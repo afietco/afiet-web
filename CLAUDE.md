@@ -35,6 +35,10 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   (nuxt → cssnano zinciri) opsiyonel peer'ı; npm bunu lock'a yazmayı atlıyor
   ve CI'da `npm ci` senkron hatası veriyor. Kaldırmadan önce `npm ci --dry-run`
   ile doğrula.
+- CI bilinçli olarak `npm ci` DEĞİL `npm install` kullanır: npm, platforma göre
+  atlanan opsiyonelleri (tailwind oxide wasm zinciri, @emnapi/*) lock'a eksik
+  yazabiliyor (npm/cli#4828) ve `npm ci` linux'ta düşüyor. `npm ci`ya geri
+  dönmeden önce CI'ın üç dalda da yeşil olduğunu görmeden merge etme.
 
 ## Kurallar
 

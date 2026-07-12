@@ -24,11 +24,14 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Lockfile npm 11 ile yazılıyor; Node 22'nin npm 10'u opsiyonel
-      # bağımlılıkları farklı doğrulayıp senkron hatası veriyor (npm/cli#4828).
+      # Lockfile npm 11 ile yazılıyor; ayrıca npm, platforma göre atlanan
+      # opsiyonel bağımlılıkları (tailwind oxide wasm zinciri, @emnapi/*)
+      # lock'a eksik yazabiliyor (npm/cli#4828) ve `npm ci` senkron hatası
+      # veriyor. Bu yüzden CI npm 11 + `npm install` kullanır — sürümleri
+      # yine lockfile belirler, eksik opsiyoneller tamamlanır.
       - run: npm install -g npm@11
 
-      - run: npm ci
+      - run: npm install --no-audit --no-fund
 
       - run: npm run typecheck
 
