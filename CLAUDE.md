@@ -29,6 +29,13 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   bu Mac'te sistem Chrome'u, CI'da `CHROME_PATH`
 - `npm run assets` — `public/og.png`'yi yeniden üretir (`scripts/generate-assets.mjs`)
 
+## Bilinen tuhaflıklar
+
+- devDependencies'teki `commander` bizim kodumuz için değil: svgo@4'ün
+  (nuxt → cssnano zinciri) opsiyonel peer'ı; npm bunu lock'a yazmayı atlıyor
+  ve CI'da `npm ci` senkron hatası veriyor. Kaldırmadan önce `npm ci --dry-run`
+  ile doğrula.
+
 ## Kurallar
 
 - Bekleme listesi endpoint'i `NUXT_PUBLIC_WAITLIST_ENDPOINT` env'inden gelir;
