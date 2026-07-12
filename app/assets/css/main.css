@@ -1,0 +1,142 @@
+/* afiet landing — "sıcak sofra" tasarım sistemi.
+   Marka kuralları: afiet-mobile/BRAND.md (emerald, Nunito, küçük harf "afiet").
+   Sayfa bilinçli olarak tek temadır (açık, sıcak krem) — sofra ışığı. */
+
+@import 'tailwindcss';
+@import '@fontsource-variable/nunito';
+
+@theme {
+  --font-sans: 'Nunito Variable', ui-rounded, system-ui, 'Segoe UI', sans-serif;
+
+  /* Zemin ve mürekkep — keten örtü üzerinde sıcak taş tonları */
+  --color-canvas: #fdfaf3;
+  --color-surface: #ffffff;
+  --color-ink: #322f2a;
+  --color-soft: #605a4f;
+  --color-muted: #97907f;
+  --color-line: #ece4d4;
+
+  /* Marka yeşili ve türevleri (BRAND.md > Renk) */
+  --color-brand: #059669;
+  --color-brand-deep: #047857;
+  --color-brand-bright: #10b981;
+  --color-brand-mint: #a7f3d0;
+  --color-brand-ink: #022c22;
+
+  /* Besin grubu vurguları — uygulamadaki eşlemenin aynısı */
+  --color-sebze: #059669;
+  --color-meyve: #f43f5e;
+  --color-protein: #f97316;
+  --color-tahil: #f59e0b;
+  --color-sut: #0ea5e9;
+
+  --shadow-lift:
+    0 12px 32px -12px rgb(4 120 87 / 0.16),
+    0 2px 8px -2px rgb(50 47 42 / 0.08);
+  --shadow-float:
+    0 32px 72px -28px rgb(4 120 87 / 0.28),
+    0 8px 22px -10px rgb(50 47 42 / 0.12);
+
+  --animate-steam: steam 3.4s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+
+  /* Afi'nin buhar telleri: yükselip incelerek soluklaşır, geri süzülür */
+  @keyframes steam {
+    0%, 100% { transform: translateY(0) scaleY(1); opacity: 1; }
+    50% { transform: translateY(-10px) scaleY(1.08); opacity: 0.45; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-mint text-brand-ink;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 font-extrabold text-white shadow-lift transition hover:bg-brand-deep active:scale-[0.97];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-3 font-bold text-ink transition hover:border-brand/40 hover:text-brand-deep active:scale-[0.97];
+  }
+
+  /* Buhar telleri (AfiMascot içindeki path'ler) */
+  .steam {
+    animation: var(--animate-steam);
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  .steam-b {
+    animation-delay: -1.7s;
+  }
+
+  /* Kaydırınca beliren bloklar — v-reveal direktifi .is-in ekler */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Sayfa açılışında kademeli beliren hero elemanları */
+  .rise {
+    animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .rise {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+}
