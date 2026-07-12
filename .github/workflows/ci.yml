@@ -24,6 +24,10 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Lockfile npm 11 ile yazılıyor; Node 22'nin npm 10'u opsiyonel
+      # bağımlılıkları farklı doğrulayıp senkron hatası veriyor (npm/cli#4828).
+      - run: npm install -g npm@11
+
       - run: npm ci
 
       - run: npm run typecheck
