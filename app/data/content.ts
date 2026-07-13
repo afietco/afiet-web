@@ -84,9 +84,15 @@ export const cta = {
     'çıktığı gün ilk sen öğren.',
   formPlaceholder: 'e-posta adresin',
   formButton: 'Haber ver',
-  formDone: 'Afiyet olsun, listedesin! 🎉 Çıktığı gün sana yazacağız.',
+  formSending: 'Gönderiliyor…',
+  formDone: 'Afiyet olsun, listedesin!',
+  formDoneSub: 'Çıktığı gün ilk sana yazacağız. 🎉',
+  formExists: 'Zaten listedesin 💚',
+  formExistsSub: 'Seni unutmadık — sofrada yerin hazır.',
+  formInvalid: 'Geçerli bir e-posta girer misin? 🌿',
   formError: 'Bir şey ters gitti — birazdan yeniden dener misin?',
   formSoon: 'Bekleme listesi çok yakında burada 🌱',
+  privacy: 'Sadece çıkış haberi için. Spam yok, ne zaman istersen çıkarsın.',
 }
 
 export const footer = {

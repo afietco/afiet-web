@@ -20,6 +20,13 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   hero'daki açılış animasyonu `.rise` sınıfıyla CSS'te
 - Afi maskotu `AfiMascot.vue` — buhar telleri hep İKİ tanedir, yüz ifadesi sabittir
   (BRAND.md > Logo); `public/icon.svg` ile birlikte değişir
+- Bekleme listesi: `server/api/waitlist.post.ts` (Nitro) → Neon `waitlist` tablosu
+  (`@neondatabase/serverless`, tablo kendi kendini kurar — CREATE TABLE IF NOT EXISTS +
+  ON CONFLICT). E-posta doğrulama + honeypot (`company` alanı) + kaynak etiketi.
+  Connection string `NUXT_DATABASE_URL` (runtimeConfig.databaseUrl, server-side).
+  `WaitlistForm.vue` durum makinesi: idle→sending→done/exists/soon/error, başarıda
+  konfetili kutlama. Backend'in AYNI Neon'una yazar ama golang-migrate şemasından
+  ayrı tablo (landing'e ait).
 
 ## Komutlar
 
@@ -42,8 +49,8 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
 
 ## Kurallar
 
-- Bekleme listesi endpoint'i `NUXT_PUBLIC_WAITLIST_ENDPOINT` env'inden gelir;
-  boşken form gizlenir, "çok yakında" satırı görünür. Çalışmayan form yayınlanmaz.
+- Bekleme listesi Neon'a `NUXT_DATABASE_URL` ile yazar (yukarı bkz.); boşken route
+  503 'soon' döner, form "çok yakında" moduna geçer. Çalışmayan form yayınlanmaz.
 - Dal modeli: `feature/*` → `development` → `staging` → `main`
   (`afiet-mobile/docs/BRANCHING.md`). `main` = Vercel production.
 - Her anlamlı değişiklikten sonra: `npm run build && npm run smoke`.

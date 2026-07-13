@@ -18,11 +18,10 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    public: {
-      // Bekleme listesi kayıt endpoint'i (env: NUXT_PUBLIC_WAITLIST_ENDPOINT).
-      // Boşken form "çok yakında" modunda; backend hazır olunca doldurulur.
-      waitlistEndpoint: '',
-    },
+    // Neon connection string (server-side, gizli). Env: NUXT_DATABASE_URL.
+    // Boşken /api/waitlist "soon" döner ve form "çok yakında" moduna geçer —
+    // çalışmayan form yayınlanmaz. Yereldeyken .env'den okunur.
+    databaseUrl: '',
   },
 
   app: {

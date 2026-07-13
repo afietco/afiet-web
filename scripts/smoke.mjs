@@ -51,6 +51,29 @@ try {
   ok(html.includes('og:image'), 'og:image meta mevcut')
   ok(html.includes('Çünkü sofra sayı saymaz.'), 'zag bölümü prerender HTML içinde')
 
+  // --- Waitlist server route (/api/waitlist) ---
+  const post = (body) =>
+    fetch(`http://localhost:${PORT}/api/waitlist`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+
+  const invalid = await post({ email: 'not-an-email' })
+  ok(invalid.status === 422, `geçersiz e-posta → 422 (${invalid.status})`)
+
+  const honey = await post({ email: 'bot@afiet.co', company: 'spam-co' })
+  const honeyBody = await honey.json().catch(() => ({}))
+  ok(honey.status === 200 && honeyBody.status === 'ok', `honeypot dolu → sessiz ok (${honey.status})`)
+
+  // DB bağlıysa 200 ok/exists, değilse (smoke ortamı) 503 soon — ikisi de geçerli.
+  const submit = await post({ email: 'smoke@afiet.co' })
+  const submitBody = await submit.json().catch(() => ({}))
+  ok(
+    [200, 503].includes(submit.status) && ['ok', 'exists', 'soon'].includes(submitBody.status),
+    `geçerli e-posta → tutarlı yanıt (${submit.status} ${submitBody.status})`,
+  )
+
   browser = await chromium.launch({ executablePath: CHROME, headless: true })
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
   const errors = []
