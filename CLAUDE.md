@@ -10,7 +10,9 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
 
 ## Stack ve yapı
 
-- Nuxt 4 + Tailwind v4 (`@tailwindcss/vite`), tam statik prerender (`nitro.prerender`)
+- Nuxt 4 + Tailwind v4 (`@tailwindcss/vite`); sayfalar `routeRules` swr:60 ile
+  istekte SSR + cache (Vercel'de ISR) — SEO meta'sı panelden değiştirilebilsin
+  diye build'de dondurulmaz (statik prerender'ın yerini aldı)
 - Tasarım tokenları ve animasyonlar: `app/assets/css/main.css` (@theme) —
   sayfa bilinçli olarak tek temadır (açık/krem "sıcak sofra"); dark mode yok
 - Tüm metin içeriği: `app/data/content.ts` — kopya değişikliği bileşene dokunmaz
@@ -28,13 +30,42 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   konfetili kutlama. Backend'in AYNI Neon'una yazar ama golang-migrate şemasından
   ayrı tablo (landing'e ait).
 
+## SEO & GEO (panelden yönetilir)
+
+- Model: kod varsayılanları (`server/utils/seoDefaults.ts` — bugünkü davranışın
+  birebir kaydı) + Neon'daki override'lar (`seo_settings`/`seo_pages`/
+  `seo_redirects`, waitlist gibi kendi kendini kurar). Boş DB = varsayılanlar;
+  "varsayılana dön" = satırı sil. Efektif birleşim: `server/utils/seoStore.ts`
+  (60 sn bellek cache; her admin yazımı cache'i VE swr sayfa cache'ini düşürür).
+- Sayfalar `usePageSeo()` composable'ı ile `/api/seo/meta?path=`ten meta çeker
+  (title/description/og/twitter/canonical/robots/doğrulama kodları/JSON-LD).
+  Elle `useHead` meta bloğu YAZMA — panel yönetimini kırar.
+- JSON-LD: ana sayfada Organization+WebSite+SoftwareApplication grafiği +
+  (doluysa) FAQPage. SSS maddeleri hem görünür bölüm (`FaqSection.vue`, boşsa
+  render edilmez) hem şemadır — ikisi hep aynı kaynaktan gelir.
+- Dinamik route'lar: `/robots.txt` (AI bot izinleri panelden; varsayılan liste
+  `seoDefaults.ts > AI_BOTS`, Bytespider engelli), `/sitemap.xml`, `/llms.txt`.
+  `public/robots.txt` bilinçli olarak YOK. Yönlendirmeler:
+  `server/middleware/redirects.ts` (tam yol eşleşmesi, panelden).
+- Panel = afiet-admin reposundaki "SEO & GEO" ekranı; `/api/admin/seo*` uçlarına
+  kullanıcının Stack/Neon Auth JWT'siyle gelir. Doğrulama `server/utils/
+  adminAuth.ts`: JWKS+issuer+audience (backend'in AUTH_* değerlerinin aynısı,
+  env: `NUXT_ADMIN_*`) ve backend'le aynı kural (roles 'admin' VEYA
+  NUXT_ADMIN_EMAILS). Yerel geliştirmede `NUXT_ADMIN_DEV_TOKEN` bypass'ı yalnız
+  `nuxt dev`te çalışır. CORS: `server/middleware/admin-cors.ts`.
+- Vercel env kurulumu: `bash scripts/vercel-env-setup.sh` (değerleri gcloud
+  Secret Manager + .env'den okur; production dahil).
+- 404 artık gerçektir (`app/error.vue`, markalı) — eski deploy'daki "her yol
+  200 + ana sayfa" soft-404 davranışına geri dönme.
+
 ## Komutlar
 
 - `npm run dev` / `build` / `preview`
 - `npm run typecheck` — vue-tsc
 - `npm run smoke` — build sonrası gerçek Chrome doğrulaması (`scripts/smoke.mjs`);
   bu Mac'te sistem Chrome'u, CI'da `CHROME_PATH`
-- `npm run assets` — `public/og.png`'yi yeniden üretir (`scripts/generate-assets.mjs`)
+- `npm run assets` — `public/og.png` ve `public/favicon.ico`'yu yeniden üretir
+  (`scripts/generate-assets.mjs`)
 
 ## Bilinen tuhaflıklar
 

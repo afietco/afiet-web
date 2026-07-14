@@ -8,10 +8,7 @@
     </a>
     <SiteHeader />
     <main id="icerik">
-      <HeroSection />
-      <ZagSection />
-      <VoiceSection />
-      <CtaSection />
+      <NuxtPage />
     </main>
     <SiteFooter />
   </div>
