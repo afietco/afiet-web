@@ -1,20 +1,8 @@
 <script setup lang="ts">
 import { hesapSil } from '~/data/content'
 
-const SITE_URL = 'https://afiet.co'
-useHead({
-  title: 'Hesabını sil — afiet',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'afiet hesabını ve tüm verilerini uygulamadan ya da e-posta ile nasıl silebileceğin.',
-    },
-    { property: 'og:title', content: 'Hesabını sil — afiet' },
-    { property: 'og:url', content: `${SITE_URL}/hesap-sil` },
-  ],
-  link: [{ rel: 'canonical', href: `${SITE_URL}/hesap-sil` }],
-})
+// Meta/canonical panelden yönetilir (varsayılanlar kodda — seoDefaults.ts).
+usePageSeo()
 </script>
 
 <template>

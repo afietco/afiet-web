@@ -1,20 +1,8 @@
 <script setup lang="ts">
 import { privacy } from '~/data/content'
 
-const SITE_URL = 'https://afiet.co'
-useHead({
-  title: 'Gizlilik Politikası — afiet',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'afiet gizlilik politikası: hangi verileri neden topladığımız, nerede sakladığımız ve verini nasıl silebileceğin.',
-    },
-    { property: 'og:title', content: 'Gizlilik Politikası — afiet' },
-    { property: 'og:url', content: `${SITE_URL}/gizlilik` },
-  ],
-  link: [{ rel: 'canonical', href: `${SITE_URL}/gizlilik` }],
-})
+// Meta/canonical panelden yönetilir (varsayılanlar kodda — seoDefaults.ts).
+usePageSeo()
 </script>
 
 <template>
