@@ -5,7 +5,7 @@ import { footer } from '~/data/content'
 <template>
   <footer class="border-t border-line/70">
     <div
-      class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 py-10 sm:flex-row"
+      class="mx-auto flex max-w-6xl flex-col items-center gap-5 px-5 py-10 sm:flex-row sm:justify-between"
     >
       <div class="flex items-center gap-2.5">
         <AfiMascot class="h-8 w-8" />
@@ -14,6 +14,16 @@ import { footer } from '~/data/content'
           <div class="text-xs font-bold text-muted">{{ footer.tagline }}</div>
         </div>
       </div>
+      <nav class="flex items-center gap-5" aria-label="Alt bağlantılar">
+        <NuxtLink
+          v-for="l in footer.links"
+          :key="l.to"
+          :to="l.to"
+          class="text-sm font-bold text-muted transition hover:text-brand-deep"
+        >
+          {{ l.label }}
+        </NuxtLink>
+      </nav>
       <p class="text-sm font-bold text-muted">
         {{ footer.signoff }} · © {{ new Date().getFullYear() }} afiet
       </p>

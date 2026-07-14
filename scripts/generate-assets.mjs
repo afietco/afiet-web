@@ -1,10 +1,11 @@
 /**
- * Sosyal paylaşım görselini (public/og.png, 1200×630) üretir.
+ * Sosyal paylaşım görselini (public/og.png, 1200×630) ve favicon.ico'yu
+ * (32×32, PNG gömülü ICO) üretir.
  * Kaynak tek gerçek: public/icon.svg (Afi) + Nunito (node_modules'ten).
  * Bu makinede sistem Chrome'u kullanılır (playwright-core, browser indirmez).
  * Kullanım: npm run assets
  */
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -58,5 +59,29 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 } })
 await page.setContent(html)
 await page.evaluate(() => document.fonts.ready)
 await page.screenshot({ path: path.join(root, 'public/og.png') })
+
+// favicon.ico: Afi'yi 32×32 şeffaf PNG olarak çek, tek girdili ICO'ya paketle
+// (PNG gömülü ICO her modern istemcide geçerli). /favicon.ico'yu ısrarla
+// isteyen istemciler (bazı SERP favicon botları, eski araçlar) için.
+const fav = await browser.newPage({ viewport: { width: 32, height: 32 } })
+await fav.setContent(
+  `<!doctype html><style>*{margin:0}body{width:32px;height:32px}svg{width:32px;height:32px;display:block}</style><body>${icon}</body>`,
+)
+const png = await fav.screenshot({ omitBackground: true })
+const header = Buffer.alloc(22)
+header.writeUInt16LE(0, 0) // reserved
+header.writeUInt16LE(1, 2) // tip: icon
+header.writeUInt16LE(1, 4) // görüntü sayısı
+header.writeUInt8(32, 6) // genişlik
+header.writeUInt8(32, 7) // yükseklik
+header.writeUInt8(0, 8) // palet yok
+header.writeUInt8(0, 9) // reserved
+header.writeUInt16LE(1, 10) // düzlem
+header.writeUInt16LE(32, 12) // bpp
+header.writeUInt32LE(png.length, 14) // veri boyu
+header.writeUInt32LE(22, 18) // veri ofseti
+writeFileSync(path.join(root, 'public/favicon.ico'), Buffer.concat([header, png]))
+
 await browser.close()
 console.log('✓ public/og.png (1200×630)')
+console.log('✓ public/favicon.ico (32×32 PNG-ICO)')

@@ -74,6 +74,36 @@ try {
     `geçerli e-posta → tutarlı yanıt (${submit.status} ${submitBody.status})`,
   )
 
+  // --- SEO & GEO yüzeyi (DB'siz ortamda kod varsayılanlarıyla çalışmalı) ---
+  const robots = await (await fetch(`http://localhost:${PORT}/robots.txt`)).text()
+  ok(robots.includes('Sitemap:'), 'robots.txt Sitemap satırı içeriyor')
+  ok(robots.includes('Bytespider'), 'robots.txt Bytespider engeli içeriyor')
+
+  const sitemapRes = await fetch(`http://localhost:${PORT}/sitemap.xml`)
+  const sitemap = await sitemapRes.text()
+  ok(
+    (sitemapRes.headers.get('content-type') || '').includes('xml') &&
+      sitemap.includes('<urlset') &&
+      (sitemap.match(/<loc>/g) || []).length >= 3,
+    'sitemap.xml gerçek XML ve ≥3 sayfa listeliyor',
+  )
+
+  const llms = await (await fetch(`http://localhost:${PORT}/llms.txt`)).text()
+  ok(llms.startsWith('# afiet'), 'llms.txt yayında')
+
+  const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
+  ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
+
+  const meta = await (
+    await fetch(`http://localhost:${PORT}/api/seo/meta?path=/`)
+  ).json()
+  ok(meta.title?.includes('afiet') && meta.canonical, '/api/seo/meta tutarlı yanıt veriyor')
+
+  const jsonldCount = (html.match(/application\/ld\+json/g) || []).length
+  ok(jsonldCount >= 2, `JSON-LD blokları HTML'de (${jsonldCount})`)
+  ok(html.includes('FAQPage'), 'FAQPage şeması HTML içinde')
+  ok(html.includes('twitter:title'), 'twitter:title meta mevcut')
+
   browser = await chromium.launch({ executablePath: CHROME, headless: true })
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
   const errors = []

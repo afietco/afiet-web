@@ -1,6 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
 
-const SITE_URL = 'https://afiet.co'
 const TITLE = 'afiet — Sayma, dengele.'
 const DESCRIPTION =
   'Kalori saydırmadan, Türk sofrasının kendi ölçüleriyle — dilim, kase, avuç — ' +
@@ -11,41 +10,53 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 
-  // Tek sayfalık statik vitrin: rota build'de HTML'e döner (SEO + ilk boya hızı).
+  // SEO/GEO panelden yönetilir (afiet-admin → /api/admin/seo → Neon).
+  // Sayfalar bu yüzden build'de dondurulmaz; swr ile istekte render edilip
+  // 60 sn cache'lenir (Vercel'de ISR'a çevrilir) — panel değişikliği en geç
+  // 1-2 dakikada canlıya yansır, ilk boya hızı edge cache sayesinde korunur.
+  // robots.txt / sitemap.xml / llms.txt dinamik server route'larıdır.
+  routeRules: {
+    '/': { swr: 60 },
+    '/gizlilik': { swr: 60 },
+    '/hesap-sil': { swr: 60 },
+  },
+
   nitro: {
-    prerender: { routes: ['/'], crawlLinks: true },
     compressPublicAssets: true,
   },
 
   runtimeConfig: {
     // Neon connection string (server-side, gizli). Env: NUXT_DATABASE_URL.
-    // Boşken /api/waitlist "soon" döner ve form "çok yakında" moduna geçer —
-    // çalışmayan form yayınlanmaz. Yereldeyken .env'den okunur.
+    // Boşken /api/waitlist "soon" döner, SEO uçları kod varsayılanlarını sunar
+    // ve admin yazma uçları 503 döner — çalışmayan form/panel yayınlanmaz.
     databaseUrl: '',
+    // Panel (afiet-admin) istekleri için JWT doğrulama — backend'in
+    // AUTH_JWKS_URL / AUTH_ISSUER / AUTH_AUDIENCE değerlerinin aynısı.
+    adminJwksUrl: '',
+    adminIssuer: '',
+    adminAudience: '',
+    // Virgüllü admin e-posta allowlist'i (backend ADMIN_EMAILS ile aynı).
+    adminEmails: '',
+    // YALNIZ `nuxt dev`te geçerli bypass token'ı (production'da kod ölü).
+    adminDevToken: '',
+    // Panelin origin'leri (virgüllü) — /api/admin/** CORS izni.
+    adminCorsOrigins: '',
   },
 
   app: {
     head: {
       htmlAttrs: { lang: 'tr' },
+      // Aşağısı yalnızca son çare fallback'tir: her sayfa usePageSeo ile
+      // panelden yönetilen meta setini basar (og/twitter/canonical dahil).
       title: TITLE,
       meta: [
         { name: 'description', content: DESCRIPTION },
         { name: 'theme-color', content: '#fdfaf3' },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'afiet' },
-        { property: 'og:locale', content: 'tr_TR' },
-        { property: 'og:title', content: TITLE },
-        { property: 'og:description', content: DESCRIPTION },
-        { property: 'og:url', content: `${SITE_URL}/` },
-        { property: 'og:image', content: `${SITE_URL}/og.png` },
-        { property: 'og:image:width', content: '1200' },
-        { property: 'og:image:height', content: '630' },
-        { name: 'twitter:card', content: 'summary_large_image' },
       ],
       link: [
         { rel: 'icon', href: '/icon.svg', type: 'image/svg+xml' },
+        { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'canonical', href: `${SITE_URL}/` },
       ],
     },
   },
