@@ -98,4 +98,101 @@ export const cta = {
 export const footer = {
   tagline: 'Sayma, dengele.',
   signoff: 'Sofranıza afiyet.',
+  links: [
+    { label: 'Gizlilik', to: '/gizlilik' },
+    { label: 'Hesabını sil', to: '/hesap-sil' },
+  ],
+}
+
+/**
+ * Yasal sayfalar (herkese açık — mağaza ve KVKK/Play için). İçerik GERÇEĞE
+ * uygundur: uygulama hesap gerektirir ve veriyi backend'de saklar; eski
+ * "yalnızca bu cihazda" metni artık geçerli DEĞİL.
+ */
+export const privacy = {
+  title: 'Gizlilik Politikası',
+  effective: '13 Temmuz 2026',
+  contact: 'rberkkaratas@gmail.com',
+  intro:
+    'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
+    'Yalnızca uygulamanın çalışması için gereken veriyi toplarız; reklam, izleme ya da ' +
+    'üçüncü taraflara satış yoktur.',
+  sections: [
+    {
+      title: 'Topladığımız veriler',
+      body: [
+        'Hesap: e-posta adresin — kimlik doğrulama için (sağlayıcı: Stack Auth).',
+        'Profil: görünen adın, cinsiyetin, doğum tarihin, boyun ve aktivite düzeyin.',
+        'Sağlık ve beslenme: öğün ve besin kayıtların, besin grupları, su tüketimin, ' +
+          'vücut ölçülerin (kilo, bel, boyun, kalça) ve bunlardan hesaplanan BMI, BMR, ' +
+          'TDEE gibi değerler.',
+        'Kullanım: kayıt tarihlerin ve seri (streak) gibi uygulama içi etkinliğin.',
+      ],
+    },
+    {
+      title: 'Verileri neden işliyoruz',
+      body: [
+        'Yalnızca uygulamanın çalışması için: kayıtlarını saklamak, aile profillerini ' +
+          'yönetmek ve sana dengeli beslenme özetleri göstermek.',
+        'Reklam göstermiyoruz, verini satmıyoruz, üçüncü taraflarla paylaşmıyoruz ve ' +
+          'seni izlemiyoruz.',
+      ],
+    },
+    {
+      title: 'Nerede saklanır',
+      body: [
+        'Verilerin, bizim yönettiğimiz sunucularda (Google Cloud, Avrupa bölgesi) ' +
+          'saklanır; cihazınla sunucu arasındaki aktarım HTTPS ile şifrelenir.',
+        'Kimlik doğrulama Stack Auth tarafından sağlanır.',
+      ],
+    },
+    {
+      title: 'Verini silme',
+      body: [
+        'Hesabını ve tüm verilerini uygulamadan silebilirsin: Profil → Hesabı sil. ' +
+          'Bu işlem öğün, ölçü ve profil kayıtlarını kalıcı olarak kaldırır.',
+        'Dilersen rberkkaratas@gmail.com adresine yazarak da silme talep edebilirsin; ' +
+          'talebini en geç 30 gün içinde işleriz.',
+      ],
+    },
+    {
+      title: 'Çocuklar',
+      body: [
+        'afiet 18 yaş ve üzeri kullanıcılar içindir. Bilerek 18 yaş altından veri ' +
+          'toplamayız.',
+      ],
+    },
+    {
+      title: 'Değişiklikler',
+      body: [
+        'Bu politikayı zaman zaman güncelleyebiliriz; önemli değişiklikleri bu sayfada ' +
+          'duyururuz. Yürürlük tarihi yukarıda yazılıdır.',
+      ],
+    },
+    {
+      title: 'İletişim',
+      body: ['Sorular ve talepler için: rberkkaratas@gmail.com'],
+    },
+  ],
+}
+
+export const hesapSil = {
+  title: 'Hesabını sil',
+  contact: 'rberkkaratas@gmail.com',
+  intro:
+    'Hesabını ve afiet’teki tüm verilerini istediğin zaman silebilirsin. En hızlısı ' +
+    'uygulama içinden; erişemiyorsan e-posta ile de talep edebilirsin.',
+  appTitle: 'Uygulamadan (en hızlı)',
+  steps: [
+    'afiet uygulamasını aç ve giriş yap.',
+    'Profil sekmesine git.',
+    'Hesap bölümünde “Hesabı sil”e dokun ve onayla.',
+    'Öğün, ölçü ve profil kayıtların dâhil tüm verilerin kalıcı olarak silinir; ' +
+      'işlem geri alınamaz.',
+  ],
+  emailTitle: 'E-posta ile',
+  emailBody:
+    'Uygulamaya erişemiyorsan, kayıtlı e-posta adresinden rberkkaratas@gmail.com ' +
+    'adresine “hesap silme” yaz. Kimliğini doğruladıktan sonra hesabını ve tüm ' +
+    'verilerini en geç 30 gün içinde sileriz.',
 }

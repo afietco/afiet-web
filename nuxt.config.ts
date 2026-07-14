@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 
   // Tek sayfalık statik vitrin: rota build'de HTML'e döner (SEO + ilk boya hızı).
   nitro: {
-    prerender: { routes: ['/'], crawlLinks: true },
+    prerender: { routes: ['/', '/gizlilik', '/hesap-sil'], crawlLinks: true },
     compressPublicAssets: true,
   },
 
@@ -45,7 +45,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', href: '/icon.svg', type: 'image/svg+xml' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'canonical', href: `${SITE_URL}/` },
+        // canonical sayfa başına useHead ile ayarlanır (index / gizlilik / hesap-sil).
       ],
     },
   },
