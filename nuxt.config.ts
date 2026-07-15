@@ -11,14 +11,16 @@ export default defineNuxtConfig({
   vite: { plugins: [tailwindcss()] },
 
   // SEO/GEO panelden yönetilir (afiet-admin → /api/admin/seo → Neon).
-  // Sayfalar bu yüzden build'de dondurulmaz; swr ile istekte render edilip
-  // 60 sn cache'lenir (Vercel'de ISR'a çevrilir) — panel değişikliği en geç
-  // 1-2 dakikada canlıya yansır, ilk boya hızı edge cache sayesinde korunur.
+  // Sayfalar build'de dondurulmaz; Vercel-native ISR (isr: 60) ile istekte
+  // render edilip 60 sn'de bir tazelenir — panel değişikliği en geç 1-2
+  // dakikada canlıya yansır. NOT: `swr: 60` Vercel'de hiç revalidate
+  // etmiyordu (sayfalar ~30 saat tek render'dan servis edildi, 15 Tem
+  // tespiti) — isr'a bu yüzden geçildi, swr'a geri dönme.
   // robots.txt / sitemap.xml / llms.txt dinamik server route'larıdır.
   routeRules: {
-    '/': { swr: 60 },
-    '/gizlilik': { swr: 60 },
-    '/hesap-sil': { swr: 60 },
+    '/': { isr: 60 },
+    '/gizlilik': { isr: 60 },
+    '/hesap-sil': { isr: 60 },
   },
 
   nitro: {
