@@ -100,6 +100,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 
 ## Bağlantılar
 - [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve bekleme listesi.
+- [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
 - İletişim: rberkkaratas@gmail.com
@@ -194,6 +195,16 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'Kalori saydırmadan, Türk sofrasının diliyle ailece dengeli beslenme. ' +
       'Sofrada seni seven biri gibi konuşur. Yakında App Store ve Google Play’de.',
     sitemap: { include: true, changefreq: 'weekly', priority: 1 },
+  }),
+  '/blog': makePage({
+    title: 'Blog — afiet',
+    description:
+      'Kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine ' +
+      'rehberler — afiet günlüğü. Sofranın kendi diliyle: dilim, kase, avuç.',
+    ogDescription:
+      'afiet günlüğü: kalori saymadan dengeli beslenme rehberleri, porsiyon ölçüleri ' +
+      've aile sofrası üzerine yazılar. Sayma, dengele.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.6 },
   }),
   '/gizlilik': makePage({
     title: 'Gizlilik Politikası — afiet',
