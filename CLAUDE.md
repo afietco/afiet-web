@@ -58,6 +58,27 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
 - 404 artık gerçektir (`app/error.vue`, markalı) — eski deploy'daki "her yol
   200 + ana sayfa" soft-404 davranışına geri dönme.
 
+## Blog & içerik planı (panelden + Claude ile)
+
+- Veri modeli: `server/utils/contentStore.ts` — `content_items` (panel içerik
+  planı), `blog_posts` (yazılar; runtime kaynağı DB'dir), `content_metrics`
+  (elle girilen ölçümler). SEO tabloları gibi kendi kendini kurar; tipler
+  `contentTypes.ts` ↔ afiet-admin `src/services/content.ts` BİREBİR aynadır.
+- Panel uçları: `/api/admin/content*` (GET/PUT/DELETE — `requireAdmin`,
+  503 `db_bagli_degil`, 422 `gecersiz_alan:<alan>`, yazmalar taze payload döner).
+- Public: `/blog` + `/blog/[slug]` (routeRules isr:60) `/api/blog/posts*`ten
+  beslenir; gövde sunucuda **markdown-it `html:false`** ile render edilir —
+  ham HTML escape edilir, `html: true`'ya ÇEVİRME (v-html güvenliği buna dayalı).
+  Yazı meta'sı/JSON-LD'si (BlogPosting + BreadcrumbList) `seoStore.resolvePageMeta`
+  içinde üretilir; panelin `seo_pages['/blog/<slug>']` override'ı üstüne biner.
+  Sitemap yayındaki yazıları otomatik ekler; RSS: `/blog/rss.xml`.
+- Yayınlama (deploy YOK): panel prompt'u → Claude Code yazıyı
+  `content/posts/<slug>.md`e yazar → onay → `node scripts/publish-post.mjs
+  content/posts/<slug>.md` (Neon host'u gösterip onay ister; upsert + bağlı
+  panel içeriğini "yayında" yapar). Görünürlük: sayfa ≤ ~2 dk, sitemap/RSS ≤ 5 dk.
+  Yayından kaldırma: `--unpublish <slug>`. md dosyaları sürümlü YEDEKTİR;
+  script'teki DDL `contentStore.ts` ile senkron tutulur.
+
 ## Komutlar
 
 - `npm run dev` / `build` / `preview`
