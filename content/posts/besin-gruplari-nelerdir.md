@@ -4,7 +4,7 @@ title: "Besin grupları nelerdir? 5 besin grubunu renklerle tanı"
 description: "Besin grupları nelerdir? TÜBER 2022'ye göre 5 besin grubunu renkleriyle ve sofra diliyle (dilim, kase, avuç) tanı; tabağındaki dengeyi saymadan gör."
 tags: [besin grupları, dengeli beslenme, sağlıklı tabak, beslenme rehberi]
 item_id: 6
-cover_url:
+cover_url: /covers/besin-gruplari-5-renk.png
 published_at:
 ---
 
@@ -35,6 +35,8 @@ Dikkatini çekmiştir: sebzeler ve meyveler tek bir grup değil, iki ayrı grup.
 Şimdi her gruba bir renk verelim; bu renkler aynı zamanda afiet'te göreceğin renkler.
 
 ## Grup grup tanıyalım: 5 grup, 5 renk
+
+![5 besin grubu ve renkleri: mavi süt ve ürünleri, turuncu protein, yeşil sebzeler, kırmızı meyveler, sarı ekmek ve tahıllar; afiet besin grupları rehberi](/covers/besin-gruplari-5-renk.png)
 
 ### Mavi: süt ve ürünleri
 
