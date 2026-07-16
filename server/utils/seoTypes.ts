@@ -156,6 +156,10 @@ export type ResolvedPageMeta = {
   jsonld: Record<string, unknown>[]
   /** Ana sayfa SSS bölümü için (showOnLanding && items.length). */
   faq: { title: string; intro: string; items: FaqItem[] } | null
+  /** Blog yazılarında 'article' — opsiyonel alanlar panel tipini bozmaz. */
+  ogType?: 'website' | 'article'
+  publishedAt?: string
+  modifiedAt?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

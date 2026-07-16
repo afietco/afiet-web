@@ -1,6 +1,8 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
 import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
+import { getPublishedPost } from './contentStore'
+import type { BlogPost } from './contentTypes'
 import type {
   DeepPartial,
   PageSeo,
@@ -168,9 +170,28 @@ function normalizePath(path: string): string {
 /** Bir sayfanın render edilecek nihai meta seti. Bilinmeyen path'ler de tutarlı üretir (404 sayfası dahil). */
 export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<ResolvedPageMeta> {
   const path = normalizePath(rawPath)
-  const { settings, pages } = await getSeoBundle(event)
+  const [{ settings, pages }, overrides] = await Promise.all([getSeoBundle(event), loadOverrides(event)])
   const g = settings.general
-  const page = pages[path] ?? makePage({})
+  let page = pages[path] ?? makePage({})
+
+  // Blog yazısı: meta tabanı DB'deki yazıdan gelir, panelin sayfa override'ı
+  // (seo_pages['/blog/<slug>']) ham haliyle üstüne biner. Yayında olmayan/
+  // bilinmeyen slug mevcut bilinmeyen-yol davranışına düşer (sayfa 404 verir).
+  let post: BlogPost | null = null
+  if (path.startsWith('/blog/') && path !== '/blog') {
+    post = await getPublishedPost(event, path.slice('/blog/'.length))
+    if (post) {
+      const postPage = makePage({
+        title: `${post.title} — afiet`,
+        description: post.description,
+        ogTitle: post.title,
+        ogDescription: post.description,
+        ogImage: post.coverUrl ?? '',
+        sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+      })
+      page = deepMerge<PageSeo>(postPage, overrides.pages[path])
+    }
+  }
 
   const title = page.title || g.defaultTitle
   const description = page.description || g.defaultDescription
@@ -228,6 +249,47 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       })
     }
   }
+  const base = g.baseUrl.replace(/\/$/, '')
+  if (path === '/blog') {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: `${g.siteName} blog`,
+      url: `${base}/blog`,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+    })
+  }
+  if (post) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.description,
+      inLanguage: g.locale.replace('_', '-'),
+      ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
+      dateModified: post.updatedAt,
+      mainEntityOfPage: canonical,
+      ...(post.tags.length ? { keywords: post.tags.join(', ') } : {}),
+      ...(post.coverUrl ? { image: absolutize(post.coverUrl, g.baseUrl) } : {}),
+      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      publisher: {
+        '@type': 'Organization',
+        name: g.siteName,
+        url: g.baseUrl,
+        logo: { '@type': 'ImageObject', url: absolutize('/icon.svg', g.baseUrl) },
+      },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${base}/blog` },
+        { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
+      ],
+    })
+  }
   jsonld.push(...page.jsonld)
 
   const showFaq =
@@ -252,6 +314,9 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     faq: showFaq
       ? { title: settings.faq.title, intro: settings.faq.intro, items: settings.faq.items }
       : null,
+    ogType: post ? 'article' : 'website',
+    ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
+    ...(post ? { modifiedAt: post.updatedAt } : {}),
   }
 }
 
@@ -279,7 +344,7 @@ export function buildRobotsTxt(settings: SeoSettings): string {
   return lines.join('\n') + '\n'
 }
 
-function xmlEscape(s: string): string {
+export function xmlEscape(s: string): string {
   return s
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
@@ -287,10 +352,11 @@ function xmlEscape(s: string): string {
     .replaceAll('"', '&quot;')
 }
 
-/** sitemap.xml içeriği — yalnız kodda var olan ve include edilen sayfalar. */
+/** sitemap.xml içeriği — kodda var olan sayfalar + dinamik ekler (blog yazıları). */
 export function buildSitemapXml(
   bundle: SeoBundle,
   updatedAt: Record<string, string> = {},
+  extra: { loc: string; lastmod?: string }[] = [],
 ): string {
   const base = bundle.settings.general.baseUrl.replace(/\/$/, '')
   const entries = KNOWN_PATHS.filter((p) => bundle.pages[p]?.sitemap.include !== false)
@@ -306,6 +372,12 @@ export function buildSitemapXml(
       parts.push('  </url>')
       return parts.join('\n')
     })
+  for (const e of extra) {
+    const parts = [`  <url>`, `    <loc>${xmlEscape(e.loc)}</loc>`]
+    if (e.lastmod) parts.push(`    <lastmod>${new Date(e.lastmod).toISOString()}</lastmod>`)
+    parts.push('  </url>')
+    entries.push(parts.join('\n'))
+  }
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
