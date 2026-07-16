@@ -4,7 +4,7 @@ title: "Kalori saymadan dengeli beslenme: elinle ölç"
 description: "Kalori saymadan dengeli beslenme mümkün: elin ve mutfaktaki doğal ölçülerle — avuç, yumruk, dilim, kase — tabağını nasıl yargısızca dengeleyeceğini öğren."
 tags: [dengeli beslenme, porsiyon ölçüsü, sezgisel beslenme, besin grupları]
 item_id: 5
-cover_url:
+cover_url: /covers/el-porsiyon-rehberi.png
 published_at:
 ---
 
@@ -29,6 +29,8 @@ Bir tabağı "iyi" ya da "kötü" diye ayırmak yerine, bu misafirlerin çoğunu
 Güzel tarafı: bu dengeyi görmek için mutfak terazisine de gerek yok. Ölçün zaten elinde.
 
 ## Elin senin ölçün
+
+![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ — afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
 
 Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait — yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/calorie-control-guide-infographics), pratik bir başlangıç noktası sunar:
 
