@@ -94,6 +94,33 @@ try {
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
 
+  // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---
+  const blogRes = await fetch(`http://localhost:${PORT}/blog`)
+  const blogHtml = await blogRes.text()
+  ok(
+    blogRes.status === 200 && blogHtml.includes('Sofradan notlar'),
+    `/blog 200 ve liste sayfası render oluyor (${blogRes.status})`,
+  )
+  ok(blogHtml.includes('rel="canonical"'), '/blog canonical içeriyor')
+
+  const blogApi = await fetch(`http://localhost:${PORT}/api/blog/posts`)
+  const blogApiBody = await blogApi.json().catch(() => null)
+  ok(
+    blogApi.status === 200 && Array.isArray(blogApiBody?.posts),
+    `/api/blog/posts 200 + dizi (${blogApiBody?.posts?.length ?? '—'} yazı)`,
+  )
+
+  const missingPost = await fetch(`http://localhost:${PORT}/blog/olmayan-yazi-smoke`)
+  ok(missingPost.status === 404, `bilinmeyen yazı gerçek 404 (${missingPost.status})`)
+
+  const rssRes = await fetch(`http://localhost:${PORT}/blog/rss.xml`)
+  const rss = await rssRes.text()
+  ok(
+    (rssRes.headers.get('content-type') || '').includes('xml') && rss.includes('<rss'),
+    'blog RSS yayında ve XML',
+  )
+  ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
+
   const meta = await (
     await fetch(`http://localhost:${PORT}/api/seo/meta?path=/`)
   ).json()

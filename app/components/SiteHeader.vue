@@ -12,6 +12,12 @@
         >
           Neden afiet?
         </NuxtLink>
+        <NuxtLink
+          to="/blog"
+          class="hidden font-bold text-soft transition hover:text-brand-deep sm:block"
+        >
+          Blog
+        </NuxtLink>
         <NuxtLink to="/#haber" class="btn-primary !px-5 !py-2.5 text-sm">Haber ver</NuxtLink>
       </nav>
     </div>

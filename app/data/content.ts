@@ -99,9 +99,23 @@ export const footer = {
   tagline: 'Sayma, dengele.',
   signoff: 'Sofranıza afiyet.',
   links: [
+    { label: 'Blog', to: '/blog' },
     { label: 'Gizlilik', to: '/gizlilik' },
     { label: 'Hesabını sil', to: '/hesap-sil' },
   ],
+}
+
+/** Blog (afiet günlüğü) — liste ve yazı sayfası metinleri. */
+export const blog = {
+  eyebrow: 'afiet günlüğü',
+  title: 'Sofradan notlar',
+  sub:
+    'Kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine ' +
+    'kısa rehberler — sofranın kendi diliyle.',
+  rss: 'RSS ile takip et',
+  empty: 'İlk yazı fırında — çok yakında burada. 🌿',
+  back: '← Tüm yazılar',
+  readingSuffix: 'dk okuma',
 }
 
 /**
