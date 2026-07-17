@@ -11,5 +11,6 @@
       <NuxtPage />
     </main>
     <SiteFooter />
+    <CookieNotice />
   </div>
 </template>
