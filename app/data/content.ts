@@ -263,3 +263,27 @@ export const epostaDogrula = {
     'Bağlantının süresi dolmuş ya da daha önce kullanılmış. Uygulamadan ' +
     'yeni bir doğrulama e-postası isteyebilirsin.',
 }
+
+/**
+ * Grup davet inişi (/katil/{code}): uygulamadaki GroupHome’un paylaştığı
+ * davet linkinin karşılama noktası. afiet yüklüyse bağlantı doğrudan
+ * uygulamada açılır (universal link) ve bu sayfa hiç görünmez; görünüyorsa
+ * kullanıcının uygulaması yok ya da bağlantı tarayıcıda açıldı demektir.
+ * Ton sakin ve davetkâr; kod büyük gösterilir ki elle de girilebilsin.
+ */
+export const katil = {
+  eyebrow: 'grup daveti',
+  title: 'Bir gruba davet edildin',
+  sub: 'afiet’te sofraya birlikte oturun. Dengeyi ailece kovalayın.',
+  codeLabel: 'Grup ID’si',
+  openApp: 'Uygulamada aç',
+  openHint: 'afiet yüklüyse bu buton uygulamada açar ve seni gruba katılma adımına götürür.',
+  noAppTitle: 'afiet’in yok mu?',
+  noAppBody:
+    'App Store ve Google Play’de çok yakında. İndirdikten sonra Grubum ' +
+    'sekmesinde “ID ile katıl”a dokun ve bu kodu gir. Sofrada yerin hazır.',
+  invalidTitle: 'Bu bağlantı geçerli değil',
+  invalidBody:
+    'Davet kodu eksik ya da hatalı görünüyor. Grubu kuran kişiden davet ' +
+    'bağlantısını yeniden paylaşmasını isteyebilirsin.',
+}
