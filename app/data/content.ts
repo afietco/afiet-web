@@ -210,3 +210,41 @@ export const hesapSil = {
     'adresine “hesap silme” yaz. Kimliğini doğruladıktan sonra hesabını ve tüm ' +
     'verilerini en geç 30 gün içinde sileriz.',
 }
+
+/**
+ * Auth yardımcı sayfaları (/sifre-yenile/{env}, /e-posta-dogrula/{env}):
+ * Stack Auth e-postalarındaki bağlantıların iniş noktası. Ton sakin ve
+ * yargısız; teknik detay, hata dökümü ya da İngilizce API metni gösterilmez.
+ */
+export const authOrtak = {
+  checking: 'Bağlantı kontrol ediliyor…',
+  invalidTitle: 'Bu bağlantı geçerli değil',
+  invalidBody:
+    'Bağlantı eksik ya da hatalı görünüyor. E-postandaki bağlantıya yeniden ' +
+    'dokunmayı deneyebilirsin.',
+}
+
+export const sifreYenile = {
+  title: 'Yeni şifreni belirle',
+  label: 'Yeni şifren',
+  hint: 'En az 8 karakter',
+  button: 'Şifreyi güncelle',
+  sending: 'Güncelleniyor…',
+  doneTitle: 'Şifren güncellendi',
+  doneBody: 'Uygulamaya dönüp yeni şifrenle giriş yapabilirsin. Afiyet olsun!',
+  expiredTitle: 'Bu bağlantı artık geçerli değil',
+  expiredBody:
+    'Bağlantının süresi dolmuş ya da daha önce kullanılmış. Uygulamadaki ' +
+    'giriş ekranından yeni bir bağlantı isteyebilirsin.',
+  errTooShort: 'Şifre en az 8 karakter olmalı.',
+  errGeneric: 'Bir şeyler ters gitti, tekrar dene.',
+}
+
+export const epostaDogrula = {
+  doneTitle: 'E-postan doğrulandı 🎉',
+  doneBody: 'Uygulamaya dönebilirsin. Afiyet olsun!',
+  expiredTitle: 'Bu bağlantı artık geçerli değil',
+  expiredBody:
+    'Bağlantının süresi dolmuş ya da daha önce kullanılmış. Uygulamadan ' +
+    'yeni bir doğrulama e-postası isteyebilirsin.',
+}
