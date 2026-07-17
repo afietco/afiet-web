@@ -45,6 +45,13 @@ export default defineNuxtConfig({
     adminDevToken: '',
     // Panelin origin'leri (virgüllü) — /api/admin/** CORS izni.
     adminCorsOrigins: '',
+
+    public: {
+      // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
+      // Yalnız burada toplar; dev/preview/staging boş kalır ki paylaşılan
+      // Neon kirlenmesin. Env: NUXT_PUBLIC_ANALYTICS_DOMAINS.
+      analyticsDomains: 'afiet.co,www.afiet.co',
+    },
   },
 
   app: {
