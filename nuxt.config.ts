@@ -23,6 +23,12 @@ export default defineNuxtConfig({
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },
+    // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
+    // olmadığından statik sunum content-type belirleyemez; Apple bunu
+    // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
+    '/.well-known/apple-app-site-association': {
+      headers: { 'content-type': 'application/json' },
+    },
   },
 
   nitro: {
