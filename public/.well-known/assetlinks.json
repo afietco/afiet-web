@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "co.afiet.app",
+      "sha256_cert_fingerprints": [
+        "68:6A:66:B7:D2:04:98:09:C7:E0:8F:B2:5B:57:30:59:D7:79:4D:AD:25:91:00:F7:11:E0:7E:3D:6D:E4:B9:7D"
+      ]
+    }
+  }
+]

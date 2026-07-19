@@ -91,6 +91,27 @@ try {
   const llms = await (await fetch(`http://localhost:${PORT}/llms.txt`)).text()
   ok(llms.startsWith('# afiet'), 'llms.txt yayında')
 
+  // --- Native app association ---
+  const assetLinksResponse = await fetch(
+    `http://localhost:${PORT}/.well-known/assetlinks.json`,
+  )
+  const assetLinks = await assetLinksResponse.json().catch(() => null)
+  const androidAssociation = assetLinks?.find(
+    (statement) => statement?.target?.package_name === 'co.afiet.app',
+  )
+  ok(
+    assetLinksResponse.status === 200 &&
+      (assetLinksResponse.headers.get('content-type') || '').includes('application/json'),
+    'Android asset links are served as JSON',
+  )
+  ok(
+    androidAssociation?.relation?.includes('delegate_permission/common.handle_all_urls') &&
+      androidAssociation?.target?.sha256_cert_fingerprints?.includes(
+        '68:6A:66:B7:D2:04:98:09:C7:E0:8F:B2:5B:57:30:59:D7:79:4D:AD:25:91:00:F7:11:E0:7E:3D:6D:E4:B9:7D',
+      ),
+    'Android asset links use the Play App Signing certificate',
+  )
+
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
 

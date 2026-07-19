@@ -23,10 +23,12 @@ export default defineNuxtConfig({
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },
-    // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
-    // olmadığından statik sunum content-type belirleyemez; Apple bunu
-    // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
+    // Native app association files must be served as JSON. The Apple file has
+    // no extension, so its content type cannot be inferred from the filename.
     '/.well-known/apple-app-site-association': {
+      headers: { 'content-type': 'application/json' },
+    },
+    '/.well-known/assetlinks.json': {
       headers: { 'content-type': 'application/json' },
     },
   },
