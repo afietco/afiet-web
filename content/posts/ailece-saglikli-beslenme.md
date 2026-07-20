@@ -4,7 +4,7 @@ title: "Ailece sağlıklı beslenme: sofra alışkanlığını kurmak"
 description: "Ailece sağlıklı beslenme bir kurallar listesiyle değil, paylaşılan bir sofra ritüeliyle kurulur. Seçici yeme ve akşam telaşında suçluluk duymadan denge kurun."
 tags: [ailece beslenme, aile sofrası, çocuk beslenmesi, sofra alışkanlığı]
 item_id: 8
-cover_url:
+cover_url: /covers/aile-sofrasi-rehberi.png
 published_at:
 ---
 
