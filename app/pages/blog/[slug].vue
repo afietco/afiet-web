@@ -54,6 +54,17 @@ const fmtDate = (iso: string | null) =>
       </p>
     </header>
 
+    <!-- Kapak: alt="" bilinçli — başlık ve açıklama hemen yanında, görsel
+         onları tekrar eder. width/height CLS'i keser, LCP olduğu için lazy yok. -->
+    <img
+      v-if="post.coverUrl"
+      :src="post.coverUrl"
+      alt=""
+      width="1200"
+      height="630"
+      class="mt-8 aspect-[1200/630] w-full rounded-2xl border border-line object-cover"
+    />
+
     <!-- Gövde: sunucuda markdown-it (html:false) ile üretilmiş güvenli HTML. -->
     <div class="post-body mt-8" v-html="post.html" />
 
