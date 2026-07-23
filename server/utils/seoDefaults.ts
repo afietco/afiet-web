@@ -196,6 +196,16 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'Sofrada seni seven biri gibi konuşur. Yakında App Store ve Google Play’de.',
     sitemap: { include: true, changefreq: 'weekly', priority: 1 },
   }),
+  '/beta': makePage({
+    title: 'afiet beta | İlk sofraya katıl',
+    description:
+      'afiet beta için ilk gruba 100 kişi katılıyor. iOS ve Android daveti almak için ' +
+      'e-postanı bırak, sofranın diliyle dengeyi ilk deneyenlerden ol.',
+    ogTitle: "afiet şimdi beta'da",
+    ogDescription:
+      'İlk sofrada 100 kişilik yer var. iOS ve Android beta daveti için e-postanı bırak.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.8 },
+  }),
   '/blog': makePage({
     title: 'Blog — afiet',
     description:
