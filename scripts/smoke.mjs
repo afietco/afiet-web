@@ -103,6 +103,16 @@ try {
   )
   ok(blogHtml.includes('rel="canonical"'), '/blog canonical içeriyor')
 
+  const betaRes = await fetch(`http://localhost:${PORT}/beta`)
+  const betaHtml = await betaRes.text()
+  ok(
+    betaRes.status === 200 &&
+      betaHtml.includes('afiet şimdi beta') &&
+      betaHtml.includes('100 kişilik yer var'),
+    `/beta 200 ve davet metni render oluyor (${betaRes.status})`,
+  )
+  ok(betaHtml.includes('rel="canonical"'), '/beta canonical içeriyor')
+
   const blogApi = await fetch(`http://localhost:${PORT}/api/blog/posts`)
   const blogApiBody = await blogApi.json().catch(() => null)
   ok(
@@ -120,6 +130,7 @@ try {
     'blog RSS yayında ve XML',
   )
   ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
+  ok(sitemap.includes('/beta'), 'sitemap /beta sayfasını içeriyor')
 
   const meta = await (
     await fetch(`http://localhost:${PORT}/api/seo/meta?path=/`)
@@ -166,6 +177,56 @@ try {
   })
   ok(nearHaber, '"Haber ver" tıklaması #haber bölümüne götürüyor')
 
+  let betaBody
+  await page.route('**/api/beta/apply', async (route) => {
+    if (route.request().method() === 'POST') {
+      betaBody = route.request().postDataJSON()
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"status":"ok"}' })
+      return
+    }
+    await route.continue()
+  })
+
+  await page.goto(`http://localhost:${PORT}/beta`, { waitUntil: 'networkidle' })
+  await page.getByRole('heading', { level: 1, name: "afiet şimdi beta'da." }).waitFor()
+  ok(true, '/beta h1 görünür')
+  ok((await page.locator('#beta-katil form').count()) === 1, '/beta formu görünür')
+  ok((await page.getByText('iOS ve Android aynı anda').count()) > 0, '/beta platform başlangıcı görünür')
+  ok((await page.getByText('100 kişi', { exact: true }).count()) > 0, '/beta kontenjanı görünür')
+
+  await page.getByRole('link', { name: 'Sofrada yerini ayır' }).click()
+  await page.waitForTimeout(700)
+  const nearBetaForm = await page.evaluate(() => {
+    const r = document.getElementById('beta-katil').getBoundingClientRect()
+    return r.top > -50 && r.top < window.innerHeight
+  })
+  ok(nearBetaForm, 'beta CTA form bölümüne götürüyor')
+
+  // Adım 1 — e-posta
+  await page.getByPlaceholder('e-posta adresin').fill('beta-smoke@afiet.co')
+  await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
+  // Adım 2 — platform + hedef zorunlu
+  await page.getByRole('button', { name: 'iPhone' }).click()
+  await page.getByRole('button', { name: 'Daha çok enerji' }).click()
+  await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
+  // Adım 3 — uygulama seçimi + onay + gönder
+  await page.getByRole('button', { name: 'FatSecret' }).click()
+  await page.getByRole('checkbox').check()
+  await page.locator('#beta-katil form').getByRole('button', { name: 'Sofrada yerini ayır' }).click()
+  await page.getByText('Sofrada yerin hazır!').waitFor()
+  ok(betaBody?.source === 'beta', 'beta formu source alanını beta gönderiyor')
+  ok(betaBody?.platform === 'ios', 'beta formu platform (ios) gönderiyor')
+  ok(betaBody?.consent === true, 'beta formu onay (consent) gönderiyor')
+  ok(
+    Array.isArray(betaBody?.goals) && betaBody.goals.includes('enerji'),
+    'beta formu hedef seçimini gönderiyor',
+  )
+  ok(
+    Array.isArray(betaBody?.appsNutrition) && betaBody.appsNutrition.includes('fatsecret'),
+    'beta formu uygulama seçimini gönderiyor',
+  )
+  await page.reload({ waitUntil: 'networkidle' })
+
   ok(errors.length === 0, `konsol/sayfa hatası yok${errors.length ? `: ${errors[0]}` : ''}`)
 
   // --- İsteğe bağlı ekran görüntüleri ---
@@ -183,10 +244,10 @@ try {
       await page.waitForTimeout(900)
     }
     await settle()
-    await page.screenshot({ path: join(process.env.SHOT_DIR, 'desktop-full.png'), fullPage: true })
+    await page.screenshot({ path: join(process.env.SHOT_DIR, 'beta-desktop-full.png'), fullPage: true })
     await page.setViewportSize({ width: 390, height: 844 })
     await settle()
-    await page.screenshot({ path: join(process.env.SHOT_DIR, 'mobile-full.png'), fullPage: true })
+    await page.screenshot({ path: join(process.env.SHOT_DIR, 'beta-mobile-full.png'), fullPage: true })
     console.log(`  → ekran görüntüleri: ${process.env.SHOT_DIR}`)
   }
 

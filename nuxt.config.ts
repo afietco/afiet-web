@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   // robots.txt / sitemap.xml / llms.txt dinamik server route'larıdır.
   routeRules: {
     '/': { isr: 60 },
+    '/beta': { isr: 60 },
     '/blog': { isr: 60 },
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },

@@ -77,7 +77,21 @@ export const voice = {
   ],
 }
 
-export const cta = {
+export interface WaitlistCopy {
+  formPlaceholder: string
+  formButton: string
+  formSending: string
+  formDone: string
+  formDoneSub: string
+  formExists: string
+  formExistsSub: string
+  formInvalid: string
+  formError: string
+  formSoon: string
+  privacy: string
+}
+
+export const cta: WaitlistCopy & { title: string; sub: string } = {
   title: 'afiet yakında cebinde',
   sub:
     'App Store ve Google Play’e geliyor. E-postanı bırak, ' +
@@ -95,10 +109,235 @@ export const cta = {
   privacy: 'Sadece çıkış haberi için. Spam yok, ne zaman istersen çıkarsın.',
 }
 
+export const beta = {
+  eyebrow: 'beta daveti',
+  title: "afiet şimdi beta'da.",
+  sub:
+    'Sofranın diliyle konuşan afiet’i gerçek hayatında deneyip bize ilk ses verenlerden ol.',
+  cohortLabel: 'ilk sofra',
+  cohortCount: '100',
+  cohortSuffix: 'kişi',
+  platforms: 'iOS ve Android aynı anda',
+  cta: 'Sofrada yerini ayır',
+  note: 'Halka açık indirme bağlantısı yok. Davetini e-posta ile göndereceğiz.',
+  motifLabel: 'ilk sofradaki yerler',
+  featuresEyebrow: 'beta’da ne var?',
+  featuresTitle: 'Gerçek sofrada çalışan üç temel akış',
+  featuresSub:
+    'Gününü hesap tablosuna çevirmeden kaydet, ritmini gör ve sevdiklerinle aynı sofrada buluş.',
+  features: [
+    {
+      key: 'kayit',
+      number: '01',
+      title: 'Sofranın diliyle kayıt',
+      body:
+        'Mercimek çorbasını gramla değil, kaseyle yaz. Afi bilmediğin yemeğe fotoğraftan bakmana yardım etsin.',
+    },
+    {
+      key: 'ritim',
+      number: '02',
+      title: 'Afiyet ritmi',
+      body:
+        'Haftanı kusursuzlukla değil, kendi ritminle gör. Her yeni sofra yeni bir başlangıç olsun.',
+    },
+    {
+      key: 'sofra',
+      number: '03',
+      title: 'Soframız',
+      body:
+        'Ailenle veya arkadaşlarınla aynı sofrada yan yana dur. Kıyas yok, sıralama yok.',
+    },
+  ],
+  tester: {
+    eyebrow: 'birlikte deneyelim',
+    title: 'Sen kullan, biz dikkatle dinleyelim.',
+    intro:
+      'Beta, bitmiş ürün gösterisi değil. Gerçek sofrada nelerin iyi çalıştığını ve nerede pürüz çıktığını birlikte görmek için.',
+    asksTitle: 'Senden beklediğimiz',
+    asks: [
+      'afiet’i bir hafta kendi sofranda kullanman',
+      'Kısa geri bildirim formunu doldurman',
+      'Karşılaştığın pürüzleri açıkça paylaşman',
+    ],
+    promisesTitle: 'Bizden bekleyebileceğin',
+    promises: [
+      'iOS ve Android için aynı başlangıç günü',
+      'Davet ve kurulum adımlarının e-posta ile gelmesi',
+      'Her geri bildirimin ürün ekibi tarafından okunması',
+    ],
+  },
+  invite: {
+    eyebrow: 'ilk grup',
+    title: 'İlk sofrada 100 kişilik yer var.',
+    sub:
+      'iOS ve Android beta davetleri aynı anda başlayacak. E-postanı bırak, sıran geldiğinde kurulum adımlarını gönderelim.',
+    platformIos: 'iOS',
+    platformIosSub: 'TestFlight daveti',
+    platformAndroid: 'Android',
+    platformAndroidSub: 'Google Play beta daveti',
+  },
+  faqEyebrow: 'merak ettiklerin',
+  faqTitle: 'Beta hakkında kısa cevaplar',
+  faq: [
+    {
+      q: 'Beta nedir?',
+      a:
+        'afiet’in yayın öncesi sürümünü gerçek hayatında deneyip geri bildirim vereceğin ilk kullanım dönemi.',
+    },
+    {
+      q: 'Beta ücretli mi?',
+      a: 'Hayır. Beta kullanımı ücretsizdir.',
+    },
+    {
+      q: 'Hangi telefonlarda çalışacak?',
+      a:
+        'iOS ve Android beta aynı anda başlayacak. iOS daveti TestFlight, Android daveti Google Play üzerinden gelecek.',
+    },
+    {
+      q: 'Davet ne zaman gelir?',
+      a:
+        'İlk grup 100 kişiyle sınırlı. Sıran geldiğinde daveti ve kurulum adımlarını e-posta ile göndereceğiz.',
+    },
+    {
+      q: 'Listeden nasıl çıkarım?',
+      a:
+        'Beta e-postalarından çıkmak istersen rberkkaratas@gmail.com adresine yazman yeterli.',
+    },
+  ],
+}
+
+/**
+ * Beta başvuru formu (çok adımlı). Zorunlu: e-posta, platform, hedef, onay.
+ * Gerisi isteğe bağlı. Sayı/kilo/kalori sormayız — marka gereği. Alan seçenekleri
+ * Türkiye kullanım verisine göre sıralı; `BetaForm.vue` bu yapıyı okur.
+ */
+export const betaForm = {
+  stepNames: ['E-posta', 'Seni tanıyalım', 'Alışkanlıkların'],
+  step1: {
+    title: 'Beta davetin için e-postanı bırak',
+    lead: 'İlk sofrada 100 kişilik yer var. Önce e-postan, sonra birkaç kısa soru.',
+    emailLabel: 'E-posta adresin',
+    emailPlaceholder: 'e-posta adresin',
+    next: 'Devam',
+  },
+  step2: {
+    title: 'Seni biraz tanıyalım',
+    platformLabel: 'Hangi telefonu kullanıyorsun?',
+    platforms: [
+      { value: 'ios', label: 'iPhone' },
+      { value: 'android', label: 'Android' },
+    ],
+    goalLabel: 'Ne daha çok olsun istersin?',
+    goalHint: 'Birden fazla seçebilirsin',
+    goals: [
+      { value: 'enerji', label: 'Daha çok enerji' },
+      { value: 'huzur', label: 'Yemekle daha huzurlu bir ilişki' },
+      { value: 'cesitlilik', label: 'Daha çeşitli beslenme' },
+      { value: 'ritim', label: 'Düzenli bir ritim' },
+      { value: 'sofra', label: 'Sevdiklerimle daha çok sofra' },
+      { value: 'oz-bakim', label: 'Kendime iyi bakmak' },
+    ],
+    countingLabel: 'Kalori sayan bir uygulama nasıl hissettirdi?',
+    countingHint: 'İstersen yanıtla',
+    counting: [
+      { value: 'yoruyor', label: 'Hâlâ kullanıyorum ama yoruyor' },
+      { value: 'biraktim', label: 'Bıraktım, bunaltıcıydı' },
+      { value: 'iyi-geldi', label: 'İşe yaradı, iyi geldi' },
+      { value: 'hic', label: 'Hiç kullanmadım' },
+    ],
+    back: 'Geri',
+    next: 'Devam',
+  },
+  step3: {
+    title: 'Alışkanlıkların ve iletişim',
+    lead: 'Hepsi isteğe bağlı, dilersen bu adımı atla.',
+    appsLabel: 'Şu an neleri kullanıyorsun?',
+    appsHint: 'Uygulama veya cihaz, birden fazla seçebilirsin',
+    appGroups: [
+      {
+        key: 'nutrition',
+        label: 'Kalori / beslenme',
+        options: [
+          { value: 'fatsecret', label: 'FatSecret' },
+          { value: 'yazio', label: 'Yazio' },
+          { value: 'myfitnesspal', label: 'MyFitnessPal' },
+          { value: 'diyetkolik', label: 'Diyetkolik' },
+          { value: 'lifesum', label: 'Lifesum' },
+          { value: 'diyetisyen', label: 'Diyetisyen uygulaması' },
+          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
+        ],
+      },
+      {
+        key: 'activity',
+        label: 'Spor / adım',
+        options: [
+          { value: 'samsung-health', label: 'Samsung Health' },
+          { value: 'google-fit', label: 'Google Fit' },
+          { value: 'apple-fitness', label: 'Apple Fitness / Sağlık' },
+          { value: 'strava', label: 'Strava' },
+          { value: 'huawei-health', label: 'Huawei Health' },
+          { value: 'nike-run', label: 'Nike Run Club' },
+          { value: 'adidas-running', label: 'adidas Running' },
+          { value: 'adimsayar', label: 'Adımsayar' },
+          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
+        ],
+      },
+      {
+        key: 'body',
+        label: 'Vücut / kilo / cihaz',
+        options: [
+          { value: 'apple-health', label: 'Apple Health' },
+          { value: 'xiaomi-scale', label: 'Xiaomi akıllı tartı' },
+          { value: 'apple-watch', label: 'Apple Watch' },
+          { value: 'xiaomi-band', label: 'Xiaomi / Amazfit bileklik' },
+          { value: 'huawei-wear', label: 'Huawei saat / bileklik' },
+          { value: 'galaxy-watch', label: 'Samsung Galaxy Watch' },
+          { value: 'garmin', label: 'Garmin' },
+          { value: 'fitbit', label: 'Fitbit' },
+          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
+        ],
+      },
+    ],
+    appsOtherPlaceholder: 'Listede yoksa yaz (isteğe bağlı)',
+    contactLabel: 'Sana nasıl ulaşalım?',
+    contact: [
+      { value: 'eposta', label: 'E-posta' },
+      { value: 'bildirim', label: 'Uygulama bildirimi' },
+    ],
+    heardLabel: 'Bizi nereden duydun?',
+    heard: [
+      { value: 'instagram', label: 'Instagram' },
+      { value: 'arkadas', label: 'Bir arkadaşım' },
+      { value: 'x', label: 'X (Twitter)' },
+      { value: 'google', label: 'Google araması' },
+      { value: 'tiktok', label: 'TikTok' },
+      { value: 'baska', label: 'Başka' },
+    ],
+    consentText: 'Kaydolarak beta daveti ve ürün haberleri için bana ulaşmanıza izin veriyorum.',
+    consentLinkLabel: 'Gizlilik',
+    consentLinkHref: '/gizlilik',
+    back: 'Geri',
+    submit: 'Sofrada yerini ayır',
+  },
+  status: {
+    sending: 'Gönderiliyor…',
+    done: 'Sofrada yerin hazır!',
+    doneSub: 'Davet sırası geldiğinde sana e-posta göndereceğiz. 🌿',
+    exists: 'Başvurunu güncelledik 💚',
+    existsSub: 'Davet sıranı koruyoruz, yerin duruyor.',
+    soon: 'Beta başvuruları çok yakında burada 🌱',
+    error: 'Bir şey ters gitti. Birazdan yeniden dener misin?',
+    invalidEmail: 'Geçerli bir e-posta girer misin? 🌿',
+    missingStep2: 'Telefonunu seç ve en az bir şey işaretle 🌿',
+    consentRequired: 'Devam etmek için onay kutusunu işaretler misin? 🌿',
+  },
+}
+
 export const footer = {
   tagline: 'Sayma, dengele.',
   signoff: 'Sofranıza afiyet.',
   links: [
+    { label: 'Beta', to: '/beta' },
     { label: 'Blog', to: '/blog' },
     { label: 'Gizlilik', to: '/gizlilik' },
     { label: 'Hesabını sil', to: '/hesap-sil' },
