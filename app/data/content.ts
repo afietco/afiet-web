@@ -13,7 +13,7 @@ export const hero = {
   sub:
     'afiet kalori saydırmaz. Sofranın kendi diliyle konuşur — kaç dilim, ' +
     'kaç kase, bir avuç — ve ailece dengeli beslenmeyi tatlı bir alışkanlığa çevirir.',
-  ctaPrimary: 'Çıkınca haber ver',
+  ctaPrimary: 'Beta’ya katıl',
   ctaSecondary: 'Neden afiet?',
 }
 
@@ -91,11 +91,26 @@ export interface WaitlistCopy {
   privacy: string
 }
 
-export const cta: WaitlistCopy & { title: string; sub: string } = {
-  title: 'afiet yakında cebinde',
+/**
+ * Sayfa sonu çağrısı. Bekleme listesi yerine BETA davetine yönlendirir:
+ * uygulama artık beta'da ve ilk sofrada sınırlı yer var, dolayısıyla
+ * "çıkınca haber veririz" demek yerine doğrudan katılmaya çağırıyoruz.
+ * WaitlistCopy alanları duruyor: /api/waitlist ve admin ekranı hâlâ canlı.
+ */
+export const cta: WaitlistCopy & {
+  title: string
+  sub: string
+  betaCta: string
+  betaTo: string
+  betaNote: string
+} = {
+  title: 'afiet şimdi beta’da',
   sub:
-    'App Store ve Google Play’e geliyor. E-postanı bırak, ' +
-    'çıktığı gün ilk sen öğren.',
+    'İlk sofrada 100 kişilik yer var. Sen de kendi sofranda dene, ' +
+    'ne işe yarayıp yaramadığını birlikte görelim.',
+  betaCta: 'Sofrada yerini ayır',
+  betaTo: '/beta',
+  betaNote: 'Halka açık indirme bağlantısı yok. Davetini e-posta ile göndeririz.',
   formPlaceholder: 'e-posta adresin',
   formButton: 'Haber ver',
   formSending: 'Gönderiliyor…',
