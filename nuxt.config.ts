@@ -52,12 +52,31 @@ export default defineNuxtConfig({
     adminDevToken: '',
     // Panelin origin'leri (virgüllü) — /api/admin/** CORS izni.
     adminCorsOrigins: '',
+    // "Afi'ye sor" bileti: backend'in ASK_TICKET_SECRET'ıyla AYNI değer olmak
+    // zorunda, yoksa imza tutmaz. Boşken /api/afi/ticket 503 'soon' döner ve
+    // panel "çok yakında" moduna geçer. Env: NUXT_ASK_TICKET_SECRET.
+    askTicketSecret: '',
+    // Biletin hedeflediği backend ortamı; backend'in APP_ENV'iyle aynı olmalı
+    // (development | staging | production). Preview biletinin prod'da
+    // geçmemesini bu alan sağlar. Env: NUXT_ASK_ENV.
+    askEnv: '',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
       // Yalnız burada toplar; dev/preview/staging boş kalır ki paylaşılan
       // Neon kirlenmesin. Env: NUXT_PUBLIC_ANALYTICS_DOMAINS.
       analyticsDomains: 'afiet.co,www.afiet.co',
+      // "Afi'ye sor" panelinin konuştuğu backend ucu (Go API, Cloud Run).
+      // BOŞ = bölüm hiç render edilmez, üretim görsel olarak değişmez.
+      // 'mock' = backend olmadan sahte akışla çalışır (yerel geliştirme + smoke).
+      // Env: NUXT_PUBLIC_ASK_API_URL.
+      askApiUrl: '',
+      // Cloudflare Turnstile SİTE anahtarı. Gizli değildir, HTML'e basılır;
+      // secret yalnız backend'de (TURNSTILE_SECRET) durur ve doğrulama orada
+      // yapılır. BOŞ = Turnstile hiç yüklenmez, panel çalışmaya devam eder
+      // (dev, preview ve smoke Cloudflare'e erişmeden koşsun diye).
+      // Env: NUXT_PUBLIC_TURNSTILE_SITE_KEY.
+      turnstileSiteKey: '',
     },
   },
 
