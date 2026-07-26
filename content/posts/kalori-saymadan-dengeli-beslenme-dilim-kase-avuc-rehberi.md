@@ -39,7 +39,7 @@ Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı b�
 - **Avuç dolusu — tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir avuç dolusu (kabaca bir kupa) pratik bir ölçü.
 - **Başparmak — yağ.** Zeytinyağı, tereyağı, fındık ezmesi gibi yoğun yağlar için başparmağın kadarı iyi bir pusula.
 
-İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın.
+İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın. Menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerde bunun karşılığını merak ediyorsan, [el ölçüsüyle porsiyon rehberimize](/blog/porsiyon-olculeri-el-olcusu) göz atabilirsin.
 
 ## Mutfaktaki doğal ölçüler: dilim, kase, avuç
 
