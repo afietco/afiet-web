@@ -66,7 +66,7 @@ Gördüğün gibi hiçbir öğünde "yeme" dediğimiz bir şey yok. Ekmek de var
 
 ## Ölçüler kişiden kişiye değişir
 
-Burada en önemli not: bu ölçüler bir başlangıç noktası, bitiş çizgisi değil. Bir sporcuyla, hamile bir annenin ya da ofiste oturarak çalışan birinin ihtiyaçları farklıdır. [Ulusal Sağlık Servisi'nin (NHS) Eatwell rehberi](https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/) de ihtiyacın kişiden kişiye, özellikle hareket düzeyine göre değiştiğini hatırlatıyor.
+Burada en önemli not: bu ölçüler bir başlangıç noktası, bitiş çizgisi değil. Bir sporcuyla, hamile bir annenin ya da ofiste oturarak çalışan birinin ihtiyaçları farklıdır. Ulusal Sağlık Servisi (NHS) de [porsiyonun kişiye göre değiştiğini](https://www.nhs.uk/live-well/eat-well/5-a-day/portion-sizes/) hatırlatıyor: yetişkinde bir porsiyon sebze-meyve 80 gram sayılırken, çocukta ölçü avucuna sığan kadardır ve yaşa, beden ölçüsüne, hareket düzeyine göre değişir.
 
 En iyi geri bildirimi ise bedenin veriyor. Yemeğe başlamadan önce "gerçekten aç mıyım?" diye, ortalarında "artık rahatladım mı?" diye kısaca durup dinlemek, herhangi bir sayıdan daha isabetli. Sezgisel beslenmenin özü de bu: açlık ve tokluk sinyallerine yeniden güvenmeyi öğrenmek.
 
