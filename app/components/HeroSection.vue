@@ -66,7 +66,7 @@ const chipSpots = [
         </p>
 
         <div class="rise mt-9 flex flex-wrap items-center gap-3" style="--d: 240ms">
-          <a href="#haber" class="btn-primary">{{ hero.ctaPrimary }}</a>
+          <NuxtLink to="/beta" class="btn-primary">{{ hero.ctaPrimary }}</NuxtLink>
           <a href="#neden" class="btn-ghost">{{ hero.ctaSecondary }}</a>
         </div>
 

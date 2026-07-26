@@ -176,7 +176,11 @@ try {
   // --- Bölümler ve içerik sayıları ---
   ok((await page.locator('#neden article').count()) === 4, '4 zag kartı')
   ok((await page.locator('ul li p').count()) === 4, '4 ses tonu balonu')
-  ok((await page.locator('#haber').count()) === 1, 'bekleme listesi bölümü mevcut')
+  ok((await page.locator('#haber').count()) === 1, 'kapanış bölümü mevcut')
+  ok(
+    (await page.locator('#haber a[href="/beta"]').count()) >= 1,
+    'kapanış bölümü beta sayfasına yönlendiriyor',
+  )
 
   // --- Scroll reveal çalışıyor ---
   await page.locator('#haber').scrollIntoViewIfNeeded()
@@ -184,15 +188,30 @@ try {
   const revealed = await page.locator('.reveal.is-in').count()
   ok(revealed > 0, `scroll reveal çalışıyor (${revealed} eleman)`)
 
-  // --- Header CTA ana bölüme kaydırıyor ---
+  // --- Header CTA beta sayfasına götürüyor ---
   await page.evaluate(() => window.scrollTo(0, 0))
-  await page.getByRole('navigation').getByRole('link', { name: 'Haber ver' }).click()
-  await page.waitForTimeout(1200)
-  const nearHaber = await page.evaluate(() => {
-    const r = document.getElementById('haber').getBoundingClientRect()
-    return r.top > -50 && r.top < window.innerHeight
-  })
-  ok(nearHaber, '"Haber ver" tıklaması #haber bölümüne götürüyor')
+  await page.getByRole('navigation').getByRole('link', { name: 'Beta’ya katıl' }).first().click()
+  await page.waitForURL('**/beta', { timeout: 10000 })
+  ok(page.url().endsWith('/beta'), 'header CTA /beta sayfasına götürüyor')
+  await page.goBack({ waitUntil: 'networkidle' })
+
+  // --- Mobil menü: küçük ekranda bağlantılar ulaşılabilir olmalı ---
+  await page.setViewportSize({ width: 380, height: 800 })
+  await page.reload({ waitUntil: 'networkidle' })
+  const menu = page.locator('header details.site-menu')
+  ok((await menu.count()) === 1, 'mobil menü mevcut')
+  ok(!(await page.locator('header details.site-menu div a').first().isVisible()),
+    'menü kapalıyken bağlantılar gizli')
+  await menu.locator('summary').click()
+  ok(await page.locator('header details.site-menu').getByRole('link', { name: 'Blog' }).isVisible(),
+    'menü açılınca Blog bağlantısı görünüyor')
+  await page.locator('header details.site-menu').getByRole('link', { name: 'Blog' }).click()
+  await page.waitForURL('**/blog', { timeout: 10000 })
+  ok(page.url().includes('/blog'), 'mobil menüden Blog’a gidiliyor')
+  ok(!(await page.locator('header details.site-menu[open]').count()),
+    'yol değişince menü kapanıyor')
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' })
 
   let betaBody
   await page.route('**/api/beta/apply', async (route) => {
