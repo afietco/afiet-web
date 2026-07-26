@@ -32,14 +32,14 @@ Güzel tarafı: bu dengeyi görmek için mutfak terazisine de gerek yok. Ölçü
 
 ![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ — afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
 
-Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait — yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/calorie-control-guide-infographics), pratik bir başlangıç noktası sunar:
+Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait — yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/hand-portion-faq), pratik bir başlangıç noktası sunar:
 
 - **Avuç içi — protein.** Bir öğündeki et, tavuk, balık ya da köftenin, aşağı yukarı avuç içinin büyüklüğü ve kalınlığı kadar olması iyi bir referans. Mercimek, nohut gibi bitkisel proteinlerde de benzer bir dolgunluk düşün.
 - **Yumruk — sebze.** Sebzede cömert olabilirsin; bir yumruk kadarı güzel bir başlangıç, canın isterse iki yumruk da olur. Burada üst sınır peşinde koşmuyoruz.
 - **Avuç dolusu — tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir avuç dolusu (kabaca bir kupa) pratik bir ölçü.
 - **Başparmak — yağ.** Zeytinyağı, tereyağı, fındık ezmesi gibi yoğun yağlar için başparmağın kadarı iyi bir pusula.
 
-İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın.
+İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın. Menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerde bunun karşılığını merak ediyorsan, [el ölçüsüyle porsiyon rehberimize](/blog/porsiyon-olculeri-el-olcusu) göz atabilirsin.
 
 ## Mutfaktaki doğal ölçüler: dilim, kase, avuç
 
@@ -66,7 +66,7 @@ Gördüğün gibi hiçbir öğünde "yeme" dediğimiz bir şey yok. Ekmek de var
 
 ## Ölçüler kişiden kişiye değişir
 
-Burada en önemli not: bu ölçüler bir başlangıç noktası, bitiş çizgisi değil. Bir sporcuyla, hamile bir annenin ya da ofiste oturarak çalışan birinin ihtiyaçları farklıdır. [Ulusal Sağlık Servisi (NHS)](https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/portion-sizes/) de porsiyonun kişiye, yaşa ve hareket düzeyine göre değiştiğini hatırlatıyor.
+Burada en önemli not: bu ölçüler bir başlangıç noktası, bitiş çizgisi değil. Bir sporcuyla, hamile bir annenin ya da ofiste oturarak çalışan birinin ihtiyaçları farklıdır. [Ulusal Sağlık Servisi'nin (NHS) Eatwell rehberi](https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/) de ihtiyacın kişiden kişiye, özellikle hareket düzeyine göre değiştiğini hatırlatıyor.
 
 En iyi geri bildirimi ise bedenin veriyor. Yemeğe başlamadan önce "gerçekten aç mıyım?" diye, ortalarında "artık rahatladım mı?" diye kısaca durup dinlemek, herhangi bir sayıdan daha isabetli. Sezgisel beslenmenin özü de bu: açlık ve tokluk sinyallerine yeniden güvenmeyi öğrenmek.
 
