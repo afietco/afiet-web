@@ -10,5 +10,7 @@ const { faq } = usePageSeo()
   <ZagSection />
   <VoiceSection />
   <FaqSection v-if="faq" :faq="faq" />
+  <!-- Afi'ye sor: SSS'nin kardeşi, içinde değil. SSS boşken de görünür. -->
+  <AskAfiSection :attached="Boolean(faq)" />
   <CtaSection />
 </template>
