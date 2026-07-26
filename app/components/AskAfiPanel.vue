@@ -234,11 +234,11 @@ function paragraphs(text: string) {
         </button>
       </div>
 
-      <!-- Turnstile kabı. Normal akışta durur ve boşken yer kaplamaz
-           (empty:hidden): görünmez bir kapta gösterilen zorluk çözülemez ve
-           panel kilitlenir. Yalnız site anahtarı varsa basılır. -->
+      <!-- Turnstile kabı YALNIZ backend doğrulama istediğinde basılır. Normal
+           akışta durur ve boşken yer kaplamaz (empty:hidden): görünmez bir
+           kapta gösterilen zorluk çözülemez ve panel kilitlenir. -->
       <div
-        v-if="turnstileSiteKey"
+        v-if="turnstileSiteKey && afi.verifying.value"
         :ref="(el) => (afi.turnstile.host.value = el as HTMLElement | null)"
         class="cf-turnstile mt-3 empty:hidden"
         :data-sitekey="turnstileSiteKey"
