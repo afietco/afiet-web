@@ -71,11 +71,15 @@ export function useAskAfi() {
     return ticket.value
   }
 
-  /** İlk etkileşimde bilet ve Turnstile paralel ısıtılır.
-   *  Mock modda ikisi de atlanır: mock'un amacı backend olmadan çalışmak. */
+  // Captcha VARSAYILAN OLARAK KAPALIDIR. Backend "kısa bir doğrulama gerekiyor"
+  // dediğinde açılır (429 + needsVerification) ve aynı soru yeniden gönderilir.
+  // İlk sorunun önüne doğrulama koymak, bu panelde bot trafiğinden çok
+  // yarıda bırakılmış sohbete mal oluyor.
+  const verifying = ref(false)
+
+  /** İlk etkileşimde yalnız bilet ısıtılır; Turnstile'a dokunulmaz. */
   function warmUp() {
     if (mockMode) return
-    void turnstile.warmUp()
     void getTicket().catch(() => {})
   }
 
@@ -312,6 +316,7 @@ export function useAskAfi() {
     turnsLeft,
     remainingChips,
     turnstile,
+    verifying,
     warmUp,
     ask,
     stop,
