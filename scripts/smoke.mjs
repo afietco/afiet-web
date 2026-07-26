@@ -251,6 +251,17 @@ try {
   await afiSection.scrollIntoViewIfNeeded()
   ok((await afiSection.count()) === 1, 'Afi’ye sor bölümü sayfada')
 
+  // Marka değişmezleri (afiet-brand/maskot/README.md): buhar HEP iki tel,
+  // yüz hiç değişmez (iki göz + bir gülümseme). Kod artık buna dayanıyor.
+  ok(
+    (await page.locator('#afiye-sor .afi-stage .afi-steam').count()) === 2,
+    'Afi maskotunda tam iki buhar teli var',
+  )
+  ok(
+    (await page.locator('#afiye-sor .afi-stage svg g[stroke="#047857"] path').count()) === 3,
+    'Afi’nin yüzü değişmedi (iki göz + gülümseme)',
+  )
+
   await page.locator('#afi-soru').focus()
   ok(
     (await page.locator('#afiye-sor .afi-stage').getAttribute('data-mood')) === 'listening',

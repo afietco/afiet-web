@@ -61,8 +61,11 @@ function paragraphs(text: string) {
   >
     <!-- Afi ve davet -->
     <div class="flex items-start gap-4">
-      <div class="afi-stage shrink-0" :data-mood="afi.mood.value" aria-hidden="true">
-        <AfiMascot class="h-14 w-14" />
+      <!-- Serbest duruşlu maskot (logo değil). 96 px, markanın boyut
+           merdiveninde "boş durum" basamağı: panel açılışı tam olarak o an.
+           Daha küçüğünde kase konturu (#ece4d4) beyaz kartta kayboluyor. -->
+      <div class="afi-stage -mt-2 shrink-0" :data-mood="afi.mood.value" aria-hidden="true">
+        <AfiPose class="h-24 w-24" />
       </div>
       <p class="pt-1 leading-relaxed font-bold text-ink">{{ askAfi.invitation }}</p>
     </div>
@@ -75,8 +78,12 @@ function paragraphs(text: string) {
         class="flex gap-2.5"
         :class="turn.role === 'sen' ? 'items-end justify-end' : 'items-start'"
       >
-        <!-- Cevap çok satırlı olabildiği için Afi ilk satıra hizalanır. -->
-        <AfiMascot v-if="turn.role === 'afi'" class="mt-1 h-8 w-8 shrink-0" />
+        <!-- Balon avatarında LOGO kullanılır, maskot değil: logo tile üstünde
+             yaşar ve 32 px'te okunur, tile'sız maskotun konturu ise bu boyutta
+             yarım piksele düşüp beyaz kartta kayboluyor. VoiceSection'daki
+             sohbet balonları da aynı deseni kullanıyor.
+             Cevap çok satırlı olabildiği için Afi ilk satıra hizalanır. -->
+        <AfiMascot v-if="turn.role === 'afi'" class="mt-0.5 h-8 w-8 shrink-0" />
         <div
           class="max-w-[85%] px-5 py-3 font-bold"
           :class="
