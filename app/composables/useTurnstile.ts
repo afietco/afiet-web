@@ -26,6 +26,12 @@ declare global {
   }
 }
 
+// Captcha SORUNUN ÖNÜNE GEÇMEZ. Token bu süre içinde gelmezse boş gider ve
+// backend isteği daha dar bir kotayla yine karşılar. Bir cevabın 4 saniyede
+// dönebildiği bir panelde captcha'yı kritik yola koymak, korumadığı kadar
+// zarar verir.
+const TOKEN_BUDGET_MS = 3_000
+
 const SCRIPT_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
 
 // Tek seferlik, hafızada tutulan yükleme sözü: panel birkaç kez etkileşim
@@ -130,7 +136,7 @@ export function useTurnstile() {
           resolve(typeof token === 'string' ? token : '')
         }
         // Cloudflare hiç geri dönmezse panel kilitlenmesin.
-        timer = setTimeout(() => finish(''), 20_000)
+        timer = setTimeout(() => finish(''), TOKEN_BUDGET_MS)
         try {
           // Token'lar tek kullanımlık: her soru için sıfırla ve yeniden çalıştır.
           api.reset(id)
