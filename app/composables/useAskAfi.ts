@@ -45,6 +45,10 @@ export function useAskAfi() {
   const focused = ref(false)
   const company = ref('') // honeypot
   const announce = ref('') // sr-only canlı bölge (token token DEĞİL)
+  // Görünen hata metni. 'error' durumunun tek bir sabit cümlesi yok: zaman
+  // aşımı, doğrulama ve genel arıza farklı şeyler ve ziyaretçiye farklı
+  // görünmeli.
+  const errorText = ref(askAfi.error)
   const usedChips = ref<string[]>([])
   const turnsLeft = ref(MAX_TURNS)
 
@@ -195,6 +199,7 @@ export function useAskAfi() {
         const code = (err as { askCode?: string })?.askCode
         if (code === 'rate_limited') failWith('limit')
         else if (code === 'soon') failWith('soon')
+        else if (code === 'captcha') failWith('captcha')
         else failWith('error')
         // Cevapsız balonu bırakma; hata satırı zaten durumu anlatıyor.
         turns.value = turns.value.filter((t) => t.id !== answer.id)
@@ -206,7 +211,13 @@ export function useAskAfi() {
     }
   }
 
-  function failWith(kind: 'error' | 'limit' | 'soon' | 'slow') {
+  function failWith(kind: 'error' | 'limit' | 'soon' | 'slow' | 'captcha') {
+    if (kind === 'captcha') {
+      state.value = 'error'
+      errorText.value = askAfi.captchaFailed
+      announce.value = askAfi.captchaFailed
+      return
+    }
     if (kind === 'limit') {
       state.value = 'limit'
       announce.value = askAfi.limit
@@ -215,7 +226,8 @@ export function useAskAfi() {
       announce.value = askAfi.soon
     } else {
       state.value = 'error'
-      announce.value = kind === 'slow' ? askAfi.slow : askAfi.error
+      errorText.value = kind === 'slow' ? askAfi.slow : askAfi.error
+      announce.value = errorText.value
     }
   }
 
@@ -311,6 +323,7 @@ export function useAskAfi() {
     focused,
     company,
     announce,
+    errorText,
     busy,
     canSend,
     turnsLeft,

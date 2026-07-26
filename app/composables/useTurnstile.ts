@@ -60,6 +60,10 @@ export function useTurnstile() {
 
   const host = ref<HTMLElement | null>(null)
   const challenging = ref(false)
+  // Cloudflare gerçekten etkileşim isteyecekse (Managed modda olabiliyor)
+  // panelin kutuya yer açması gerekir; aksi halde çözülemeyen bir zorluk
+  // gizli kalır ve ziyaretçi sebebini anlamadan takılır.
+  const interactive = ref(false)
   let widgetId: string | null = null
   // warmUp uçuştayken ikinci bir çağrı ikinci bir widget render etmesin.
   let warming: Promise<void> | null = null
@@ -90,16 +94,20 @@ export function useTurnstile() {
       widgetId = api.render(el, {
         sitekey: siteKey,
         action: 'turnstile-spin-v2',
-        // Görünmez ve yalnız gerekince görünür; bir zorluk gösterilecekse
-        // kutu yerinde açılır (gizli kaptaki widget çözülemez ve kilitlenir).
-        // Görünmezlik appearance ile sağlanır. size:'invisible' ARTIK GEÇERLİ
-        // DEĞİL ve geçersiz seçenek widget'ı sessizce bozuyor: token hiç
-        // üretilmiyor, backend missing-input-response ile reddediyor.
+        // GÖRÜNÜRLÜĞÜ BELİRLEYEN ŞEY BU SATIRLAR DEĞİL, WIDGET'IN MODU.
+        // appearance:'interaction-only' yalnız "gerek olmadıkça gizle" der;
+        // widget Cloudflare panelinde "Managed" moddaysa Cloudflare gerek
+        // gördüğü an kutuyu açar ve buradan engellenemez. Kutunun hiç
+        // çıkmaması isteniyorsa widget "Invisible" moda alınmalı (dashboard).
+        // size:'invisible' artık geçerli bir seçenek DEĞİL; geçersiz seçenek
+        // widget'ı sessizce bozuyor ve token hiç üretilmiyor.
         appearance: 'interaction-only',
         execution: 'execute',
         language: 'tr',
         theme: 'light',
         retry: 'never',
+        'before-interactive-callback': () => (interactive.value = true),
+        'after-interactive-callback': () => (interactive.value = false),
         callback: (token: string) => finish(token),
         'error-callback': () => finish(''),
         'expired-callback': () => finish(''),
@@ -150,5 +158,5 @@ export function useTurnstile() {
     }
   }
 
-  return { enabled, host, challenging, warmUp, getToken }
+  return { enabled, host, challenging, interactive, warmUp, getToken }
 }
