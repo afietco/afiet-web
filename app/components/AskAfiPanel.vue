@@ -30,11 +30,11 @@ const showForm = computed(() => afi.state.value !== 'capped' && afi.state.value 
 // okuyup çıkan ziyaretçi Cloudflare ile hiç temas etmesin.
 function onFocus() {
   afi.focused.value = true
-  void afi.turnstile.warmUp()
+  afi.warmUp()
 }
 
 async function pickChip(chip: string) {
-  void afi.turnstile.warmUp()
+  afi.warmUp()
   await afi.ask(chip, chip)
   await nextTick()
   inputEl.value?.focus({ preventScroll: true })
@@ -92,8 +92,11 @@ function paragraphs(text: string) {
              yaşar ve 32 px'te okunur, tile'sız maskotun konturu ise bu boyutta
              yarım piksele düşüp beyaz kartta kayboluyor. VoiceSection'daki
              sohbet balonları da aynı deseni kullanıyor.
-             Cevap çok satırlı olabildiği için Afi ilk satıra hizalanır. -->
-        <AfiMascot v-if="turn.role === 'afi'" class="mt-0.5 h-8 w-8 shrink-0" />
+             Cevap çok satırlı olabildiği için Afi ilk satıra hizalanır.
+             aria-hidden ŞART: SVG'nin <title>'ı balonun metnine karışıyor ve
+             ekran okuyucu her cevaptan önce "afiet logosu, buharı tüten mutlu
+             kase" diye okuyor. Kimin konuştuğu zaten balon düzeninden belli. -->
+        <AfiMascot v-if="turn.role === 'afi'" class="mt-0.5 h-8 w-8 shrink-0" aria-hidden="true" />
         <div
           class="max-w-[85%] px-5 py-3 font-bold"
           :class="

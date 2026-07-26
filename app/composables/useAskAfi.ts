@@ -52,6 +52,39 @@ export function useAskAfi() {
   let seq = 0
   let lastQuestion = ''
 
+  // Bilet bellekte tutulur, sayfaya GÖMÜLMEZ: ana sayfa 60 sn ISR ile
+  // önbelleklendiği için gömülü bilet bütün ziyaretçilere aynı gelir ve
+  // hiçbir şey kanıtlamaz. Süresi dolmadan 30 sn önce tazelenir.
+  let ticket: { value: string; exp: number } | null = null
+
+  async function getTicket(force = false): Promise<string> {
+    const now = Math.floor(Date.now() / 1000)
+    if (!force && ticket && ticket.exp - now > 30) return ticket.value
+    // setup() içinde DEĞİL, yalnız etkileşimde çağrılır; useFetch de
+    // kullanılmaz, yoksa bilet ISR HTML'ine pişerdi.
+    const res = await $fetch<{ ticket?: string; expiresAt?: number; status?: string }>(
+      '/api/afi/ticket',
+      { method: 'GET' },
+    )
+    if (!res?.ticket || !res.expiresAt) throw askError('soon')
+    ticket = { value: res.ticket, exp: res.expiresAt }
+    return ticket.value
+  }
+
+  /** İlk etkileşimde bilet ve Turnstile paralel ısıtılır.
+   *  Mock modda ikisi de atlanır: mock'un amacı backend olmadan çalışmak. */
+  function warmUp() {
+    if (mockMode) return
+    void turnstile.warmUp()
+    void getTicket().catch(() => {})
+  }
+
+  function askError(code: string) {
+    const e = new Error('ask: ' + code) as Error & { askCode?: string }
+    e.askCode = code
+    return e
+  }
+
   const answeredCount = computed(() => turns.value.filter((t) => t.role === 'afi' && !t.streaming).length)
   const busy = computed(() => state.value === 'sending' || state.value === 'streaming')
   const canSend = computed(() => draft.value.trim().length >= 4 && !busy.value && state.value !== 'capped' && state.value !== 'limit')
@@ -193,23 +226,32 @@ export function useAskAfi() {
     // Turnstile token'ı tek kullanımlıktır ve backend oturum başına bir kez
     // doğrular. Alınamazsa boş gider: engelli bir eklenti yüzünden paneli
     // kırmayız, güvenlik tarafı backend'de (bilet + IP penceresi) duruyor.
-    const captcha = await turnstile.getToken()
+    const [captcha, tkt] = await Promise.all([turnstile.getToken(), getTicket()])
 
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      signal,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        question,
-        company: company.value,
-        'cf-turnstile-response': captcha,
-      }),
-    })
+    const send = (t: string) =>
+      fetch(apiUrl, {
+        method: 'POST',
+        signal,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          ticket: t,
+          question,
+          company: company.value,
+          'cf-turnstile-response': captcha,
+        }),
+      })
+
+    let res = await send(tkt)
+    // Bilet sunucuda süresi dolmuş sayılırsa bir kez tazeleyip tekrar dene:
+    // sekmesi uzun süre açık kalan ziyaretçi elle yenilemek zorunda kalmasın.
+    if (res.status === 401) {
+      res = await send(await getTicket(true))
+    }
 
     if (!res.ok || !res.headers.get('content-type')?.includes('text/event-stream')) {
-      const err = new Error(`ask ${res.status}`) as Error & { askCode?: string }
-      err.askCode = res.status === 429 ? 'rate_limited' : res.status === 503 ? 'soon' : 'http'
-      throw err
+      throw askError(
+        res.status === 429 ? 'rate_limited' : res.status === 503 ? 'soon' : 'http',
+      )
     }
     if (!res.body) throw new Error('ask: gövde yok')
 
@@ -227,9 +269,7 @@ export function useAskAfi() {
         return
       } else if (frame.event === 'error') {
         const e = frameJson<{ code?: string }>(frame)
-        const err = new Error('ask akış hatası') as Error & { askCode?: string }
-        err.askCode = e?.code
-        throw err
+        throw askError(e?.code || 'upstream')
       }
       // Bilinmeyen event tipleri sessizce yok sayılır.
     }
@@ -263,6 +303,7 @@ export function useAskAfi() {
     turnsLeft,
     remainingChips,
     turnstile,
+    warmUp,
     ask,
     stop,
     retry,

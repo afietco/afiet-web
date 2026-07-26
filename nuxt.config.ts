@@ -52,6 +52,14 @@ export default defineNuxtConfig({
     adminDevToken: '',
     // Panelin origin'leri (virgüllü) — /api/admin/** CORS izni.
     adminCorsOrigins: '',
+    // "Afi'ye sor" bileti: backend'in ASK_TICKET_SECRET'ıyla AYNI değer olmak
+    // zorunda, yoksa imza tutmaz. Boşken /api/afi/ticket 503 'soon' döner ve
+    // panel "çok yakında" moduna geçer. Env: NUXT_ASK_TICKET_SECRET.
+    askTicketSecret: '',
+    // Biletin hedeflediği backend ortamı; backend'in APP_ENV'iyle aynı olmalı
+    // (development | staging | production). Preview biletinin prod'da
+    // geçmemesini bu alan sağlar. Env: NUXT_ASK_ENV.
+    askEnv: '',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
