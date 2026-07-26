@@ -14,6 +14,8 @@ import { askAfi } from '~/data/content'
  * etmek gereksiz bir XSS ve marka hasarı yüzeyidir.
  */
 const afi = useAskAfi()
+// Site anahtarı gizli değildir, HTML'e basılır. Secret yalnız backend'dedir.
+const turnstileSiteKey = String(useRuntimeConfig().public.turnstileSiteKey || '')
 const inputEl = ref<HTMLInputElement | null>(null)
 // NuxtLink'e konan ref bileşen örneğidir, DOM düğümü değil: $el üzerinden inilir.
 const capLink = ref<{ $el?: HTMLElement } | null>(null)
@@ -24,7 +26,15 @@ const hintTone = computed(() =>
 
 const showForm = computed(() => afi.state.value !== 'capped' && afi.state.value !== 'soon')
 
+// Turnstile ilk gerçek etkileşimde ısıtılır, sayfa açılışında değil: SSS'yi
+// okuyup çıkan ziyaretçi Cloudflare ile hiç temas etmesin.
+function onFocus() {
+  afi.focused.value = true
+  void afi.turnstile.warmUp()
+}
+
 async function pickChip(chip: string) {
+  void afi.turnstile.warmUp()
   await afi.ask(chip, chip)
   await nextTick()
   inputEl.value?.focus({ preventScroll: true })
@@ -189,7 +199,7 @@ function paragraphs(text: string) {
             :disabled="afi.state.value === 'limit'"
             :placeholder="askAfi.placeholder"
             class="w-full rounded-full border border-line bg-canvas px-5 py-3.5 font-semibold text-ink transition placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none disabled:opacity-60"
-            @focus="afi.focused.value = true"
+            @focus="onFocus"
             @blur="afi.focused.value = false"
             @keydown.esc="onEsc"
           />
@@ -220,6 +230,20 @@ function paragraphs(text: string) {
           {{ askAfi.send }}
         </button>
       </div>
+
+      <!-- Turnstile kabı. Normal akışta durur ve boşken yer kaplamaz
+           (empty:hidden): görünmez bir kapta gösterilen zorluk çözülemez ve
+           panel kilitlenir. Yalnız site anahtarı varsa basılır. -->
+      <div
+        v-if="turnstileSiteKey"
+        :ref="(el) => (afi.turnstile.host.value = el as HTMLElement | null)"
+        class="cf-turnstile mt-3 empty:hidden"
+        :data-sitekey="turnstileSiteKey"
+        data-action="turnstile-spin-v2"
+      />
+      <p v-if="afi.turnstile.challenging.value" class="mt-2 text-center text-sm font-semibold text-muted">
+        {{ askAfi.captchaCheck }}
+      </p>
 
       <!-- yardım / hata satırı -->
       <p

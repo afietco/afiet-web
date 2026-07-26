@@ -63,6 +63,12 @@ export default defineNuxtConfig({
       // 'mock' = backend olmadan sahte akışla çalışır (yerel geliştirme + smoke).
       // Env: NUXT_PUBLIC_ASK_API_URL.
       askApiUrl: '',
+      // Cloudflare Turnstile SİTE anahtarı. Gizli değildir, HTML'e basılır;
+      // secret yalnız backend'de (TURNSTILE_SECRET) durur ve doğrulama orada
+      // yapılır. BOŞ = Turnstile hiç yüklenmez, panel çalışmaya devam eder
+      // (dev, preview ve smoke Cloudflare'e erişmeden koşsun diye).
+      // Env: NUXT_PUBLIC_TURNSTILE_SITE_KEY.
+      turnstileSiteKey: '',
     },
   },
 

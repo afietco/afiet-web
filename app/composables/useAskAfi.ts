@@ -37,6 +37,8 @@ export function useAskAfi() {
   const mockMode = apiUrl === 'mock'
   const enabled = apiUrl !== ''
 
+  const turnstile = useTurnstile()
+
   const state = ref<AskState>('idle')
   const turns = ref<AskTurn[]>([])
   const draft = ref('')
@@ -188,11 +190,20 @@ export function useAskAfi() {
     onDelta: (t: string) => void,
     signal: AbortSignal,
   ) {
+    // Turnstile token'ı tek kullanımlıktır ve backend oturum başına bir kez
+    // doğrular. Alınamazsa boş gider: engelli bir eklenti yüzünden paneli
+    // kırmayız, güvenlik tarafı backend'de (bilet + IP penceresi) duruyor.
+    const captcha = await turnstile.getToken()
+
     const res = await fetch(apiUrl, {
       method: 'POST',
       signal,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ question, company: company.value }),
+      body: JSON.stringify({
+        question,
+        company: company.value,
+        'cf-turnstile-response': captcha,
+      }),
     })
 
     if (!res.ok || !res.headers.get('content-type')?.includes('text/event-stream')) {
@@ -251,6 +262,7 @@ export function useAskAfi() {
     canSend,
     turnsLeft,
     remainingChips,
+    turnstile,
     ask,
     stop,
     retry,
