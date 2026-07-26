@@ -4,7 +4,7 @@ title: "Diyet yapmadan sağlıklı kalmak: kısıtlama neden geri teper?"
 description: "Diyet yapmadan sağlıklı kalmak mümkün. Kısıtlayıcı diyetler neden geri teper, yo-yo etkisi nasıl kırılır ve denge besin gruplarıyla nasıl kurulur?"
 tags: [sürdürülebilir beslenme, yo-yo etkisi, sağlıklı alışkanlık, dengeli beslenme]
 item_id: 10
-cover_url:
+cover_url: /covers/diyet-yapmadan-denge.png
 published_at:
 ---
 
