@@ -103,7 +103,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
-- İletişim: rberkkaratas@gmail.com
+- İletişim: destek@afiet.co
 `,
   },
   schema: {
@@ -113,7 +113,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       url: SITE_URL,
       logo: `${SITE_URL}/icon.svg`,
       sameAs: [],
-      contactEmail: 'rberkkaratas@gmail.com',
+      contactEmail: 'destek@afiet.co',
     },
     website: { enabled: true },
     mobileApp: {
@@ -174,7 +174,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
         a:
           'İstediğin zaman. Uygulamada Profil → Hesabı sil ile öğün, ölçü ve profil ' +
           'kayıtların kalıcı olarak silinir; işlem geri alınamaz. Uygulamaya erişemiyorsan ' +
-          'rberkkaratas@gmail.com adresine yazman yeterli; talebini en geç 30 gün içinde işleriz.',
+          'destek@afiet.co adresine yazman yeterli; talebini en geç 30 gün içinde işleriz.',
       },
       {
         q: 'afiet kimin için?',
