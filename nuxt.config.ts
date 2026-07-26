@@ -58,6 +58,11 @@ export default defineNuxtConfig({
       // Yalnız burada toplar; dev/preview/staging boş kalır ki paylaşılan
       // Neon kirlenmesin. Env: NUXT_PUBLIC_ANALYTICS_DOMAINS.
       analyticsDomains: 'afiet.co,www.afiet.co',
+      // "Afi'ye sor" panelinin konuştuğu backend ucu (Go API, Cloud Run).
+      // BOŞ = bölüm hiç render edilmez, üretim görsel olarak değişmez.
+      // 'mock' = backend olmadan sahte akışla çalışır (yerel geliştirme + smoke).
+      // Env: NUXT_PUBLIC_ASK_API_URL.
+      askApiUrl: '',
     },
   },
 

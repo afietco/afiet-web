@@ -109,6 +109,50 @@ export const cta: WaitlistCopy & { title: string; sub: string } = {
   privacy: 'Sadece çıkış haberi için. Spam yok, ne zaman istersen çıkarsın.',
 }
 
+/**
+ * "Afi'ye sor" paneli — SSS listesinin hemen altında. Cevaplar backend'den
+ * akar; buradaki metinler yalnızca çerçevedir.
+ *
+ * Marka: Afi'nin üzgün ya da endişeli hâli YOKTUR (BRAND.md > Logo). Hata,
+ * sınır ve kota durumlarında bile ton davetkârdır, suçlayıcı değildir.
+ * Bu blokta uzun tire (—) kullanılmaz.
+ */
+export const askAfi = {
+  eyebrow: 'Afi burada',
+  title: 'Aklına takılan başka bir şey var mı?',
+  // SSS listesi varken başlık yerine bu tek satır görünür (iki başlık üst üste gelmesin).
+  attachedLead: 'Cevabını yukarıda bulamadın mı? Afi’ye sor, sofranın diliyle anlatsın.',
+  invitation: 'Merhaba, ben Afi. afiet’le ilgili ne merak ediyorsan sor, kısaca anlatayım.',
+  chipsLabel: 'Şunları sorabilirsin',
+  chips: [
+    'afiet kalori saymadan nasıl çalışıyor?',
+    'Ailece nasıl kullanırız?',
+    'Beta’ya nasıl katılırım?',
+  ],
+  moreChips: 'Başka bir şey sor',
+  inputLabel: 'Afi’ye sorun',
+  placeholder: 'afiet’e dair ne merak ediyorsun?',
+  send: 'Sor',
+  sending: 'Gönderiliyor…',
+  stop: 'Dur',
+  retry: 'Yeniden sor',
+  thinking: 'Afi düşünüyor…',
+  answering: 'Afi yazıyor…',
+  hint: 'Afi genel bilgi verir, sağlık tavsiyesi vermez. Sağlık bilgini yazma.',
+  privacyLabel: 'Sorular nasıl saklanıyor?',
+  privacyTo: '/gizlilik',
+  error: 'Afi şu an cevap veremedi. Birazdan yeniden sorar mısın?',
+  slow: 'Afi biraz düşünceye daldı. İstersen yeniden sor.',
+  limit: 'Bugünlük soru hakkın doldu. Yarın Afi yine burada olacak. 🌿',
+  cap: 'Bu sohbet burada tamamlandı. Merakın sürüyorsa beta’ya katıl, Afi uygulamada seninle devam etsin.',
+  capCta: 'Sofrada yerini ayır',
+  capCtaTo: '/beta',
+  unknownBetaCta: 'Beta’ya katıl',
+  unknownBlogCta: 'Blogda anlattıklarımız',
+  captchaCheck: 'Bir saniye, gerçek bir sofra arkadaşı olduğunu doğruluyoruz.',
+  soon: 'Afi’ye soru sorma çok yakında burada 🌱',
+}
+
 export const beta = {
   eyebrow: 'beta daveti',
   title: "afiet şimdi beta'da.",

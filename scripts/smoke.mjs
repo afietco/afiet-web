@@ -24,7 +24,14 @@ if (!existsSync(join(root, '.output/server/index.mjs'))) {
 const server = spawn('node', ['.output/server/index.mjs'], {
   cwd: root,
   stdio: 'ignore',
-  env: { ...process.env, PORT: String(PORT), NITRO_PORT: String(PORT) },
+  env: {
+    ...process.env,
+    PORT: String(PORT),
+    NITRO_PORT: String(PORT),
+    // "Afi'ye sor" paneli boş URL'de hiç render edilmez; smoke'ta sahte akışla
+    // açıyoruz ki bölüm ve etkileşim gerçekten test edilsin.
+    NUXT_PUBLIC_ASK_API_URL: 'mock',
+  },
 })
 
 const ok = (cond, msg) => {
@@ -142,6 +149,16 @@ try {
   ok(html.includes('FAQPage'), 'FAQPage şeması HTML içinde')
   ok(html.includes('twitter:title'), 'twitter:title meta mevcut')
 
+  // --- Afi'ye sor: SSS sözleşmesini bozmadan eklendi mi ---
+  ok(html.includes('id="afiye-sor"'), 'Afi’ye sor bölümü prerender HTML içinde')
+  ok(html.includes('ne merak ediyorsan sor'), 'Afi daveti prerender HTML içinde')
+  ok((html.match(/<details/g) || []).length >= 3, 'SSS <details> öğeleri hâlâ HTML içinde')
+  // Panel ileride Turnstile yükleyecek; sayfa açılışında YÜKLENMEMELİ.
+  ok(
+    !html.includes('challenges.cloudflare.com'),
+    'Turnstile sayfa yüklemede yok (yalnız etkileşimde yüklenir)',
+  )
+
   browser = await chromium.launch({ executablePath: CHROME, headless: true })
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
   const errors = []
@@ -227,7 +244,54 @@ try {
   )
   await page.reload({ waitUntil: 'networkidle' })
 
+  // --- Afi'ye sor paneli: çip → akış → cevap ---
+  // Beta testleri sayfayı /beta'ya götürdü; panel ana sayfada.
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' })
+  const afiSection = page.locator('#afiye-sor')
+  await afiSection.scrollIntoViewIfNeeded()
+  ok((await afiSection.count()) === 1, 'Afi’ye sor bölümü sayfada')
+
+  await page.locator('#afi-soru').focus()
+  ok(
+    (await page.locator('#afiye-sor .afi-stage').getAttribute('data-mood')) === 'listening',
+    'input odakta Afi “dinliyor” moduna geçiyor',
+  )
+
+  const chipsBefore = await page.locator('#afiye-sor [data-afi-chip]').count()
+  await page.locator('#afiye-sor [data-afi-chip]').first().click()
+  await page.waitForFunction(
+    () => !document.querySelector('#afiye-sor [aria-busy="true"]'),
+    null,
+    { timeout: 25000 },
+  )
+  ok(
+    (await page.locator('#afiye-sor li').count()) === 2,
+    'soru ve cevap balonu sohbete eklendi',
+  )
+  ok(
+    (await page.locator('#afiye-sor [data-afi-chip]').count()) === chipsBefore - 1,
+    'kullanılan çip listeden düşüyor',
+  )
+  ok(
+    (await afiSection.textContent())?.includes('kalori saydırmaz'),
+    'Afi’nin cevabı ekrana akıyor',
+  )
+
   ok(errors.length === 0, `konsol/sayfa hatası yok${errors.length ? `: ${errors[0]}` : ''}`)
+
+  // --- JS'siz sözleşme: SSS JS olmadan da çalışır (FaqSection.vue docblock'u) ---
+  const noJsCtx = await browser.newContext({ javaScriptEnabled: false })
+  const noJsPage = await noJsCtx.newPage()
+  await noJsPage.goto(`http://localhost:${PORT}/`)
+  const noJsDetails = await noJsPage.locator('#sss details').count()
+  ok(noJsDetails >= 3, `JS'siz SSS öğeleri var (${noJsDetails})`)
+  await noJsPage.locator('#sss details summary').first().click()
+  ok(
+    await noJsPage.locator('#sss details[open]').first().isVisible(),
+    "JS'siz <details> açılıyor",
+  )
+  ok((await noJsPage.locator('#afiye-sor').count()) === 1, "JS'siz sayfada Afi bölümü de var")
+  await noJsCtx.close()
 
   // --- İsteğe bağlı ekran görüntüleri ---
   if (process.env.SHOT_DIR) {
