@@ -150,6 +150,7 @@ export const askAfi = {
   unknownBetaCta: 'Beta’ya katıl',
   unknownBlogCta: 'Blogda anlattıklarımız',
   captchaCheck: 'Bir saniye, gerçek bir sofra arkadaşı olduğunu doğruluyoruz.',
+  captchaFailed: 'Doğrulama tamamlanamadı. Biraz sonra yeniden sorar mısın?',
   soon: 'Afi’ye soru sorma çok yakında burada 🌱',
 }
 

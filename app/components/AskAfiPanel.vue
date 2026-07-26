@@ -244,7 +244,12 @@ function paragraphs(text: string) {
         :data-sitekey="turnstileSiteKey"
         data-action="turnstile-spin-v2"
       />
-      <p v-if="afi.turnstile.challenging.value" class="mt-2 text-center text-sm font-semibold text-muted">
+      <!-- Metin YALNIZ Cloudflare gerçekten etkileşim istediğinde çıkar.
+           Sessiz doğrulamada ziyaretçi hiçbir şey görmez. -->
+      <p
+        v-if="afi.turnstile.interactive.value"
+        class="mt-2 text-center text-sm font-semibold text-muted"
+      >
         {{ askAfi.captchaCheck }}
       </p>
 
@@ -257,7 +262,7 @@ function paragraphs(text: string) {
       >
         <template v-if="afi.state.value === 'limit'">{{ askAfi.limit }}</template>
         <template v-else-if="afi.state.value === 'error'">
-          {{ askAfi.error }}
+          {{ afi.errorText.value }}
           <button
             type="button"
             class="ml-1 underline underline-offset-2 hover:text-brand-deep"
