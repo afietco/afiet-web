@@ -26,7 +26,10 @@ export type AskTurn = {
   sources?: AskSource[]
 }
 
-const MAX_TURNS = 6
+// Sunucudaki ASK_MAX_TURNS ile aynı olmalı. Sohbet artık gerçekten ilerlediği
+// için 6 erken bitiyordu; asıl sınır zaten IP penceresi ve global devre
+// kesici, tur sayısı yalnız tek oturumun uzamasını engelliyor.
+const MAX_TURNS = 12
 const FIRST_TOKEN_TIMEOUT_MS = 20_000
 const TOTAL_TIMEOUT_MS = 90_000
 
