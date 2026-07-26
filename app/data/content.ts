@@ -409,7 +409,7 @@ export const blog = {
  */
 export const privacy = {
   title: 'Gizlilik Politikası',
-  effective: '13 Temmuz 2026',
+  effective: '26 Temmuz 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
@@ -449,6 +449,31 @@ export const privacy = {
         'Analitik yalnız açık onayınla çalışır: ilk ziyaretinde çıkan bilgilendirmede "Reddet" ' +
           'diyebilir, tarayıcının "İzleme yok" (Do Not Track) ayarını açabilir ya da çerezleri ' +
           'silerek istatistiğe dahil olmayı durdurabilirsin.',
+      ],
+    },
+    {
+      title: 'afiet.co’da Afi’ye soru sorma',
+      body: [
+        'Ana sayfadaki “Afi’ye sor” bölümüne yazdığın soru, cevabı üretebilmemiz için ' +
+          'afiet’in kendi sunucusuna gönderilir. Adını, e-postanı ya da bir hesabı ' +
+          'istemeyiz; sohbet için sunucunun ürettiği, sekmen açık kaldığı sürece ' +
+          'yaşayan rastgele bir oturum numarası kullanılır ve bu numara cihazına ' +
+          'kaydedilmez.',
+        'Soruları ve Afi’nin cevaplarını, Afi’yi geliştirmek ve hangi konuları daha ' +
+          'iyi anlatmamız gerektiğini görmek için saklarız. IP adresini saklamayız; ' +
+          'kötüye kullanımı sınırlamak için yalnızca geri döndürülemez biçimde ' +
+          'özetlenmiş (hash’lenmiş) hâlini kısa süre tutarız. Sorular reklam için ' +
+          'kullanılmaz, üçüncü taraflarla paylaşılmaz.',
+        'Kişisel sağlık bilgini yazmana gerek yok; lütfen yazma. Afi genel bilgi ' +
+          'verir, tıbbi tavsiye ya da kişiye özel beslenme önerisi vermez.',
+        'Cevabı üretmek için sorun Microsoft Azure’un Avrupa bölgesindeki yapay zekâ ' +
+          'servisine iletilir. Orada model eğitimi için kullanılmaz.',
+        'Bu bölümü otomatik kötüye kullanımdan korumak için Cloudflare Turnstile ' +
+          'kullanırız. Turnstile sessiz çalışır, ekranda bir şey göstermez ve ancak ' +
+          'çok sayıda arka arkaya soruda devreye girer; sayfayı okuyup geçen bir ' +
+          'ziyaretçi için hiç çalışmaz. Bu kontrol sırasında Cloudflare, isteğin ' +
+          'geldiği ağ bilgisini görür. Ayrıntılar Cloudflare’in Turnstile Gizlilik ' +
+          'Ek Metni’nde: https://www.cloudflare.com/turnstile-privacy-policy/',
       ],
     },
     {
