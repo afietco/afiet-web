@@ -201,7 +201,7 @@ export const beta = {
     {
       q: 'Listeden nasıl çıkarım?',
       a:
-        'Beta e-postalarından çıkmak istersen rberkkaratas@gmail.com adresine yazman yeterli.',
+        'Beta e-postalarından çıkmak istersen destek@afiet.co adresine yazman yeterli.',
     },
   ],
 }
@@ -365,7 +365,7 @@ export const blog = {
 export const privacy = {
   title: 'Gizlilik Politikası',
   effective: '13 Temmuz 2026',
-  contact: 'rberkkaratas@gmail.com',
+  contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
     'Yalnızca uygulamanın çalışması için gereken veriyi toplarız; reklam, izleme ya da ' +
@@ -419,7 +419,7 @@ export const privacy = {
       body: [
         'Hesabını ve tüm verilerini uygulamadan silebilirsin: Profil → Hesabı sil. ' +
           'Bu işlem öğün, ölçü ve profil kayıtlarını kalıcı olarak kaldırır.',
-        'Dilersen rberkkaratas@gmail.com adresine yazarak da silme talep edebilirsin; ' +
+        'Dilersen destek@afiet.co adresine yazarak da silme talep edebilirsin; ' +
           'talebini en geç 30 gün içinde işleriz.',
       ],
     },
@@ -439,14 +439,18 @@ export const privacy = {
     },
     {
       title: 'İletişim',
-      body: ['Sorular ve talepler için: rberkkaratas@gmail.com'],
+      body: [
+        'Sorular ve talepler için: destek@afiet.co',
+        'Kişisel verilerine ilişkin resmi başvurularını kvkk@afiet.co adresine ' +
+          'iletebilirsin.',
+      ],
     },
   ],
 }
 
 export const hesapSil = {
   title: 'Hesabını sil',
-  contact: 'rberkkaratas@gmail.com',
+  contact: 'destek@afiet.co',
   intro:
     'Hesabını ve afiet’teki tüm verilerini istediğin zaman silebilirsin. En hızlısı ' +
     'uygulama içinden; erişemiyorsan e-posta ile de talep edebilirsin.',
@@ -460,7 +464,7 @@ export const hesapSil = {
   ],
   emailTitle: 'E-posta ile',
   emailBody:
-    'Uygulamaya erişemiyorsan, kayıtlı e-posta adresinden rberkkaratas@gmail.com ' +
+    'Uygulamaya erişemiyorsan, kayıtlı e-posta adresinden destek@afiet.co ' +
     'adresine “hesap silme” yaz. Kimliğini doğruladıktan sonra hesabını ve tüm ' +
     'verilerini en geç 30 gün içinde sileriz.',
 }
