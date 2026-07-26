@@ -55,6 +55,8 @@ export function useTurnstile() {
   const host = ref<HTMLElement | null>(null)
   const challenging = ref(false)
   let widgetId: string | null = null
+  // warmUp uçuştayken ikinci bir çağrı ikinci bir widget render etmesin.
+  let warming: Promise<void> | null = null
   // Turnstile sonucu render sırasında verilen callback'lerden gelir, execute'un
   // dönüşünden değil. Bekleyen çözücüyü burada tutup oradan tetikliyoruz.
   let settle: ((token: string) => void) | null = null
@@ -66,8 +68,14 @@ export function useTurnstile() {
   }
 
   /** İlk etkileşimde çağrılır; script'i ve widget'ı ısıtır. */
-  async function warmUp() {
-    if (!enabled || widgetId || !host.value) return
+  function warmUp(): Promise<void> {
+    if (!enabled || widgetId || !host.value) return Promise.resolve()
+    if (warming) return warming
+    warming = renderWidget().finally(() => (warming = null))
+    return warming
+  }
+
+  async function renderWidget() {
     try {
       const api = await loadScript()
       widgetId = api.render(host.value, {
@@ -75,9 +83,11 @@ export function useTurnstile() {
         action: 'turnstile-spin-v2',
         // Görünmez ve yalnız gerekince görünür; bir zorluk gösterilecekse
         // kutu yerinde açılır (gizli kaptaki widget çözülemez ve kilitlenir).
+        // Görünmezlik appearance ile sağlanır. size:'invisible' ARTIK GEÇERLİ
+        // DEĞİL ve geçersiz seçenek widget'ı sessizce bozuyor: token hiç
+        // üretilmiyor, backend missing-input-response ile reddediyor.
         appearance: 'interaction-only',
         execution: 'execute',
-        size: 'invisible',
         language: 'tr',
         theme: 'light',
         retry: 'never',
@@ -117,7 +127,7 @@ export function useTurnstile() {
           resolve(typeof token === 'string' ? token : '')
         }
         // Cloudflare hiç geri dönmezse panel kilitlenmesin.
-        timer = setTimeout(() => finish(''), 12_000)
+        timer = setTimeout(() => finish(''), 20_000)
         try {
           // Token'lar tek kullanımlık: her soru için sıfırla ve yeniden çalıştır.
           api.reset(id)
