@@ -142,10 +142,17 @@ export function useAskAfi() {
       timedOut = true
       controller?.abort()
     }, TOTAL_TIMEOUT_MS)
-    let firstTokenTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
-      timedOut = true
-      controller?.abort()
-    }, FIRST_TOKEN_TIMEOUT_MS)
+    // Gözcü, istek TELE ÇIKTIĞINDA başlar; bilet ve captcha beklemesi bu
+    // bütçeyi yemez. Aksi halde captcha 20 saniyeyi doldurunca istek daha
+    // gönderilmeden iptal oluyordu.
+    let firstTokenTimer: ReturnType<typeof setTimeout> | null = null
+    const armFirstTokenWatchdog = () => {
+      if (firstTokenTimer) return
+      firstTokenTimer = setTimeout(() => {
+        timedOut = true
+        controller?.abort()
+      }, FIRST_TOKEN_TIMEOUT_MS)
+    }
 
     const clearFirstToken = () => {
       if (firstTokenTimer) clearTimeout(firstTokenTimer)
@@ -163,7 +170,7 @@ export function useAskAfi() {
 
     try {
       if (mockMode) await runMock(question, onDelta, signal)
-      else await runReal(question, answer, onDelta, signal)
+      else await runReal(question, answer, onDelta, signal, armFirstTokenWatchdog)
 
       answer.streaming = false
       // Tamamlanan cevabı ekran okuyucuya BİR KEZ duyur (token token değil).
@@ -222,6 +229,7 @@ export function useAskAfi() {
     answer: AskTurn,
     onDelta: (t: string) => void,
     signal: AbortSignal,
+    armWatchdog: () => void,
   ) {
     // Turnstile token'ı tek kullanımlıktır ve backend oturum başına bir kez
     // doğrular. Alınamazsa boş gider: engelli bir eklenti yüzünden paneli
@@ -241,6 +249,7 @@ export function useAskAfi() {
         }),
       })
 
+    armWatchdog()
     let res = await send(tkt)
     // Bilet sunucuda süresi dolmuş sayılırsa bir kez tazeleyip tekrar dene:
     // sekmesi uzun süre açık kalan ziyaretçi elle yenilemek zorunda kalmasın.
