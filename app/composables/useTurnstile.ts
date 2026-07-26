@@ -78,7 +78,10 @@ export function useTurnstile() {
   async function renderWidget() {
     try {
       const api = await loadScript()
-      widgetId = api.render(host.value, {
+      // Script inerken bileşen sökülmüş olabilir; kap yoksa render etme.
+      const el = host.value
+      if (!el) return
+      widgetId = api.render(el, {
         sitekey: siteKey,
         action: 'turnstile-spin-v2',
         // Görünmez ve yalnız gerekince görünür; bir zorluk gösterilecekse
