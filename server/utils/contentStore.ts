@@ -13,7 +13,7 @@ import type {
 import { emptyBrief } from './contentTypes'
 
 /**
- * İçerik planı + blog verisi: SEO/waitlist ile aynı Neon'da, landing'e ait
+ * İçerik planı + blog verisi: SEO/beta ile aynı Neon'da, landing'e ait
  * kendi kendini kuran tablolar (seoStore deseni; backend'in golang-migrate
  * şemasından bağımsız). DB yoksa admin GET boş listelerle `dbConnected:false`
  * döner, yazma uçları 503 verir — smoke/CI ortamı DB'siz de yeşildir.

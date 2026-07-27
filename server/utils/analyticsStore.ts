@@ -3,7 +3,7 @@ import type { H3Event } from 'h3'
 
 /**
  * First-party web analitiği toplama katmanı. Beacon `POST /api/track`ten gelen
- * olayları SEO/waitlist/içerik ile AYNI Neon'da, landing'e ait kendi kendini
+ * olayları SEO/içerik ile AYNI Neon'da, landing'e ait kendi kendini
  * kuran `analytics_events` tablosuna yazar (golang-migrate şemasından bağımsız).
  * DB yoksa endpoint sessizce 204 döner — analitik hiçbir koşulda siteyi kırmaz.
  *

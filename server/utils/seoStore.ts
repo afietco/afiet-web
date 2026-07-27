@@ -15,7 +15,7 @@ import type {
 } from './seoTypes'
 
 /**
- * SEO verisi: waitlist ile aynı Neon'da, landing'e ait kendi kendini kuran
+ * SEO verisi: beta başvurularıyla aynı Neon'da, landing'e ait kendi kendini kuran
  * tablolar (backend'in golang-migrate şemasından bağımsız). DB yoksa/boşsa
  * her şey kod varsayılanlarıyla çalışır — bu yüzden smoke/CI ortamında da
  * site aynen render olur.
