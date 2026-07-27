@@ -22,6 +22,11 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   hero'daki açılış animasyonu `.rise` sınıfıyla CSS'te
 - Afi maskotu `AfiMascot.vue` — buhar telleri hep İKİ tanedir, yüz ifadesi sabittir
   (BRAND.md > Logo); `public/icon.svg` ile birlikte değişir
+- `public/bimi/afi.svg` — e-posta istemcilerinde gönderen avatarı (BIMI). DNS'teki
+  `default._bimi.posta.afiet.co` kaydı bu URL'i gösterir, yani DOSYA YOLU SABİT
+  KALMALI, taşınırsa avatar düşer. SVG Tiny P/S profili: `baseProfile="tiny-ps"`,
+  `<title>` zorunlu, kare viewBox, script/animasyon/dış referans yasak. Kaynağı
+  `afiet-brand/logo/afi-icon.svg`, marka logosu değişirse bu da elle yenilenir.
 - Beta başvurusu: `server/api/beta/apply.post.ts` (Nitro) → Neon
   `beta_applications` tablosu (`@neondatabase/serverless`; DDL'in TEK kaynağı
   `server/utils/betaStore.ts`). E-posta doğrulama + honeypot (`company` alanı) +
