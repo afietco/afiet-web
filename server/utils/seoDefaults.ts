@@ -96,10 +96,10 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 
 ## Durum
 - Henüz yayında değil; yakında App Store ve Google Play’de.
-- Çıkış haberi için afiet.co’daki bekleme listesine e-posta bırakılabilir.
+- Kapalı beta sürüyor; afiet.co/beta üzerinden başvurulabilir, davetler e-posta ile gönderilir.
 
 ## Bağlantılar
-- [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve bekleme listesi.
+- [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve beta daveti.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.

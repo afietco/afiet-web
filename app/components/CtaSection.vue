@@ -24,10 +24,8 @@ import { cta } from '~/data/content'
             {{ cta.sub }}
           </p>
 
-          <!-- Bekleme listesi formu yerine beta daveti: uygulama artık
-               beta'da, dolayısıyla "çıkınca haber veririz" demek yerine
-               doğrudan katılmaya çağırıyoruz. Form ve /api/waitlist duruyor,
-               yalnız buradan çağrılmıyor. -->
+          <!-- Landing'in tek dönüşüm noktası: /beta başvurusu. Burada e-posta
+               toplanmaz, form beta sayfasında yaşar. -->
           <div class="mt-9 flex flex-col items-center gap-3">
             <NuxtLink :to="cta.betaTo" class="btn-primary !px-8 !py-4 text-base">
               {{ cta.betaCta }}
