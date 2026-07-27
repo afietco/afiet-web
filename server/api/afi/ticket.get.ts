@@ -58,8 +58,8 @@ export default defineEventHandler(async (event) => {
   const secret = String(cfg.askTicketSecret || '')
   const env = String(cfg.askEnv || '')
 
-  // Yapılandırılmamışsa panel "çok yakında" moduna geçsin; bekleme listesi
-  // route'undaki 503 'soon' deseninin aynısı — çalışmayan form yayınlanmaz.
+  // Yapılandırılmamışsa panel "çok yakında" moduna geçsin; beta başvuru
+  // route'undaki 503 'soon' deseninin aynısı, çalışmayan form yayınlanmaz.
   if (!secret || !env) {
     setResponseStatus(event, 503)
     return { status: 'soon' }

@@ -58,28 +58,25 @@ try {
   ok(html.includes('og:image'), 'og:image meta mevcut')
   ok(html.includes('Çünkü sofra sayı saymaz.'), 'zag bölümü prerender HTML içinde')
 
-  // --- Waitlist server route (/api/waitlist) ---
+  // --- Beta başvuru route'u (/api/beta/apply) ---
+  // Yalnız REDDEDİLEN durumlar denenir: geçerli başvuru DB'ye yazardı ve
+  // smoke koşusu gerçek başvuru tablosunu kirletmemeli.
   const post = (body) =>
-    fetch(`http://localhost:${PORT}/api/waitlist`, {
+    fetch(`http://localhost:${PORT}/api/beta/apply`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     })
 
-  const invalid = await post({ email: 'not-an-email' })
+  const invalid = await post({ email: 'not-an-email', consent: true })
   ok(invalid.status === 422, `geçersiz e-posta → 422 (${invalid.status})`)
 
-  const honey = await post({ email: 'bot@afiet.co', company: 'spam-co' })
+  const noConsent = await post({ email: 'smoke@afiet.co', consent: false })
+  ok(noConsent.status === 422, `rıza yoksa → 422 (${noConsent.status})`)
+
+  const honey = await post({ email: 'bot@afiet.co', consent: true, company: 'spam-co' })
   const honeyBody = await honey.json().catch(() => ({}))
   ok(honey.status === 200 && honeyBody.status === 'ok', `honeypot dolu → sessiz ok (${honey.status})`)
-
-  // DB bağlıysa 200 ok/exists, değilse (smoke ortamı) 503 soon — ikisi de geçerli.
-  const submit = await post({ email: 'smoke@afiet.co' })
-  const submitBody = await submit.json().catch(() => ({}))
-  ok(
-    [200, 503].includes(submit.status) && ['ok', 'exists', 'soon'].includes(submitBody.status),
-    `geçerli e-posta → tutarlı yanıt (${submit.status} ${submitBody.status})`,
-  )
 
   // --- SEO & GEO yüzeyi (DB'siz ortamda kod varsayılanlarıyla çalışmalı) ---
   const robots = await (await fetch(`http://localhost:${PORT}/robots.txt`)).text()

@@ -147,7 +147,7 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
         WHERE event='pageview' AND country IS NOT NULL AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
         GROUP BY country ORDER BY visits DESC LIMIT 12`,
     sql`SELECT slug, title, to_char(published_at, 'YYYY-MM-DD') AS published_at FROM blog_posts`.catch(() => [] as Record<string, unknown>[]),
-    sql`SELECT count(*)::int AS n FROM waitlist WHERE created_at >= now() - make_interval(days => ${days})`.catch(() => [{ n: 0 }] as Record<string, unknown>[]),
+    sql`SELECT count(*)::int AS n FROM beta_applications WHERE created_at >= now() - make_interval(days => ${days})`.catch(() => [{ n: 0 }] as Record<string, unknown>[]),
   ])
 
   const t = (totalsRows[0] ?? {}) as { views?: number; visitors?: number; sessions?: number; avg_ms?: number }

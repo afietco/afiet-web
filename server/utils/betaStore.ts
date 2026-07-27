@@ -2,7 +2,7 @@ import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
 
 /**
- * Beta başvuru katmanı. Başvurular SEO/waitlist/analitik ile AYNI Neon'da,
+ * Beta başvuru katmanı. Başvurular SEO/analitik ile AYNI Neon'da,
  * landing'e ait kendi kendini kuran `beta_applications` tablosunda yaşar
  * (golang-migrate şemasından bağımsız). Yazma ucu `POST /api/beta/apply`,
  * okuma ucu `GET /api/admin/beta` (yalnız admin). DDL burada TEK kaynaktır.
