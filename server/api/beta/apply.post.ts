@@ -2,7 +2,7 @@ import { betaSql, ensureBetaTable } from '~~/server/utils/betaStore'
 
 /**
  * Beta başvurusu. Zengin başvuruyu backend'in AYNI Neon Postgres'inde
- * `beta_applications` tablosuna yazar (waitlist gibi kendi kendini kurar, public uç,
+ * `beta_applications` tablosuna yazar (tablo kendi kendini kurar, public uç,
  * uygulamanın /v1 şemasından bağımsız). Bağlantı yoksa "soon" döner. Tablo DDL'i
  * `server/utils/betaStore.ts`te TEK kaynaktır. Okuma: `GET /api/admin/beta`.
  *

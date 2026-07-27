@@ -2,7 +2,7 @@
 
 afiet.co tanıtım sitesi (landing). Uygulama yalnızca native mobilde yaşar —
 bu sitede uygulamaya/PWA'ya link verilmez; CTA'lar store rozetleri ("yakında")
-ve bekleme listesidir. UI dili tamamen Türkçe.
+ve /beta başvurusudur. UI dili tamamen Türkçe.
 
 Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afiet"
 (cümle başında bile; `uppercase` sınıfı isme asla değmez), tagline
@@ -17,24 +17,31 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   sayfa bilinçli olarak tek temadır (açık/krem "sıcak sofra"); dark mode yok
 - Tüm metin içeriği: `app/data/content.ts` — kopya değişikliği bileşene dokunmaz
 - Bileşenler `app/components/` altında bölüm başına tektir (SiteHeader, HeroSection,
-  PhoneMock, ZagSection, VoiceSection, CtaSection, WaitlistForm, SiteFooter…)
+  PhoneMock, ZagSection, VoiceSection, CtaSection, BetaForm, SiteFooter…)
 - `v-reveal` direktifi (`app/plugins/reveal.ts`) scroll'da `.is-in` ekler;
   hero'daki açılış animasyonu `.rise` sınıfıyla CSS'te
 - Afi maskotu `AfiMascot.vue` — buhar telleri hep İKİ tanedir, yüz ifadesi sabittir
   (BRAND.md > Logo); `public/icon.svg` ile birlikte değişir
-- Bekleme listesi: `server/api/waitlist.post.ts` (Nitro) → Neon `waitlist` tablosu
-  (`@neondatabase/serverless`, tablo kendi kendini kurar — CREATE TABLE IF NOT EXISTS +
-  ON CONFLICT). E-posta doğrulama + honeypot (`company` alanı) + kaynak etiketi.
+- `public/bimi/afi.svg` — e-posta istemcilerinde gönderen avatarı (BIMI). DNS'teki
+  `default._bimi.posta.afiet.co` kaydı bu URL'i gösterir, yani DOSYA YOLU SABİT
+  KALMALI, taşınırsa avatar düşer. SVG Tiny P/S profili: `baseProfile="tiny-ps"`,
+  `<title>` zorunlu, kare viewBox, script/animasyon/dış referans yasak. Kaynağı
+  `afiet-brand/logo/afi-icon.svg`, marka logosu değişirse bu da elle yenilenir.
+- Beta başvurusu: `server/api/beta/apply.post.ts` (Nitro) → Neon
+  `beta_applications` tablosu (`@neondatabase/serverless`; DDL'in TEK kaynağı
+  `server/utils/betaStore.ts`). E-posta doğrulama + honeypot (`company` alanı) +
+  ZORUNLU açık rıza (KVKK). Aynı e-posta yeniden başvurursa yanıtlar güncellenir.
   Connection string `NUXT_DATABASE_URL` (runtimeConfig.databaseUrl, server-side).
-  `WaitlistForm.vue` durum makinesi: idle→sending→done/exists/soon/error, başarıda
-  konfetili kutlama. Backend'in AYNI Neon'una yazar ama golang-migrate şemasından
-  ayrı tablo (landing'e ait).
+  `BetaForm.vue` çok adımlı: e-posta → seni tanıyalım → alışkanlıkların.
+  Kilo/kalori/sayı SORULMAZ (marka gereği). Okuma: `GET /api/admin/beta`.
+  Landing'de başka e-posta toplama noktası yok; eski bekleme listesi
+  (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırıldı.
 
 ## SEO & GEO (panelden yönetilir)
 
 - Model: kod varsayılanları (`server/utils/seoDefaults.ts` — bugünkü davranışın
   birebir kaydı) + Neon'daki override'lar (`seo_settings`/`seo_pages`/
-  `seo_redirects`, waitlist gibi kendi kendini kurar). Boş DB = varsayılanlar;
+  `seo_redirects`, beta tablosu gibi kendi kendini kurar). Boş DB = varsayılanlar;
   "varsayılana dön" = satırı sil. Efektif birleşim: `server/utils/seoStore.ts`
   (60 sn bellek cache; her admin yazımı cache'i VE swr sayfa cache'ini düşürür).
 - Sayfalar `usePageSeo()` composable'ı ile `/api/seo/meta?path=`ten meta çeker
@@ -101,7 +108,7 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
 
 ## Kurallar
 
-- Bekleme listesi Neon'a `NUXT_DATABASE_URL` ile yazar (yukarı bkz.); boşken route
+- Beta başvurusu Neon'a `NUXT_DATABASE_URL` ile yazar (yukarı bkz.); boşken route
   503 'soon' döner, form "çok yakında" moduna geçer. Çalışmayan form yayınlanmaz.
 - Dal modeli: `feature/*` → `development` → `staging` → `main`
   (`afiet-mobile/docs/BRANCHING.md`). `main` = Vercel production.

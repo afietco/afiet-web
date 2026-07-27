@@ -38,7 +38,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Neon connection string (server-side, gizli). Env: NUXT_DATABASE_URL.
-    // Boşken /api/waitlist "soon" döner, SEO uçları kod varsayılanlarını sunar
+    // Boşken /api/beta/apply "soon" döner, SEO uçları kod varsayılanlarını sunar
     // ve admin yazma uçları 503 döner — çalışmayan form/panel yayınlanmaz.
     databaseUrl: '',
     // Panel (afiet-admin) istekleri için JWT doğrulama — backend'in

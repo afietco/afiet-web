@@ -77,33 +77,13 @@ export const voice = {
   ],
 }
 
-export interface WaitlistCopy {
-  formPlaceholder: string
-  formButton: string
-  formSending: string
-  formDone: string
-  formDoneSub: string
-  formExists: string
-  formExistsSub: string
-  formInvalid: string
-  formError: string
-  formSoon: string
-  privacy: string
-}
-
 /**
- * Sayfa sonu çağrısı. Bekleme listesi yerine BETA davetine yönlendirir:
- * uygulama artık beta'da ve ilk sofrada sınırlı yer var, dolayısıyla
- * "çıkınca haber veririz" demek yerine doğrudan katılmaya çağırıyoruz.
- * WaitlistCopy alanları duruyor: /api/waitlist ve admin ekranı hâlâ canlı.
+ * Sayfa sonu çağrısı: doğrudan BETA başvurusuna yönlendirir. Uygulama artık
+ * beta'da ve ilk sofrada sınırlı yer var, dolayısıyla e-posta toplayıp
+ * "çıkınca haber veririz" demek yerine katılmaya çağırıyoruz. Landing'de
+ * başka e-posta toplama noktası YOK; tek dizin /beta formudur.
  */
-export const cta: WaitlistCopy & {
-  title: string
-  sub: string
-  betaCta: string
-  betaTo: string
-  betaNote: string
-} = {
+export const cta = {
   title: 'afiet şimdi beta’da',
   sub:
     'İlk sofrada 100 kişilik yer var. Sen de kendi sofranda dene, ' +
@@ -111,17 +91,6 @@ export const cta: WaitlistCopy & {
   betaCta: 'Sofrada yerini ayır',
   betaTo: '/beta',
   betaNote: 'Halka açık indirme bağlantısı yok. Davetini e-posta ile göndeririz.',
-  formPlaceholder: 'e-posta adresin',
-  formButton: 'Haber ver',
-  formSending: 'Gönderiliyor…',
-  formDone: 'Afiyet olsun, listedesin!',
-  formDoneSub: 'Çıktığı gün ilk sana yazacağız. 🎉',
-  formExists: 'Zaten listedesin 💚',
-  formExistsSub: 'Seni unutmadık — sofrada yerin hazır.',
-  formInvalid: 'Geçerli bir e-posta girer misin? 🌿',
-  formError: 'Bir şey ters gitti — birazdan yeniden dener misin?',
-  formSoon: 'Bekleme listesi çok yakında burada 🌱',
-  privacy: 'Sadece çıkış haberi için. Spam yok, ne zaman istersen çıkarsın.',
 }
 
 /**
