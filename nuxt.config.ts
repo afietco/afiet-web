@@ -24,6 +24,9 @@ export default defineNuxtConfig({
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },
+    // Durum sayfası ve API'si: 60 sn tazelik yeterli (cron 5 dk'da bir yazar).
+    '/durum': { isr: 60 },
+    '/api/status': { isr: 60 },
     // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
     // olmadığından statik sunum content-type belirleyemez; Apple bunu
     // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
@@ -87,6 +90,9 @@ export default defineNuxtConfig({
     // bildirim maili atılır. Boşken mail hiç denenmez, başvuru etkilenmez.
     // Env: NUXT_RESEND_API_KEY.
     resendApiKey: '',
+    // Makine çağrılı cron uçlarının sırrı (X-Cron-Secret başlığı).
+    // Boşken cron uçları 503 döner. Env: NUXT_CRON_SECRET.
+    cronSecret: '',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
