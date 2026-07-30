@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Afi maskotu — tile'sız serbest duruş (afiet-brand/maskot/afi-temel.svg).
+ * Afi maskotu - tile'sız serbest duruş (afiet-brand/maskot/afi-temel.svg).
  *
  * Logo DEĞİLDİR: logo (AfiMascot.vue) emerald tile üstünde yaşar, maskot
  * tile'sız durur ve ekranın içine iner (afiet-brand/maskot/README.md).

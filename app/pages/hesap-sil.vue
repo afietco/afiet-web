@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { hesapSil } from '~/data/content'
 
-// Meta/canonical panelden yönetilir (varsayılanlar kodda — seoDefaults.ts).
+// Meta/canonical panelden yönetilir (varsayılanlar kodda - seoDefaults.ts).
 usePageSeo()
 </script>
 

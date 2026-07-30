@@ -3,7 +3,7 @@ import { askAfi } from '~/data/content'
 
 /**
  * "Afi'ye sor" bölümü. FaqSection'ın İÇİNDE değil, index.vue'da KARDEŞİ olarak
- * durur — çünkü `faq` üç ayrı durumda null olur (panelden "ana sayfada göster"
+ * durur - çünkü `faq` üç ayrı durumda null olur (panelden "ana sayfada göster"
  * kapatılınca, liste boşalınca, yol kök değilken) ve panelin en çok işe
  * yaradığı an tam da SSS'nin görünmediği andır. FaqSection.vue'nun "JS'siz
  * çalışır, içerik HTML'de kalır" sözleşmesi de böylece hiç kırılmaz.

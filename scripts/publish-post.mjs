@@ -1,5 +1,5 @@
 /**
- * Blog yayınlama — markdown dosyasını Neon'daki blog_posts tablosuna basar.
+ * Blog yayınlama - markdown dosyasını Neon'daki blog_posts tablosuna basar.
  * Deploy GEREKMEZ: yazı ISR + bellek cache nedeniyle ~2 dk içinde canlıdır
  * (sitemap/RSS ≤ 5 dk). Panel prompt'ları bu script'i çağırtır.
  *
@@ -12,7 +12,7 @@
  *   published_at (boşsa ilk yayında now() basılır, güncellemede korunur).
  *
  * DB: .env'deki NUXT_DATABASE_URL (ya da ortam değişkeni). Script hedef Neon
- * host'unu gösterip onay ister — yanlış ortama yazmayı engeller.
+ * host'unu gösterip onay ister - yanlış ortama yazmayı engeller.
  * md dosyası repoya commit'lenir (yedek); RUNTIME KAYNAĞI VERİTABANIDIR.
  */
 import { readFileSync, existsSync } from 'node:fs'
@@ -33,7 +33,7 @@ const die = (msg) => {
   process.exit(1)
 }
 
-// ── DB bağlantısı (.env — dotenv bağımlılığı yok) ────────────────────────────
+// ── DB bağlantısı (.env - dotenv bağımlılığı yok) ────────────────────────────
 function databaseUrl() {
   if (process.env.NUXT_DATABASE_URL) return process.env.NUXT_DATABASE_URL.trim()
   const envPath = join(root, '.env')
@@ -51,7 +51,7 @@ async function confirm(question) {
   return answer === 'e' || answer === 'evet'
 }
 
-// contentStore.ts ile SENKRON tut — aynı tablolar, aynı DDL.
+// contentStore.ts ile SENKRON tut - aynı tablolar, aynı DDL.
 async function ensureTables(sql) {
   await sql`
     CREATE TABLE IF NOT EXISTS content_items (
@@ -176,7 +176,7 @@ if (post.publishedAt && Number.isNaN(new Date(post.publishedAt).getTime()))
 const minutes = readingMinutes(post.body)
 const words = post.body.trim().split(/\s+/).length
 if (post.description.length < 140 || post.description.length > 160)
-  console.log(`⚠ description ${post.description.length} karakter (ideal 140–160) — yine de yayınlanabilir.`)
+  console.log(`⚠ description ${post.description.length} karakter (ideal 140–160) - yine de yayınlanabilir.`)
 
 await ensureTables(sql)
 const existing = await sql`SELECT slug, status FROM blog_posts WHERE slug = ${post.slug}`
@@ -186,9 +186,9 @@ console.log('─'.repeat(60))
 console.log(`${mode}  →  ${SITE}/blog/${post.slug}`)
 console.log(`başlık      : ${post.title}`)
 console.log(`açıklama    : ${post.description.slice(0, 80)}… (${post.description.length}ch)`)
-console.log(`etiketler   : ${post.tags.join(', ') || '—'}`)
+console.log(`etiketler   : ${post.tags.join(', ') || '-'}`)
 console.log(`gövde       : ${words} kelime · ~${minutes} dk okuma`)
-console.log(`panel item  : ${post.itemId ?? '— (bağlı değil)'}`)
+console.log(`panel item  : ${post.itemId ?? '- (bağlı değil)'}`)
 console.log('─'.repeat(60))
 if (!(await confirm('Yayınlansın mı?'))) die('Vazgeçildi.')
 
@@ -225,10 +225,10 @@ if (post.itemId) {
   console.log(
     updated.length
       ? `✓ Panel içeriği #${post.itemId} "yayında" yapıldı.`
-      : `⚠ Panel içeriği #${post.itemId} bulunamadı — panelde elle güncelle.`,
+      : `⚠ Panel içeriği #${post.itemId} bulunamadı - panelde elle güncelle.`,
   )
 }
 
 console.log(`✓ Yayında: ${SITE}/blog/${post.slug}`)
 console.log('  görünürlük: sayfa ≤ ~2 dk (bellek cache 60 sn + ISR 60 sn) · sitemap/RSS ≤ 5 dk')
-console.log('  hatırlatma: md dosyasını commit\'le — yedek dosyada, runtime kaynağı DB\'de.')
+console.log('  hatırlatma: md dosyasını commit\'le - yedek dosyada, runtime kaynağı DB\'de.')

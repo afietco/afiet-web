@@ -221,5 +221,8 @@ const seats = rings.flatMap((ring, ri) =>
         </div>
       </div>
     </section>
+
+    <!-- Afi'ye sor: SSS'in kardeşi, ana sayfadaki panelin birebir aynısı. -->
+    <AskAfiSection attached />
   </div>
 </template>

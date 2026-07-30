@@ -1,12 +1,12 @@
 # afiet-web
 
-[afiet.co](https://afiet.co) — afiet mobil uygulamasının tanıtım sitesi (landing).
+[afiet.co](https://afiet.co) - afiet mobil uygulamasının tanıtım sitesi (landing).
 Uygulamanın kendisi yalnızca native mobil olarak yaşar; bu site markanın web vitrinini üstlenir.
 
 ## Stack
 
-- **Nuxt 4** (Vue 3) — tam statik üretim (`/` build sırasında prerender edilir)
-- **Tailwind CSS v4** (`@tailwindcss/vite`) — marka tokenları `app/assets/css/main.css`
+- **Nuxt 4** (Vue 3) - tam statik üretim (`/` build sırasında prerender edilir)
+- **Tailwind CSS v4** (`@tailwindcss/vite`) - marka tokenları `app/assets/css/main.css`
 - **Nunito Variable** (`@fontsource-variable/nunito`, self-host)
 - İçerik metinleri tek yerde: `app/data/content.ts`
 

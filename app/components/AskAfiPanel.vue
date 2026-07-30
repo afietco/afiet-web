@@ -4,7 +4,7 @@ import { askAfi } from '~/data/content'
 /**
  * "Afi'ye sor" kartı. SSS listesinin altında durur; AskAfiSection sarmalar.
  *
- * Marka sözleşmesi (BRAND.md > Logo): AfiMascot bileşenine dokunulmaz — iki
+ * Marka sözleşmesi (BRAND.md > Logo): AfiMascot bileşenine dokunulmaz - iki
  * buhar teli ve sabit yüz ifadesi korunur. Yalnız .afi-stage sarmalayıcısı
  * ruh hâli değiştirir ve Afi'nin üzgün hâli YOKTUR: hata, kota ve sınır
  * durumlarında mood idle'a döner.

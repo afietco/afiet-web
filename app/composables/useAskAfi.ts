@@ -354,7 +354,7 @@ function sleep(ms: number, signal: AbortSignal) {
   })
 }
 
-/** Sahte cevaplar — yalnız mock modda. Marka sesinde, kısa, yargısız. */
+/** Sahte cevaplar - yalnız mock modda. Marka sesinde, kısa, yargısız. */
 function mockAnswer(question: string): string {
   const q = question.toLocaleLowerCase('tr')
   if (q.includes('kalori')) {

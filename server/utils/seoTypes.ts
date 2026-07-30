@@ -2,7 +2,7 @@
  * SEO/GEO ayar modeli. Kaynak-of-truth şekiller burada; kod varsayılanları
  * `seoDefaults.ts`te, DB yalnızca ÜZERİNE YAZILAN kısmi değerleri tutar
  * (boş DB = bugünkü davranışla birebir aynı). Panel (afiet-admin) bu
- * şekillerin aynısını kendi tarafında tanımlar — alan eklerken iki ucu
+ * şekillerin aynısını kendi tarafında tanımlar - alan eklerken iki ucu
  * birlikte güncelle.
  */
 
@@ -15,11 +15,11 @@ export type SeoGeneral = {
   /** Göreli (/og.png) ya da mutlak URL; göreli ise baseUrl ile mutlaklaşır. */
   defaultOgImage: string
   ogImageAlt: string
-  /** '@kullanici' — boşsa twitter:site basılmaz. */
+  /** '@kullanici' - boşsa twitter:site basılmaz. */
   twitterSite: string
   locale: string
   themeColor: string
-  /** Arama motoru site doğrulama kodları — boş olanlar basılmaz. */
+  /** Arama motoru site doğrulama kodları - boş olanlar basılmaz. */
   verification: { google: string; bing: string; yandex: string }
 }
 
@@ -28,7 +28,7 @@ export type AiBotInfo = {
   /** robots.txt User-agent değeri (büyük/küçük harf botun duyurduğu gibi). */
   agent: string
   owner: string
-  /** 'egitim' | 'arama' | 'kullanici' — panelde rozet olarak gösterilir. */
+  /** 'egitim' | 'arama' | 'kullanici' - panelde rozet olarak gösterilir. */
   purpose: 'egitim' | 'arama' | 'kullanici'
   note: string
 }
@@ -64,7 +64,7 @@ export type SeoSchema = {
     operatingSystem: string
     category: string
     description: string
-    /** Mağaza linkleri — uygulama yayında değilken boş bırakılır, basılmaz. */
+    /** Mağaza linkleri - uygulama yayında değilken boş bırakılır, basılmaz. */
     appStoreUrl: string
     playStoreUrl: string
   }
@@ -101,7 +101,7 @@ export type PageSitemap = {
 }
 
 export type PageSeo = {
-  /** Tam başlık — yazılan neyse o basılır (şablon büyüsü yok). */
+  /** Tam başlık - yazılan neyse o basılır (şablon büyüsü yok). */
   title: string
   description: string
   /** Boş alanlar title/description/genel og görseline düşer. */
@@ -156,7 +156,7 @@ export type ResolvedPageMeta = {
   jsonld: Record<string, unknown>[]
   /** Ana sayfa SSS bölümü için (showOnLanding && items.length). */
   faq: { title: string; intro: string; items: FaqItem[] } | null
-  /** Blog yazılarında 'article' — opsiyonel alanlar panel tipini bozmaz. */
+  /** Blog yazılarında 'article' - opsiyonel alanlar panel tipini bozmaz. */
   ogType?: 'website' | 'article'
   publishedAt?: string
   modifiedAt?: string

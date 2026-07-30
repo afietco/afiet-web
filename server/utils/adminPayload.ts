@@ -4,7 +4,7 @@ import { getSeoBundle, hasDb, loadOverrides, seoDefaultsForAdmin } from './seoSt
 /**
  * Panelin tek seferde ihtiyaç duyduğu her şey: ham override'lar (neyin
  * değiştirildiğini bilmek için), kod varsayılanları, efektif birleşim,
- * bot kataloğu ve DB durumu. Yazan uçlar da bunu döndürür — panel tek
+ * bot kataloğu ve DB durumu. Yazan uçlar da bunu döndürür - panel tek
  * yanıtla tazelenir.
  */
 export async function buildAdminPayload(event: H3Event) {

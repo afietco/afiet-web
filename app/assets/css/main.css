@@ -1,6 +1,6 @@
-/* afiet landing — "sıcak sofra" tasarım sistemi.
+/* afiet landing - "sıcak sofra" tasarım sistemi.
    Marka kuralları: afiet-mobile/BRAND.md (emerald, Nunito, küçük harf "afiet").
-   Sayfa bilinçli olarak tek temadır (açık, sıcak krem) — sofra ışığı. */
+   Sayfa bilinçli olarak tek temadır (açık, sıcak krem) - sofra ışığı. */
 
 @import 'tailwindcss';
 @import '@fontsource-variable/nunito';
@@ -8,7 +8,7 @@
 @theme {
   --font-sans: 'Nunito Variable', ui-rounded, system-ui, 'Segoe UI', sans-serif;
 
-  /* Zemin ve mürekkep — keten örtü üzerinde sıcak taş tonları */
+  /* Zemin ve mürekkep - keten örtü üzerinde sıcak taş tonları */
   --color-canvas: #fdfaf3;
   --color-surface: #ffffff;
   --color-ink: #322f2a;
@@ -23,7 +23,7 @@
   --color-brand-mint: #a7f3d0;
   --color-brand-ink: #022c22;
 
-  /* Besin grubu vurguları — uygulamadaki eşlemenin aynısı */
+  /* Besin grubu vurguları - uygulamadaki eşlemenin aynısı */
   --color-sebze: #059669;
   --color-meyve: #f43f5e;
   --color-protein: #f97316;
@@ -236,7 +236,7 @@
     animation: var(--animate-afi-caret);
   }
 
-  /* Kaydırınca beliren bloklar — v-reveal direktifi .is-in ekler */
+  /* Kaydırınca beliren bloklar - v-reveal direktifi .is-in ekler */
   .reveal {
     opacity: 0;
     transform: translateY(26px);

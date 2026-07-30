@@ -7,7 +7,7 @@
  * sinyaline ve `afiet_no_track` opt-out'una saygı gösterir.
  *
  * Yalnız production host'larında (runtimeConfig.public.analyticsDomains) çalışır;
- * dev/preview/staging kapalı — paylaşılan Neon kirlenmez. GÖNDERİM yalnız KVKK
+ * dev/preview/staging kapalı - paylaşılan Neon kirlenmez. GÖNDERİM yalnız KVKK
  * onayı verilmişse yapılır (`afiet_analytics_consent === 'accepted'`, bildirimi
  * `CookieNotice.vue` yazar); "Kabul et" anında geçerli sayfayı sayar.
  */

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Bugün ekranının stilize hali — görsel yalnızca temsilidir, canlı UI değildir. */
+/** Bugün ekranının stilize hali - görsel yalnızca temsilidir, canlı UI değildir. */
 const groups = [
   { label: 'Sebze', dot: 'bg-sebze', done: true },
   { label: 'Meyve', dot: 'bg-meyve', done: false },

@@ -3,7 +3,7 @@ import MarkdownIt from 'markdown-it'
 /**
  * Blog gövdesi render'ı. `html: false` KRİTİK: markdown içindeki ham HTML
  * escape edilir, çıktı v-html ile basılsa da script/iframe enjeksiyonu
- * imkânsızdır — sanitizer bağımlılığına gerek kalmaz. html: true'ya çevirme.
+ * imkânsızdır - sanitizer bağımlılığına gerek kalmaz. html: true'ya çevirme.
  */
 const md = new MarkdownIt({ html: false, linkify: true, typographer: false })
 

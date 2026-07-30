@@ -5,7 +5,7 @@ import type { H3Event } from 'h3'
  * First-party web analitiği toplama katmanı. Beacon `POST /api/track`ten gelen
  * olayları SEO/içerik ile AYNI Neon'da, landing'e ait kendi kendini
  * kuran `analytics_events` tablosuna yazar (golang-migrate şemasından bağımsız).
- * DB yoksa endpoint sessizce 204 döner — analitik hiçbir koşulda siteyi kırmaz.
+ * DB yoksa endpoint sessizce 204 döner - analitik hiçbir koşulda siteyi kırmaz.
  *
  * Tüm kayıt TOPLU/kohort düzeyindedir: IP saklanmaz; ziyaretçi/oturum birinci-
  * taraf çerezle (rastgele UUID) izlenir. Okuma tarafı FAZ 3'te
@@ -123,7 +123,7 @@ export function channelFor(opts: { hasUtm: boolean; refHost: string | null; ourH
   return 'referral'
 }
 
-/** Basit, bağımsız UA ayrıştırma — cihaz/tarayıcı/OS ailesi. */
+/** Basit, bağımsız UA ayrıştırma - cihaz/tarayıcı/OS ailesi. */
 export function parseUa(ua: string): { device: string; browser: string; os: string } {
   const u = ua || ''
   const isTablet = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(u)

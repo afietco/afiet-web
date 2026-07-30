@@ -169,7 +169,7 @@ export function sanitizeRedirect(value: unknown): SeoRedirect {
   const toRaw = typeof value.to === 'string' ? value.to.trim() : fail('to')
   const to = /^https?:\/\//.test(toRaw) ? toRaw : normalizePath(toRaw)
   const code = value.code === 302 ? 302 : 301
-  if (from === '/') fail('from') // ana sayfayı yönlendirme — siteyi kilitler
+  if (from === '/') fail('from') // ana sayfayı yönlendirme - siteyi kilitler
   if (from.startsWith('/api') || from.startsWith('/_nuxt')) fail('from')
   if (from === to) fail('to')
   if (from.length > 500 || to.length > 1000) fail('to')

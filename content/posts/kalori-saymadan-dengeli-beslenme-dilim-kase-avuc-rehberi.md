@@ -1,7 +1,7 @@
 ---
 slug: kalori-saymadan-dengeli-beslenme-dilim-kase-avuc-rehberi
 title: "Kalori saymadan dengeli beslenme: elinle ölç"
-description: "Kalori saymadan dengeli beslenme mümkün: elin ve mutfaktaki doğal ölçülerle — avuç, yumruk, dilim, kase — tabağını nasıl yargısızca dengeleyeceğini öğren."
+description: "Kalori saymadan dengeli beslenme mümkün: elin ve mutfaktaki doğal ölçülerle (avuç, yumruk, dilim, kase) tabağını nasıl yargısızca dengeleyeceğini öğren."
 tags: [dengeli beslenme, porsiyon ölçüsü, sezgisel beslenme, besin grupları]
 item_id: 5
 cover_url: /covers/el-porsiyon-rehberi.png
@@ -10,7 +10,7 @@ published_at:
 
 Kahvaltını yerken telefonuna kaç kalori girdiğini hesapladığın günler oldu mu? Bir dilim ekmeğin, bir avuç cevizin, çayının yanındaki peynirin ardından o küçük rakamların toplanmasını izlemek... Bir süre sonra yemek, sevdiğin bir şey olmaktan çıkıp çözülmesi gereken bir probleme dönüşebiliyor. İyi haber şu: dengeli beslenmek için bu kadar hesaba gerek yok. Çoğu zaman en pratik ölçü aletin, zaten elinde.
 
-Bu yazıda kalori saymadan dengeli beslenmenin nazik bir yolunu paylaşıyoruz: besin gruplarına ve doğal ölçülere — dilim, kase, avuç — bakarak tabağını sezgiyle kurmak. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
+Bu yazıda kalori saymadan dengeli beslenmenin nazik bir yolunu paylaşıyoruz: besin gruplarına ve doğal ölçülere (dilim, kase, avuç) bakarak tabağını sezgiyle kurmak. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
 
 ## Kalori saymak neden çoğumuzu yoruyor?
 
@@ -30,14 +30,14 @@ Güzel tarafı: bu dengeyi görmek için mutfak terazisine de gerek yok. Ölçü
 
 ## Elin senin ölçün
 
-![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ — afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
+![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
 
-Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait — yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/hand-portion-faq), pratik bir başlangıç noktası sunar:
+Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait; yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/hand-portion-faq), pratik bir başlangıç noktası sunar:
 
-- **Avuç içi — protein.** Bir öğündeki et, tavuk, balık ya da köftenin, aşağı yukarı avuç içinin büyüklüğü ve kalınlığı kadar olması iyi bir referans. Mercimek, nohut gibi bitkisel proteinlerde de benzer bir dolgunluk düşün.
-- **Yumruk — sebze.** Sebzede cömert olabilirsin; bir yumruk kadarı güzel bir başlangıç, canın isterse iki yumruk da olur. Burada üst sınır peşinde koşmuyoruz.
-- **Avuç dolusu — tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir avuç dolusu (kabaca bir kupa) pratik bir ölçü.
-- **Başparmak — yağ.** Zeytinyağı, tereyağı, fındık ezmesi gibi yoğun yağlar için başparmağın kadarı iyi bir pusula.
+- **Avuç içi: protein.** Bir öğündeki et, tavuk, balık ya da köftenin, aşağı yukarı avuç içinin büyüklüğü ve kalınlığı kadar olması iyi bir referans. Mercimek, nohut gibi bitkisel proteinlerde de benzer bir dolgunluk düşün.
+- **Yumruk: sebze.** Sebzede cömert olabilirsin; bir yumruk kadarı güzel bir başlangıç, canın isterse iki yumruk da olur. Burada üst sınır peşinde koşmuyoruz.
+- **Avuç dolusu: tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir avuç dolusu (kabaca bir kupa) pratik bir ölçü.
+- **Başparmak: yağ.** Zeytinyağı, tereyağı, fındık ezmesi gibi yoğun yağlar için başparmağın kadarı iyi bir pusula.
 
 İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın. Menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerde bunun karşılığını merak ediyorsan, [el ölçüsüyle porsiyon rehberimize](/blog/porsiyon-olculeri-el-olcusu) göz atabilirsin.
 
@@ -76,11 +76,11 @@ Bir öğünde ölçüyü kaçırdıysan da sorun yok. Bir tabak yemek, bir gün�
 
 Her şeyi bir anda değiştirmen gerekmiyor. En güzeli, tek bir öğünle başlamak.
 
-Yarın sadece bir öğünde tabağına bak ve sor: proteinim var mı (avuç içi), sebzem var mı (yumruk), enerjim var mı (avuç dolusu tahıl)? Eksik bir misafir varsa nazikçe davet et. Bu kadar. Birkaç gün sonra bu bakış kendiliğinden gelmeye başlar; işte alışkanlık böyle oturur — zorlamayla değil, tekrar eden küçük ve keyifli anlarla.
+Yarın sadece bir öğünde tabağına bak ve sor: proteinim var mı (avuç içi), sebzem var mı (yumruk), enerjim var mı (avuç dolusu tahıl)? Eksik bir misafir varsa nazikçe davet et. Bu kadar. Birkaç gün sonra bu bakış kendiliğinden gelmeye başlar; işte alışkanlık böyle oturur; zorlamayla değil, tekrar eden küçük ve keyifli anlarla.
 
 Bu yolculukta yalnız değilsin. [afiet](/), sofrada seni seven bir arkadaş gibi; kalori saymak yerine dilim, kase ve avuçla dengeyi görmene yardım ediyor. Daha fazla nazik rehber için [blogumuzdaki diğer yazılara](/blog) da göz atabilirsin.
 
-Ölçüyü elinde taşımak güzel geldiyse, afiet'i denemek istediğinde seni bekliyoruz — sayma, birlikte dengele.
+Ölçüyü elinde taşımak güzel geldiyse, afiet'i denemek istediğinde seni bekliyoruz: sayma, birlikte dengele.
 
 ## Sık sorulanlar
 

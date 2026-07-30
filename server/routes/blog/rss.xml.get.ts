@@ -1,7 +1,7 @@
 import { getPublishedPosts } from '~~/server/utils/contentStore'
 import { getSeoBundle, xmlEscape } from '~~/server/utils/seoStore'
 
-/** RSS 2.0 — yayındaki blog yazıları; kanal metası panel ayarlarından. */
+/** RSS 2.0 - yayındaki blog yazıları; kanal metası panel ayarlarından. */
 export default defineEventHandler(async (event) => {
   const [{ settings }, posts] = await Promise.all([getSeoBundle(event), getPublishedPosts(event)])
   const g = settings.general

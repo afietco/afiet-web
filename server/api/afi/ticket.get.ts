@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 
 /**
- * "Afi'ye sor" bileti — kısa ömürlü, imzalı, tek oturumluk.
+ * "Afi'ye sor" bileti - kısa ömürlü, imzalı, tek oturumluk.
  *
  * Neden var: panel anonim, dolayısıyla kotayı asacak bir kullanıcı kimliği yok.
  * Bilet backend'e şunu kanıtlar: istek bizim sayfamızdan geldi (yalnız afiet-web
