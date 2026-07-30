@@ -90,14 +90,46 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - 404 artık gerçektir (`app/error.vue`, markalı) - eski deploy'daki "her yol
   200 + ana sayfa" soft-404 davranışına geri dönme.
 
-## Blog & içerik planı (panelden + Claude ile)
+## Blog & içerik takvimi (panelden + Claude ile)
 
-- Veri modeli: `server/utils/contentStore.ts` - `content_items` (panel içerik
-  planı), `blog_posts` (yazılar; runtime kaynağı DB'dir), `content_metrics`
-  (elle girilen ölçümler). SEO tabloları gibi kendi kendini kurar; tipler
-  `contentTypes.ts` ↔ afiet-admin `src/services/content.ts` BİREBİR aynadır.
+- Veri modeli: `server/utils/contentStore.ts` - `content_items` (takvim
+  etkinlikleri), `blog_posts` (yazılar; runtime kaynağı DB'dir),
+  `content_metrics` (ölçümler), `content_attachments` (indirilebilir ekler).
+  SEO tabloları gibi kendi kendini kurar; tipler `contentTypes.ts` ↔
+  afiet-admin `src/services/content.ts` BİREBİR aynadır.
+- **Şema büyürken:** tablolar prod'da veriyle yaşıyor, `CREATE TABLE IF NOT
+  EXISTS` yetmez. `ensureContentTables` eklemeli ALTER'ları da koşar
+  (`ADD COLUMN IF NOT EXISTS` + adlandırılmış CHECK'i düşür/ekle). Kolon SİLME
+  ya da tip daraltma yapılmaz. Platform/biçim listesi büyüyünce DB CHECK'i ile
+  `contentTypes.ts > CHANNELS / CONTENT_FORMATS` HEP birlikte değişir (yoksa
+  panel sessiz 400/422 alır).
+- Etkinlik iki eksenlidir: `channel` = platform (blog | instagram | x | tiktok |
+  youtube; DB kolon adı tarihsel olarak "channel", UI'da "platform" yazar) ve
+  `format` (yazi | reel | carousel | story | post | shorts | video). Hangi
+  platformda hangi biçim geçerli: `FORMATS_BY_CHANNEL` (doğrulama + UI aynı
+  listeyi okur).
+- Zaman: `planned_at timestamptz` + `all_day` tek gerçektir; `planned_date`
+  geriye uyum için türetilip yazılmaya devam eder. Takvim **Europe/Istanbul**
+  duvar saatinde çalışır (`CONTENT_TZ`), tarayıcının yereli kullanılmaz.
 - Panel uçları: `/api/admin/content*` (GET/PUT/DELETE - `requireAdmin`,
   503 `db_bagli_degil`, 422 `gecersiz_alan:<alan>`, yazmalar taze payload döner).
+  Sürükle-bırak için ayrı `PUT /api/admin/content/move` (yalnız zamanı taşır,
+  diğer alanları ezmez).
+- **Ekler (Google Cloud Storage):** kova `gs://afiet-icerik` (europe-west1,
+  herkese açık erişim KAPALI, lifecycle silme YOK, ortamlar `prod/ staging/
+  dev/` prefix'iyle ayrılır). Dosya sunucudan GEÇMEZ: `POST .../attachment`
+  imzalı PUT bileti verir, panel doğrudan kovaya yükler, `PUT .../attachment`
+  nesneyi HEAD'le doğrulayıp satırı `hazir` yapar. Sebep: Vercel'in ~4.5MB
+  gövde sınırı reel videolarını taşımaz. İndirme kalıcı URL değildir,
+  `GET .../attachment-url` 15 dakikalık imza üretir.
+  İmzalama `server/utils/gcsSign.ts`: **bağımlılık yok**, Web Crypto ile V4
+  (repoda @types/node yok, `node:crypto` kullanma). Sunucu HEAD/DELETE için de
+  kendine imza atar, OAuth token takası hiç yok.
+  Anahtar: Secret Manager `app-content-gcs-key` → `NUXT_GCS_SA_KEY` (base64).
+  Servis hesabı `content-storage@afiet-co` yalnız bu kovada objectAdmin. BOŞ
+  anahtar = yükleme kapalı, takvimin geri kalanı çalışır (`storageReady:false`).
+  Kova CORS'unda yeni bir panel origin'i yoksa tarayıcı yüklemesi preflight'ta
+  düşer (`gcloud storage buckets update --cors-file`).
 - Public: `/blog` + `/blog/[slug]` (routeRules isr:60) `/api/blog/posts*`ten
   beslenir; gövde sunucuda **markdown-it `html:false`** ile render edilir -
   ham HTML escape edilir, `html: true`'ya ÇEVİRME (v-html güvenliği buna dayalı).
@@ -110,6 +142,42 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   panel içeriğini "yayında" yapar). Görünürlük: sayfa ≤ ~2 dk, sitemap/RSS ≤ 5 dk.
   Yayından kaldırma: `--unpublish <slug>`. md dosyaları sürümlü YEDEKTİR;
   script'teki DDL `contentStore.ts` ile senkron tutulur.
+
+## Sosyal hesaplar & otomatik ölçüm (Faz 2)
+
+- Model: `server/utils/socialStore.ts` - `social_accounts` (bağlı hesap +
+  ŞİFRELİ token) ve `social_posts` (platformdan çekilen gönderi; takvim
+  etkinliğine `item_id` ile bağlanır). Tipler `socialTypes.ts` ↔ afiet-admin
+  `src/services/social.ts` BİREBİR aynadır.
+- **Instagram yolu:** "Instagram API with Instagram Login"
+  (`graph.instagram.com`), izinler `instagram_business_basic` +
+  `instagram_business_manage_insights`. **Kendi hesabımız için App Review
+  GEREKMEZ**: hesap Meta uygulamasında tester/developer rolündeyse Standard
+  Access yeter.
+- Bağlama akışı: panel `GET /api/admin/social/instagram-start` ile imzalı
+  `state` içeren authorize adresini alır → kullanıcı izin verir → Meta
+  `GET /api/social/instagram/callback`e döner (bu uç PUBLIC olmak zorunda;
+  güvenlik `state` HMAC'i + 10 dk ömür). Token uzun ömürlüye çevrilip
+  AES-256-GCM ile şifrelenerek saklanır (`socialCrypto.ts`,
+  `NUXT_SOCIAL_TOKEN_KEY`). Meta'ya kayıtlı redirect TEK adres olduğu için
+  bağlama **yalnız production'da** çalışır.
+- **Ölçüm webhook'u YOK** (hiçbir platform vermiyor): `POST /api/cron/social-metrics`
+  günde bir çalışır (Cloud Scheduler `app-social-metrics-prod`, 06:00
+  Europe/Istanbul, `X-Cron-Secret` = `NUXT_CRON_SECRET`). Cron: token bitişine
+  20 günden az kaldıysa yeniler → son 25 gönderiyi çeker → eşleştirir →
+  eşleşenlerin insight'larını `content_metrics`e (source `instagram`) yazar.
+  Meta 90 günden eskisini vermediği için anlık görüntüyü almazsak geçmiş
+  kaybolur; tarih başına tek satır (`UNIQUE (item_id, metric_date)`).
+- Eşleştirme SADECE `platform_post_id` ya da `published_url` = permalink ile
+  yapılır; caption benzerliğine BAKILMAZ (yanlış eşleşme eşleşmemekten kötü).
+  Eşleşmeyen gönderi panelde listelenir, tek tıkla bağlanır
+  (`PUT /api/admin/social/link`).
+- Metrik adları v22.0 sonrasıdır: `views, reach, likes, comments, saved,
+  shares, total_interactions`. `impressions` ve `video_views` KALDIRILDI, geri
+  ekleme. Story'de `saved` yok, o yüzden metrik seti biçime göre daralır ve
+  hata olursa `views,reach`e düşerek yeniden dener.
+- Token/sır loglanmaz: Graph hataları URL'siz, yalnız type+code+message olarak
+  yazılır (URL'de access_token olabilir).
 
 ## Komutlar
 
