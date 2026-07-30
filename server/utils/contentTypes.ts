@@ -15,8 +15,12 @@ export type Channel = 'blog' | 'instagram' | 'x' | 'tiktok' | 'youtube'
 export type ContentFormat = 'yazi' | 'reel' | 'carousel' | 'story' | 'post' | 'shorts' | 'video'
 export type ContentStatus = 'fikir' | 'planlandi' | 'uretimde' | 'yayinda' | 'arsiv'
 export type BlogPostStatus = 'taslak' | 'yayinda'
-/** Ölçümün nereden geldiği: elle mi girildi, platform API'sinden mi çekildi. */
-export type MetricSource = 'elle' | 'instagram' | 'youtube' | 'tiktok' | 'x'
+/**
+ * Ölçümün nereden geldiği: elle mi girildi, platform API'sinden mi çekildi,
+ * yoksa panele indirilen dışa aktarım dosyasından mı ('csv', ör. Meta Business
+ * Suite > Insights > Export Data).
+ */
+export type MetricSource = 'elle' | 'csv' | 'instagram' | 'youtube' | 'tiktok' | 'x'
 /** Ek yaşam döngüsü: imza verildi (bekliyor) → nesne kovada doğrulandı (hazir). */
 export type AttachmentStatus = 'bekliyor' | 'hazir'
 export type AttachmentKind = 'video' | 'gorsel' | 'pdf'
@@ -24,7 +28,9 @@ export type AttachmentKind = 'video' | 'gorsel' | 'pdf'
 export const CHANNELS: Channel[] = ['blog', 'instagram', 'x', 'tiktok', 'youtube']
 export const CONTENT_FORMATS: ContentFormat[] = ['yazi', 'reel', 'carousel', 'story', 'post', 'shorts', 'video']
 export const CONTENT_STATUSES: ContentStatus[] = ['fikir', 'planlandi', 'uretimde', 'yayinda', 'arsiv']
-export const METRIC_SOURCES: MetricSource[] = ['elle', 'instagram', 'youtube', 'tiktok', 'x']
+export const METRIC_SOURCES: MetricSource[] = ['elle', 'csv', 'instagram', 'youtube', 'tiktok', 'x']
+/** Tek istekte içe aktarılabilecek en fazla ölçüm satırı. */
+export const METRICS_IMPORT_MAX = 500
 
 /** Hangi platformda hangi biçimler anlamlı - doğrulama ve UI aynı listeyi okur. */
 export const FORMATS_BY_CHANNEL: Record<Channel, ContentFormat[]> = {
@@ -111,6 +117,10 @@ export type ContentMetric = {
   shares: number
   saves: number
   clicks: number
+  /** Instagram/TikTok gibi platformlardan gelen tekil erisim (elle girisde 0). */
+  reach: number
+  /** Platformun "total_interactions" karsiligi; elle girisde 0. */
+  interactions: number
   notes: string
   source: MetricSource
 }

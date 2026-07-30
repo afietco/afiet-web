@@ -40,6 +40,11 @@ setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
   gcs=$(secret app-content-gcs-key | base64 | tr -d '\n')
   add NUXT_GCS_SA_KEY "$gcs" "$env" $branch
   add NUXT_GCS_BUCKET "afiet-icerik" "$env" $branch
+  # Sosyal hesap token'larinin sifreleme anahtari (uc ortamda AYNI) + ortam
+  # basina cron sirri. Instagram app kimlikleri BURADA YOK: Meta uygulamasi
+  # elle acilir ve NUXT_IG_APP_ID/SECRET tek seferlik elle girilir.
+  add NUXT_SOCIAL_TOKEN_KEY "$(secret app-social-token-key)" "$env" $branch
+  add NUXT_CRON_SECRET "$(secret app-$p-cron-secret)" "$env" $branch
 }
 
 echo "→ development dalı (preview): dev Stack projesi + dev Neon"

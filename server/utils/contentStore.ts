@@ -152,6 +152,12 @@ export async function ensureContentTables(sql: Sql) {
   `
   // Ölçüm kaynağı: elle mi girildi, platform API'sinden mi geldi (Faz 2).
   await sql`ALTER TABLE content_metrics ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'elle'`
+  // Platformdan gelen iki ek ölçü; elle girişte 0 kalır.
+  await sql`
+    ALTER TABLE content_metrics
+      ADD COLUMN IF NOT EXISTS reach int NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS interactions int NOT NULL DEFAULT 0
+  `
   // Etkinliğe bağlı indirilebilir dosyalar; nesne gs://<kova>/<object_key>'de.
   await sql`
     CREATE TABLE IF NOT EXISTS content_attachments (
@@ -266,6 +272,8 @@ function mapMetric(r: Row): ContentMetric {
     shares: Number(r.shares),
     saves: Number(r.saves),
     clicks: Number(r.clicks),
+    reach: Number(r.reach ?? 0),
+    interactions: Number(r.interactions ?? 0),
     notes: String(r.notes ?? ''),
     source: (r.source as ContentMetric['source']) ?? 'elle',
   }
@@ -399,12 +407,15 @@ export async function upsertMetric(sql: Sql, input: ContentMetricInput): Promise
   const exists = await sql`SELECT 1 FROM content_items WHERE id = ${input.itemId}`
   if (!exists.length) throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:itemId' })
   await sql`
-    INSERT INTO content_metrics (item_id, metric_date, views, likes, comments, shares, saves, clicks, notes, source)
+    INSERT INTO content_metrics (item_id, metric_date, views, likes, comments, shares, saves, clicks,
+                                 reach, interactions, notes, source)
     VALUES (${input.itemId}, ${input.metricDate}, ${input.views}, ${input.likes}, ${input.comments},
-            ${input.shares}, ${input.saves}, ${input.clicks}, ${input.notes}, ${input.source})
+            ${input.shares}, ${input.saves}, ${input.clicks}, ${input.reach}, ${input.interactions},
+            ${input.notes}, ${input.source})
     ON CONFLICT (item_id, metric_date) DO UPDATE SET
       views = EXCLUDED.views, likes = EXCLUDED.likes, comments = EXCLUDED.comments,
       shares = EXCLUDED.shares, saves = EXCLUDED.saves, clicks = EXCLUDED.clicks,
+      reach = EXCLUDED.reach, interactions = EXCLUDED.interactions,
       notes = EXCLUDED.notes, source = EXCLUDED.source, updated_at = now()
   `
 }

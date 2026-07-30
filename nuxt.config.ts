@@ -60,6 +60,23 @@ export default defineNuxtConfig({
     // (development | staging | production). Preview biletinin prod'da
     // geçmemesini bu alan sağlar. Env: NUXT_ASK_ENV.
     askEnv: '',
+    // ── Sosyal hesaplar / otomatik ölçüm (Faz 2) ──────────────────────────
+    // Instagram uygulama kimlikleri (Meta app > Instagram API with Instagram
+    // Login). BOŞ = bağlama akışı kapalı, panel bunu rozetle söyler ve takvim
+    // çalışmaya devam eder. Env: NUXT_IG_APP_ID / NUXT_IG_APP_SECRET.
+    igAppId: '',
+    igAppSecret: '',
+    // Meta'ya KAYITLI redirect_uri; tek bir adres olmak zorunda, o yüzden
+    // bağlama akışı yalnız production'da çalışır:
+    // https://afiet.co/api/social/instagram/callback
+    igRedirectUri: '',
+    // Erişim token'larını DB'de şifrelemek için 32 baytlık base64 anahtar
+    // (Secret Manager: app-social-token-key). BOŞ = hesap bağlama 503 döner;
+    // yarım şifreleme yapılmaz. Env: NUXT_SOCIAL_TOKEN_KEY.
+    socialTokenKey: '',
+    // Cloud Scheduler'ın /api/cron/* uçlarına verdiği X-Cron-Secret başlığı.
+    // BOŞ = cron uçları 503 (yanlışlıkla açık kalmasın). Env: NUXT_CRON_SECRET.
+    cronSecret: '',
     // İçerik takvimi ekleri (gs://afiet-icerik): imzalı yükleme/indirme.
     // Anahtar Secret Manager'daki `app-content-gcs-key`in base64'ü (ham JSON
     // da kabul edilir). BOŞ = ek yükleme kapalı, panel bunu rozetle söyler ve
