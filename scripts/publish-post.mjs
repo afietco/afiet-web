@@ -52,14 +52,17 @@ async function confirm(question) {
 }
 
 // contentStore.ts ile SENKRON tut - aynı tablolar, aynı DDL.
+// NOT: bu script yalnız blog yayınlar; takvim kolonlarını (planned_at, caption,
+// format, ekler...) BURADA kurmaya çalışmaz - onları panelin dokunduğu
+// `ensureContentTables` kurar. Buradaki DDL sıfırdan bir DB'de yazının
+// bağlanacağı iki tablonun VAR OLMASINI garanti etmek içindir.
 async function ensureTables(sql) {
   await sql`
     CREATE TABLE IF NOT EXISTS content_items (
       id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-      channel text NOT NULL CHECK (channel IN ('blog','instagram','x')),
+      channel text NOT NULL,
       title text NOT NULL,
-      status text NOT NULL DEFAULT 'fikir'
-        CHECK (status IN ('fikir','planlandi','uretimde','yayinda','arsiv')),
+      status text NOT NULL DEFAULT 'fikir',
       slug text,
       brief jsonb NOT NULL DEFAULT '{}'::jsonb,
       planned_date date,
