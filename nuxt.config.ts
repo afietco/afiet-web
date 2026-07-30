@@ -60,6 +60,12 @@ export default defineNuxtConfig({
     // (development | staging | production). Preview biletinin prod'da
     // geçmemesini bu alan sağlar. Env: NUXT_ASK_ENV.
     askEnv: '',
+    // İçerik takvimi ekleri (gs://afiet-icerik): imzalı yükleme/indirme.
+    // Anahtar Secret Manager'daki `app-content-gcs-key`in base64'ü (ham JSON
+    // da kabul edilir). BOŞ = ek yükleme kapalı, panel bunu rozetle söyler ve
+    // takvimin geri kalanı çalışmaya devam eder. Env: NUXT_GCS_SA_KEY.
+    gcsSaKey: '',
+    gcsBucket: 'afiet-icerik',
     // Resend API anahtarı (posta.afiet.co): yeni beta başvurusunda ekibe
     // bildirim maili atılır. Boşken mail hiç denenmez, başvuru etkilenmez.
     // Env: NUXT_RESEND_API_KEY.

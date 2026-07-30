@@ -33,6 +33,13 @@ setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
   # geliştirme makinesindeki string prod'u gösterirse preview'lar prod'a yazar.
   db=$(secret "app-$p-database-url")
   add NUXT_DATABASE_URL "$db" "$env" $branch
+  # İçerik takvimi ekleri: TEK servis hesabı anahtarı üç ortamda da aynıdır
+  # (kova bir, ortamlar nesne prefix'i ile ayrılır: prod/ staging/ dev/).
+  # base64: Vercel env'inde çok satırlı JSON taşımak kırılgan.
+  local gcs
+  gcs=$(secret app-content-gcs-key | base64 | tr -d '\n')
+  add NUXT_GCS_SA_KEY "$gcs" "$env" $branch
+  add NUXT_GCS_BUCKET "afiet-icerik" "$env" $branch
 }
 
 echo "→ development dalı (preview): dev Stack projesi + dev Neon"
