@@ -90,9 +90,6 @@ export default defineNuxtConfig({
     // bildirim maili atılır. Boşken mail hiç denenmez, başvuru etkilenmez.
     // Env: NUXT_RESEND_API_KEY.
     resendApiKey: '',
-    // Makine çağrılı cron uçlarının sırrı (X-Cron-Secret başlığı).
-    // Boşken cron uçları 503 döner. Env: NUXT_CRON_SECRET.
-    cronSecret: '',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
