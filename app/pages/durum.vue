@@ -1,15 +1,29 @@
 <script setup lang="ts">
-import {
-  components,
-  incidents,
-  overall,
-  providers,
-  STATE_LABEL,
-  type ServiceState,
-} from '~/data/status'
+/**
+ * Sistem durumu sayfası. Veri /api/status'tan gelir (cron 5 dk'da bir yazar,
+ * yanıt 60 sn ISR ile önbellekli); sayfa açıkken dakikada bir tazelenir.
+ * Saat metinleri hep İstanbul saatiyle basılır ki SSR (UTC) ile istemci
+ * aynı çıktıyı üretsin (hydration farkı olmasın).
+ */
+type ServiceState = 'up' | 'degraded' | 'down' | 'none'
+
+const { data: status, refresh } = await useFetch('/api/status', { key: 'status' })
+
+let timer: ReturnType<typeof setInterval> | undefined
+onMounted(() => {
+  timer = setInterval(() => refresh(), 60_000)
+})
+onUnmounted(() => clearInterval(timer))
 
 // Meta/canonical panelden yönetilir (varsayılanlar seoDefaults.ts'te).
 usePageSeo()
+
+const STATE_LABEL: Record<ServiceState, string> = {
+  up: 'Çalışıyor',
+  degraded: 'Yavaşlama',
+  down: 'Kesinti',
+  none: 'Veri yok',
+}
 
 /** Durum noktası ve rozet renkleri; 'none' gri kalır (henüz veri yok). */
 const dotClasses: Record<ServiceState, string> = {
@@ -34,7 +48,7 @@ const barClasses: Record<ServiceState, string> = {
 }
 
 /* Tailwind sınıfları kaynakta düz metin olmalı; HeroSection'daki eşlemenin aynısı. */
-const accentDot: Record<(typeof components)[number]['accent'], string> = {
+const accentDot: Record<string, string> = {
   sebze: 'bg-sebze',
   meyve: 'bg-meyve',
   protein: 'bg-protein',
@@ -56,15 +70,74 @@ const bannerText: Record<ServiceState, string> = {
   none: 'Durum verisi toplanıyor',
 }
 
-const title = heroTitle[overall.state]
+const overallState = computed<ServiceState>(() => status.value?.overall.state ?? 'none')
+const title = computed(() => heroTitle[overallState.value])
 
-/** Bar başlığı: "29 Temmuz · Kesinti (29 dk)" gibi. */
-function dayTitle(date: string, state: ServiceState, note?: string) {
+/** Bileşen id'sinden görünen ada (olayların "Etkilenen" satırı için). */
+const componentName = computed(() => {
+  const map = new Map<string, string>()
+  for (const c of status.value?.components ?? []) map.set(c.id, c.name)
+  return (id: string) => map.get(id) ?? id
+})
+
+function fmtTime(iso: string) {
+  return new Date(iso).toLocaleTimeString('tr-TR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Istanbul',
+  })
+}
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Istanbul',
+  })
+}
+
+const checkedAtLabel = computed(() => {
+  const iso = status.value?.overall.checkedAt
+  return iso ? `${fmtTime(iso)} (TSİ)` : 'henüz yok'
+})
+
+/** Bar başlığı: "29 Temmuz · Kesinti" gibi. */
+function dayTitle(date: string, state: ServiceState) {
   const label = new Date(`${date}T12:00:00`).toLocaleDateString('tr-TR', {
     day: 'numeric',
     month: 'long',
   })
-  return note ? `${label} · ${note}` : `${label} · ${STATE_LABEL[state]}`
+  return `${label} · ${STATE_LABEL[state]}`
+}
+
+function fmtUptime(uptime: number | null) {
+  if (uptime === null) return 'henüz veri yok'
+  return `Çalışma oranı: %${uptime.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}`
+}
+
+function duration(startedAt: string, resolvedAt: string | null) {
+  if (!resolvedAt) return 'sürüyor'
+  const mins = Math.max(1, Math.round((+new Date(resolvedAt) - +new Date(startedAt)) / 60_000))
+  const h = Math.floor(mins / 60)
+  return h > 0 ? `${h} saat ${mins % 60} dakika` : `${mins} dakika`
+}
+
+/** Olay zaman çizgisi: açılış notu + (çözüldüyse) kapanış satırı. */
+function incidentUpdates(inc: { detail: string; startedAt: string; resolvedAt: string | null }) {
+  const updates = [
+    {
+      time: fmtTime(inc.startedAt),
+      text: inc.detail || 'Sorun tespit edildi; inceliyoruz.',
+    },
+  ]
+  if (inc.resolvedAt) {
+    updates.push({
+      time: fmtTime(inc.resolvedAt),
+      text: 'Sorun giderildi, servisler normale döndü.',
+    })
+  }
+  return updates
 }
 </script>
 
@@ -111,18 +184,18 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
           <span class="relative flex h-3.5 w-3.5" aria-hidden="true">
             <span
               class="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
-              :class="dotClasses[overall.state]"
+              :class="dotClasses[overallState]"
             />
             <span
               class="relative inline-flex h-3.5 w-3.5 rounded-full"
-              :class="dotClasses[overall.state]"
+              :class="dotClasses[overallState]"
             />
           </span>
           <span class="text-lg font-extrabold tracking-tight text-ink">
-            {{ bannerText[overall.state] }}
+            {{ bannerText[overallState] }}
           </span>
           <span class="text-sm font-bold text-muted">
-            Son kontrol: {{ overall.checkedAt }} · {{ overall.intervalNote }}
+            Son kontrol: {{ checkedAtLabel }} · Servisler 5 dakikada bir denetlenir.
           </span>
         </div>
       </div>
@@ -132,7 +205,7 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
     <section class="mx-auto max-w-4xl px-5 pb-8" aria-label="Servis bileşenleri">
       <ul class="flex flex-col gap-4">
         <li
-          v-for="(c, i) in components"
+          v-for="(c, i) in status?.components ?? []"
           :key="c.id"
           v-reveal="i * 60"
           class="reveal rounded-3xl border border-line bg-surface p-5 shadow-lift sm:p-6"
@@ -162,12 +235,12 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
               :key="d.date"
               class="min-w-0 flex-1 rounded-[2px] transition hover:opacity-70"
               :class="[barClasses[d.state], j < 45 ? 'hidden sm:block' : '']"
-              :title="dayTitle(d.date, d.state, d.note)"
+              :title="dayTitle(d.date, d.state)"
             />
           </div>
           <div class="mt-2 flex items-center justify-between text-xs font-bold text-muted">
             <span><span class="sm:hidden">45</span><span class="hidden sm:inline">90</span> gün önce</span>
-            <span>Çalışma oranı: %{{ c.uptime }}</span>
+            <span>{{ fmtUptime(c.uptime) }}</span>
             <span>bugün</span>
           </div>
         </li>
@@ -184,7 +257,7 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
         düzenli olarak okunur.
       </p>
       <ul class="mt-4 grid gap-3 sm:grid-cols-2">
-        <li v-for="(p, i) in providers" :key="p.name" v-reveal="i * 60" class="reveal">
+        <li v-for="(p, i) in status?.providers ?? []" :key="p.id" v-reveal="i * 60" class="reveal">
           <a
             :href="p.url"
             target="_blank"
@@ -216,9 +289,9 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
         Geçmiş olaylar
       </h2>
 
-      <ol class="mt-4 flex flex-col gap-4">
+      <ol v-if="status?.incidents.length" class="mt-4 flex flex-col gap-4">
         <li
-          v-for="inc in incidents"
+          v-for="inc in status.incidents"
           :key="inc.id"
           v-reveal
           class="reveal rounded-3xl border border-line bg-surface p-6 shadow-lift"
@@ -227,16 +300,21 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
             <h3 class="text-lg font-extrabold tracking-tight text-ink">{{ inc.title }}</h3>
             <span
               class="rounded-full px-3 py-1 text-xs font-extrabold"
-              :class="inc.resolved ? 'bg-brand-mint/40 text-brand-deep' : 'bg-tahil/15 text-tahil'"
+              :class="inc.resolvedAt ? 'bg-brand-mint/40 text-brand-deep' : 'bg-tahil/15 text-tahil'"
             >
-              {{ inc.resolved ? 'Çözüldü' : 'İzleniyor' }}
+              {{ inc.resolvedAt ? 'Çözüldü' : 'İzleniyor' }}
             </span>
           </div>
           <p class="mt-1 text-xs font-bold text-muted">
-            {{ inc.date }} · {{ inc.duration }} · Etkilenen: {{ inc.affected.join(', ') }}
+            {{ fmtDate(inc.startedAt) }} · {{ duration(inc.startedAt, inc.resolvedAt) }} ·
+            Etkilenen: {{ inc.affected.map(componentName).join(', ') }}
           </p>
           <ol class="mt-4 flex flex-col gap-3 border-l-2 border-line pl-4">
-            <li v-for="u in inc.updates" :key="u.time" class="text-[15px] leading-relaxed text-soft">
+            <li
+              v-for="u in incidentUpdates(inc)"
+              :key="u.time"
+              class="text-[15px] leading-relaxed text-soft"
+            >
               <span class="font-extrabold text-ink">{{ u.time }}</span>
               <span class="mx-1.5 text-muted" aria-hidden="true">·</span>{{ u.text }}
             </li>
@@ -245,7 +323,12 @@ function dayTitle(date: string, state: ServiceState, note?: string) {
       </ol>
 
       <p class="mt-4 text-sm leading-relaxed text-soft">
-        Son 90 günde başka olay kaydedilmedi. Bir sorun mu fark ettin? Bize
+        {{
+          status?.incidents.length
+            ? 'Son 90 günde başka olay kaydedilmedi.'
+            : 'Son 90 günde olay kaydedilmedi.'
+        }}
+        Bir sorun mu fark ettin? Bize
         <a
           href="mailto:destek@afiet.co"
           class="font-bold text-brand-deep underline underline-offset-2 hover:text-brand"
