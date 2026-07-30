@@ -16,7 +16,7 @@ if (error.value || !post.value) {
   })
 }
 
-// Meta/JSON-LD sunucuda çözülür (BlogPosting + Breadcrumb — seoStore).
+// Meta/JSON-LD sunucuda çözülür (BlogPosting + Breadcrumb - seoStore).
 usePageSeo()
 
 const fmtDate = (iso: string | null) =>
@@ -54,7 +54,7 @@ const fmtDate = (iso: string | null) =>
       </p>
     </header>
 
-    <!-- Kapak: alt="" bilinçli — başlık ve açıklama hemen yanında, görsel
+    <!-- Kapak: alt="" bilinçli - başlık ve açıklama hemen yanında, görsel
          onları tekrar eder. width/height CLS'i keser, LCP olduğu için lazy yok. -->
     <img
       v-if="post.coverUrl"
@@ -70,9 +70,9 @@ const fmtDate = (iso: string | null) =>
 
     <footer class="mt-12 border-t border-line pt-8">
       <p class="font-bold text-soft">
-        afiet yakında App Store ve Google Play’de —
-        <NuxtLink to="/#haber" class="font-extrabold text-brand transition hover:text-brand-deep"
-          >çıkınca haber ver</NuxtLink
+        afiet şimdi beta’da:
+        <NuxtLink to="/beta" class="font-extrabold text-brand transition hover:text-brand-deep"
+          >sofrada yerini ayır</NuxtLink
         >
       </p>
       <NuxtLink to="/blog" class="btn-ghost mt-6">{{ blog.back }}</NuxtLink>
@@ -81,7 +81,7 @@ const fmtDate = (iso: string | null) =>
 </template>
 
 <style scoped>
-/* Markdown gövdesi — typography eklentisi yok, tema tokenlarıyla elle. */
+/* Markdown gövdesi - typography eklentisi yok, tema tokenlarıyla elle. */
 .post-body {
   color: var(--color-soft);
   font-size: 16.5px;

@@ -1,7 +1,7 @@
 import { buildRobotsTxt, getSeoBundle } from '~~/server/utils/seoStore'
 
 /**
- * Dinamik robots.txt — AI bot izinleri ve ek kurallar panelden yönetilir.
+ * Dinamik robots.txt - AI bot izinleri ve ek kurallar panelden yönetilir.
  * (Statik public/robots.txt kaldırıldı; bu route onun yerini alır.)
  */
 export default defineEventHandler(async (event) => {

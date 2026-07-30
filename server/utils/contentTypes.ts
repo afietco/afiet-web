@@ -2,7 +2,7 @@
  * İçerik planı + blog veri sözleşmesi (kaynak-of-truth).
  *
  * Panel tarafındaki afiet-admin/src/services/content.ts bu tiplerin BİREBİR
- * aynasıdır — alan eklerken/değiştirirken iki ucu birlikte güncelle.
+ * aynasıdır - alan eklerken/değiştirirken iki ucu birlikte güncelle.
  * (seoTypes ↔ webApi.ts ile aynı kural.)
  */
 
@@ -13,7 +13,7 @@ export type BlogPostStatus = 'taslak' | 'yayinda'
 export const CHANNELS: Channel[] = ['blog', 'instagram', 'x']
 export const CONTENT_STATUSES: ContentStatus[] = ['fikir', 'planlandi', 'uretimde', 'yayinda', 'arsiv']
 
-/** İçerik brief'i — panelin "prompt-ready" alanları; jsonb olarak saklanır. */
+/** İçerik brief'i - panelin "prompt-ready" alanları; jsonb olarak saklanır. */
 export type ContentBrief = {
   keywords: string[]
   audience: string
@@ -34,7 +34,7 @@ export type ContentItem = {
   /** Yalnız blog kanalı; afiet.co/blog/<slug>. */
   slug: string | null
   brief: ContentBrief
-  /** YYYY-MM-DD — hedeflenen yayın günü. */
+  /** YYYY-MM-DD - hedeflenen yayın günü. */
   plannedDate: string | null
   publishedUrl: string | null
   createdAt: string
@@ -44,7 +44,7 @@ export type ContentItem = {
 /** PUT gövdesi: id varsa güncelleme, yoksa ekleme. */
 export type ContentItemInput = Omit<ContentItem, 'id' | 'createdAt' | 'updatedAt'> & { id?: number }
 
-/** Elle girilen dönemsel ölçüm — (itemId, metricDate) benzersizdir, üzerine yazar. */
+/** Elle girilen dönemsel ölçüm - (itemId, metricDate) benzersizdir, üzerine yazar. */
 export type ContentMetric = {
   id: number
   itemId: number

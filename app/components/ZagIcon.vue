@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Zag kartlarının el çizimi duotone ikonları (currentColor). */
-defineProps<{ name: 'denge' | 'sofra' | 'aile' | 'sefkat' }>()
+defineProps<{ name: 'denge' | 'sofra' | 'afi' | 'ritim' | 'aile' | 'sefkat' }>()
 </script>
 
 <template>
@@ -14,7 +14,7 @@ defineProps<{ name: 'denge' | 'sofra' | 'aile' | 'sefkat' }>()
     stroke-linejoin="round"
     aria-hidden="true"
   >
-    <!-- beş grup, yay üzerinde — üçü dolu, denge tamamlanıyor -->
+    <!-- beş grup, yay üzerinde - üçü dolu, denge tamamlanıyor -->
     <template v-if="name === 'denge'">
       <circle cx="4" cy="13" r="1.7" fill="currentColor" stroke="none" />
       <circle cx="8" cy="7.8" r="1.7" fill="currentColor" stroke="none" />
@@ -28,6 +28,20 @@ defineProps<{ name: 'denge' | 'sofra' | 'aile' | 'sefkat' }>()
     <template v-else-if="name === 'sofra'">
       <path d="M4 19v-5.5a8 8 0 0 1 16 0V19z" />
       <path d="M7.5 19v-5a4.5 4.5 0 0 1 9 0v5" opacity="0.35" />
+    </template>
+
+    <!-- fotoğraf makinesi: Afi'nin yemek tanıması -->
+    <template v-else-if="name === 'afi'">
+      <path d="M3.5 8.5h3l1.6-2.3h7.8L17.5 8.5h3v10.5h-17z" />
+      <circle cx="12" cy="13.5" r="3.4" />
+      <circle cx="12" cy="13.5" r="1.3" fill="currentColor" stroke="none" opacity="0.3" />
+    </template>
+
+    <!-- nabız çizgisi: kendi ritmin -->
+    <template v-else-if="name === 'ritim'">
+      <path d="M2.8 13h4l2.2-5.4 3.8 9.4 2.4-6.2 1.2 2.2h4.8" />
+      <circle cx="12" cy="6" r="1.4" fill="currentColor" stroke="none" opacity="0.3" />
+      <circle cx="19" cy="18.5" r="1.4" fill="currentColor" stroke="none" opacity="0.3" />
     </template>
 
     <!-- iki büyük bir küçük: aile -->

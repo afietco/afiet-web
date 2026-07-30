@@ -7,11 +7,11 @@ import { createRemoteJWKSet, jwtVerify } from 'jose'
  * ile doğrulanır; yetki = roles içinde 'admin' VEYA e-posta allowlist'te.
  *
  * Env (Vercel/yerel):
- *   NUXT_ADMIN_JWKS_URL   — backend'deki AUTH_JWKS_URL ile aynı değer
- *   NUXT_ADMIN_ISSUER     — AUTH_ISSUER
- *   NUXT_ADMIN_AUDIENCE   — AUTH_AUDIENCE
- *   NUXT_ADMIN_EMAILS     — virgüllü allowlist (backend ADMIN_EMAILS ile aynı)
- *   NUXT_ADMIN_DEV_TOKEN  — YALNIZ `nuxt dev`te çalışan bypass token'ı;
+ *   NUXT_ADMIN_JWKS_URL   - backend'deki AUTH_JWKS_URL ile aynı değer
+ *   NUXT_ADMIN_ISSUER     - AUTH_ISSUER
+ *   NUXT_ADMIN_AUDIENCE   - AUTH_AUDIENCE
+ *   NUXT_ADMIN_EMAILS     - virgüllü allowlist (backend ADMIN_EMAILS ile aynı)
+ *   NUXT_ADMIN_DEV_TOKEN  - YALNIZ `nuxt dev`te çalışan bypass token'ı;
  *                           production build'de kod seviyesinde ölüdür.
  */
 

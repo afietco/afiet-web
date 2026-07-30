@@ -1,6 +1,6 @@
 import { getPublishedPosts } from '~~/server/utils/contentStore'
 
-/** Yayındaki yazıların listesi (gövdesiz) — /blog sayfası bunu okur. */
+/** Yayındaki yazıların listesi (gövdesiz) - /blog sayfası bunu okur. */
 export default defineEventHandler(async (event) => {
   const posts = await getPublishedPosts(event)
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=60')

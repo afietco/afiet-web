@@ -14,7 +14,7 @@ import {
  * her sayfa görüntülemede (ve ayrılırken süre için) buraya yollar. Ziyaretçi ve
  * oturum httpOnly birinci-taraf çerezlerle (rastgele UUID) izlenir; IP saklanmaz.
  *
- * Sözleşme: analitik ASLA siteyi kırmaz — geçersiz gövde, bot, DB yokluğu ya da
+ * Sözleşme: analitik ASLA siteyi kırmaz - geçersiz gövde, bot, DB yokluğu ya da
  * herhangi bir hata sessizce 204 döner (sendBeacon yanıtı zaten yok sayılır).
  */
 

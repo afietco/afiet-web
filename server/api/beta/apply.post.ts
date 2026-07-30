@@ -7,7 +7,7 @@ import { betaSql, ensureBetaTable } from '~~/server/utils/betaStore'
  * `server/utils/betaStore.ts`te TEK kaynaktır. Okuma: `GET /api/admin/beta`.
  *
  * Zorunlu: geçerli e-posta + açık rıza (consent). Gerisi isteğe bağlı.
- * Sayı/kilo/kalori toplamayız — marka gereği. Env: NUXT_DATABASE_URL.
+ * Sayı/kilo/kalori toplamayız - marka gereği. Env: NUXT_DATABASE_URL.
  */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -31,6 +31,55 @@ function strArray(v: unknown): string[] {
     .map((x) => x.slice(0, 48))
 }
 
+/**
+ * Yeni başvuruda ekibe bildirim maili (Resend, posta.afiet.co). Başvurunun
+ * kendisini ASLA düşürmez: mail hatası yutulur, yalnız loglanır. Anahtar
+ * boşsa hiç denenmez. Yalnız YENİ başvuruda çağrılır, güncellemede değil.
+ */
+async function notifyNewApplication(
+  apiKey: string,
+  data: {
+    email: string
+    platform: string
+    goals: string[]
+    countingFeeling: string
+    appsNutrition: string[]
+    appsActivity: string[]
+    appsBody: string[]
+    heardFrom: string
+  },
+): Promise<void> {
+  const row = (label: string, value: string) => (value ? `${label}: ${value}` : '')
+  const text = [
+    row('E-posta', data.email),
+    row('Platform', data.platform),
+    row('Hedefler', data.goals.join(', ')),
+    row('Kalori sayma deneyimi', data.countingFeeling),
+    row('Beslenme uygulamaları', data.appsNutrition.join(', ')),
+    row('Spor/adım', data.appsActivity.join(', ')),
+    row('Vücut/cihaz', data.appsBody.join(', ')),
+    row('Nereden duydu', data.heardFrom),
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  try {
+    await $fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}` },
+      body: {
+        from: 'afiet beta <bildirim@posta.afiet.co>',
+        to: ['berk@afiet.co', 'rberkkaratas@gmail.com'],
+        reply_to: data.email,
+        subject: `Yeni beta başvurusu: ${data.email}`,
+        text,
+      },
+    })
+  } catch (err) {
+    console.error('[beta] bildirim maili gönderilemedi:', err)
+  }
+}
+
 export default defineEventHandler(async (event): Promise<{ status: BetaStatus }> => {
   const body = await readBody(event).catch(() => ({}) as Record<string, unknown>)
 
@@ -41,7 +90,7 @@ export default defineEventHandler(async (event): Promise<{ status: BetaStatus }>
   // Gizli honeypot alanı: gerçek kullanıcı doldurmaz, botlar doldurur.
   const honeypot = String(body?.company ?? '')
 
-  // Bota sessizce başarı taklidi yap — sinyal verme, DB'ye yazma.
+  // Bota sessizce başarı taklidi yap - sinyal verme, DB'ye yazma.
   if (honeypot) return { status: 'ok' }
 
   if (!EMAIL_RE.test(email) || email.length > 254) {
@@ -105,6 +154,21 @@ export default defineEventHandler(async (event): Promise<{ status: BetaStatus }>
       RETURNING (xmax = 0) AS inserted
     `
     const inserted = rows[0]?.inserted === true || rows[0]?.inserted === 't'
+    // Kapalı test listelerine (TestFlight/Play) elle ekleme yapılabilsin diye
+    // yeni başvuruyu e-posta ile haber ver. Env: NUXT_RESEND_API_KEY.
+    const resendApiKey = String(useRuntimeConfig(event).resendApiKey || '')
+    if (inserted && resendApiKey) {
+      await notifyNewApplication(resendApiKey, {
+        email,
+        platform,
+        goals,
+        countingFeeling,
+        appsNutrition,
+        appsActivity,
+        appsBody,
+        heardFrom,
+      })
+    }
     return { status: inserted ? 'ok' : 'exists' }
   } catch (err) {
     console.error('[beta] başvuru başarısız:', err)

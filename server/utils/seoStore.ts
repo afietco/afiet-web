@@ -17,13 +17,13 @@ import type {
 /**
  * SEO verisi: beta başvurularıyla aynı Neon'da, landing'e ait kendi kendini kuran
  * tablolar (backend'in golang-migrate şemasından bağımsız). DB yoksa/boşsa
- * her şey kod varsayılanlarıyla çalışır — bu yüzden smoke/CI ortamında da
+ * her şey kod varsayılanlarıyla çalışır - bu yüzden smoke/CI ortamında da
  * site aynen render olur.
  */
 
 export const SETTINGS_KEYS: SettingsKey[] = ['general', 'robots', 'llms', 'schema', 'faq']
 
-/** Kodda karşılığı olan gerçek sayfalar — sitemap ve panel listesi bunlardan başlar. */
+/** Kodda karşılığı olan gerçek sayfalar - sitemap ve panel listesi bunlardan başlar. */
 export const KNOWN_PATHS = Object.keys(DEFAULT_PAGES)
 
 const CACHE_TTL_MS = 60_000
@@ -182,7 +182,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     post = await getPublishedPost(event, path.slice('/blog/'.length))
     if (post) {
       const postPage = makePage({
-        title: `${post.title} — afiet`,
+        title: `${post.title} | afiet`,
         description: post.description,
         ogTitle: post.title,
         ogDescription: post.description,
@@ -352,7 +352,7 @@ export function xmlEscape(s: string): string {
     .replaceAll('"', '&quot;')
 }
 
-/** sitemap.xml içeriği — kodda var olan sayfalar + dinamik ekler (blog yazıları). */
+/** sitemap.xml içeriği - kodda var olan sayfalar + dinamik ekler (blog yazıları). */
 export function buildSitemapXml(
   bundle: SeoBundle,
   updatedAt: Record<string, string> = {},

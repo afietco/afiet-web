@@ -1,7 +1,7 @@
 import { resolvePageMeta } from '~~/server/utils/seoStore'
 
 /**
- * Bir sayfanın efektif meta seti — sayfalar SSR sırasında bunu çağırır
+ * Bir sayfanın efektif meta seti - sayfalar SSR sırasında bunu çağırır
  * (usePageSeo), panel de canlı önizleme için kullanır. Public ve yan etkisiz.
  */
 export default defineEventHandler(async (event) => {

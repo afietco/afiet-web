@@ -24,8 +24,10 @@ const counting = ref('')
 const appsNutrition = ref<string[]>([])
 const appsActivity = ref<string[]>([])
 const appsBody = ref<string[]>([])
-const appsOther = ref('')
-const contact = ref('')
+// Grup başına "Başka…" çipi: açıksa o gruba özel metin kutusu görünür,
+// yazılan metin gönderimde grubun listesine eklenir.
+const otherOpen = ref<Record<string, boolean>>({ nutrition: false, activity: false, body: false })
+const otherText = ref<Record<string, string>>({ nutrition: '', activity: '', body: '' })
 const heard = ref('')
 const consent = ref(false)
 
@@ -48,6 +50,18 @@ function toggleApp(key: string, value: string) {
   }
   const rest = arr.filter((v) => v !== 'hicbiri')
   group.value = rest.includes(value) ? rest.filter((v) => v !== value) : [...rest, value]
+}
+
+// "Başka…" çipi: kapatılınca yazılan metin de temizlenir.
+function toggleOther(key: string) {
+  otherOpen.value[key] = !otherOpen.value[key]
+  if (!otherOpen.value[key]) otherText.value[key] = ''
+}
+
+// Gönderimde serbest metni grubun listesine ekle.
+function withOther(key: string, arr: string[]): string[] {
+  const text = (otherText.value[key] ?? '').trim()
+  return text ? [...arr, text] : arr
 }
 
 // Çoklu seçim (hedefler).
@@ -107,11 +121,9 @@ async function submit() {
         platform: platform.value,
         goals: goals.value,
         countingFeeling: counting.value,
-        appsNutrition: appsNutrition.value,
-        appsActivity: appsActivity.value,
-        appsBody: appsBody.value,
-        appsOther: appsOther.value.trim(),
-        contactChannel: contact.value,
+        appsNutrition: withOther('nutrition', appsNutrition.value),
+        appsActivity: withOther('activity', appsActivity.value),
+        appsBody: withOther('body', appsBody.value),
         heardFrom: heard.value,
         consent: consent.value,
         source: 'beta',
@@ -128,7 +140,7 @@ async function submit() {
   }
 }
 
-// Kutlama konfetisi — marka renklerinde, deterministik.
+// Kutlama konfetisi - marka renklerinde, deterministik.
 const confetti = Array.from({ length: 14 }, (_, i) => ({
   left: `${(i * 37 + 11) % 100}%`,
   hue: ['bg-brand', 'bg-brand-mint', 'bg-tahil', 'bg-meyve', 'bg-sut'][i % 5],
@@ -206,7 +218,7 @@ const confetti = Array.from({ length: 14 }, (_, i) => ({
         <input id="bf-company" v-model="company" type="text" name="company" tabindex="-1" autocomplete="off" />
       </div>
 
-      <!-- ADIM 1 — E-posta -->
+      <!-- ADIM 1 - E-posta -->
       <div v-if="step === 1">
         <h3 class="text-2xl font-black tracking-[-0.02em] text-brand-ink">{{ c.step1.title }}</h3>
         <p class="mt-2 font-semibold text-soft">{{ c.step1.lead }}</p>
@@ -228,7 +240,7 @@ const confetti = Array.from({ length: 14 }, (_, i) => ({
         </div>
       </div>
 
-      <!-- ADIM 2 — Seni tanıyalım -->
+      <!-- ADIM 2 - Seni tanıyalım -->
       <div v-else-if="step === 2" class="space-y-8">
         <h3 class="text-2xl font-black tracking-[-0.02em] text-brand-ink">{{ c.step2.title }}</h3>
 
@@ -293,7 +305,7 @@ const confetti = Array.from({ length: 14 }, (_, i) => ({
         </div>
       </div>
 
-      <!-- ADIM 3 — Alışkanlıklar ve iletişim -->
+      <!-- ADIM 3 - Alışkanlıklar ve iletişim -->
       <div v-else class="space-y-8">
         <div>
           <h3 class="text-2xl font-black tracking-[-0.02em] text-brand-ink">{{ c.step3.title }}</h3>
@@ -318,32 +330,25 @@ const confetti = Array.from({ length: 14 }, (_, i) => ({
                 >
                   {{ o.label }}
                 </button>
+                <button
+                  type="button"
+                  :aria-pressed="otherOpen[grp.key]"
+                  class="rounded-full border px-3.5 py-1.5 text-sm font-bold transition"
+                  :class="chip(Boolean(otherOpen[grp.key]))"
+                  @click="toggleOther(grp.key)"
+                >
+                  {{ c.step3.appsOtherChip }}
+                </button>
               </div>
+              <input
+                v-if="otherOpen[grp.key]"
+                v-model="otherText[grp.key]"
+                type="text"
+                :placeholder="c.step3.appsOtherPlaceholder"
+                maxlength="48"
+                class="mt-2.5 w-full rounded-2xl border border-line bg-canvas px-4 py-3 text-sm font-semibold text-ink transition placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
+              />
             </div>
-          </div>
-          <input
-            v-model="appsOther"
-            type="text"
-            :placeholder="c.step3.appsOtherPlaceholder"
-            maxlength="200"
-            class="mt-4 w-full rounded-2xl border border-line bg-canvas px-4 py-3 text-sm font-semibold text-ink transition placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
-          />
-        </fieldset>
-
-        <fieldset>
-          <legend class="font-black text-brand-ink">{{ c.step3.contactLabel }}</legend>
-          <div class="mt-3 flex flex-wrap gap-2.5">
-            <button
-              v-for="o in c.step3.contact"
-              :key="o.value"
-              type="button"
-              :aria-pressed="contact === o.value"
-              class="rounded-full border px-4 py-2 text-sm font-bold transition"
-              :class="chip(contact === o.value)"
-              @click="contact = pickSingle(contact, o.value)"
-            >
-              {{ o.label }}
-            </button>
           </div>
         </fieldset>
 

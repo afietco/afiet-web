@@ -1,7 +1,7 @@
 /**
- * Sayfanın tüm metin içeriği tek yerde — kopya değişikliği bileşenlere dokunmaz.
+ * Sayfanın tüm metin içeriği tek yerde - kopya değişikliği bileşenlere dokunmaz.
  * Ses tonu kuralları: afiet-mobile/BRAND.md ("sofrada seni seven biri";
- * sen dili, yargı yok, davet ve kutlama var).
+ * sen dili, yargı yok, davet ve kutlama var). Uzun tire (em dash) kullanılmaz.
  */
 
 export type Accent = 'sebze' | 'meyve' | 'protein' | 'tahil' | 'sut'
@@ -11,8 +11,8 @@ export const hero = {
   titleA: 'Sayma,',
   titleB: 'dengele.',
   sub:
-    'afiet kalori saydırmaz. Sofranın kendi diliyle konuşur — kaç dilim, ' +
-    'kaç kase, bir avuç — ve ailece dengeli beslenmeyi tatlı bir alışkanlığa çevirir.',
+    'afiet kalori saydırmaz. Sofranın kendi diliyle konuşur (kaç dilim, ' +
+    'kaç kase, bir avuç) ve ailece dengeli beslenmeyi tatlı bir alışkanlığa çevirir.',
   ctaPrimary: 'Beta’ya katıl',
   ctaSecondary: 'Neden afiet?',
 }
@@ -44,8 +44,24 @@ export const zags: { key: string; title: string; body: string; accent: Accent }[
     title: 'Sofranın diliyle',
     body:
       'Gram ve kalori değil: kaç dilim, kaç kase, bir avuç. Menemenden ' +
-      'mercimeğe Türk sofrası içeride hazır.',
+      'mercimeğe 2000’i aşkın yemek ve besin içeride hazır.',
     accent: 'tahil',
+  },
+  {
+    key: 'afi',
+    title: 'Afi yanında',
+    body:
+      'Bilmediğin yemeğin fotoğrafını çek, Afi tanısın. Aklına takılanı sor, ' +
+      'sofranın diliyle anlatsın.',
+    accent: 'protein',
+  },
+  {
+    key: 'ritim',
+    title: 'Kendi ritminle',
+    body:
+      'Kusursuz hafta değil, senin ritmin. Haftanı afiyet günleriyle görürsün; ' +
+      'her sofra yeni bir başlangıçtır.',
+    accent: 'meyve',
   },
   {
     key: 'aile',
@@ -53,7 +69,7 @@ export const zags: { key: string; title: string; body: string; accent: Accent }[
     body:
       'Herkesin kendi profili, hepinizin aynı sofrası. Alışkanlık yalnız ' +
       'kurulmaz; birlikte kurulur, birlikte kutlanır.',
-    accent: 'meyve',
+    accent: 'sut',
   },
   {
     key: 'sefkat',
@@ -61,7 +77,7 @@ export const zags: { key: string; title: string; body: string; accent: Accent }[
     body:
       'afiet yargılamaz. Kaçırdığın günde “yarın yeni bir sofra” der, ' +
       'denge gününde seninle sevinir.',
-    accent: 'sut',
+    accent: 'sebze',
   },
 ]
 
@@ -73,7 +89,7 @@ export const voice = {
     'Günaydın! Bugün sebzeye yer açılır mı? 🌿',
     'Afiyet olsun! 🎉 İlk kaydını yaptın.',
     'Sofran seni özledi 🍲',
-    'Bugün afiyetteydin — beş grup tamam 💚',
+    'Bugün afiyetteydin, beş grup tamam 💚',
   ],
 }
 
@@ -90,16 +106,16 @@ export const cta = {
     'ne işe yarayıp yaramadığını birlikte görelim.',
   betaCta: 'Sofrada yerini ayır',
   betaTo: '/beta',
-  betaNote: 'Halka açık indirme bağlantısı yok. Davetini e-posta ile göndeririz.',
+  betaNote: 'Davetin e-posta ile gelir.',
 }
 
 /**
- * "Afi'ye sor" paneli — SSS listesinin hemen altında. Cevaplar backend'den
- * akar; buradaki metinler yalnızca çerçevedir.
+ * "Afi'ye sor" paneli - ana sayfada kendi bölümü, beta sayfasında SSS'in
+ * kardeşi. Cevaplar backend'den akar; buradaki metinler yalnızca çerçevedir.
  *
  * Marka: Afi'nin üzgün ya da endişeli hâli YOKTUR (BRAND.md > Logo). Hata,
  * sınır ve kota durumlarında bile ton davetkârdır, suçlayıcı değildir.
- * Bu blokta uzun tire (—) kullanılmaz.
+ * Bu blokta uzun tire kullanılmaz.
  */
 export const askAfi = {
   eyebrow: 'Afi burada',
@@ -146,9 +162,9 @@ export const beta = {
   cohortLabel: 'ilk sofra',
   cohortCount: '100',
   cohortSuffix: 'kişi',
-  platforms: 'iOS ve Android aynı anda',
+  platforms: 'iOS başladı, Android yakında',
   cta: 'Sofrada yerini ayır',
-  note: 'Halka açık indirme bağlantısı yok. Davetini e-posta ile göndereceğiz.',
+  note: 'Davetin e-posta ile gelir.',
   motifLabel: 'ilk sofradaki yerler',
   featuresEyebrow: 'beta’da ne var?',
   featuresTitle: 'Gerçek sofrada çalışan üç temel akış',
@@ -190,7 +206,7 @@ export const beta = {
     ],
     promisesTitle: 'Bizden bekleyebileceğin',
     promises: [
-      'iOS ve Android için aynı başlangıç günü',
+      'Beta boyunca düzenli yeni sürümler',
       'Davet ve kurulum adımlarının e-posta ile gelmesi',
       'Her geri bildirimin ürün ekibi tarafından okunması',
     ],
@@ -199,11 +215,12 @@ export const beta = {
     eyebrow: 'ilk grup',
     title: 'İlk sofrada 100 kişilik yer var.',
     sub:
-      'iOS ve Android beta davetleri aynı anda başlayacak. E-postanı bırak, sıran geldiğinde kurulum adımlarını gönderelim.',
+      'iOS davetleri TestFlight ile gidiyor; Android daveti Google Play üzerinden ' +
+      'çok yakında. E-postanı bırak, sıran geldiğinde kurulum adımlarını gönderelim.',
     platformIos: 'iOS',
     platformIosSub: 'TestFlight daveti',
     platformAndroid: 'Android',
-    platformAndroidSub: 'Google Play beta daveti',
+    platformAndroidSub: 'Google Play beta daveti (yakında)',
   },
   faqEyebrow: 'merak ettiklerin',
   faqTitle: 'Beta hakkında kısa cevaplar',
@@ -218,14 +235,16 @@ export const beta = {
       a: 'Hayır. Beta kullanımı ücretsizdir.',
     },
     {
-      q: 'Hangi telefonlarda çalışacak?',
+      q: 'Hangi telefonlarda çalışıyor?',
       a:
-        'iOS ve Android beta aynı anda başlayacak. iOS daveti TestFlight, Android daveti Google Play üzerinden gelecek.',
+        'iOS davetleri TestFlight üzerinden gidiyor. Android daveti Google Play ' +
+        'üzerinden çok yakında başlayacak.',
     },
     {
       q: 'Davet ne zaman gelir?',
       a:
-        'İlk grup 100 kişiyle sınırlı. Sıran geldiğinde daveti ve kurulum adımlarını e-posta ile göndereceğiz.',
+        'İlk grup 100 kişiyle sınırlı. Sıran geldiğinde daveti ve kurulum adımlarını ' +
+        'e-posta ile göndeririz.',
     },
     {
       q: 'Listeden nasıl çıkarım?',
@@ -237,7 +256,7 @@ export const beta = {
 
 /**
  * Beta başvuru formu (çok adımlı). Zorunlu: e-posta, platform, hedef, onay.
- * Gerisi isteğe bağlı. Sayı/kilo/kalori sormayız — marka gereği. Alan seçenekleri
+ * Gerisi isteğe bağlı. Sayı/kilo/kalori sormayız - marka gereği. Alan seçenekleri
  * Türkiye kullanım verisine göre sıralı; `BetaForm.vue` bu yapıyı okur.
  */
 export const betaForm = {
@@ -259,26 +278,26 @@ export const betaForm = {
     goalLabel: 'Ne daha çok olsun istersin?',
     goalHint: 'Birden fazla seçebilirsin',
     goals: [
-      { value: 'enerji', label: 'Daha çok enerji' },
-      { value: 'huzur', label: 'Yemekle daha huzurlu bir ilişki' },
-      { value: 'cesitlilik', label: 'Daha çeşitli beslenme' },
-      { value: 'ritim', label: 'Düzenli bir ritim' },
-      { value: 'sofra', label: 'Sevdiklerimle daha çok sofra' },
-      { value: 'oz-bakim', label: 'Kendime iyi bakmak' },
+      { value: 'enerji', label: 'Gün boyu daha enerjik hissetmek' },
+      { value: 'huzur', label: 'Yemek konusunda suçluluk hissetmemek' },
+      { value: 'cesitlilik', label: 'Daha çeşitli ve dengeli beslenmek' },
+      { value: 'ritim', label: 'Sürdürebileceğim bir beslenme düzeni' },
+      { value: 'sofra', label: 'Ailemle birlikte sağlıklı beslenmek' },
+      { value: 'kilo', label: 'Kilomu sağlıklı şekilde yönetmek' },
     ],
-    countingLabel: 'Kalori sayan bir uygulama nasıl hissettirdi?',
+    countingLabel: 'Daha önce kullandığın kalori sayan uygulamalar nasıl hissettirdi?',
     countingHint: 'İstersen yanıtla',
     counting: [
-      { value: 'yoruyor', label: 'Hâlâ kullanıyorum ama yoruyor' },
+      { value: 'yoruyor', label: 'Hâlâ kullanıyorum ama beni yoruyor' },
       { value: 'biraktim', label: 'Bıraktım, bunaltıcıydı' },
-      { value: 'iyi-geldi', label: 'İşe yaradı, iyi geldi' },
+      { value: 'iyi-geldi', label: 'İşe yaradı, memnun kaldım' },
       { value: 'hic', label: 'Hiç kullanmadım' },
     ],
     back: 'Geri',
     next: 'Devam',
   },
   step3: {
-    title: 'Alışkanlıkların ve iletişim',
+    title: 'Alışkanlıkların',
     lead: 'Hepsi isteğe bağlı, dilersen bu adımı atla.',
     appsLabel: 'Şu an neleri kullanıyorsun?',
     appsHint: 'Uygulama veya cihaz, birden fazla seçebilirsin',
@@ -292,6 +311,9 @@ export const betaForm = {
           { value: 'myfitnesspal', label: 'MyFitnessPal' },
           { value: 'diyetkolik', label: 'Diyetkolik' },
           { value: 'lifesum', label: 'Lifesum' },
+          { value: 'fitatu', label: 'Fitatu' },
+          { value: 'loseit', label: 'Lose It!' },
+          { value: 'noom', label: 'Noom' },
           { value: 'diyetisyen', label: 'Diyetisyen uygulaması' },
           { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
         ],
@@ -305,6 +327,7 @@ export const betaForm = {
           { value: 'apple-fitness', label: 'Apple Fitness / Sağlık' },
           { value: 'strava', label: 'Strava' },
           { value: 'huawei-health', label: 'Huawei Health' },
+          { value: 'mi-fitness', label: 'Mi Fitness (Zepp)' },
           { value: 'nike-run', label: 'Nike Run Club' },
           { value: 'adidas-running', label: 'adidas Running' },
           { value: 'adimsayar', label: 'Adımsayar' },
@@ -323,16 +346,15 @@ export const betaForm = {
           { value: 'galaxy-watch', label: 'Samsung Galaxy Watch' },
           { value: 'garmin', label: 'Garmin' },
           { value: 'fitbit', label: 'Fitbit' },
+          { value: 'withings', label: 'Withings' },
+          { value: 'akilli-tarti', label: 'Akıllı tartı (diğer)' },
           { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
         ],
       },
     ],
-    appsOtherPlaceholder: 'Listede yoksa yaz (isteğe bağlı)',
-    contactLabel: 'Sana nasıl ulaşalım?',
-    contact: [
-      { value: 'eposta', label: 'E-posta' },
-      { value: 'bildirim', label: 'Uygulama bildirimi' },
-    ],
+    // Her grubun sonunda "Başka..." çipi: seçilince o gruba özel metin kutusu açılır.
+    appsOtherChip: 'Başka…',
+    appsOtherPlaceholder: 'Kullandığını yaz',
     heardLabel: 'Bizi nereden duydun?',
     heard: [
       { value: 'instagram', label: 'Instagram' },
@@ -369,31 +391,30 @@ export const footer = {
     { label: 'Beta', to: '/beta' },
     { label: 'Blog', to: '/blog' },
     { label: 'Gizlilik', to: '/gizlilik' },
-    { label: 'Hesabını sil', to: '/hesap-sil' },
   ],
 }
 
-/** Blog (afiet günlüğü) — liste ve yazı sayfası metinleri. */
+/** Blog (afiet günlüğü) - liste ve yazı sayfası metinleri. */
 export const blog = {
   eyebrow: 'afiet günlüğü',
   title: 'Sofradan notlar',
   sub:
     'Kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine ' +
-    'kısa rehberler — sofranın kendi diliyle.',
+    'kısa rehberler; sofranın kendi diliyle.',
   rss: 'RSS ile takip et',
-  empty: 'İlk yazı fırında — çok yakında burada. 🌿',
+  empty: 'İlk yazı fırında, çok yakında burada. 🌿',
   back: '← Tüm yazılar',
   readingSuffix: 'dk okuma',
 }
 
 /**
- * Yasal sayfalar (herkese açık — mağaza ve KVKK/Play için). İçerik GERÇEĞE
+ * Yasal sayfalar (herkese açık - mağaza ve KVKK/Play için). İçerik GERÇEĞE
  * uygundur: uygulama hesap gerektirir ve veriyi backend'de saklar; eski
  * "yalnızca bu cihazda" metni artık geçerli DEĞİL.
  */
 export const privacy = {
   title: 'Gizlilik Politikası',
-  effective: '26 Temmuz 2026',
+  effective: '30 Temmuz 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
@@ -403,12 +424,15 @@ export const privacy = {
     {
       title: 'Topladığımız veriler',
       body: [
-        'Hesap: e-posta adresin — kimlik doğrulama için (sağlayıcı: Stack Auth).',
+        'Hesap: e-posta adresin, kimlik doğrulama için (sağlayıcı: Stack Auth).',
         'Profil: görünen adın, cinsiyetin, doğum tarihin, boyun ve aktivite düzeyin.',
         'Sağlık ve beslenme: öğün ve besin kayıtların, besin grupları, su tüketimin, ' +
           'vücut ölçülerin (kilo, bel, boyun, kalça) ve bunlardan hesaplanan BMI, BMR, ' +
           'TDEE gibi değerler.',
         'Kullanım: kayıt tarihlerin ve seri (streak) gibi uygulama içi etkinliğin.',
+        'Bildirimler: izin verirsen, hatırlatma ve duyuru gönderebilmek için cihazının ' +
+          'anonim bildirim adresi (push token). Bildirimleri istediğin zaman cihaz ' +
+          'ayarlarından kapatabilirsin.',
       ],
     },
     {
@@ -418,6 +442,26 @@ export const privacy = {
           'yönetmek ve sana dengeli beslenme özetleri göstermek.',
         'Reklam göstermiyoruz, verini satmıyoruz, üçüncü taraflarla paylaşmıyoruz ve ' +
           'seni izlemiyoruz.',
+      ],
+    },
+    {
+      title: 'Uygulamada Afi’ye fotoğraf gönderme',
+      body: [
+        'Bilmediğin bir yemeği Afi’ye fotoğrafla sorabilirsin. Fotoğraf, yalnızca ' +
+          'yemeği tanıyabilmemiz için afiet’in kendi sunucusu üzerinden Microsoft ' +
+          'Azure’un Avrupa bölgesindeki yapay zekâ servisine iletilir; orada model ' +
+          'eğitimi için kullanılmaz.',
+        'Fotoğrafların reklam için kullanılmaz ve üçüncü taraflarla paylaşılmaz.',
+      ],
+    },
+    {
+      title: 'Hata ve çökme kayıtları',
+      body: [
+        'Uygulama beklenmedik biçimde kapanırsa, sorunu bulup düzeltebilmemiz için ' +
+          'teknik bir kayıt (cihaz modeli, işletim sistemi sürümü, hatanın olduğu ekran) ' +
+          'Sentry hizmetiyle toplanır.',
+        'Bu kayıtlarda öğün ya da sağlık verin yer almaz; kayıtlar reklam ya da ' +
+          'profilleme için kullanılmaz.',
       ],
     },
     {
@@ -438,7 +482,7 @@ export const privacy = {
     {
       title: 'afiet.co’da Afi’ye soru sorma',
       body: [
-        'Ana sayfadaki “Afi’ye sor” bölümüne yazdığın soru, cevabı üretebilmemiz için ' +
+        'Sitedeki “Afi’ye sor” bölümüne yazdığın soru, cevabı üretebilmemiz için ' +
           'afiet’in kendi sunucusuna gönderilir. Adını, e-postanı ya da bir hesabı ' +
           'istemeyiz; sohbet için sunucunun ürettiği, sekmen açık kaldığı sürece ' +
           'yaşayan rastgele bir oturum numarası kullanılır ve bu numara cihazına ' +
@@ -473,8 +517,9 @@ export const privacy = {
       body: [
         'Hesabını ve tüm verilerini uygulamadan silebilirsin: Profil → Hesabı sil. ' +
           'Bu işlem öğün, ölçü ve profil kayıtlarını kalıcı olarak kaldırır.',
-        'Dilersen destek@afiet.co adresine yazarak da silme talep edebilirsin; ' +
-          'talebini en geç 30 gün içinde işleriz.',
+        'Uygulamaya erişemiyorsan adımlar için “Hesabını sil” sayfasına bakabilir ' +
+          'ya da destek@afiet.co adresine yazarak silme talep edebilirsin; talebini ' +
+          'en geç 30 gün içinde işleriz.',
       ],
     },
     {

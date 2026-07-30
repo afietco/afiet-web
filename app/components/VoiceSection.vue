@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { voice } from '~/data/content'
 
-/* Balonlar hafif kaydırmalarla dizilir — sohbet gibi, ızgara gibi değil. */
+/* Balonlar hafif kaydırmalarla dizilir - sohbet gibi, ızgara gibi değil. */
 const offsets = ['sm:ml-0', 'sm:ml-14', 'sm:ml-5', 'sm:ml-20']
 </script>
 
