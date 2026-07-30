@@ -25,7 +25,8 @@ import { footer } from '~/data/content'
         </NuxtLink>
       </nav>
       <p class="text-sm font-bold text-muted">
-        {{ footer.signoff }} · © {{ new Date().getFullYear() }} afiet
+        <span class="font-display text-base font-medium text-soft italic">{{ footer.signoff }}</span>
+        · © {{ new Date().getFullYear() }} afiet
       </p>
     </div>
   </footer>

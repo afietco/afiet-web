@@ -20,7 +20,7 @@ watch(
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/80 backdrop-blur-md">
+  <header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/75 backdrop-blur-xl">
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
       <NuxtLink to="/" class="flex items-center gap-2.5" aria-label="afiet ana sayfa">
         <AfiMascot class="h-9 w-9" />
