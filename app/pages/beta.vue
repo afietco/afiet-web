@@ -33,7 +33,7 @@ const seats = rings.flatMap((ring, ri) =>
         style="background: radial-gradient(circle at 78% 35%, rgb(16 185 129 / 0.35), transparent 34%), radial-gradient(circle at 18% 90%, rgb(167 243 208 / 0.16), transparent 28%)"
       />
       <div
-        class="pointer-events-none absolute inset-0 opacity-[0.06]"
+        class="pointer-events-none absolute inset-0 opacity-[0.035]"
         aria-hidden="true"
         style="background-image: linear-gradient(rgb(255 255 255) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255) 1px, transparent 1px); background-size: 42px 42px"
       />
@@ -43,7 +43,7 @@ const seats = rings.flatMap((ring, ri) =>
           <p class="rise text-sm font-extrabold tracking-[0.24em] text-brand-mint uppercase" style="--d: 0.05s">
             {{ beta.eyebrow }}
           </p>
-          <h1 class="rise mt-5 text-5xl leading-[0.96] font-black tracking-[-0.045em] text-balance sm:text-7xl" style="--d: 0.12s">
+          <h1 class="rise mt-5 font-display text-5xl leading-[0.98] font-semibold tracking-[-0.025em] text-balance sm:text-7xl" style="--d: 0.12s">
             {{ beta.title }}
           </h1>
           <p class="rise mt-7 max-w-xl text-lg leading-8 font-semibold text-white/75 sm:text-xl" style="--d: 0.2s">
@@ -90,7 +90,7 @@ const seats = rings.flatMap((ring, ri) =>
             </svg>
 
             <div class="absolute inset-[17%] flex flex-col items-center justify-center rounded-full border border-brand-mint/25 bg-brand-deep/80 text-center shadow-inner">
-              <span class="text-[clamp(4.5rem,13vw,8rem)] leading-none font-black tracking-[-0.07em] text-brand-mint">
+              <span class="font-display text-[clamp(4.5rem,13vw,8rem)] leading-none font-semibold tracking-[-0.04em] text-brand-mint">
                 {{ beta.cohortCount }}
               </span>
               <span class="mt-1 text-base font-extrabold tracking-[0.22em] text-white/70 uppercase">
@@ -110,7 +110,7 @@ const seats = rings.flatMap((ring, ri) =>
       <div class="mx-auto max-w-6xl">
         <div class="max-w-3xl">
           <p class="text-sm font-extrabold tracking-[0.22em] text-brand uppercase">{{ beta.featuresEyebrow }}</p>
-          <h2 class="mt-4 text-4xl leading-tight font-black tracking-[-0.035em] text-brand-ink sm:text-5xl">
+          <h2 class="mt-4 font-display text-4xl leading-tight font-semibold tracking-[-0.015em] text-brand-ink sm:text-5xl">
             {{ beta.featuresTitle }}
           </h2>
           <p class="mt-5 max-w-2xl text-lg leading-8 font-semibold text-soft">{{ beta.featuresSub }}</p>
@@ -124,7 +124,7 @@ const seats = rings.flatMap((ring, ri) =>
           >
             <div class="absolute top-0 right-0 h-28 w-28 rounded-bl-full bg-brand-mint/15 transition group-hover:bg-brand-mint/25" aria-hidden="true" />
             <p class="relative font-black tracking-[0.18em] text-brand">{{ feature.number }}</p>
-            <h3 class="relative mt-16 text-2xl font-black tracking-[-0.025em] text-brand-ink">{{ feature.title }}</h3>
+            <h3 class="relative mt-16 font-display text-2xl font-semibold tracking-tight text-brand-ink">{{ feature.title }}</h3>
             <p class="relative mt-4 leading-7 font-semibold text-soft">{{ feature.body }}</p>
           </article>
         </div>
@@ -139,7 +139,7 @@ const seats = rings.flatMap((ring, ri) =>
           <AfiMascot class="absolute top-10 right-8 h-28 w-28 -rotate-3 sm:h-36 sm:w-36" />
           <div class="relative">
             <p class="text-sm font-extrabold tracking-[0.2em] text-brand-mint uppercase">{{ beta.tester.eyebrow }}</p>
-            <h2 class="mt-4 max-w-md text-4xl leading-tight font-black tracking-[-0.035em] sm:text-5xl">
+            <h2 class="mt-4 max-w-md font-display text-4xl leading-tight font-semibold tracking-[-0.015em] sm:text-5xl">
               {{ beta.tester.title }}
             </h2>
             <p class="mt-5 max-w-md leading-7 font-semibold text-white/75">{{ beta.tester.intro }}</p>
@@ -148,7 +148,7 @@ const seats = rings.flatMap((ring, ri) =>
 
         <div class="grid gap-10 p-8 sm:grid-cols-2 sm:p-12 lg:grid-cols-1 xl:grid-cols-2">
           <div>
-            <h3 class="text-xl font-black text-brand-ink">{{ beta.tester.asksTitle }}</h3>
+            <h3 class="font-display text-xl font-semibold text-brand-ink">{{ beta.tester.asksTitle }}</h3>
             <ul class="mt-6 space-y-4">
               <li v-for="item in beta.tester.asks" :key="item" class="flex gap-3 font-semibold text-soft">
                 <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-white" aria-hidden="true">
@@ -160,7 +160,7 @@ const seats = rings.flatMap((ring, ri) =>
           </div>
 
           <div>
-            <h3 class="text-xl font-black text-brand-ink">{{ beta.tester.promisesTitle }}</h3>
+            <h3 class="font-display text-xl font-semibold text-brand-ink">{{ beta.tester.promisesTitle }}</h3>
             <ul class="mt-6 space-y-4">
               <li v-for="item in beta.tester.promises" :key="item" class="flex gap-3 font-semibold text-soft">
                 <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-ink text-brand-mint" aria-hidden="true">
@@ -178,7 +178,7 @@ const seats = rings.flatMap((ring, ri) =>
       <div class="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-6xl bg-line" aria-hidden="true" />
       <div class="mx-auto max-w-4xl text-center">
         <p class="text-sm font-extrabold tracking-[0.22em] text-brand uppercase">{{ beta.invite.eyebrow }}</p>
-        <h2 class="mt-4 text-4xl leading-tight font-black tracking-[-0.04em] text-brand-ink sm:text-6xl">
+        <h2 class="mt-4 font-display text-4xl leading-tight font-semibold tracking-[-0.02em] text-brand-ink sm:text-6xl">
           {{ beta.invite.title }}
         </h2>
         <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 font-semibold text-soft">{{ beta.invite.sub }}</p>
@@ -204,7 +204,7 @@ const seats = rings.flatMap((ring, ri) =>
       <div class="mx-auto max-w-4xl">
         <div class="text-center">
           <p class="text-sm font-extrabold tracking-[0.22em] text-brand uppercase">{{ beta.faqEyebrow }}</p>
-          <h2 class="mt-4 text-4xl font-black tracking-[-0.035em] text-brand-ink sm:text-5xl">{{ beta.faqTitle }}</h2>
+          <h2 class="mt-4 font-display text-4xl font-semibold tracking-[-0.015em] text-brand-ink sm:text-5xl">{{ beta.faqTitle }}</h2>
         </div>
 
         <div class="mt-12 divide-y divide-line overflow-hidden rounded-[2rem] border border-line bg-surface px-6 sm:px-9">

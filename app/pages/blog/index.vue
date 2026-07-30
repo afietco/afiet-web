@@ -21,8 +21,11 @@ const fmtDate = (iso: string | null) =>
 <template>
   <section class="mx-auto max-w-3xl px-5 py-14 sm:py-20">
     <header>
-      <p class="font-extrabold tracking-tight text-brand">{{ blog.eyebrow }}</p>
-      <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+      <p class="flex items-center gap-3 text-sm font-extrabold tracking-wide text-brand">
+        <span class="h-px w-8 bg-brand/40" aria-hidden="true" />
+        {{ blog.eyebrow }}
+      </p>
+      <h1 class="mt-3 font-display text-4xl font-semibold tracking-[-0.02em] text-ink sm:text-5xl">
         {{ blog.title }}
       </h1>
       <p class="mt-4 max-w-xl text-[17px] leading-relaxed text-soft">{{ blog.sub }}</p>
@@ -38,7 +41,7 @@ const fmtDate = (iso: string | null) =>
         v-for="p in posts"
         :key="p.slug"
         :to="`/blog/${p.slug}`"
-        class="group block overflow-hidden rounded-3xl border border-line bg-surface shadow-lift transition hover:border-brand/40"
+        class="group block overflow-hidden rounded-3xl border border-line bg-surface shadow-lift transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-float"
       >
         <!-- Kapak: kartın üstünde tam genişlik. alt="" bilinçli - başlık ve
              açıklama hemen altında, görsel onları tekrar eder. Kapaksız yazıda
@@ -60,7 +63,7 @@ const fmtDate = (iso: string | null) =>
             >
           </p>
           <h2
-            class="mt-2 text-xl font-extrabold tracking-tight text-ink transition group-hover:text-brand-deep sm:text-2xl"
+            class="mt-2 font-display text-xl font-semibold tracking-tight text-ink transition group-hover:text-brand-deep sm:text-2xl"
           >
             {{ p.title }}
           </h2>

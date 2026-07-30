@@ -9,7 +9,7 @@ const offsets = ['sm:ml-0', 'sm:ml-14', 'sm:ml-5', 'sm:ml-20']
   <section aria-labelledby="ses-baslik">
     <div class="mx-auto max-w-6xl px-5">
       <div
-        class="relative overflow-hidden rounded-[48px] bg-brand-ink px-6 py-16 sm:px-12 md:px-16 md:py-20"
+        class="relative overflow-hidden rounded-[36px] bg-brand-ink px-6 py-16 sm:rounded-[48px] sm:px-12 md:px-16 md:py-20"
       >
         <!-- koyu kasede buhar ışığı -->
         <div class="pointer-events-none absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-brand-bright/20 blur-3xl" aria-hidden="true" />
@@ -23,7 +23,7 @@ const offsets = ['sm:ml-0', 'sm:ml-14', 'sm:ml-5', 'sm:ml-20']
             <h2
               id="ses-baslik"
               v-reveal="80"
-              class="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl"
+              class="mt-3 font-display text-4xl font-semibold tracking-[-0.015em] text-white sm:text-5xl"
             >
               {{ voice.title }}
             </h2>

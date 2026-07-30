@@ -1,12 +1,20 @@
 /* afiet landing - "sıcak sofra" tasarım sistemi.
    Marka kuralları: afiet-mobile/BRAND.md (emerald, Nunito, küçük harf "afiet").
-   Sayfa bilinçli olarak tek temadır (açık, sıcak krem) - sofra ışığı. */
+   Sayfa bilinçli olarak tek temadır (açık, sıcak krem) - sofra ışığı.
+
+   Tipografi katmanı: gövde ve wordmark her zaman Nunito (marka fontu);
+   başlıklar web'e özel display katmanı olarak Fraunces taşır (editoryal
+   sıcaklık). Fraunces'in "full" dosyası SOFT/WONK eksenlerini de içerir;
+   .wonk sınıfı bu eksenleri kullanır. */
 
 @import 'tailwindcss';
 @import '@fontsource-variable/nunito';
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
 
 @theme {
   --font-sans: 'Nunito Variable', ui-rounded, system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
 
   /* Zemin ve mürekkep - keten örtü üzerinde sıcak taş tonları */
   --color-canvas: #fdfaf3;
@@ -39,6 +47,8 @@
 
   --animate-steam: steam 3.4s ease-in-out infinite;
   --animate-float: float 7s ease-in-out infinite;
+  /* Akan ölçü şeridi (HeroSection): liste iki kez basılır, -%50 kayar */
+  --animate-marquee: marquee 32s linear infinite;
 
   /* Afi maskotunun ruh hâlleri (AfiPose.vue). Süre ve keyframe değerleri
      afiet-brand/maskot/afi-maskot.html "06 · hareket" spec tablosundan
@@ -98,6 +108,10 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
 }
 
 @layer base {
@@ -108,6 +122,24 @@
 
   body {
     @apply bg-canvas font-sans text-ink antialiased;
+  }
+
+  /* Kağıt dokusu: tüm sayfanın üzerine sabit, %4'lük ince tahıl (grain).
+     Etkileşimi asla yakalamaz; "sıcak sofra" temasının keten hissi. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* Display başlıkları satır dengesi: tek kelime sarkmasın */
+  h1, h2 {
+    text-wrap: balance;
   }
 
   ::selection {
@@ -134,10 +166,57 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 font-extrabold text-white shadow-lift transition hover:bg-brand-deep active:scale-[0.97];
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 font-extrabold text-white transition duration-300 hover:-translate-y-0.5 active:scale-[0.97];
+    background-image: linear-gradient(
+      135deg,
+      var(--color-brand-bright),
+      var(--color-brand) 55%,
+      var(--color-brand-deep)
+    );
+    box-shadow:
+      0 14px 30px -12px rgb(4 120 87 / 0.5),
+      inset 0 1px 0 rgb(255 255 255 / 0.22);
   }
+  /* Hover'da butonun üzerinden bir kez ışık süzülür (sofra ışığı) */
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgb(255 255 255 / 0.3) 50%,
+      transparent 65%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.7s ease;
+  }
+  .btn-primary:hover {
+    box-shadow:
+      0 18px 40px -14px rgb(4 120 87 / 0.55),
+      inset 0 1px 0 rgb(255 255 255 / 0.25);
+  }
+  .btn-primary:hover::before {
+    transform: translateX(130%);
+  }
+
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-3 font-bold text-ink transition hover:border-brand/40 hover:text-brand-deep active:scale-[0.97];
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-3 font-bold text-ink transition duration-300 hover:-translate-y-0.5 hover:border-brand/40 hover:text-brand-deep hover:shadow-lift active:scale-[0.97];
+  }
+
+  /* Fraunces'in yumuşak/eğri eksenleri: vurgu kelimesine el sıcaklığı verir */
+  .wonk {
+    font-variation-settings: 'SOFT' 70, 'WONK' 1;
+  }
+
+  /* Akan ölçü şeridi (HeroSection): kesintisiz döngü için içerik iki kez
+     basılır; -%50 kayınca ikinci kopya birincinin yerini alır. */
+  .marquee {
+    overflow: hidden;
+  }
+  .marquee-track {
+    animation: var(--animate-marquee);
+    will-change: transform;
   }
 
   /* Buhar telleri (AfiMascot içindeki path'ler) */
