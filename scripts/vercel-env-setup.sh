@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SEO & GEO paneli için Vercel env kurulumu (afiet-web projesi).
-# Değerleri Secret Manager'dan (gcloud) ve yerel .env'den OKUR — script'e
+# Değerleri Secret Manager'dan (gcloud) ve yerel .env'den OKUR - script'e
 # secret gömülmez. Repo kökünden çalıştır: bash scripts/vercel-env-setup.sh
 #
 # Gerekenler: `vercel` (login'li, proje linkli) + `gcloud` (afiet-co erişimi).
@@ -28,7 +28,7 @@ setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
   add NUXT_ADMIN_AUDIENCE "$id" "$env" $branch
   add NUXT_ADMIN_EMAILS "$EMAILS" "$env" $branch
   add NUXT_ADMIN_CORS_ORIGINS "$CORS" "$env" $branch
-  # DB: her ortam KENDİ Neon branch'ine bağlanır — kaynak backend'in kullandığı
+  # DB: her ortam KENDİ Neon branch'ine bağlanır - kaynak backend'in kullandığı
   # secret'ın ta kendisi (app-<ortam>-database-url). Yerel .env'den OKUMA:
   # geliştirme makinesindeki string prod'u gösterirse preview'lar prod'a yazar.
   db=$(secret "app-$p-database-url")

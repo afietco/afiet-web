@@ -14,7 +14,7 @@ const accentClasses: Record<Accent, string> = {
   <section id="neden" class="scroll-mt-20" aria-labelledby="neden-baslik">
     <div class="mx-auto max-w-6xl px-5 py-24">
       <div class="mx-auto max-w-2xl text-center">
-        <!-- "afiet" hiçbir yerde büyük harfe çevrilmez (BRAND.md) — uppercase yok -->
+        <!-- "afiet" hiçbir yerde büyük harfe çevrilmez (BRAND.md) - uppercase yok -->
         <p v-reveal class="text-sm font-extrabold tracking-wide text-brand">
           {{ zagsIntro.eyebrow }}
         </p>
@@ -38,7 +38,7 @@ const accentClasses: Record<Accent, string> = {
             class="flex h-13 w-13 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
             :class="accentClasses[zag.accent]"
           >
-            <ZagIcon :name="zag.key as 'denge' | 'sofra' | 'aile' | 'sefkat'" />
+            <ZagIcon :name="zag.key as 'denge' | 'sofra' | 'afi' | 'ritim' | 'aile' | 'sefkat'" />
           </div>
           <h3 class="mt-5 text-2xl font-extrabold tracking-tight">{{ zag.title }}</h3>
           <p class="mt-2.5 leading-relaxed font-semibold text-soft">{{ zag.body }}</p>

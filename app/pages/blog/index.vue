@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { blog } from '~/data/content'
 
-// Meta/canonical panelden yönetilir (varsayılanlar kodda — seoDefaults.ts).
+// Meta/canonical panelden yönetilir (varsayılanlar kodda - seoDefaults.ts).
 usePageSeo()
 
 const { data } = useFetch('/api/blog/posts', {
@@ -40,7 +40,7 @@ const fmtDate = (iso: string | null) =>
         :to="`/blog/${p.slug}`"
         class="group block overflow-hidden rounded-3xl border border-line bg-surface shadow-lift transition hover:border-brand/40"
       >
-        <!-- Kapak: kartın üstünde tam genişlik. alt="" bilinçli — başlık ve
+        <!-- Kapak: kartın üstünde tam genişlik. alt="" bilinçli - başlık ve
              açıklama hemen altında, görsel onları tekrar eder. Kapaksız yazıda
              kart eskisi gibi yalnız metindir. -->
         <img

@@ -1,5 +1,5 @@
 /**
- * Uçtan uca smoke testi — build edilmiş siteyi (.output) Nitro sunucusuyla açar,
+ * Uçtan uca smoke testi - build edilmiş siteyi (.output) Nitro sunucusuyla açar,
  * gerçek Chrome'da içerik/SEO/etkileşim assert'leri koşar.
  *
  * Kullanım: npm run build && npm run smoke
@@ -17,7 +17,7 @@ const CHROME =
   process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 if (!existsSync(join(root, '.output/server/index.mjs'))) {
-  console.error('.output yok — önce `npm run build` çalıştır.')
+  console.error('.output yok - önce `npm run build` çalıştır.')
   process.exit(1)
 }
 
@@ -121,7 +121,7 @@ try {
   const blogApiBody = await blogApi.json().catch(() => null)
   ok(
     blogApi.status === 200 && Array.isArray(blogApiBody?.posts),
-    `/api/blog/posts 200 + dizi (${blogApiBody?.posts?.length ?? '—'} yazı)`,
+    `/api/blog/posts 200 + dizi (${blogApiBody?.posts?.length ?? '-'} yazı)`,
   )
 
   const missingPost = await fetch(`http://localhost:${PORT}/blog/olmayan-yazi-smoke`)
@@ -171,7 +171,7 @@ try {
   ok(true, 'h1 görünür')
 
   // --- Bölümler ve içerik sayıları ---
-  ok((await page.locator('#neden article').count()) === 4, '4 zag kartı')
+  ok((await page.locator('#neden article').count()) === 6, '6 zag kartı')
   ok((await page.locator('ul li p').count()) === 4, '4 ses tonu balonu')
   ok((await page.locator('#haber').count()) === 1, 'kapanış bölümü mevcut')
   ok(
@@ -224,7 +224,7 @@ try {
   await page.getByRole('heading', { level: 1, name: "afiet şimdi beta'da." }).waitFor()
   ok(true, '/beta h1 görünür')
   ok((await page.locator('#beta-katil form').count()) === 1, '/beta formu görünür')
-  ok((await page.getByText('iOS ve Android aynı anda').count()) > 0, '/beta platform başlangıcı görünür')
+  ok((await page.getByText('iOS başladı, Android yakında').count()) > 0, '/beta platform durumu görünür')
   ok((await page.getByText('100 kişi', { exact: true }).count()) > 0, '/beta kontenjanı görünür')
 
   await page.getByRole('link', { name: 'Sofrada yerini ayır' }).click()
@@ -235,14 +235,14 @@ try {
   })
   ok(nearBetaForm, 'beta CTA form bölümüne götürüyor')
 
-  // Adım 1 — e-posta
+  // Adım 1 - e-posta
   await page.getByPlaceholder('e-posta adresin').fill('beta-smoke@afiet.co')
   await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
-  // Adım 2 — platform + hedef zorunlu
+  // Adım 2 - platform + hedef zorunlu
   await page.getByRole('button', { name: 'iPhone' }).click()
-  await page.getByRole('button', { name: 'Daha çok enerji' }).click()
+  await page.getByRole('button', { name: 'Gün boyu daha enerjik hissetmek' }).click()
   await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
-  // Adım 3 — uygulama seçimi + onay + gönder
+  // Adım 3 - uygulama seçimi + onay + gönder
   await page.getByRole('button', { name: 'FatSecret' }).click()
   await page.getByRole('checkbox').check()
   await page.locator('#beta-katil form').getByRole('button', { name: 'Sofrada yerini ayır' }).click()

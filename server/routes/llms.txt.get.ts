@@ -1,6 +1,6 @@
 import { getSeoBundle } from '~~/server/utils/seoStore'
 
-/** llms.txt (llmstxt.org) — içerik panelden düzenlenir, kapatılırsa 404. */
+/** llms.txt (llmstxt.org) - içerik panelden düzenlenir, kapatılırsa 404. */
 export default defineEventHandler(async (event) => {
   const { settings } = await getSeoBundle(event)
   if (!settings.llms.enabled) {

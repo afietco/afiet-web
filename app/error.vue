@@ -11,7 +11,7 @@ const props = defineProps<{ error: NuxtError }>()
 const notFound = computed(() => props.error.statusCode === 404)
 
 useSeoMeta({
-  title: () => (notFound.value ? 'Sayfa bulunamadı — afiet' : 'Bir şeyler ters gitti — afiet'),
+  title: () => (notFound.value ? 'Sayfa bulunamadı | afiet' : 'Bir şeyler ters gitti | afiet'),
   robots: 'noindex, nofollow',
 })
 </script>

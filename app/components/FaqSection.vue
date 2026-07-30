@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * SSS bölümü — içerik panelden (SEO & GEO > Yapısal veri & SSS) yönetilir ve
+ * SSS bölümü - içerik panelden (SEO & GEO > Yapısal veri & SSS) yönetilir ve
  * aynı maddeler FAQPage JSON-LD olarak da basılır (usePageSeo). Boşken sayfa
  * bu bileşeni hiç render etmez. Native <details>: JS'siz çalışır, içerik
  * HTML'de kalır (GEO botları JS çalıştırmadan okur).

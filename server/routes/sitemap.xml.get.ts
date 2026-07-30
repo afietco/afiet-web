@@ -1,7 +1,7 @@
 import { getPublishedPosts } from '~~/server/utils/contentStore'
 import { buildSitemapXml, getSeoBundle, loadOverrides } from '~~/server/utils/seoStore'
 
-/** Dinamik sitemap — kod sayfaları + panel override'ları + yayındaki blog yazıları. */
+/** Dinamik sitemap - kod sayfaları + panel override'ları + yayındaki blog yazıları. */
 export default defineEventHandler(async (event) => {
   const [bundle, overrides, posts] = await Promise.all([
     getSeoBundle(event),

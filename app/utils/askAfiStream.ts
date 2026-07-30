@@ -3,7 +3,7 @@
  *
  * Neden EventSource değil: EventSource yalnız GET'tir, gövde taşıyamaz (soru,
  * bilet, captcha token'ı gövdede gider), başlık koyamaz ve bağlantı düşünce
- * kendiliğinden yeniden bağlanır — bu da aynı soruyu sessizce tekrar sorup
+ * kendiliğinden yeniden bağlanır - bu da aynı soruyu sessizce tekrar sorup
  * tekrar faturalandırır. Bu yüzden fetch + ReadableStream.
  *
  * TELİ ÇEKME NOKTASI: decode her zaman { stream: true } ile yapılır. Türkçe
@@ -11,7 +11,7 @@
  * gelebilir; bayrak olmadan cevabın ortasında bozuk karakter çıkar.
  *
  * Sunucu sözleşmesi (backend kendi frame'lerini üretir, Foundry'nin ham
- * frame'leri ASLA buraya kadar gelmez — onlar sistem talimatını taşıyor):
+ * frame'leri ASLA buraya kadar gelmez - onlar sistem talimatını taşıyor):
  *   event: status   data: {"state":"searching"}
  *   event: delta    data: {"t":"afiet kalori "}
  *   event: sources  data: {"items":[{"title":"...","url":"/blog/..."}]}

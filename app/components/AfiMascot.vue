@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Afi — buharı tüten mutlu kase (public/icon.svg'nin bileşen hali).
+ * Afi - buharı tüten mutlu kase (public/icon.svg'nin bileşen hali).
  * Anatomi BRAND.md > Logo kurallarına bağlıdır: iki buhar teli (duotone),
  * kapalı mutlu gözler, emerald degrade zemin. Buhar CSS ile süzülür.
  */
@@ -9,7 +9,7 @@ const gid = useId()
 
 <template>
   <svg viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg">
-    <title>afiet logosu — buharı tüten mutlu kase</title>
+    <title>afiet logosu: buharı tüten mutlu kase</title>
     <defs>
       <linearGradient :id="gid" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#10b981" />

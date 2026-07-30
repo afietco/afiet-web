@@ -16,7 +16,7 @@ import { emptyBrief } from './contentTypes'
  * İçerik planı + blog verisi: SEO/beta ile aynı Neon'da, landing'e ait
  * kendi kendini kuran tablolar (seoStore deseni; backend'in golang-migrate
  * şemasından bağımsız). DB yoksa admin GET boş listelerle `dbConnected:false`
- * döner, yazma uçları 503 verir — smoke/CI ortamı DB'siz de yeşildir.
+ * döner, yazma uçları 503 verir - smoke/CI ortamı DB'siz de yeşildir.
  *
  * Panel uçları taze okur (yazma sonrası dönen payload panelin tek gerçeği);
  * 60 sn bellek cache'i yalnız yayındaki blog yazılarına uygulanır (Faz C'de
@@ -113,7 +113,7 @@ const toIso = (v: unknown): string => {
 const toIsoOrNull = (v: unknown): string | null => (v ? toIso(v) || null : null)
 /**
  * DATE kolonu → 'YYYY-MM-DD'. Sürücü Date nesnesi döndürür (yerel gece
- * yarısı) — toISOString() TZ yüzünden günü kaydırır, yerel alanlardan kur.
+ * yarısı) - toISOString() TZ yüzünden günü kaydırır, yerel alanlardan kur.
  */
 const toDateStr = (v: unknown): string | null => {
   if (!v) return null
@@ -128,7 +128,7 @@ function readStrArr(v: unknown): string[] {
   return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
 }
 
-/** jsonb brief'i tam şekle oturt — eksik alanlar boş, fazlalıklar atılır. */
+/** jsonb brief'i tam şekle oturt - eksik alanlar boş, fazlalıklar atılır. */
 function readBrief(v: unknown): ContentBrief {
   const src = (typeof v === 'object' && v !== null && !Array.isArray(v) ? v : {}) as Row
   const base = emptyBrief()
@@ -271,7 +271,7 @@ export async function listPostsSummary(sql: Sql): Promise<BlogPostSummary[]> {
   return rows.map(mapPostSummary)
 }
 
-/** Yayındaki yazılar (gövdesiz kullanım için de tam satır) — 60 sn cache'li; Faz C sayfaları okur. */
+/** Yayındaki yazılar (gövdesiz kullanım için de tam satır) - 60 sn cache'li; Faz C sayfaları okur. */
 export async function getPublishedPosts(event: H3Event): Promise<BlogPost[]> {
   if (postsCache && Date.now() - postsCache.at < POSTS_CACHE_TTL_MS) return postsCache.posts
   const sql = sqlClient(event)
