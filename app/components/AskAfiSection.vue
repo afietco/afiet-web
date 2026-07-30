@@ -43,7 +43,7 @@ const enabled = computed(() => String(config.public.askApiUrl || '') !== '')
         <h2
           id="afiye-sor-baslik"
           v-reveal="80"
-          class="mt-3 text-4xl font-black tracking-tight text-ink sm:text-5xl"
+          class="mt-3 font-display text-4xl font-semibold tracking-[-0.015em] text-ink sm:text-5xl"
         >
           {{ askAfi.title }}
         </h2>

@@ -33,7 +33,7 @@ const fmtDate = (iso: string | null) =>
       <NuxtLink to="/blog" class="text-sm font-bold text-muted transition hover:text-brand-deep">
         {{ blog.back }}
       </NuxtLink>
-      <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+      <h1 class="mt-4 font-display text-4xl leading-tight font-semibold tracking-[-0.02em] text-ink sm:text-[2.75rem]">
         {{ post.title }}
       </h1>
       <p class="mt-3 text-sm font-bold text-muted">
@@ -90,17 +90,29 @@ const fmtDate = (iso: string | null) =>
 .post-body :deep(h2) {
   margin: 2em 0 0.6em;
   color: var(--color-ink);
-  font-size: 1.45em;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: 1.55em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   line-height: 1.25;
 }
 .post-body :deep(h3) {
   margin: 1.6em 0 0.5em;
   color: var(--color-ink);
-  font-size: 1.15em;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  font-weight: 600;
   letter-spacing: -0.01em;
+}
+/* Editoryal giriş: ilk paragrafın ilk harfi Fraunces gömme başlık (drop cap) */
+.post-body :deep(> p:first-child)::first-letter {
+  float: left;
+  margin: 0.06em 0.14em 0 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 3.1em;
+  font-weight: 600;
+  line-height: 0.85;
 }
 .post-body :deep(p) {
   margin: 0.9em 0;
@@ -134,11 +146,14 @@ const fmtDate = (iso: string | null) =>
   font-weight: 800;
 }
 .post-body :deep(blockquote) {
-  margin: 1.2em 0;
+  margin: 1.4em 0;
   padding: 0.2em 1.2em;
   border-left: 3px solid var(--color-brand-mint);
   color: var(--color-ink);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.08em;
+  font-style: italic;
+  font-weight: 500;
 }
 .post-body :deep(code) {
   padding: 0.15em 0.4em;
