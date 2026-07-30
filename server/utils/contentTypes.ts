@@ -111,6 +111,10 @@ export type ContentMetric = {
   shares: number
   saves: number
   clicks: number
+  /** Instagram/TikTok gibi platformlardan gelen tekil erisim (elle girisde 0). */
+  reach: number
+  /** Platformun "total_interactions" karsiligi; elle girisde 0. */
+  interactions: number
   notes: string
   source: MetricSource
 }

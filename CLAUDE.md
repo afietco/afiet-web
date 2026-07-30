@@ -143,6 +143,42 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Yayından kaldırma: `--unpublish <slug>`. md dosyaları sürümlü YEDEKTİR;
   script'teki DDL `contentStore.ts` ile senkron tutulur.
 
+## Sosyal hesaplar & otomatik ölçüm (Faz 2)
+
+- Model: `server/utils/socialStore.ts` - `social_accounts` (bağlı hesap +
+  ŞİFRELİ token) ve `social_posts` (platformdan çekilen gönderi; takvim
+  etkinliğine `item_id` ile bağlanır). Tipler `socialTypes.ts` ↔ afiet-admin
+  `src/services/social.ts` BİREBİR aynadır.
+- **Instagram yolu:** "Instagram API with Instagram Login"
+  (`graph.instagram.com`), izinler `instagram_business_basic` +
+  `instagram_business_manage_insights`. **Kendi hesabımız için App Review
+  GEREKMEZ**: hesap Meta uygulamasında tester/developer rolündeyse Standard
+  Access yeter.
+- Bağlama akışı: panel `GET /api/admin/social/instagram-start` ile imzalı
+  `state` içeren authorize adresini alır → kullanıcı izin verir → Meta
+  `GET /api/social/instagram/callback`e döner (bu uç PUBLIC olmak zorunda;
+  güvenlik `state` HMAC'i + 10 dk ömür). Token uzun ömürlüye çevrilip
+  AES-256-GCM ile şifrelenerek saklanır (`socialCrypto.ts`,
+  `NUXT_SOCIAL_TOKEN_KEY`). Meta'ya kayıtlı redirect TEK adres olduğu için
+  bağlama **yalnız production'da** çalışır.
+- **Ölçüm webhook'u YOK** (hiçbir platform vermiyor): `POST /api/cron/social-metrics`
+  günde bir çalışır (Cloud Scheduler `app-social-metrics-prod`, 06:00
+  Europe/Istanbul, `X-Cron-Secret` = `NUXT_CRON_SECRET`). Cron: token bitişine
+  20 günden az kaldıysa yeniler → son 25 gönderiyi çeker → eşleştirir →
+  eşleşenlerin insight'larını `content_metrics`e (source `instagram`) yazar.
+  Meta 90 günden eskisini vermediği için anlık görüntüyü almazsak geçmiş
+  kaybolur; tarih başına tek satır (`UNIQUE (item_id, metric_date)`).
+- Eşleştirme SADECE `platform_post_id` ya da `published_url` = permalink ile
+  yapılır; caption benzerliğine BAKILMAZ (yanlış eşleşme eşleşmemekten kötü).
+  Eşleşmeyen gönderi panelde listelenir, tek tıkla bağlanır
+  (`PUT /api/admin/social/link`).
+- Metrik adları v22.0 sonrasıdır: `views, reach, likes, comments, saved,
+  shares, total_interactions`. `impressions` ve `video_views` KALDIRILDI, geri
+  ekleme. Story'de `saved` yok, o yüzden metrik seti biçime göre daralır ve
+  hata olursa `views,reach`e düşerek yeniden dener.
+- Token/sır loglanmaz: Graph hataları URL'siz, yalnız type+code+message olarak
+  yazılır (URL'de access_token olabilir).
+
 ## Komutlar
 
 - `npm run dev` / `build` / `preview`

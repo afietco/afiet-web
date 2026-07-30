@@ -222,6 +222,8 @@ export function sanitizeContentMetric(value: unknown): ContentMetricInput {
     shares: count(value.shares, 'shares'),
     saves: count(value.saves, 'saves'),
     clicks: count(value.clicks, 'clicks'),
+    reach: count(value.reach, 'reach'),
+    interactions: count(value.interactions, 'interactions'),
     notes: optStr(value.notes, 'notes', 500),
     source: METRIC_SOURCES.find((s) => s === value.source) ?? 'elle',
   }
