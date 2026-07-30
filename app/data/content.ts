@@ -405,6 +405,15 @@ export const blog = {
   empty: 'İlk yazı fırında, çok yakında burada. 🌿',
   back: '← Tüm yazılar',
   readingSuffix: 'dk okuma',
+  searchLabel: 'Yazılarda ara',
+  searchPlaceholder: 'Bir konu ara: porsiyon, kahvaltı, denge...',
+  sortLabel: 'Sırala',
+  sortNew: 'En yeni',
+  sortOld: 'En eski',
+  noResults: 'Bu aramaya uyan yazı bulamadık. Başka bir kelimeyle dener misin?',
+  pagesLabel: 'Blog sayfaları',
+  pagePrev: 'Önceki sayfa',
+  pageNext: 'Sonraki sayfa',
 }
 
 /**
