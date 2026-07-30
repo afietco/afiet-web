@@ -37,6 +37,31 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   Landing'de başka e-posta toplama noktası yok; eski bekleme listesi
   (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırıldı.
 
+## Veritabanı: her ortam kendi Neon branch'i
+
+`NUXT_DATABASE_URL` ortam başına AYRIDIR ve backend'in kullandığı secret'ın
+aynısıdır (`app-<ortam>-database-url`, gcloud Secret Manager):
+
+| Vercel ortamı | Neon branch | kaynak secret |
+|---|---|---|
+| production (`main`) | production | `app-prod-database-url` |
+| preview (`staging`) | staging | `app-staging-database-url` |
+| preview (`development`) | development | `app-dev-database-url` |
+| yerel `nuxt dev` | development | repodaki `.env` |
+
+Yani web'in kendi kendini kuran tabloları (`seo_*`, `blog_posts`,
+`content_items`, `content_metrics`, `beta_applications`, `analytics_events`)
+üç Neon branch'inde de ayrı ayrı yaşar, backend'in golang-migrate şemasının
+yanında. Dev ve staging'de bu tablolar BOŞ başlar: SEO kod varsayılanlarına
+düşer, `/blog` boş listelenir — bu bir arıza değil.
+
+Prod'a yazan tek akış blog yayınıdır ve BİLİNÇLİ olmalıdır; yerel `.env` artık
+development'ı gösterdiği için prod URL'i tek seferlik verilir:
+
+```
+NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/posts/<slug>.md
+```
+
 ## SEO & GEO (panelden yönetilir)
 
 - Model: kod varsayılanları (`server/utils/seoDefaults.ts` — bugünkü davranışın
@@ -60,8 +85,8 @@ Marka rehberi: `../afiet-mobile/BRAND.md` — isim HER YERDE küçük harf "afie
   env: `NUXT_ADMIN_*`) ve backend'le aynı kural (roles 'admin' VEYA
   NUXT_ADMIN_EMAILS). Yerel geliştirmede `NUXT_ADMIN_DEV_TOKEN` bypass'ı yalnız
   `nuxt dev`te çalışır. CORS: `server/middleware/admin-cors.ts`.
-- Vercel env kurulumu: `bash scripts/vercel-env-setup.sh` (değerleri gcloud
-  Secret Manager + .env'den okur; production dahil).
+- Vercel env kurulumu: `bash scripts/vercel-env-setup.sh` (tüm değerleri gcloud
+  Secret Manager'dan okur; production dahil).
 - 404 artık gerçektir (`app/error.vue`, markalı) — eski deploy'daki "her yol
   200 + ana sayfa" soft-404 davranışına geri dönme.
 

@@ -12,12 +12,14 @@ EMAILS="admin@afiet.co"
 
 secret() { gcloud secrets versions access latest --secret="$1" --project afiet-co; }
 add() { # add <isim> <değer> <ortam> [dal]
-  printf '%s' "$2" | vercel env add "$1" "$3" ${4:-} --force
+  # --sensitive: projedeki mevcut kayıtların tipi bu; --force ile üstüne yazarken
+  # tip değişirse `vercel env pull` bazı değerleri boş string olarak indirir.
+  printf '%s' "$2" | vercel env add "$1" "$3" ${4:-} --sensitive --force
 }
 
 setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
   local p="$1" env="$2" branch="${3:-}"
-  local id issuer jwks
+  local id issuer jwks db
   issuer=$(secret "app-$p-auth-issuer")
   id=$(secret "app-$p-auth-audience")
   jwks=$(secret "app-$p-auth-jwks-url")
@@ -26,19 +28,20 @@ setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
   add NUXT_ADMIN_AUDIENCE "$id" "$env" $branch
   add NUXT_ADMIN_EMAILS "$EMAILS" "$env" $branch
   add NUXT_ADMIN_CORS_ORIGINS "$CORS" "$env" $branch
+  # DB: her ortam KENDİ Neon branch'ine bağlanır — kaynak backend'in kullandığı
+  # secret'ın ta kendisi (app-<ortam>-database-url). Yerel .env'den OKUMA:
+  # geliştirme makinesindeki string prod'u gösterirse preview'lar prod'a yazar.
+  db=$(secret "app-$p-database-url")
+  add NUXT_DATABASE_URL "$db" "$env" $branch
 }
 
-echo "→ development dalı (preview): dev Stack projesi"
+echo "→ development dalı (preview): dev Stack projesi + dev Neon"
 setup_env dev preview development
-if [ -f .env ] && grep -q '^NUXT_DATABASE_URL=.' .env; then
-  add NUXT_DATABASE_URL "$(grep '^NUXT_DATABASE_URL=' .env | cut -d= -f2-)" preview development
-fi
 
-echo "→ staging dalı (preview): staging Stack projesi"
+echo "→ staging dalı (preview): staging Stack projesi + staging Neon"
 setup_env staging preview staging
-# staging DB istenirse: staging Neon URL'ini elle ekleyin (vercel env add NUXT_DATABASE_URL preview staging)
 
-echo "→ production: prod Stack projesi"
+echo "→ production: prod Stack projesi + prod Neon"
 setup_env prod production
 
 echo "✓ Bitti. Kontrol: vercel env ls"
