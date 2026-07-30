@@ -239,6 +239,16 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'izleme yok, veri satışı yok. Verini istediğin zaman silebilirsin.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
   }),
+  '/durum': makePage({
+    title: 'Sistem durumu | afiet',
+    description:
+      "afiet servislerinin anlık durumu ve 90 günlük çalışma oranları: uygulama sunucusu, " +
+      'veritabanı, web sitesi, Afi yapay zekâ, kimlik doğrulama ve e-posta iletimi.',
+    ogDescription:
+      "afiet'in tüm servislerinin anlık durumu, geçmiş olaylar ve 90 günlük çalışma " +
+      'oranları tek sayfada.',
+    sitemap: { include: true, changefreq: 'daily', priority: 0.3 },
+  }),
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:
