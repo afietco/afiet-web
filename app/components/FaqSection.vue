@@ -18,7 +18,7 @@ defineProps<{
         <h2
           id="sss-baslik"
           v-reveal="80"
-          class="mt-3 text-4xl font-black tracking-tight text-ink sm:text-5xl"
+          class="mt-3 font-display text-4xl font-semibold tracking-[-0.015em] text-ink sm:text-5xl"
         >
           {{ faq.title }}
         </h2>
@@ -38,20 +38,20 @@ defineProps<{
             class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 font-extrabold tracking-tight text-ink [&::-webkit-details-marker]:hidden"
           >
             <span>{{ item.q }}</span>
-            <svg
-              class="faq-chevron h-5 w-5 shrink-0 text-brand transition-transform duration-300"
-              viewBox="0 0 20 20"
-              fill="none"
+            <span
+              class="faq-chevron flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-canvas text-brand transition duration-300 group-hover:bg-brand-mint/40"
               aria-hidden="true"
             >
-              <path
-                d="M5 8l5 5 5-5"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+              <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M5 8l5 5 5-5"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
           </summary>
           <p class="px-6 pb-6 leading-relaxed font-semibold text-soft">{{ item.a }}</p>
         </details>
