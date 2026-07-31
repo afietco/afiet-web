@@ -1,4 +1,4 @@
-import { destekLlmsFull } from '~~/server/utils/destekStore'
+import { supportLlmsFull } from '~~/server/utils/supportStore'
 import { getSeoBundle } from '~~/server/utils/seoStore'
 
 /**
@@ -18,5 +18,5 @@ export default defineEventHandler(async (event) => {
   const base = settings.general.baseUrl.replace(/\/$/, '')
   setHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=900')
-  return await destekLlmsFull(base)
+  return await supportLlmsFull(base)
 })

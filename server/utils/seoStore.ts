@@ -3,9 +3,9 @@ import type { H3Event } from 'h3'
 import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
 import { getPublishedPost } from './contentStore'
 import type { BlogPost } from './contentTypes'
-import { destekYaziGetir } from './destekStore'
-import { destekKategori } from './destekKategori'
-import type { DestekKategori, DestekYazi } from '#shared/types/destek'
+import { getSupportArticle } from './supportStore'
+import { supportCategory } from './supportCategories'
+import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type {
   DeepPartial,
   PageSeo,
@@ -199,22 +199,22 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   // Destek yazısı: meta tabanı markdown dosyasının frontmatter'ından gelir,
   // panelin sayfa override'ı (seo_pages['/destek/<kategori>/<slug>']) üstüne
   // biner. Kategori sayfalarının meta'sı DEFAULT_PAGES'ta hazırdır.
-  let destekYazi: DestekYazi | null = null
-  let destekKat: DestekKategori | null = null
+  let supportArticle: SupportArticle | null = null
+  let supportCat: SupportCategory | null = null
   if (path.startsWith('/destek/')) {
-    const parcalar = path.slice('/destek/'.length).split('/')
-    destekKat = destekKategori(parcalar[0] ?? '')
-    if (destekKat && parcalar.length === 2 && parcalar[1]) {
-      destekYazi = await destekYaziGetir(destekKat.slug, parcalar[1])
-      if (destekYazi) {
-        const yaziSayfa = makePage({
-          title: `${destekYazi.baslik} | afiet destek`,
-          description: destekYazi.ozet,
-          ogTitle: destekYazi.baslik,
-          ogDescription: destekYazi.ozet,
+    const parts = path.slice('/destek/'.length).split('/')
+    supportCat = supportCategory(parts[0] ?? '')
+    if (supportCat && parts.length === 2 && parts[1]) {
+      supportArticle = await getSupportArticle(supportCat.slug, parts[1])
+      if (supportArticle) {
+        const articlePage = makePage({
+          title: `${supportArticle.title} | afiet destek`,
+          description: supportArticle.summary,
+          ogTitle: supportArticle.title,
+          ogDescription: supportArticle.summary,
           sitemap: { include: true, changefreq: 'monthly', priority: 0.5 },
         })
-        page = deepMerge<PageSeo>(yaziSayfa, overrides.pages[path])
+        page = deepMerge<PageSeo>(articlePage, overrides.pages[path])
       }
     }
   }
@@ -330,11 +330,11 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       inLanguage: g.locale.replace('_', '-'),
       isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
     })
-  } else if (destekKat && !destekYazi) {
+  } else if (supportCat && !supportArticle) {
     jsonld.push({
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: destekKat.baslik,
+      name: supportCat.title,
       url: canonical,
       description,
       inLanguage: g.locale.replace('_', '-'),
@@ -345,19 +345,19 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
         { '@type': 'ListItem', position: 2, name: 'Destek', item: `${base}/destek` },
-        { '@type': 'ListItem', position: 3, name: destekKat.baslik, item: canonical },
+        { '@type': 'ListItem', position: 3, name: supportCat.title, item: canonical },
       ],
     })
-  } else if (destekKat && destekYazi) {
+  } else if (supportCat && supportArticle) {
     jsonld.push({
       '@context': 'https://schema.org',
       '@type': 'TechArticle',
-      headline: destekYazi.baslik,
-      description: destekYazi.ozet,
+      headline: supportArticle.title,
+      description: supportArticle.summary,
       inLanguage: g.locale.replace('_', '-'),
-      dateModified: destekYazi.guncelleme,
+      dateModified: supportArticle.updated,
       mainEntityOfPage: canonical,
-      articleSection: destekKat.baslik,
+      articleSection: supportCat.title,
       author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
       publisher: {
         '@type': 'Organization',
@@ -375,10 +375,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         {
           '@type': 'ListItem',
           position: 3,
-          name: destekKat.baslik,
-          item: `${base}/destek/${destekKat.slug}`,
+          name: supportCat.title,
+          item: `${base}/destek/${supportCat.slug}`,
         },
-        { '@type': 'ListItem', position: 4, name: destekYazi.baslik, item: canonical },
+        { '@type': 'ListItem', position: 4, name: supportArticle.title, item: canonical },
       ],
     })
   }
@@ -407,10 +407,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     faq: showFaq
       ? { title: settings.faq.title, intro: settings.faq.intro, items: settings.faq.items }
       : null,
-    ogType: post || destekYazi ? 'article' : 'website',
+    ogType: post || supportArticle ? 'article' : 'website',
     ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
     ...(post ? { modifiedAt: post.updatedAt } : {}),
-    ...(destekYazi ? { modifiedAt: destekYazi.guncelleme } : {}),
+    ...(supportArticle ? { modifiedAt: supportArticle.updated } : {}),
   }
 }
 

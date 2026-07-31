@@ -1,14 +1,14 @@
-import { destekKategorileri } from '~~/server/utils/destekStore'
+import { supportCategoriesWithArticles } from '~~/server/utils/supportStore'
 
 /**
  * Destek merkezi haritası: kategoriler ve içindeki yazı özetleri (gövdesiz).
  * Hub ve kategori sayfaları ile yazı sayfasının sol menüsü bunu okur.
  */
 export default defineEventHandler(async (event) => {
-  const kategoriler = await destekKategorileri()
+  const categories = await supportCategoriesWithArticles()
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=300')
   return {
-    kategoriler,
-    toplam: kategoriler.reduce((n, k) => n + k.yazilar.length, 0),
+    categories,
+    total: categories.reduce((n, c) => n + c.articles.length, 0),
   }
 })

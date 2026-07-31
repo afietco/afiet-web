@@ -1,4 +1,4 @@
-import { destekAramaDizini } from '~~/server/utils/destekStore'
+import { supportSearchIndex } from '~~/server/utils/supportStore'
 
 /**
  * Arama dizini. İstemci bunu arama kutusuna İLK odaklandığında indirir, sayfa
@@ -8,7 +8,7 @@ import { destekAramaDizini } from '~~/server/utils/destekStore'
  * Dizin deploy'dan deploy'a değişir, o yüzden uzun kenar önbelleği güvenli.
  */
 export default defineEventHandler(async (event) => {
-  const satirlar = await destekAramaDizini()
+  const rows = await supportSearchIndex()
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=3600')
-  return { satirlar }
+  return { rows }
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { destek } from '~/data/content'
-import { aksanMetin } from '~/utils/destekAksan'
-import type { DestekKategoriDolu } from '#shared/types/destek'
+import { support } from '~/data/content'
+import { accentText } from '~/utils/supportAccent'
+import type { SupportCategoryWithArticles } from '#shared/types/support'
 
 /**
  * Yazı ve kategori sayfalarının sol menüsü: kategori ağacı, açık kategori
@@ -9,62 +9,66 @@ import type { DestekKategoriDolu } from '#shared/types/destek'
  *
  * Mobilde menü native <details> ile katlanır - sitedeki diğer katlanır
  * yüzeylerle (SSS, mobil menü) aynı sebep: JS çalışmasa da açılıp kapanır.
+ *
+ * Varsayılanlar bilinçli: 404 yolunda sayfa setup'ı yarıda kesildiğinde menü
+ * gürültü çıkarmadan boş render etsin.
  */
-// Varsayılanlar bilinçli: 404 yolunda sayfa setup'ı yarıda kesildiğinde menü
-// gürültü çıkarmadan boş render etsin.
 const props = withDefaults(
   defineProps<{
-    kategoriler?: DestekKategoriDolu[]
-    aktifKategori?: string
-    aktifYazi?: string
+    categories?: SupportCategoryWithArticles[]
+    activeCategory?: string
+    activeArticle?: string
   }>(),
-  { kategoriler: () => [], aktifKategori: '' },
+  { categories: () => [], activeCategory: '' },
 )
 
-const doluKategoriler = computed(() => props.kategoriler.filter((k) => k.yazilar.length))
+const filled = computed(() => props.categories.filter((c) => c.articles.length))
 </script>
 
 <template>
-  <nav :aria-label="destek.menuTitle">
+  <nav :aria-label="support.menuTitle">
     <!-- Masaüstü: hep açık ağaç -->
     <div class="hidden lg:block">
       <p class="mb-3 text-xs font-extrabold tracking-widest text-muted uppercase">
-        {{ destek.menuTitle }}
+        {{ support.menuTitle }}
       </p>
       <ul class="flex flex-col gap-0.5">
-        <li v-for="k in doluKategoriler" :key="k.slug">
+        <li v-for="c in filled" :key="c.slug">
           <NuxtLink
-            :to="`/destek/${k.slug}`"
+            :to="`/destek/${c.slug}`"
             class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold tracking-tight transition"
             :class="
-              k.slug === props.aktifKategori
+              c.slug === props.activeCategory
                 ? 'bg-surface text-ink shadow-lift'
                 : 'text-soft hover:bg-surface/70 hover:text-ink'
             "
           >
-            <DestekIkon
-              :name="k.ikon"
+            <SupportIcon
+              :name="c.icon"
               class="h-4 w-4 shrink-0"
-              :class="k.slug === props.aktifKategori ? aksanMetin[k.aksan] : 'text-muted'"
+              :class="c.slug === props.activeCategory ? accentText[c.accent] : 'text-muted'"
             />
-            {{ k.baslik }}
+            {{ c.title }}
           </NuxtLink>
 
           <!-- Yalnız açık kategorinin yazıları listelenir: ağaç tamamen açık
                olsa 100 satır olur ve konum hissi kaybolur. -->
-          <ul v-if="k.slug === props.aktifKategori" class="mt-1 mb-2 ml-4 flex flex-col gap-0.5 border-l border-line pl-3">
-            <li v-for="y in k.yazilar" :key="y.slug">
+          <ul
+            v-if="c.slug === props.activeCategory"
+            class="mt-1 mb-2 ml-4 flex flex-col gap-0.5 border-l border-line pl-3"
+          >
+            <li v-for="a in c.articles" :key="a.slug">
               <NuxtLink
-                :to="`/destek/${k.slug}/${y.slug}`"
+                :to="`/destek/${c.slug}/${a.slug}`"
                 class="block rounded-lg px-2.5 py-1.5 text-sm transition"
                 :class="
-                  y.slug === props.aktifYazi
+                  a.slug === props.activeArticle
                     ? 'font-extrabold text-brand-deep'
                     : 'font-semibold text-soft hover:text-ink'
                 "
-                :aria-current="y.slug === props.aktifYazi ? 'page' : undefined"
+                :aria-current="a.slug === props.activeArticle ? 'page' : undefined"
               >
-                {{ y.baslik }}
+                {{ a.title }}
               </NuxtLink>
             </li>
           </ul>
@@ -73,13 +77,13 @@ const doluKategoriler = computed(() => props.kategoriler.filter((k) => k.yazilar
     </div>
 
     <!-- Mobil ve tablet: katlanır -->
-    <details class="destek-menu rounded-3xl border border-line bg-surface lg:hidden">
+    <details class="support-menu rounded-3xl border border-line bg-surface lg:hidden">
       <summary
         class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-3.5 font-extrabold tracking-tight text-ink [&::-webkit-details-marker]:hidden"
       >
-        <span>{{ destek.menuToggle }}</span>
+        <span>{{ support.menuToggle }}</span>
         <span
-          class="destek-menu-ok grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas text-brand transition duration-300"
+          class="support-menu-caret grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas text-brand transition duration-300"
           aria-hidden="true"
         >
           <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none">
@@ -94,32 +98,35 @@ const doluKategoriler = computed(() => props.kategoriler.filter((k) => k.yazilar
         </span>
       </summary>
       <ul class="flex flex-col gap-0.5 border-t border-line px-3 py-3">
-        <li v-for="k in doluKategoriler" :key="k.slug">
+        <li v-for="c in filled" :key="c.slug">
           <NuxtLink
-            :to="`/destek/${k.slug}`"
+            :to="`/destek/${c.slug}`"
             class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold tracking-tight transition"
-            :class="k.slug === props.aktifKategori ? 'bg-canvas text-ink' : 'text-soft'"
+            :class="c.slug === props.activeCategory ? 'bg-canvas text-ink' : 'text-soft'"
           >
-            <DestekIkon
-              :name="k.ikon"
+            <SupportIcon
+              :name="c.icon"
               class="h-4 w-4 shrink-0"
-              :class="k.slug === props.aktifKategori ? aksanMetin[k.aksan] : 'text-muted'"
+              :class="c.slug === props.activeCategory ? accentText[c.accent] : 'text-muted'"
             />
-            {{ k.baslik }}
+            {{ c.title }}
           </NuxtLink>
-          <ul v-if="k.slug === props.aktifKategori" class="mt-1 mb-2 ml-4 flex flex-col gap-0.5 border-l border-line pl-3">
-            <li v-for="y in k.yazilar" :key="y.slug">
+          <ul
+            v-if="c.slug === props.activeCategory"
+            class="mt-1 mb-2 ml-4 flex flex-col gap-0.5 border-l border-line pl-3"
+          >
+            <li v-for="a in c.articles" :key="a.slug">
               <NuxtLink
-                :to="`/destek/${k.slug}/${y.slug}`"
+                :to="`/destek/${c.slug}/${a.slug}`"
                 class="block rounded-lg px-2.5 py-1.5 text-sm transition"
                 :class="
-                  y.slug === props.aktifYazi
+                  a.slug === props.activeArticle
                     ? 'font-extrabold text-brand-deep'
                     : 'font-semibold text-soft'
                 "
-                :aria-current="y.slug === props.aktifYazi ? 'page' : undefined"
+                :aria-current="a.slug === props.activeArticle ? 'page' : undefined"
               >
-                {{ y.baslik }}
+                {{ a.title }}
               </NuxtLink>
             </li>
           </ul>
@@ -130,7 +137,7 @@ const doluKategoriler = computed(() => props.kategoriler.filter((k) => k.yazilar
 </template>
 
 <style scoped>
-.destek-menu[open] .destek-menu-ok {
+.support-menu[open] .support-menu-caret {
   transform: rotate(180deg);
 }
 </style>

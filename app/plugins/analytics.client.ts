@@ -12,21 +12,21 @@
  * `CookieNotice.vue` yazar); "Kabul et" anında geçerli sayfayı sayar.
  *
  * Sayfa görüntülemenin dışında iki ürün olayı daha var (destek merkezi):
- * `$afietOlay('destek_oy' | 'destek_arama', …)`. Aynı kapılardan geçerler,
+ * `$afietEvent('destek_oy' | 'destek_arama', …)`. Aynı kapılardan geçerler,
  * ayrı bir uç ya da ikinci bir onay mekanizması YOKTUR.
  */
-type DestekOlayi = 'destek_oy' | 'destek_arama'
+type SupportEvent = 'destek_oy' | 'destek_arama'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Sunucuda ve toplamanın kapalı olduğu host'larda bile sağlayıcı DÖNER:
-  // çağıran bileşenler `$afietOlay` var mı diye kontrol etmek zorunda kalmasın.
+  // çağıran bileşenler `$afietEvent` var mı diye kontrol etmek zorunda kalmasın.
   // İmza sessiz sürümde de birebir aynı olmalı, yoksa Nuxt iki dönüş tipini
   // birleştirir ve çağrı yerleri tip hatası verir.
   const sessiz = {
     provide: {
-      afietOlay: (tur: DestekOlayi, veri: { p: string; v: string }) => {
-        void tur
-        void veri
+      afietEvent: (kind: SupportEvent, data: { p: string; v: string }) => {
+        void kind
+        void data
       },
     },
   }
@@ -135,10 +135,10 @@ export default defineNuxtPlugin((nuxtApp) => {
    * karakterde kesilir ve sunucu tarafında da ayrıca sınırlanır; sayfa
    * görüntülemeyle aynı onay kapısından geçer.
    */
-  const afietOlay = (tur: DestekOlayi, veri: { p: string; v: string }) => {
-    if (!veri.p || !veri.v) return
-    send({ e: tur, p: veri.p, v: veri.v.slice(0, 120) })
+  const afietEvent = (kind: SupportEvent, data: { p: string; v: string }) => {
+    if (!data.p || !data.v) return
+    send({ e: kind, p: data.p, v: data.v.slice(0, 120) })
   }
 
-  return { provide: { afietOlay } }
+  return { provide: { afietEvent } }
 })

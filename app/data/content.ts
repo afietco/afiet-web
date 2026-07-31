@@ -402,7 +402,7 @@ export const footer = {
  * Ton kuralı sorun giderme yazılarında da geçerlidir: suçlama yok, teknik
  * döküm yok, "yapamazsın" yok. Adım net, dil sıcak (BRAND.md > Ses tonu).
  */
-export const destek = {
+export const support = {
   eyebrow: 'destek merkezi',
   title: 'Nasıl yardımcı olabiliriz?',
   sub: 'Aradığın cevabı ara kutusuna yaz ya da aşağıdaki başlıklardan ilerle.',
@@ -437,6 +437,9 @@ export const destek = {
     'Afi’nin çözemediği bir şey varsa bize yaz. Beta boyunca her mesajı ürün ekibi okuyor.',
   contactMail: 'destek@afiet.co',
   statusLabel: 'Bir kesinti mi var?',
+  statusBody:
+    'Uygulama ya da site beklediğin gibi çalışmıyorsa önce servislerin anlık ' +
+    'durumuna bakabilirsin.',
   statusLinkLabel: 'Sistem durumunu gör',
   statusTo: '/durum',
 

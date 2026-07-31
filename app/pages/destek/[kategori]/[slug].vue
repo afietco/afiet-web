@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { destek } from '~/data/content'
+import { support } from '~/data/content'
 
 /**
  * Destek yazısı. Üç kolon: solda kategori ağacı, ortada gövde, sağda
  * "Bu sayfada". 1280 pikselin altında sağ kolon katlanır kutuya iner,
- * 1024'ün altında sol ağaç da katlanır (DestekYanMenu kendi içinde hâlleder).
+ * 1024'ün altında sol ağaç da katlanır (SupportNav kendi içinde hâlleder).
  *
  * Gövde SUNUCUDA markdown-it ile (html:false) üretilmiş güvenli HTML'dir;
  * blogdaki sözleşmenin aynısı, v-html güvenliği buna dayanır.
  */
 const route = useRoute()
-const kategoriSlug = String(route.params.kategori ?? '')
-const yaziSlug = String(route.params.slug ?? '')
+const categorySlug = String(route.params.kategori ?? '')
+const articleSlug = String(route.params.slug ?? '')
 
-const { data, error } = await useFetch(`/api/destek/${kategoriSlug}/${yaziSlug}`, {
-  key: `destek-yazi:${kategoriSlug}/${yaziSlug}`,
+const { data, error } = await useFetch(`/api/destek/${categorySlug}/${articleSlug}`, {
+  key: `destek-yazi:${categorySlug}/${articleSlug}`,
 })
 if (error.value || !data.value) {
   throw createError({
@@ -27,17 +27,17 @@ if (error.value || !data.value) {
 // Meta ve JSON-LD sunucuda çözülür (TechArticle + BreadcrumbList - seoStore).
 usePageSeo()
 
-const { data: harita } = await useFetch('/api/destek', {
+const { data: map } = await useFetch('/api/destek', {
   key: 'destek-harita',
-  default: () => ({ kategoriler: [], toplam: 0 }),
+  default: () => ({ categories: [], total: 0 }),
 })
-const kategoriler = computed(() => harita.value?.kategoriler ?? [])
+const categories = computed(() => map.value?.categories ?? [])
 
-const yazi = computed(() => data.value!.yazi)
-const kategori = computed(() => data.value!.kategori)
-const yol = computed(() => `/destek/${kategoriSlug}/${yaziSlug}`)
+const article = computed(() => data.value!.article)
+const category = computed(() => data.value!.category)
+const path = computed(() => `/destek/${categorySlug}/${articleSlug}`)
 
-const tarihYaz = (iso: string) =>
+const formatDate = (iso: string) =>
   new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(
     new Date(`${iso}T00:00:00Z`),
   )
@@ -51,10 +51,10 @@ const tarihYaz = (iso: string) =>
       <!-- Sol: kategori ağacı -->
       <aside class="mb-8 lg:mb-0">
         <div class="lg:sticky lg:top-24">
-          <DestekYanMenu
-            :kategoriler="kategoriler"
-            :aktif-kategori="kategoriSlug"
-            :aktif-yazi="yaziSlug"
+          <SupportNav
+            :categories="categories"
+            :active-category="categorySlug"
+            :active-article="articleSlug"
           />
         </div>
       </aside>
@@ -63,30 +63,30 @@ const tarihYaz = (iso: string) =>
       <article class="min-w-0">
         <nav aria-label="Kırıntı yolu" class="text-sm font-bold text-muted">
           <NuxtLink to="/destek" class="transition hover:text-brand-deep">
-            {{ destek.breadcrumbRoot }}
+            {{ support.breadcrumbRoot }}
           </NuxtLink>
           <span class="mx-1.5" aria-hidden="true">›</span>
-          <NuxtLink :to="`/destek/${kategori.slug}`" class="transition hover:text-brand-deep">
-            {{ kategori.baslik }}
+          <NuxtLink :to="`/destek/${category.slug}`" class="transition hover:text-brand-deep">
+            {{ category.title }}
           </NuxtLink>
         </nav>
 
         <h1
           class="mt-4 font-display text-3xl leading-tight font-semibold tracking-[-0.02em] text-ink sm:text-4xl"
         >
-          {{ yazi.baslik }}
+          {{ article.title }}
         </h1>
-        <p v-if="yazi.ozet" class="mt-3 text-[17px] leading-relaxed text-soft">{{ yazi.ozet }}</p>
+        <p v-if="article.summary" class="mt-3 text-[17px] leading-relaxed text-soft">{{ article.summary }}</p>
 
         <!-- 1280 altında içindekiler: kaydırma takibi yok, katlanır liste yeter -->
         <details
-          v-if="yazi.icindekiler.length"
+          v-if="article.toc.length"
           class="destek-toc mt-6 rounded-2xl border border-line bg-surface xl:hidden"
         >
           <summary
             class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 text-sm font-extrabold tracking-tight text-ink [&::-webkit-details-marker]:hidden"
           >
-            <span>{{ destek.tocTitle }}</span>
+            <span>{{ support.tocTitle }}</span>
             <span class="destek-toc-ok text-brand transition duration-300" aria-hidden="true">
               <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none">
                 <path
@@ -100,76 +100,76 @@ const tarihYaz = (iso: string) =>
             </span>
           </summary>
           <ul class="flex flex-col gap-1 border-t border-line px-5 py-3">
-            <li v-for="b in yazi.icindekiler" :key="b.id" :class="b.seviye === 3 ? 'pl-4' : ''">
+            <li v-for="h in article.toc" :key="h.id" :class="h.level === 3 ? 'pl-4' : ''">
               <a
-                :href="`#${b.id}`"
+                :href="`#${h.id}`"
                 class="text-sm font-semibold text-soft transition hover:text-brand-deep"
               >
-                {{ b.metin }}
+                {{ h.text }}
               </a>
             </li>
           </ul>
         </details>
 
         <!-- Gövde: sunucuda üretilmiş güvenli HTML -->
-        <div class="destek-govde mt-8" v-html="yazi.html" />
+        <div class="destek-govde mt-8" v-html="article.html" />
 
         <p class="mt-10 text-sm font-bold text-muted">
-          {{ destek.updatedPrefix }}:
-          <time :datetime="yazi.guncelleme">{{ tarihYaz(yazi.guncelleme) }}</time>
+          {{ support.updatedPrefix }}:
+          <time :datetime="article.updated">{{ formatDate(article.updated) }}</time>
         </p>
 
         <div class="mt-5">
-          <DestekOy :yol="yol" />
+          <SupportVote :path="path" />
         </div>
 
         <!-- Komşu yazılar: sıralı okuma yolu -->
         <nav
-          v-if="yazi.onceki || yazi.sonraki"
+          v-if="article.previous || article.next"
           class="mt-8 grid gap-3 sm:grid-cols-2"
           aria-label="Bu başlıktaki diğer yazılar"
         >
           <NuxtLink
-            v-if="yazi.onceki"
-            :to="`/destek/${kategori.slug}/${yazi.onceki.slug}`"
+            v-if="article.previous"
+            :to="`/destek/${category.slug}/${article.previous.slug}`"
             class="group rounded-2xl border border-line bg-surface px-5 py-4 transition hover:border-brand/40"
           >
             <span class="block text-xs font-extrabold tracking-widest text-muted uppercase">
-              {{ destek.prevLabel }}
+              {{ support.prevLabel }}
             </span>
             <span
               class="mt-1 block font-extrabold tracking-tight text-ink transition group-hover:text-brand-deep"
             >
-              {{ yazi.onceki.baslik }}
+              {{ article.previous.title }}
             </span>
           </NuxtLink>
           <NuxtLink
-            v-if="yazi.sonraki"
-            :to="`/destek/${kategori.slug}/${yazi.sonraki.slug}`"
+            v-if="article.next"
+            :to="`/destek/${category.slug}/${article.next.slug}`"
             class="group rounded-2xl border border-line bg-surface px-5 py-4 text-right transition hover:border-brand/40 sm:col-start-2"
           >
             <span class="block text-xs font-extrabold tracking-widest text-muted uppercase">
-              {{ destek.nextLabel }}
+              {{ support.nextLabel }}
             </span>
             <span
               class="mt-1 block font-extrabold tracking-tight text-ink transition group-hover:text-brand-deep"
             >
-              {{ yazi.sonraki.baslik }}
+              {{ article.next.title }}
             </span>
           </NuxtLink>
         </nav>
 
-        <section v-if="yazi.ilgili.length" class="mt-10">
+        <section v-if="article.related.length" class="mt-10">
           <h2 class="font-display text-xl font-semibold tracking-tight text-ink">
-            {{ destek.relatedTitle }}
+            {{ support.relatedTitle }}
           </h2>
           <ul class="mt-3 flex flex-col gap-2">
-            <li v-for="i in yazi.ilgili" :key="`${i.kategori}/${i.slug}`">
+            <li v-for="r in article.related" :key="`${r.category}/${r.slug}`">
               <NuxtLink
-                :to="`/destek/${i.kategori}/${i.slug}`"
+                :to="`/destek/${r.category}/${r.slug}`"
                 class="font-bold text-soft transition hover:text-brand-deep"
               >
-                {{ i.baslik }}
+                {{ r.title }}
               </NuxtLink>
             </li>
           </ul>
@@ -177,14 +177,14 @@ const tarihYaz = (iso: string) =>
 
         <!-- Çıkmaz sokak yok: her yazının sonunda insana ve Afi'ye yol var -->
         <div class="mt-10 rounded-3xl border border-line bg-surface px-6 py-5">
-          <p class="font-extrabold tracking-tight text-ink">{{ destek.stuckTitle }}</p>
-          <p class="mt-1.5 text-sm leading-relaxed text-soft">{{ destek.stuckBody }}</p>
+          <p class="font-extrabold tracking-tight text-ink">{{ support.stuckTitle }}</p>
+          <p class="mt-1.5 text-sm leading-relaxed text-soft">{{ support.stuckBody }}</p>
           <div class="mt-4 flex flex-wrap gap-2">
             <NuxtLink to="/destek#afiye-sor" class="btn-primary !px-5 !py-2.5 text-sm">
-              {{ destek.stuckAskCta }}
+              {{ support.stuckAskCta }}
             </NuxtLink>
-            <a :href="`mailto:${destek.contactMail}`" class="btn-ghost !px-5 !py-2.5 text-sm">
-              {{ destek.contactMail }}
+            <a :href="`mailto:${support.contactMail}`" class="btn-ghost !px-5 !py-2.5 text-sm">
+              {{ support.contactMail }}
             </a>
           </div>
         </div>
@@ -193,7 +193,7 @@ const tarihYaz = (iso: string) =>
       <!-- Sağ: yapışkan içindekiler, yalnız geniş ekranda -->
       <aside class="hidden xl:block">
         <div class="sticky top-24">
-          <DestekIcindekiler :basliklar="yazi.icindekiler" />
+          <SupportToc :headings="article.toc" />
         </div>
       </aside>
     </div>

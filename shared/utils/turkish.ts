@@ -10,7 +10,7 @@
  * indirmektir, o yüzden harf eşlemesi küçültmeden ÖNCE uygulanır.
  */
 
-const HARFLER: Record<string, string> = {
+const LETTERS: Record<string, string> = {
   ç: 'c', Ç: 'c',
   ğ: 'g', Ğ: 'g',
   ı: 'i', I: 'i', İ: 'i',
@@ -24,16 +24,16 @@ const HARFLER: Record<string, string> = {
   '’': '', "'": '',
 }
 
-const HARF_DESENI = /[çÇğĞıIİöÖşŞüÜâÂîÎûÛ’']/g
+const LETTER_PATTERN = /[çÇğĞıIİöÖşŞüÜâÂîÎûÛ’']/g
 
 /** Aksanları ve Türkçe harfleri sadeleştirip küçük harfe indirir. */
-export function trKatla(metin: string): string {
-  return metin.replace(HARF_DESENI, (h) => HARFLER[h] ?? h).toLowerCase()
+export function trFold(text: string): string {
+  return text.replace(LETTER_PATTERN, (letter) => LETTERS[letter] ?? letter).toLowerCase()
 }
 
 /** Başlık id'si ve dosya adı için güvenli slug: yalnız a-z, 0-9 ve tire. */
-export function trSlug(metin: string): string {
-  return trKatla(metin)
+export function trSlug(text: string): string {
+  return trFold(text)
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80)
@@ -43,8 +43,8 @@ export function trSlug(metin: string): string {
  * Aramada kullanılan kelime listesi. İki karakterden kısa parçalar atılır
  * ("ve", "bir" gibi kelimeler kalır, tek harfler gitmiş olur).
  */
-export function trKelimeler(metin: string): string[] {
-  return trKatla(metin)
+export function trWords(text: string): string[] {
+  return trFold(text)
     .split(/[^a-z0-9]+/)
-    .filter((k) => k.length >= 2)
+    .filter((word) => word.length >= 2)
 }

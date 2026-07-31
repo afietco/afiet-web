@@ -1,4 +1,4 @@
-import { destekLlmsBolumu } from '~~/server/utils/destekStore'
+import { supportLlmsSection } from '~~/server/utils/supportStore'
 import { getSeoBundle } from '~~/server/utils/seoStore'
 
 /**
@@ -14,8 +14,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'llms_kapali' })
   }
   const base = settings.general.baseUrl.replace(/\/$/, '')
-  const destek = await destekLlmsBolumu(base)
+  const supportSection = await supportLlmsSection(base)
   setHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=300')
-  return destek ? `${settings.llms.content.trimEnd()}\n\n${destek}` : settings.llms.content
+  return supportSection
+    ? `${settings.llms.content.trimEnd()}\n\n${supportSection}`
+    : settings.llms.content
 })

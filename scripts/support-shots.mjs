@@ -53,47 +53,47 @@ try {
     })
   }
 
-  const cek = async (ad, yol, viewport, { tamSayfa = false, once } = {}) => {
+  const shoot = async (name, path, viewport, { fullPage = false, before } = {}) => {
     const page = await browser.newPage({ viewport, deviceScaleFactor: 2 })
-    await page.goto(`http://localhost:${PORT}${yol}`, { waitUntil: 'networkidle' })
+    await page.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'networkidle' })
     await settle(page)
-    if (once) await once(page)
-    await page.screenshot({ path: join(OUT, `${ad}.png`), fullPage: tamSayfa })
+    if (before) await before(page)
+    await page.screenshot({ path: join(OUT, `${name}.png`), fullPage })
     await page.close()
-    console.log(`  ✓ ${ad}.png`)
+    console.log(`  ✓ ${name}.png`)
   }
 
-  const masa = { width: 1440, height: 900 }
-  const mobil = { width: 390, height: 844 }
+  const desktop = { width: 1440, height: 900 }
+  const mobile = { width: 390, height: 844 }
 
-  await cek('01-hub-masaustu', '/destek', masa)
-  await cek('02-hub-tam', '/destek', masa, { tamSayfa: true })
-  await cek('03-hub-arama-acik', '/destek', masa, {
-    once: async (page) => {
-      await page.locator('#destek-ara-buyuk').click()
-      await page.locator('#destek-ara-buyuk').fill('grup')
+  await shoot('01-hub-masaustu', '/destek', desktop)
+  await shoot('02-hub-tam', '/destek', desktop, { fullPage: true })
+  await shoot('03-hub-arama-acik', '/destek', desktop, {
+    before: async (page) => {
+      await page.locator('#destek-ara-large').click()
+      await page.locator('#destek-ara-large').fill('grup')
       await page.locator('#destek-sonuclar [role="option"]').first().waitFor({ timeout: 8000 })
       await page.waitForTimeout(250)
     },
   })
-  await cek('04-kategori-masaustu', '/destek/ogun-kaydi', masa)
-  await cek(
+  await shoot('04-kategori-masaustu', '/destek/ogun-kaydi', desktop)
+  await shoot(
     '05-yazi-masaustu',
     '/destek/ogun-kaydi/ogunu-duzenleme-ve-silme',
-    masa,
+    desktop,
   )
-  await cek(
+  await shoot(
     '06-yazi-tam',
     '/destek/ogun-kaydi/ogunu-duzenleme-ve-silme',
-    masa,
-    { tamSayfa: true },
+    desktop,
+    { fullPage: true },
   )
-  await cek('07-hub-mobil', '/destek', mobil, { tamSayfa: true })
-  await cek(
+  await shoot('07-hub-mobil', '/destek', mobile, { fullPage: true })
+  await shoot(
     '08-yazi-mobil',
     '/destek/denge-ritim/afiyet-gunu-ve-ritim',
-    mobil,
-    { tamSayfa: true },
+    mobile,
+    { fullPage: true },
   )
 
   console.log(`\nEkran görüntüleri: ${OUT}`)

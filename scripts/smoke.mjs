@@ -137,52 +137,52 @@ try {
   ok(sitemap.includes('/beta'), 'sitemap /beta sayfasını içeriyor')
 
   // --- Destek merkezi: sunucu tarafı sözleşmeleri ---
-  const destekHub = await fetch(`http://localhost:${PORT}/destek`)
-  const destekHtml = await destekHub.text()
-  ok(destekHub.status === 200, `/destek 200 (${destekHub.status})`)
-  ok(destekHtml.includes('Nasıl yardımcı olabiliriz?'), '/destek başlığı prerender HTML içinde')
-  ok(destekHtml.includes('CollectionPage'), '/destek CollectionPage şeması içeriyor')
+  const supportHub = await fetch(`http://localhost:${PORT}/destek`)
+  const supportHtml = await supportHub.text()
+  ok(supportHub.status === 200, `/destek 200 (${supportHub.status})`)
+  ok(supportHtml.includes('Nasıl yardımcı olabiliriz?'), '/destek başlığı prerender HTML içinde')
+  ok(supportHtml.includes('CollectionPage'), '/destek CollectionPage şeması içeriyor')
 
-  const destekHarita = await (await fetch(`http://localhost:${PORT}/api/destek`)).json()
+  const supportMap = await (await fetch(`http://localhost:${PORT}/api/destek`)).json()
   ok(
-    Array.isArray(destekHarita.kategoriler) && destekHarita.kategoriler.length === 7,
-    `destek 7 kategori döndürüyor (${destekHarita.kategoriler?.length})`,
+    Array.isArray(supportMap.categories) && supportMap.categories.length === 7,
+    `destek 7 kategori döndürüyor (${supportMap.categories?.length})`,
   )
-  ok(destekHarita.toplam > 0, `destek yazısı var (${destekHarita.toplam})`)
+  ok(supportMap.total > 0, `destek yazısı var (${supportMap.total})`)
   ok(
-    destekHarita.kategoriler.every((k) => k.yazilar.length > 0),
+    supportMap.categories.every((c) => c.articles.length > 0),
     'her kategoride en az bir yazı var',
   )
 
-  const ilkKategori = destekHarita.kategoriler[0]
-  const ilkYazi = ilkKategori.yazilar[0]
-  const yaziYolu = `/destek/${ilkKategori.slug}/${ilkYazi.slug}`
-  const yaziRes = await fetch(`http://localhost:${PORT}${yaziYolu}`)
-  const yaziHtml = await yaziRes.text()
-  ok(yaziRes.status === 200, `${yaziYolu} 200 (${yaziRes.status})`)
-  ok(yaziHtml.includes('destek-govde'), 'destek yazısının gövdesi HTML içinde')
-  ok(yaziHtml.includes('TechArticle'), 'destek yazısı TechArticle şeması içeriyor')
-  ok(yaziHtml.includes('BreadcrumbList'), 'destek yazısı BreadcrumbList içeriyor')
+  const firstCategory = supportMap.categories[0]
+  const firstArticle = firstCategory.articles[0]
+  const articlePath = `/destek/${firstCategory.slug}/${firstArticle.slug}`
+  const articleRes = await fetch(`http://localhost:${PORT}${articlePath}`)
+  const articleHtml = await articleRes.text()
+  ok(articleRes.status === 200, `${articlePath} 200 (${articleRes.status})`)
+  ok(articleHtml.includes('destek-govde'), 'destek yazısının gövdesi HTML içinde')
+  ok(articleHtml.includes('TechArticle'), 'destek yazısı TechArticle şeması içeriyor')
+  ok(articleHtml.includes('BreadcrumbList'), 'destek yazısı BreadcrumbList içeriyor')
 
-  const destek404 = await fetch(`http://localhost:${PORT}/destek/yok-boyle-bir-sey`)
-  ok(destek404.status === 404, `bilinmeyen destek başlığı 404 (${destek404.status})`)
-  const yazi404 = await fetch(`http://localhost:${PORT}${`/destek/${ilkKategori.slug}/yok`}`)
-  ok(yazi404.status === 404, `bilinmeyen destek yazısı 404 (${yazi404.status})`)
+  const category404 = await fetch(`http://localhost:${PORT}/destek/yok-boyle-bir-sey`)
+  ok(category404.status === 404, `bilinmeyen destek başlığı 404 (${category404.status})`)
+  const article404 = await fetch(`http://localhost:${PORT}/destek/${firstCategory.slug}/yok`)
+  ok(article404.status === 404, `bilinmeyen destek yazısı 404 (${article404.status})`)
 
-  const aramaDizini = await (await fetch(`http://localhost:${PORT}/api/destek/arama`)).json()
+  const searchIndex = await (await fetch(`http://localhost:${PORT}/api/destek/arama`)).json()
   ok(
-    Array.isArray(aramaDizini.satirlar) && aramaDizini.satirlar.length === destekHarita.toplam,
-    `arama dizini tüm yazıları içeriyor (${aramaDizini.satirlar?.length})`,
+    Array.isArray(searchIndex.rows) && searchIndex.rows.length === supportMap.total,
+    `arama dizini tüm yazıları içeriyor (${searchIndex.rows?.length})`,
   )
 
   ok(sitemap.includes('/destek'), 'sitemap /destek sayfasını içeriyor')
-  ok(sitemap.includes(yaziYolu), 'sitemap destek yazısını içeriyor')
+  ok(sitemap.includes(articlePath), 'sitemap destek yazısını içeriyor')
   ok(llms.includes('## Destek merkezi'), 'llms.txt destek bölümü içeriyor')
 
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)
-  ok(llmsFull.includes(ilkYazi.baslik), 'llms-full.txt yazı gövdelerini içeriyor')
+  ok(llmsFull.includes(firstArticle.title), 'llms-full.txt yazı gövdelerini içeriyor')
 
   const meta = await (
     await fetch(`http://localhost:${PORT}/api/seo/meta?path=/`)
@@ -369,7 +369,7 @@ try {
 
   // Destek yazısı JS'siz de tam okunur olmalı: gövde sunucuda render edilir,
   // yan menü ve içindekiler native <details>tir. Arama kutusu çalışmaz, o kadar.
-  await noJsPage.goto(`http://localhost:${PORT}${yaziYolu}`)
+  await noJsPage.goto(`http://localhost:${PORT}${articlePath}`)
   ok(
     (await noJsPage.locator('.destek-govde h2').count()) > 0,
     "JS'siz destek yazısının gövdesi görünür",
@@ -380,9 +380,9 @@ try {
   await page.goto(`http://localhost:${PORT}/destek`, { waitUntil: 'networkidle' })
   ok((await page.locator('#konular a').count()) === 7, '7 kategori kartı görünüyor')
 
-  const aramaKutusu = page.locator('#destek-ara-buyuk')
-  await aramaKutusu.click()
-  await aramaKutusu.fill('olcu')
+  const searchBox = page.locator('#destek-ara-large')
+  await searchBox.click()
+  await searchBox.fill('olcu')
   // Dizin kutuya ilk odaklanmada indirilir; panel "Aranıyor…" ile açılabilir,
   // o yüzden panelin değil SONUCUN görünmesini bekle.
   await page.locator('#destek-sonuclar [role="option"]').first().waitFor({ timeout: 8000 })
@@ -392,19 +392,19 @@ try {
   )
 
   // Türkçe ünsüz yumuşaması: kök "grup" yazılır, başlıkta "Gruba" geçer.
-  await aramaKutusu.fill('grup')
+  await searchBox.fill('grup')
   await page.locator('#destek-sonuclar [role="option"]').first().waitFor({ timeout: 8000 })
-  const grupSonuclari = await page.locator('#destek-sonuclar [role="option"]').allInnerTexts()
+  const groupResults = await page.locator('#destek-sonuclar [role="option"]').allInnerTexts()
   ok(
-    grupSonuclari.some((t) => t.includes('Gruba nasıl katılırım')),
+    groupResults.some((t) => t.includes('Gruba nasıl katılırım')),
     'yumuşayan kök ("grup" → "Gruba") eşleşiyor',
   )
 
-  await aramaKutusu.fill('zzzqqq')
+  await searchBox.fill('zzzqqq')
   await page.getByRole('button', { name: 'Bunu Afi’ye soralım mı?' }).waitFor({ timeout: 5000 })
   ok(true, 'sonuçsuz arama Afi’ye devrediyor')
 
-  await aramaKutusu.fill('')
+  await searchBox.fill('')
   await page.locator('#konular a').first().click()
   await page.waitForURL('**/destek/**')
   ok(page.url().includes('/destek/'), 'kategori kartı kategoriye götürüyor')

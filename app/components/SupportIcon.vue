@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { DestekIkonAdi } from '#shared/types/destek'
+import type { SupportIconName } from '#shared/types/support'
 
 /**
  * Destek kategorilerinin el çizimi ikonları (currentColor). ZagIcon ile aynı
  * dil: 24'lük kare, 1.8 kalınlık, yuvarlak uç, dolgu yerine kontur.
  */
-defineProps<{ name: DestekIkonAdi }>()
+defineProps<{ name: SupportIconName }>()
 </script>
 
 <template>

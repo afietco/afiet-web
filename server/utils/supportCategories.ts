@@ -1,90 +1,90 @@
-import type { DestekKategori } from '#shared/types/destek'
+import type { SupportCategory } from '#shared/types/support'
 
 /**
  * Destek merkezinin kategori seti. Yazılar `content/destek/<kategori>/<slug>.md`
  * dosyalarında yaşar; kategori listesi burada, kodda durur çünkü nadiren değişir
  * ve sıra, renk, açıklama gibi alanları tasarım kararıdır.
  *
- * Aksan anahtarları uygulamadaki besin grubu renklerinin aynısıdır
+ * Vurgu renkleri uygulamadaki besin grubu renklerinin aynısıdır
  * (main.css > @theme). İlk beş kategori ürün konularıdır ve renk taşır; son
  * ikisi bilinçli olarak nötrdür, çünkü türü farklıdır (yasal ve teknik).
  *
  * Kategori slug'ı bir kez yayınlandıktan sonra DEĞİŞTİRİLMEZ: adres
  * `/destek/<kategori>/<slug>` ve panelin yönlendirme tablosu buna dayanır.
  */
-export const DESTEK_KATEGORILER: DestekKategori[] = [
+export const SUPPORT_CATEGORIES: SupportCategory[] = [
   {
     slug: 'baslangic',
-    baslik: 'Başlangıç',
-    ozet: 'Kurulumdan ilk güne',
-    aciklama:
+    title: 'Başlangıç',
+    summary: 'Kurulumdan ilk güne',
+    description:
       'afiet’i ilk kez açıyorsan buradan başla: kurulum, hesap, profil ve ' +
       'sofranın ölçü diliyle tanışma.',
-    aksan: 'sebze',
-    ikon: 'filiz',
+    accent: 'sebze',
+    icon: 'filiz',
   },
   {
     slug: 'ogun-kaydi',
-    baslik: 'Öğün kaydı ve besinler',
-    ozet: 'Ölçüler, arama, düzenleme',
-    aciklama:
+    title: 'Öğün kaydı ve besinler',
+    summary: 'Ölçüler, arama, düzenleme',
+    description:
       'Tabağını nasıl anlatacağın, besin kataloğunda arama, kaydı düzenleme ve ' +
       'geçmiş güne dokunma.',
-    aksan: 'tahil',
-    ikon: 'kase',
+    accent: 'tahil',
+    icon: 'kase',
   },
   {
     slug: 'afi',
-    baslik: 'Afi',
-    ozet: 'Fotoğraf ve sorular',
-    aciklama:
+    title: 'Afi',
+    summary: 'Fotoğraf ve sorular',
+    description:
       'Sofra arkadaşın Afi: yemeği fotoğraftan tanıması, sorularını yanıtlaması ve ' +
       'sınırlarının nerede başladığı.',
-    aksan: 'protein',
-    ikon: 'afi',
+    accent: 'protein',
+    icon: 'afi',
   },
   {
     slug: 'denge-ritim',
-    baslik: 'Denge, ritim ve alışkanlık',
-    ozet: 'Beş grup, afiyet günü, hafta',
-    aciklama:
+    title: 'Denge, ritim ve alışkanlık',
+    summary: 'Beş grup, afiyet günü, hafta',
+    description:
       'Beş besin grubu, günün nasıl dengelendiği, afiyet günü sayımı ve ' +
       'hatırlatmaların ayarı.',
-    aksan: 'meyve',
-    ikon: 'ritim',
+    accent: 'meyve',
+    icon: 'ritim',
   },
   {
     slug: 'soframiz',
-    baslik: 'Soframız',
-    ozet: 'Aile ve arkadaş grupları',
-    aciklama:
+    title: 'Soframız',
+    summary: 'Aile ve arkadaş grupları',
+    description:
       'Grup kurma, davet etme, katılma ve grupta kimin neyi gördüğü. Kıyas ve ' +
       'sıralama yok.',
-    aksan: 'sut',
-    ikon: 'sofra',
+    accent: 'sut',
+    icon: 'sofra',
   },
   {
     slug: 'hesap-gizlilik',
-    baslik: 'Hesap, gizlilik ve veri',
-    ozet: 'Giriş, veri, hesap silme',
-    aciklama:
+    title: 'Hesap, gizlilik ve veri',
+    summary: 'Giriş, veri, hesap silme',
+    description:
       'Giriş ve şifre işlemleri, verinin nerede durduğu, neyin toplanmadığı ve ' +
       'hesabını silmenin yolları.',
-    aksan: 'notr',
-    ikon: 'kalkan',
+    accent: 'neutral',
+    icon: 'kalkan',
   },
   {
     slug: 'beta-sorun-giderme',
-    baslik: 'Beta, sürüm ve sorun giderme',
-    ozet: 'Davet, güncelleme, takılmalar',
-    aciklama:
+    title: 'Beta, sürüm ve sorun giderme',
+    summary: 'Davet, güncelleme, takılmalar',
+    description:
       'Beta nasıl işliyor, sürüm nasıl güncelleniyor, bir şey takıldığında ne ' +
       'yapmalı ve hatayı bize nasıl iletirsin.',
-    aksan: 'notr',
-    ikon: 'pusula',
+    accent: 'neutral',
+    icon: 'pusula',
   },
 ]
 
-export function destekKategori(slug: string): DestekKategori | null {
-  return DESTEK_KATEGORILER.find((k) => k.slug === slug) ?? null
+export function supportCategory(slug: string): SupportCategory | null {
+  return SUPPORT_CATEGORIES.find((category) => category.slug === slug) ?? null
 }

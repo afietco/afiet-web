@@ -4,7 +4,7 @@ import type {
   SeoBundle,
   SeoSettings,
 } from './seoTypes'
-import { DESTEK_KATEGORILER } from './destekKategori'
+import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
  * Kod varsayılanları = bugünkü canlı davranış. DB yalnızca bunların üzerine
@@ -219,14 +219,14 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
  * YAZI sayfalarının meta'sı burada değil, `seoStore.resolvePageMeta` içinde
  * yazının kendisinden türetilir (blog yazılarındaki yaklaşımın aynısı).
  */
-const DESTEK_KATEGORI_SAYFALARI: Record<string, PageSeo> = Object.fromEntries(
-  DESTEK_KATEGORILER.map((k) => [
-    `/destek/${k.slug}`,
+const SUPPORT_CATEGORY_PAGES: Record<string, PageSeo> = Object.fromEntries(
+  SUPPORT_CATEGORIES.map((c) => [
+    `/destek/${c.slug}`,
     makePage({
-      title: `${k.baslik} | afiet destek merkezi`,
-      description: k.aciklama,
-      ogTitle: `${k.baslik} | afiet destek`,
-      ogDescription: k.aciklama,
+      title: `${c.title} | afiet destek merkezi`,
+      description: c.description,
+      ogTitle: `${c.title} | afiet destek`,
+      ogDescription: c.description,
       sitemap: { include: true, changefreq: 'weekly', priority: 0.5 },
     }),
   ]),
@@ -293,7 +293,7 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'sık sorulan soruların cevapları tek yerde.',
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
-  ...DESTEK_KATEGORI_SAYFALARI,
+  ...SUPPORT_CATEGORY_PAGES,
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:
