@@ -56,4 +56,10 @@ setup_env staging preview staging
 echo "→ production: prod Stack projesi + prod Neon"
 setup_env prod production
 
+# GSC senkronu YALNIZ production'da: veri sc-domain:afiet.co mülküne ait,
+# dev/staging panelde "bağlantı kurulmadı" gösterir (bilinçli). Secret zaten
+# base64 saklanır (app-gsc-sa-key), yeniden encode etme.
+echo "→ production: GSC servis hesabı anahtarı"
+add NUXT_GSC_SA_KEY "$(secret app-gsc-sa-key)" production
+
 echo "✓ Bitti. Kontrol: vercel env ls"
