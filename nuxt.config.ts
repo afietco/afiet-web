@@ -90,6 +90,14 @@ export default defineNuxtConfig({
     // bildirim maili atılır. Boşken mail hiç denenmez, başvuru etkilenmez.
     // Env: NUXT_RESEND_API_KEY.
     resendApiKey: '',
+    // Google Search Console okuma servis hesabı (Secret Manager:
+    // app-gsc-sa-key, base64 JSON; ham JSON da kabul). BOŞ = GSC senkronu 503,
+    // panel "bağlantı kurulmadı" gösterir. SA e-postası GSC mülküne elle
+    // kullanıcı olarak eklenmiş olmalı. Env: NUXT_GSC_SA_KEY.
+    gscSaKey: '',
+    // Search Console mülkü. Domain mülkü biçimi: sc-domain:afiet.co.
+    // Env: NUXT_GSC_PROPERTY.
+    gscProperty: 'sc-domain:afiet.co',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
