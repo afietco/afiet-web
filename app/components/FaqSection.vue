@@ -6,7 +6,7 @@
  * HTML'de kalır (GEO botları JS çalıştırmadan okur).
  */
 defineProps<{
-  faq: { title: string; intro: string; items: { q: string; a: string }[] }
+  faq: { title: string; intro: string; items: { q: string; a: string; href?: string }[] }
 }>()
 </script>
 
@@ -53,7 +53,31 @@ defineProps<{
               </svg>
             </span>
           </summary>
-          <p class="px-6 pb-6 leading-relaxed font-semibold text-soft">{{ item.a }}</p>
+          <div class="px-6 pb-6">
+            <p class="leading-relaxed font-semibold text-soft">{{ item.a }}</p>
+            <!-- Ayrıntılı anlatım destek merkezinde; SSS kısa cevabı verir,
+                 aynı metni iki yerde tekrar etmeyiz. Bağlantı isteğe bağlıdır
+                 (panelden yönetilir), yoksa madde eskisi gibi görünür. -->
+            <NuxtLink
+              v-if="item.href"
+              :to="item.href"
+              class="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold text-brand transition hover:text-brand-deep"
+            >
+              Ayrıntılı anlatım
+              <svg
+                class="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 6 6 6-6 6" />
+              </svg>
+            </NuxtLink>
+          </div>
         </details>
       </div>
     </div>

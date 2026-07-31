@@ -87,6 +87,16 @@ watch(
             >
               Blog
             </NuxtLink>
+            <!-- Destek merkezi masaüstü menüde YOKTUR (kullanıcı kararı):
+                 oradaki giriş kapıları alt bilgi, ana sayfadaki SSS bağlantıları
+                 ve arama motorlarıdır. Mobilde alt bilgiye inmek zahmetli
+                 olduğu için menüde durur. -->
+            <NuxtLink
+              to="/destek"
+              class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
+            >
+              Destek
+            </NuxtLink>
             <!-- "Beta'ya katıl" menüye KONMAZ: düğmesi hemen yanında duruyor,
                  aynı çağrıyı iki kez göstermek menüyü kalabalıklaştırır. -->
           </div>

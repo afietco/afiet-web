@@ -10,9 +10,27 @@
  * dev/preview/staging kapalı - paylaşılan Neon kirlenmez. GÖNDERİM yalnız KVKK
  * onayı verilmişse yapılır (`afiet_analytics_consent === 'accepted'`, bildirimi
  * `CookieNotice.vue` yazar); "Kabul et" anında geçerli sayfayı sayar.
+ *
+ * Sayfa görüntülemenin dışında iki ürün olayı daha var (destek merkezi):
+ * `$afietEvent('destek_oy' | 'destek_arama', …)`. Aynı kapılardan geçerler,
+ * ayrı bir uç ya da ikinci bir onay mekanizması YOKTUR.
  */
+type SupportEvent = 'destek_oy' | 'destek_arama'
+
 export default defineNuxtPlugin((nuxtApp) => {
-  if (import.meta.server) return
+  // Sunucuda ve toplamanın kapalı olduğu host'larda bile sağlayıcı DÖNER:
+  // çağıran bileşenler `$afietEvent` var mı diye kontrol etmek zorunda kalmasın.
+  // İmza sessiz sürümde de birebir aynı olmalı, yoksa Nuxt iki dönüş tipini
+  // birleştirir ve çağrı yerleri tip hatası verir.
+  const sessiz = {
+    provide: {
+      afietEvent: (kind: SupportEvent, data: { p: string; v: string }) => {
+        void kind
+        void data
+      },
+    },
+  }
+  if (import.meta.server) return sessiz
 
   const domains = String(useRuntimeConfig().public.analyticsDomains || '')
     .split(',')
@@ -25,7 +43,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (navigator.doNotTrack === '1' || (window as unknown as { doNotTrack?: string }).doNotTrack === '1') return false
     return true
   }
-  if (!applicable()) return
+  if (!applicable()) return sessiz
 
   // KVKK: yalnız açık onayla gönderilir (opt-in).
   const consentOk = () => {
@@ -111,4 +129,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     engSent = true
     pageview(router.currentRoute.value.path)
   })
+
+  /**
+   * Destek merkezinin iki ürün olayı. Serbest metin (arama sorgusu) 120
+   * karakterde kesilir ve sunucu tarafında da ayrıca sınırlanır; sayfa
+   * görüntülemeyle aynı onay kapısından geçer.
+   */
+  const afietEvent = (kind: SupportEvent, data: { p: string; v: string }) => {
+    if (!data.p || !data.v) return
+    send({ e: kind, p: data.p, v: data.v.slice(0, 120) })
+  }
+
+  return { provide: { afietEvent } }
 })
