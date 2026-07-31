@@ -3,6 +3,9 @@ import type { H3Event } from 'h3'
 import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
 import { getPublishedPost } from './contentStore'
 import type { BlogPost } from './contentTypes'
+import { destekYaziGetir } from './destekStore'
+import { destekKategori } from './destekKategori'
+import type { DestekKategori, DestekYazi } from '#shared/types/destek'
 import type {
   DeepPartial,
   PageSeo,
@@ -193,6 +196,29 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
 
+  // Destek yazısı: meta tabanı markdown dosyasının frontmatter'ından gelir,
+  // panelin sayfa override'ı (seo_pages['/destek/<kategori>/<slug>']) üstüne
+  // biner. Kategori sayfalarının meta'sı DEFAULT_PAGES'ta hazırdır.
+  let destekYazi: DestekYazi | null = null
+  let destekKat: DestekKategori | null = null
+  if (path.startsWith('/destek/')) {
+    const parcalar = path.slice('/destek/'.length).split('/')
+    destekKat = destekKategori(parcalar[0] ?? '')
+    if (destekKat && parcalar.length === 2 && parcalar[1]) {
+      destekYazi = await destekYaziGetir(destekKat.slug, parcalar[1])
+      if (destekYazi) {
+        const yaziSayfa = makePage({
+          title: `${destekYazi.baslik} | afiet destek`,
+          description: destekYazi.ozet,
+          ogTitle: destekYazi.baslik,
+          ogDescription: destekYazi.ozet,
+          sitemap: { include: true, changefreq: 'monthly', priority: 0.5 },
+        })
+        page = deepMerge<PageSeo>(yaziSayfa, overrides.pages[path])
+      }
+    }
+  }
+
   const title = page.title || g.defaultTitle
   const description = page.description || g.defaultDescription
   const ogImage = absolutize(page.ogImage || g.defaultOgImage, g.baseUrl)
@@ -290,6 +316,73 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       ],
     })
   }
+  // ── Destek merkezi şeması ───────────────────────────────────────────────
+  // Yazılarda HowTo BİLİNÇLİ olarak kullanılmıyor: Google HowTo zengin
+  // sonuçlarını 2023'te büyük ölçüde kaldırdı ve markdown'dan güvenilir adım
+  // nesnesi üretmek uydurma yapıya davetiye. TechArticle hem doğru hem yeterli.
+  if (path === '/destek') {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'afiet destek merkezi',
+      url: `${base}/destek`,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+    })
+  } else if (destekKat && !destekYazi) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: destekKat.baslik,
+      url: canonical,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Destek', item: `${base}/destek` },
+        { '@type': 'ListItem', position: 3, name: destekKat.baslik, item: canonical },
+      ],
+    })
+  } else if (destekKat && destekYazi) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: destekYazi.baslik,
+      description: destekYazi.ozet,
+      inLanguage: g.locale.replace('_', '-'),
+      dateModified: destekYazi.guncelleme,
+      mainEntityOfPage: canonical,
+      articleSection: destekKat.baslik,
+      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      publisher: {
+        '@type': 'Organization',
+        name: g.siteName,
+        url: g.baseUrl,
+        logo: { '@type': 'ImageObject', url: absolutize('/icon.svg', g.baseUrl) },
+      },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Destek', item: `${base}/destek` },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: destekKat.baslik,
+          item: `${base}/destek/${destekKat.slug}`,
+        },
+        { '@type': 'ListItem', position: 4, name: destekYazi.baslik, item: canonical },
+      ],
+    })
+  }
+
   jsonld.push(...page.jsonld)
 
   const showFaq =
@@ -314,9 +407,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     faq: showFaq
       ? { title: settings.faq.title, intro: settings.faq.intro, items: settings.faq.items }
       : null,
-    ogType: post ? 'article' : 'website',
+    ogType: post || destekYazi ? 'article' : 'website',
     ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
     ...(post ? { modifiedAt: post.updatedAt } : {}),
+    ...(destekYazi ? { modifiedAt: destekYazi.guncelleme } : {}),
   }
 }
 

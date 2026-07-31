@@ -143,6 +143,53 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Yayından kaldırma: `--unpublish <slug>`. md dosyaları sürümlü YEDEKTİR;
   script'teki DDL `contentStore.ts` ile senkron tutulur.
 
+## Destek merkezi (/destek)
+
+- **İçerik REPODA yaşar, veritabanında DEĞİL:** `content/destek/<kategori>/<slug>.md`.
+  Nitro `serverAssets` ile sunucu paketine gömülür (`nuxt.config > nitro`),
+  `useStorage('assets:destek')` ile okunur. Yani dokümantasyon ürünle birlikte
+  sürümlenir, PR'da gözden geçirilir ve development/staging'de de DOLUDUR
+  (blogun aksine). Yayına almak = commit + deploy.
+- Kategori seti kodda: `server/utils/destekKategori.ts` (7 kategori, aksan
+  renkleri uygulamadaki besin grubu renkleridir; son iki kategori bilinçli
+  nötrdür). **Kategori slug'ı yayınlandıktan sonra DEĞİŞTİRİLMEZ.**
+- Okuma katmanı `server/utils/destekStore.ts`: frontmatter (blogdaki
+  `publish-post.mjs` sözleşmesinin aynısı), markdown-it `html:false`,
+  h2/h3'lere id + içindekiler, arama dizini, llms çıktıları. Bellekte cache'li;
+  üretimde dosyalar değişmediği için süresizdir, `nuxt dev`te her istekte tazelenir.
+- Gövdeye özel üç çitli blok: ```` ```ipucu ````, ```` ```dikkat ````, ```` ```yol ````
+  (uygulama içi gezinme satırı). Kırmızı uyarı kutusu YOK, marka kırmızıyı
+  uyarı dili olarak kullanmıyor. Sıralı liste her zaman ADIM listesidir
+  (numara rozeti); blogdaki gömme büyük harf burada kullanılmaz.
+- Tipler `shared/types/destek.ts`, Türkçe katlama `shared/utils/turkce.ts` -
+  ikisi de sunucu VE istemci için tek kaynaktır. Katlama iki tarafta ayrışırsa
+  arama sessizce yanlış çalışır.
+- **Arama tamamen istemcide:** dizin (`/api/destek/arama`) kutuya ilk
+  odaklanmada bir kez inilir. Skorlama başlık > özet > ara başlık/anahtar
+  kelime > gövde. İki Türkçe kuralı gömülüdür: aksan katlama ("olcu" → "ölçü")
+  ve ünsüz yumuşaması ("grup" → "gruba"). Bir yazının listeye girmesi için
+  sorgunun en az bir kelimesini KÜRATÖRLÜ bir alanda taşıması gerekir; yalnız
+  gövdede geçmek yetmez (yoksa "grup" araması "besin grubu" geçen her yazıyı
+  döker). Sonuç yoksa soru Afi paneline devredilir.
+- Sayfalar: `/destek` (hub), `/destek/[kategori]`, `/destek/[kategori]/[slug]`
+  (üç kolon: sol ağaç, gövde, sağ "Bu sayfada"). Meta `usePageSeo` ile
+  panelden yönetilir; kategori sayfaları `DEFAULT_PAGES`ta üretilir, yazı
+  meta'sı `seoStore.resolvePageMeta` içinde frontmatter'dan türetilir.
+  Şema: hub/kategori `CollectionPage`, yazı `TechArticle` + `BreadcrumbList`.
+  **HowTo bilinçli olarak kullanılmıyor** (Google zengin sonucu kaldırdı,
+  markdown'dan güvenilir adım nesnesi üretmek uydurma yapıya davetiye).
+- `/llms-full.txt` tüm destek gövdesini düz metin verir; `/llms.txt`'nin destek
+  bölümü panelden değil KODDAN üretilir (elle güncellenen liste eskir).
+- Ölçüm: "Bu yazı yardımcı oldu mu?" oyu ve SONUÇSUZ arama sorgusu birinci
+  taraf analitiğe yazılır (`analytics_events.event` = `destek_oy` /
+  `destek_arama`, değer `title` kolonunda). Sayfa görüntülemeyle AYNI KVKK
+  onayı kapısından geçer (`$afietOlay`, analitik eklentisi). Gizlilik metninde
+  karşılığı vardır.
+- Destek merkezi masaüstü üst menüde YOKTUR (kullanıcı kararı): giriş kapıları
+  alt bilgi, mobil menü, ana sayfadaki SSS maddelerinin `href`leri ve arama
+  motorlarıdır.
+- Ekran görüntüsü: `node scripts/destek-shots.mjs` (build sonrası, `.shots/`).
+
 ## Sosyal hesaplar & otomatik ölçüm (Faz 2)
 
 - Model: `server/utils/socialStore.ts` - `social_accounts` (bağlı hesap +

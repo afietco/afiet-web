@@ -390,8 +390,77 @@ export const footer = {
   links: [
     { label: 'Beta', to: '/beta' },
     { label: 'Blog', to: '/blog' },
+    { label: 'Destek', to: '/destek' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
+}
+
+/**
+ * Destek merkezi metinleri. Yazıların kendisi `content/destek/**.md` içinde;
+ * burası yalnız çerçevedir (hub, kategori ve yazı sayfasının sabit metinleri).
+ *
+ * Ton kuralı sorun giderme yazılarında da geçerlidir: suçlama yok, teknik
+ * döküm yok, "yapamazsın" yok. Adım net, dil sıcak (BRAND.md > Ses tonu).
+ */
+export const destek = {
+  eyebrow: 'destek merkezi',
+  title: 'Nasıl yardımcı olabiliriz?',
+  sub: 'Aradığın cevabı ara kutusuna yaz ya da aşağıdaki başlıklardan ilerle.',
+  searchLabel: 'Destek merkezinde ara',
+  searchPlaceholder: 'Bir şey ara: kayıt, grup, bildirim…',
+  searchHint: 'Aramak için / tuşuna basabilirsin',
+  popularLabel: 'Sık sorulanlar',
+  popular: [
+    { label: 'Dilim, kase, avuç ne demek?', to: '/destek/ogun-kaydi/sofra-olculeri-dilim-kase-avuc' },
+    { label: 'Öğünü nasıl silerim?', to: '/destek/ogun-kaydi/ogunu-duzenleme-ve-silme' },
+    { label: 'Davetim geldi, nasıl kurarım?', to: '/destek/baslangic/beta-davetiyle-kurulum' },
+    { label: 'Gruba nasıl katılırım?', to: '/destek/soframiz/gruba-katilma' },
+    { label: 'Şifremi unuttum', to: '/destek/hesap-gizlilik/sifremi-unuttum' },
+  ],
+  categoriesTitle: 'Konu başlıkları',
+  countSuffix: 'yazı',
+  emptyCategory: 'Bu başlık için yazılar hazırlanıyor. 🌿',
+  empty: 'Destek yazıları çok yakında burada. 🌿',
+
+  // Arama kutusunun açılan sonuç listesi.
+  resultsLabel: 'Arama sonuçları',
+  noResultsTitle: 'Bu aramaya uyan yazı bulamadık.',
+  noResultsBody: 'Başka bir kelimeyle deneyebilir ya da doğrudan Afi’ye sorabilirsin.',
+  askAfiCta: 'Bunu Afi’ye soralım mı?',
+  searching: 'Aranıyor…',
+
+  // Hub'ın alt bölümü.
+  askTitle: 'Aradığını bulamadın mı?',
+  askSub: 'Afi burada. Sorunu yaz, sofranın diliyle kısaca anlatsın.',
+  contactTitle: 'İnsana ulaş',
+  contactBody:
+    'Afi’nin çözemediği bir şey varsa bize yaz. Beta boyunca her mesajı ürün ekibi okuyor.',
+  contactMail: 'destek@afiet.co',
+  statusLabel: 'Bir kesinti mi var?',
+  statusLinkLabel: 'Sistem durumunu gör',
+  statusTo: '/durum',
+
+  // Yazı sayfası.
+  breadcrumbRoot: 'Destek',
+  tocTitle: 'Bu sayfada',
+  menuTitle: 'Konular',
+  menuToggle: 'Konular arasında gezin',
+  updatedPrefix: 'Son güncelleme',
+  relatedTitle: 'İlgili yazılar',
+  prevLabel: 'Önceki',
+  nextLabel: 'Sonraki',
+  stuckTitle: 'Hâlâ takıldın mı?',
+  stuckBody: 'Afi’ye sorabilir ya da destek@afiet.co adresine yazabilirsin.',
+  stuckAskCta: 'Afi’ye sor',
+  backToCategory: 'Tüm başlığa dön',
+  backToHub: 'Destek merkezi',
+
+  // Yanıt oyu.
+  voteQuestion: 'Bu yazı yardımcı oldu mu?',
+  voteYes: 'Evet, oldu',
+  voteNo: 'Pek olmadı',
+  voteThanksYes: 'Sevindik, afiyet olsun 💚',
+  voteThanksNo: 'Not aldık, bu yazıyı iyileştireceğiz. 🌿',
 }
 
 /** Blog (afiet günlüğü) - liste ve yazı sayfası metinleri. */
@@ -423,7 +492,7 @@ export const blog = {
  */
 export const privacy = {
   title: 'Gizlilik Politikası',
-  effective: '30 Temmuz 2026',
+  effective: '31 Temmuz 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
@@ -483,9 +552,15 @@ export const privacy = {
         'Bunun için tarayıcına kimliğini içermeyen rastgele bir çerez (afiet_vid / afiet_sid) ' +
           'yazılır; yalnız tekil ziyaretçiyi tahmini saymak içindir. IP adresini saklamaz, ' +
           'üçüncü taraflarla paylaşmaz, reklam için kullanmaz ve seni sitelerarası izlemeyiz.',
+        'Destek merkezinde (afiet.co/destek) iki şey daha sayarız: bir yazının altındaki ' +
+          '"Bu yazı yardımcı oldu mu?" cevabın (yalnız evet ya da hayır) ve destek aramanda ' +
+          'hiç sonuç çıkmayan sorgu metni. İkincisi hangi konuyu henüz yazmadığımızı ' +
+          'görmek içindir; adınla ya da hesabınla ilişkilendirilmez. Lütfen arama kutusuna ' +
+          'kişisel ya da sağlık bilgisi yazma.',
         'Analitik yalnız açık onayınla çalışır: ilk ziyaretinde çıkan bilgilendirmede "Reddet" ' +
           'diyebilir, tarayıcının "İzleme yok" (Do Not Track) ayarını açabilir ya da çerezleri ' +
-          'silerek istatistiğe dahil olmayı durdurabilirsin.',
+          'silerek istatistiğe dahil olmayı durdurabilirsin. Bu, destek merkezindeki iki ' +
+          'sayımı da kapsar.',
       ],
     },
     {
