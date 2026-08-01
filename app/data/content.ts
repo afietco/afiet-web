@@ -392,6 +392,7 @@ export const footer = {
     { label: 'Blog', to: '/blog' },
     { label: 'Destek', to: '/destek' },
     { label: 'Hesapla', to: '/hesapla' },
+    { label: 'Yenilikler', to: '/yenilikler' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
 }
@@ -715,6 +716,49 @@ export const blog = {
   pagesLabel: 'Blog sayfaları',
   pagePrev: 'Önceki sayfa',
   pageNext: 'Sonraki sayfa',
+}
+
+/**
+ * Sürüm notları (/yenilikler). Notların kendisi `content/yenilikler/*.md`
+ * içinde; burası yalnız çerçevedir.
+ *
+ * Bu sayfanın uygulama içindeki karşılığı mobildeki "Yenilikler" alt
+ * sayfasıdır: orada kısa özet, burada tamamı. Dil aynı olmalı, yani
+ * "sürüm yayınlandı" değil "şunu artık yapabiliyorsun".
+ */
+export const releases = {
+  eyebrow: 'sürüm notları',
+  title: 'afiet’te neler değişti?',
+  sub:
+    'Her mobil sürümde ne geldiğini, ne düzeldiğini ve neyin neden değiştiğini burada ' +
+    'tutuyoruz. Uygulamadaki Yenilikler sayfası kısa özeti gösterir; uzun hâli burası.',
+  latestLabel: 'En yeni sürüm',
+  listLabel: 'Önceki sürümler',
+  empty: 'Sürüm notları çok yakında burada. 🌿',
+  back: '← Tüm sürümler',
+  readMore: 'Sürümün tamamını oku',
+  newerLabel: 'Daha yeni',
+  olderLabel: 'Daha eski',
+  changesSuffix: 'değişiklik',
+  // Sürüm sayfasının altındaki iki kutu.
+  updateTitle: 'Bu sürüm bende var mı?',
+  updateBody:
+    'Uygulamadaki menünün en altında hangi sürümde olduğun yazar. Güncelleme ' +
+    'beta boyunca TestFlight üzerinden gelir.',
+  updateLinkLabel: 'Güncelleme adımları',
+  updateTo: '/destek/beta-sorun-giderme/testflight-guncelleme',
+  helpTitle: 'Bir şey takıldı mı?',
+  helpBody:
+    'Yeni sürümde bir şey beklediğin gibi çalışmıyorsa destek merkezinde adım adım ' +
+    'anlatılan yollar var; bulamazsan bize yazabilirsin.',
+  helpLinkLabel: 'Destek merkezi',
+  helpTo: '/destek',
+  // Bilinmeyen bir sürüm numarası istendiğinde (yanıt 404'tür).
+  notFoundTitle: 'Bu sürümün notlarını bulamadık',
+  notFoundBody:
+    'Aradığın sürümün notları henüz yayında olmayabilir ya da numara yanlış yazılmış ' +
+    'olabilir. Yayındaki bütün sürümler tek listede duruyor.',
+  notFoundCta: 'Tüm sürümlere bak',
 }
 
 /**

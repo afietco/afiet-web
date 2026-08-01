@@ -31,6 +31,9 @@ export default defineNuxtConfig({
     // yönetilebilsin diye diğer sayfalarla aynı ISR penceresi.
     '/destek': { isr: 60 },
     '/destek/**': { isr: 60 },
+    // Sürüm notları: içerik repoda (deploy ile değişir), destekle aynı pencere.
+    '/yenilikler': { isr: 60 },
+    '/yenilikler/**': { isr: 60 },
     // Hesaplama araçları: form SSR'da basılır, hesap TAMAMEN tarayıcıda koşar.
     '/hesapla': { isr: 60 },
     '/hesapla/**': { isr: 60 },
@@ -47,7 +50,11 @@ export default defineNuxtConfig({
     // Destek merkezi yazıları veritabanında DEĞİL repoda yaşar; sunucu paketine
     // asset olarak gömülür ve `useStorage('assets:destek')` ile okunur
     // (server/utils/supportStore.ts). Yol nitro.srcDir'e (yani `server/`) görelidir.
-    serverAssets: [{ baseName: 'destek', dir: '../content/destek' }],
+    serverAssets: [
+      { baseName: 'destek', dir: '../content/destek' },
+      // Sürüm notları da aynı yolu izler (server/utils/releaseStore.ts).
+      { baseName: 'yenilikler', dir: '../content/yenilikler' },
+    ],
   },
 
   runtimeConfig: {
