@@ -31,6 +31,9 @@ export default defineNuxtConfig({
     // yönetilebilsin diye diğer sayfalarla aynı ISR penceresi.
     '/destek': { isr: 60 },
     '/destek/**': { isr: 60 },
+    // Hesaplama araçları: form SSR'da basılır, hesap TAMAMEN tarayıcıda koşar.
+    '/hesapla': { isr: 60 },
+    '/hesapla/**': { isr: 60 },
     // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
     // olmadığından statik sunum content-type belirleyemez; Apple bunu
     // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
