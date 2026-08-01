@@ -296,6 +296,17 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
   ...SUPPORT_CATEGORY_PAGES,
+  '/yenilikler': makePage({
+    title: 'Sürüm notları | afiet',
+    description:
+      'afiet mobil uygulamasının sürüm geçmişi: her sürümde ne geldi, ne düzeldi ve ' +
+      'neyin neden değiştiği. Uygulamadaki Yenilikler sayfasının uzun hâli.',
+    ogTitle: 'afiet’te neler değişti?',
+    ogDescription:
+      'Her mobil sürümde ne geldiğini, ne düzeldiğini ve neyin neden değiştiğini ' +
+      'anlatan sürüm notları.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.5 },
+  }),
   '/hesapla': makePage({
     title: 'Hesaplama araçları | afiet',
     description:
