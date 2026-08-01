@@ -6,6 +6,7 @@ import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
 import { supportCategory } from './supportCategories'
 import { getRelease } from './releaseStore'
+import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import type {
@@ -446,6 +447,56 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         { '@type': 'ListItem', position: 3, name: `v${release.version}`, item: canonical },
       ],
     })
+  }
+
+  // ── Hesaplama aracı şeması ──────────────────────────────────────────────
+  // Sayfa hem bir araç hem bir yazıdır; şema aracı anlatır (WebApplication),
+  // metni değil. Ücretsiz olduğu açıkça yazılır: bu, arama sonucunda "ücretsiz
+  // hesaplayıcı" arayan niyetin karşılığıdır.
+  //
+  // FAQPage'in SERP'te görsel karşılığı YOKTUR (Google zengin sonucu Ağustos
+  // 2023'te kamu ve sağlık siteleriyle sınırladı). Yine de basılır: llms.txt ile
+  // birlikte yapay zekâ motorlarının soruyu doğru cevapla eşleştirmesine yarar,
+  // panelin adı da bu yüzden "SEO & GEO". Sorular ekranda görünen SSS ile AYNI
+  // kaynaktan (content/hesapla/<slug>.md) gelir; boşsa şema hiç basılmaz.
+  if (path.startsWith('/hesapla/')) {
+    const slug = path.slice('/hesapla/'.length)
+    // Şemadaki ad marka ekini taşımaz: "| afiet" başlık çubuğu içindir.
+    const aracAdi = title.replace(/\s*\|\s*afiet\s*$/, '')
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: aracAdi,
+      url: canonical,
+      description,
+      applicationCategory: 'HealthApplication',
+      browserRequirements: 'JavaScript gerektirir',
+      inLanguage: g.locale.replace('_', '-'),
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' },
+      publisher: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Hesapla', item: `${base}/hesapla` },
+        { '@type': 'ListItem', position: 3, name: aracAdi, item: canonical },
+      ],
+    })
+    const faq = await hesapFaqItems(slug)
+    if (faq.length) {
+      jsonld.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((it) => ({
+          '@type': 'Question',
+          name: it.q,
+          acceptedAnswer: { '@type': 'Answer', text: it.a },
+        })),
+      })
+    }
   }
 
   jsonld.push(...page.jsonld)

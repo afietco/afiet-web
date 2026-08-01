@@ -21,6 +21,7 @@ import { makulMu, sayiyaCevir } from '#shared/hesap/girdi'
 usePageSeo()
 
 const c = hesapla.plate
+const icerik = useHesapIcerik(c.slug)
 
 const sex = ref<Sex>('kadin')
 const age = ref('')
@@ -257,6 +258,9 @@ const aralik = (min: number, max: number) => `${tam(min)}-${tam(max)}`
       </template>
 
     </section>
+
+    <HesapIcerik v-if="icerik" :icerik="icerik" />
+
 
     <HesapAltBilgi :sonuc-var="Boolean(result)" />
   </div>
