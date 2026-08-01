@@ -246,6 +246,39 @@ try {
       `${arac} bir kilo hedefi SUNMUYOR`,
     )
   }
+  // --- Hesaplama araçlarının uzun içeriği (content/hesapla/*.md) ---
+  // NEDEN EŞİK VAR: bu beş adres sitenin en yüksek arama talebi olan sayfaları
+  // ama hesap istemcide döndüğü için sunucudan yalnız 101-145 kelime çıkıyordu,
+  // yani arama motoru boş sayfa görüyordu. İçerik eklendikten sonra 797-903
+  // kelime. Eşik o eski hâle sessizce geri düşmeyi yakalar (içerik dosyası
+  // silinir, serverAssets bağlantısı kopar, katlama JS'e taşınır); metnin
+  // kalitesini ölçmez.
+  const kelimeSay = (html) =>
+    html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .split(' ').length
+
+  for (const arac of [
+    'vucut-kitle-indeksi',
+    'gunluk-su',
+    'yag-orani',
+    'porsiyon-cevirici',
+    'sofra-payin',
+  ]) {
+    const html = await (await fetch(`http://localhost:${PORT}/hesapla/${arac}`)).text()
+    const kelime = kelimeSay(html)
+    // Katlanır bölüm native <details>tir: içerik ilk HTML'de TAM olarak durur.
+    // JS'e taşınırsa bu iddia düşer ve sebebi de budur.
+    ok(html.includes('hesap-katlanir'), `${arac} uzun içeriği SSR HTML'inde`)
+    ok(kelime > 600, `${arac} sunucudan dolu geliyor (${kelime} kelime)`)
+    ok(html.includes('"@type":"WebApplication"'), `${arac} WebApplication şeması içeriyor`)
+    // SSS ekranda görünen metinle AYNI kaynaktan gelir; şema varsa soru da vardır.
+    ok(html.includes('"@type":"FAQPage"'), `${arac} FAQPage şeması içeriyor`)
+    ok(html.includes('sik-sorulanlar'), `${arac} SSS bölümü sayfada görünüyor`)
+  }
+
   const besinRes = await fetch(`http://localhost:${PORT}/veri/besinler.json`)
   const besinBody = await besinRes.json()
   ok(

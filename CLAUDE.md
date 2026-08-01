@@ -217,6 +217,34 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Meta/şema `seoStore.resolvePageMeta` içinde frontmatter'dan türetilir
   (TechArticle + BreadcrumbList); sitemap ve llms.txt bölümleri otomatiktir.
 
+## Hesaplama araçlarının uzun içeriği (/hesapla/*)
+
+- **NEDEN VAR:** beş hesap sayfası sitenin en yüksek arama talebi olan
+  adresleriydi ama hesap istemcide döndüğü için sunucudan yalnız **101-145
+  kelime** çıkıyordu; arama motoru boş sayfa görüyordu. Uzun içerik eklendikten
+  sonra 797-903 kelime. `scripts/smoke.mjs` bunu eşikle korur (600 kelime),
+  yani içerik dosyası silinirse ya da katlama JS'e taşınırsa smoke düşer.
+- **İçerik REPODA yaşar:** `content/hesapla/<slug>.md`, destek merkezi ve sürüm
+  notlarıyla aynı yol (Nitro `serverAssets` → `useStorage('assets:hesapla')`,
+  `server/utils/hesaplaStore.ts`). Yayına almak = commit + deploy.
+- **Gövde sözleşmesi:** yalnız `## Başlık` bölümleri. Başlığı tam olarak
+  `Sık sorulanlar` olan bölüm SSS'dir ve `**Soru?**` + cevap çiftlerine
+  ayrılır; geri kalanı katlanır panel olur. Başlık tutmuyorsa SSS boş döner ve
+  FAQPage şeması BASILMAZ (uydurma şema basmaktansa hiç basmamak yeğdir).
+  Slug frontmatter'dan gelir, dosya adından türetilmez.
+- **Katlama native `<details>`tir**, JS'e taşınmaz: katlama JavaScript'e bağlı
+  olsaydı içerik ilk HTML'de bulunmaz ve bütün işin sebebi ortadan kalkardı.
+- Sayfalar tek satırla bağlanır: `useHesapIcerik(c.slug)`
+  (`app/composables/`), bileşen `HesapIcerik.vue`. İçerik yoksa `null` döner ve
+  sayfa yalnız hesabı gösterir; eksik metin çalışan bir hesabı düşürmez.
+- Şema `seoStore.resolvePageMeta` içinde: WebApplication + BreadcrumbList +
+  (SSS doluysa) FAQPage. **FAQPage'in SERP'te görsel karşılığı YOKTUR** (Google
+  zengin sonucu Ağu 2023'te kamu ve sağlık siteleriyle sınırladı); GEO için
+  basılır. `HowTo` burada da kullanılmaz, destekteki gerekçenin aynısı.
+- Marka doktrini bu metinlerde de bağlayıcıdır (hedeflerim.md § 9 ve § 12):
+  ideal/hedef kilo yok, süre vaadi yok, hüküm kuran sıfat yok. Smoke bunu iki
+  kalıpla ayrıca kontrol eder.
+
 ## Sosyal hesaplar & otomatik ölçüm (Faz 2)
 
 - Model: `server/utils/socialStore.ts` - `social_accounts` (bağlı hesap +

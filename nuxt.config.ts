@@ -54,6 +54,8 @@ export default defineNuxtConfig({
       { baseName: 'destek', dir: '../content/destek' },
       // Sürüm notları da aynı yolu izler (server/utils/releaseStore.ts).
       { baseName: 'yenilikler', dir: '../content/yenilikler' },
+      // Hesaplama araçlarının uzun içeriği (server/utils/hesaplaStore.ts).
+      { baseName: 'hesapla', dir: '../content/hesapla' },
     ],
   },
 

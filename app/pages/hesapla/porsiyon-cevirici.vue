@@ -16,6 +16,7 @@ import { trFold, trWords } from '#shared/utils/turkish'
  */
 usePageSeo()
 const c = hesapla.portion
+const icerik = useHesapIcerik(c.slug)
 
 type Besin = {
   a: string; e: string; o: string; g: number | null; gr: string[]
@@ -267,6 +268,9 @@ const temelMi = (key: string) => BESIN_GRUBU.find((g) => g.key === key)?.temel ?
         <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
+
+    <HesapIcerik v-if="icerik" :icerik="icerik" />
+
 
     <HesapAltBilgi :sonuc-var="Boolean(secili)" />
   </div>
