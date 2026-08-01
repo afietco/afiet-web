@@ -12,7 +12,8 @@ import { askAfi } from '~/data/content'
  * üretimi görsel olarak değiştirmeden main'e merge edilebilir. 'mock' değeri
  * backend olmadan paneli çalışır gösterir.
  */
-const props = defineProps<{ attached?: boolean }>()
+// `soru`: destek merkezindeki arama bir şey bulamayınca soruyu buraya devreder.
+const props = defineProps<{ attached?: boolean; soru?: string }>()
 
 const config = useRuntimeConfig()
 const enabled = computed(() => String(config.public.askApiUrl || '') !== '')
@@ -50,7 +51,7 @@ const enabled = computed(() => String(config.public.askApiUrl || '') !== '')
       </div>
 
       <div v-reveal="120">
-        <AskAfiPanel />
+        <AskAfiPanel :soru="props.soru" />
       </div>
     </div>
   </section>

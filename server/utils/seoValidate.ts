@@ -114,7 +114,12 @@ const sanitizers: Record<SettingsKey, (v: unknown) => Record<string, unknown>> =
       out.items = v.items.map((it) => {
         if (!isObj(it) || typeof it.q !== 'string' || typeof it.a !== 'string') fail('items')
         if (it.q.length > 300 || it.a.length > 3000) fail('items')
-        return { q: it.q, a: it.a }
+        // href isteğe bağlı ve YALNIZ site içi yol olabilir: panelden dış
+        // adres ya da javascript: şeması geçirilemesin.
+        const href = typeof it.href === 'string' ? it.href.trim() : ''
+        if (href && (!href.startsWith('/') || href.startsWith('//') || href.length > 300))
+          fail('items')
+        return href ? { q: it.q, a: it.a, href } : { q: it.q, a: it.a }
       })
     }
     return out

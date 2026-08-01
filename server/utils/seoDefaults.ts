@@ -4,6 +4,7 @@ import type {
   SeoBundle,
   SeoSettings,
 } from './seoTypes'
+import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
  * Kod varsayılanları = bugünkü canlı davranış. DB yalnızca bunların üzerine
@@ -95,7 +96,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - Yalnızca uygulamanın çalışması için gereken veri toplanır (hesap e-postası, profil, öğün ve ölçü kayıtları).
 - Veriler Google Cloud'un Avrupa bölgesindeki sunucularda saklanır; aktarım HTTPS ile şifrelenir.
 - Kimlik doğrulama Stack Auth ile sağlanır.
-- Hesap ve tüm veriler uygulamadan (Profil → Hesabı sil) ya da e-posta ile silinebilir; talep en geç 30 gün içinde işlenir.
+- Hesap ve tüm veriler uygulamadan (menü → Hesap ayarlarım → Hesabı ve tüm verileri sil) ya da e-posta ile silinebilir; talep en geç 30 gün içinde işlenir.
 
 ## Durum
 - Kapalı beta canlı: iOS davetleri TestFlight ile gidiyor, Android daveti çok yakında.
@@ -105,6 +106,8 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 ## Bağlantılar
 - [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve Afi'ye soru sorma.
 - [Beta](${SITE_URL}/beta): beta başvurusu ve ilk sofra daveti.
+- [Destek merkezi](${SITE_URL}/destek): uygulamanın kullanım dokümantasyonu; kurulum, öğün kaydı, Afi, gruplar, hesap ve sorun giderme.
+- [Destek merkezi tam metin](${SITE_URL}/llms-full.txt): tüm destek yazılarının gövdesi tek dosyada.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
@@ -146,6 +149,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'afiet kalori saydırmaz; sofranın kendi diliyle konuşur. Beş besin grubunu ' +
           'renklerle görürsün, gün dengelendikçe sofran tamamlanır. Kalori hedefi, ' +
           'kırmızı uyarı ya da suçluluk yok; sadece denge.',
+        href: '/destek/baslangic/afiet-nedir',
       },
       {
         q: '“Dilim, kase, avuç” derken neyi kastediyorsunuz?',
@@ -153,6 +157,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'Gram ve kalori yerine sofranın kendi ölçüleri: kaç dilim, kaç kase, bir avuç, ' +
           'bir fincan. Menemenden mercimeğe 2000’i aşkın Türk yemeği ve besin içeride ' +
           'hazır; sen sadece tabağını tarif edersin.',
+        href: '/destek/ogun-kaydi/sofra-olculeri-dilim-kase-avuc',
       },
       {
         q: 'Afi kim, neler yapıyor?',
@@ -160,6 +165,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'Afi, afiet’in sofra arkadaşı. Bilmediğin yemeğin fotoğrafını çekersin, Afi ' +
           'tanır ve kaydına yardım eder. Aklına takılanları da sorabilirsin; sofranın ' +
           'diliyle, kısaca anlatır.',
+        href: '/destek/afi/afiye-fotografla-yemek-tanitma',
       },
       {
         q: 'afiet’i ailece kullanabilir miyiz?',
@@ -167,6 +173,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'Evet. Soframız’da ailenle ya da arkadaşlarınla aynı sofrada yan yana ' +
           'durursunuz; kıyas ve sıralama yok. Herkesin kendi profili var, hepinizin ' +
           'aynı sofrası.',
+        href: '/destek/soframiz/grup-kurma-ve-davet',
       },
       {
         q: 'afiet’i şimdi nasıl deneyebilirim?',
@@ -174,6 +181,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'afiet kapalı betada ve ilk sofra davetleri gidiyor. afiet.co/beta üzerinden ' +
           'başvurabilirsin; sıran geldiğinde davetin e-posta ile gelir. App Store ve ' +
           'Google Play çıkışı da yaklaşıyor.',
+        href: '/destek/beta-sorun-giderme/beta-nasil-isliyor',
       },
       {
         q: 'Verilerim nerede saklanıyor?',
@@ -181,23 +189,49 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
           'Verilerin bizim yönettiğimiz sunucularda (Google Cloud, Avrupa bölgesi) saklanır; ' +
           'cihazınla sunucu arasındaki aktarım HTTPS ile şifrelenir. Reklam göstermeyiz, verini ' +
           'satmayız, seni izlemeyiz; yalnızca uygulamanın çalışması için gereken veriyi toplarız.',
+        href: '/destek/hesap-gizlilik/verilerim-nerede-saklaniyor',
       },
       {
         q: 'Hesabımı ve verilerimi silebilir miyim?',
         a:
-          'İstediğin zaman. Uygulamada Profil → Hesabı sil ile öğün, ölçü ve profil ' +
+          'İstediğin zaman. Uygulamada menü → Hesap ayarlarım → Hesabı ve tüm verileri ' +
+          'sil ile öğün, ölçü ve profil ' +
           'kayıtların kalıcı olarak silinir; işlem geri alınamaz. Uygulamaya erişemiyorsan ' +
           'destek@afiet.co adresine yazman yeterli; talebini en geç 30 gün içinde işleriz.',
+        href: '/destek/hesap-gizlilik/hesabimi-silmek-istiyorum',
       },
       {
         q: 'afiet kimin için?',
         a:
           'afiet 18 yaş ve üzeri kullanıcılar içindir; bilerek 18 yaş altından veri toplamayız. ' +
           'Kalori saymadan, sofrada seni seven biri gibi konuşan bir arkadaş isteyen herkes için.',
+        href: '/destek/baslangic/afiet-nedir',
       },
     ],
   },
 }
+
+/**
+ * Destek merkezi kategori sayfaları. Tek tek yazmak yerine kategori
+ * tanımından üretilir: kategori eklenince meta'sı ve site haritası girdisi
+ * kendiliğinden gelir, panelde de düzenlenebilir olur (KNOWN_PATHS bu
+ * nesnenin anahtarlarından türer).
+ *
+ * YAZI sayfalarının meta'sı burada değil, `seoStore.resolvePageMeta` içinde
+ * yazının kendisinden türetilir (blog yazılarındaki yaklaşımın aynısı).
+ */
+const SUPPORT_CATEGORY_PAGES: Record<string, PageSeo> = Object.fromEntries(
+  SUPPORT_CATEGORIES.map((c) => [
+    `/destek/${c.slug}`,
+    makePage({
+      title: `${c.title} | afiet destek merkezi`,
+      description: c.description,
+      ogTitle: `${c.title} | afiet destek`,
+      ogDescription: c.description,
+      sitemap: { include: true, changefreq: 'weekly', priority: 0.5 },
+    }),
+  ]),
+)
 
 export const DEFAULT_PAGES: Record<string, PageSeo> = {
   '/': makePage({
@@ -249,6 +283,18 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'oranları tek sayfada.',
     sitemap: { include: true, changefreq: 'daily', priority: 0.3 },
   }),
+  '/destek': makePage({
+    title: 'Destek merkezi | afiet',
+    description:
+      'afiet uygulamasının kullanım rehberi: kurulum, öğün kaydı ve sofra ölçüleri, Afi, ' +
+      'denge ve ritim, gruplar, hesap ve gizlilik, beta ve sorun giderme.',
+    ogTitle: 'afiet destek merkezi',
+    ogDescription:
+      'Nasıl yardımcı olabiliriz? afiet’in kullanım rehberi, sorun giderme adımları ve ' +
+      'sık sorulan soruların cevapları tek yerde.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
+  }),
+  ...SUPPORT_CATEGORY_PAGES,
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:

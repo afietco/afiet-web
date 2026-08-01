@@ -17,6 +17,24 @@ const afi = useAskAfi()
 // Site anahtarı gizli değildir, HTML'e basılır. Secret yalnız backend'dedir.
 const turnstileSiteKey = String(useRuntimeConfig().public.turnstileSiteKey || '')
 const inputEl = ref<HTMLInputElement | null>(null)
+
+/**
+ * Destek merkezindeki arama bir cevap bulamazsa soruyu buraya devreder.
+ * Kutuyu yalnızca DOLDURUR, kendiliğinden göndermez: neyi soracağına
+ * ziyaretçi karar verir ve Turnstile ısınması da onun eylemine bağlı kalır.
+ */
+const props = defineProps<{ soru?: string }>()
+watch(
+  () => props.soru,
+  async (soru) => {
+    if (!soru || import.meta.server) return
+    afi.draft.value = soru
+    afi.warmUp()
+    await nextTick()
+    inputEl.value?.focus({ preventScroll: true })
+  },
+  { immediate: true },
+)
 // NuxtLink'e konan ref bileşen örneğidir, DOM düğümü değil: $el üzerinden inilir.
 const capLink = ref<{ $el?: HTMLElement } | null>(null)
 

@@ -82,6 +82,32 @@ export default defineEventHandler(async (event) => {
     const ourHost = host.replace(/^www\./, '')
     const country = (getHeader(event, 'x-vercel-ip-country') || '').slice(0, 2).toUpperCase() || null
 
+    // ── Destek merkezi olayları ──
+    // `destek_oy`: yazının işe yarayıp yaramadığı (yalnız evet/hayir).
+    // `destek_arama`: SONUÇ BULAMAYAN arama sorgusu; yazılacak bir sonraki
+    // yazının listesi budur. İkisi de yalnız /destek altından kabul edilir ve
+    // 120 karakterde kesilir; ziyaretçi kimliği sayfa görüntülemedekiyle aynı
+    // anonim çerezdir, ek bir alan toplanmaz.
+    if (body.e === 'destek_oy' || body.e === 'destek_arama') {
+      if (!path.startsWith('/destek')) return done()
+      const deger = cap(body.v, 120)
+      if (!deger) return done()
+      if (body.e === 'destek_oy' && deger !== 'evet' && deger !== 'hayir') return done()
+      await insertEvent(
+        sql,
+        blankRow({
+          event: body.e,
+          visitorId: vid,
+          sessionId: sid,
+          host,
+          path,
+          durationMs: null,
+          title: deger,
+        }),
+      )
+      return done()
+    }
+
     // ── Süre (engagement) olayı: yalnız yol + süre ──
     if (body.e === 'eng') {
       await insertEvent(sql, blankRow({ event: 'engagement', visitorId: vid, sessionId: sid, host, path, durationMs: clampInt(body.d, 0, SESSION_MAX_AGE * 1000) }))
@@ -136,8 +162,20 @@ function sanitizeUtm(raw: unknown): Utm {
   return { source: pick('source'), medium: pick('medium'), campaign: pick('campaign'), term: pick('term'), content: pick('content') }
 }
 
-/** Süre olayı için: zorunlu alanlar dolu, geri kalanı null. */
-function blankRow(p: { event: 'engagement'; visitorId: string; sessionId: string; host: string; path: string; durationMs: number | null }): EventRow {
+/**
+ * Sayfa görüntüleme dışındaki olaylar için: zorunlu alanlar dolu, geri kalanı
+ * null. `title` kolonu bu olaylarda küçük bir DEĞER taşır (oyun evet/hayir'ı
+ * ya da arama sorgusu); ayrı bir kolon açmaya değmeyecek kadar dar bir alan.
+ */
+function blankRow(p: {
+  event: 'engagement' | 'destek_oy' | 'destek_arama'
+  visitorId: string
+  sessionId: string
+  host: string
+  path: string
+  durationMs: number | null
+  title?: string | null
+}): EventRow {
   return {
     event: p.event,
     visitorId: p.visitorId,
@@ -146,7 +184,7 @@ function blankRow(p: { event: 'engagement'; visitorId: string; sessionId: string
     isEntry: false,
     host: p.host,
     path: p.path,
-    title: null,
+    title: p.title ?? null,
     referrerHost: null,
     channel: null,
     utmSource: null,
