@@ -179,6 +179,39 @@ try {
   ok(sitemap.includes(articlePath), 'sitemap destek yazısını içeriyor')
   ok(llms.includes('## Destek merkezi'), 'llms.txt destek bölümü içeriyor')
 
+  // --- Sürüm notları (/yenilikler) ---
+  // Uygulamadaki Yenilikler pop-up'ı bu adrese bağlanıyor: sayfa düşerse
+  // mağazadaki her sürümün "Tüm değişiklikleri oku" bağlantısı boşa düşer.
+  const releasesRes = await fetch(`http://localhost:${PORT}/yenilikler`)
+  const releasesHtml = await releasesRes.text()
+  ok(releasesRes.status === 200, `/yenilikler 200 (${releasesRes.status})`)
+  ok(releasesHtml.includes('neler değişti'), '/yenilikler başlığı prerender HTML içinde')
+
+  const releaseList = await (await fetch(`http://localhost:${PORT}/api/yenilikler`)).json()
+  ok(releaseList.total > 0, `sürüm notu var (${releaseList.total})`)
+  const newest = releaseList.releases?.[0]
+  ok(Boolean(newest?.version && newest?.title), 'en yeni sürümün sürümü ve başlığı dolu')
+
+  const releasePath = `/yenilikler/${newest.version}`
+  const releaseRes = await fetch(`http://localhost:${PORT}${releasePath}`)
+  const releaseHtml = await releaseRes.text()
+  ok(releaseRes.status === 200, `${releasePath} 200 (${releaseRes.status})`)
+  ok(releaseHtml.includes('surum-govde'), 'sürüm notunun gövdesi HTML içinde')
+  ok(releaseHtml.includes('TechArticle'), 'sürüm notu TechArticle şeması içeriyor')
+  // TODO'lu bir taslak yayına çıkmamalı: releaseStore onu atlar.
+  ok(!releaseHtml.includes('TODO'), 'sürüm notunda doldurulmamış TODO kalmamış')
+
+  const release404 = await fetch(`http://localhost:${PORT}/yenilikler/9.9.9`)
+  const release404Html = await release404.text()
+  ok(release404.status === 404, `bilinmeyen sürüm 404 (${release404.status})`)
+  ok(
+    release404Html.includes('bulamadık'),
+    'bilinmeyen sürüm markalı hata yerine kendi cümlesini kuruyor',
+  )
+
+  ok(sitemap.includes(releasePath), 'sitemap sürüm notunu içeriyor')
+  ok(llms.includes('## Sürüm notları'), 'llms.txt sürüm bölümü içeriyor')
+
   // --- Hesaplama araçları ---
   const hesapHub = await fetch(`http://localhost:${PORT}/hesapla`)
   const hesapHubHtml = await hesapHub.text()

@@ -5,7 +5,9 @@ import { getPublishedPost } from './contentStore'
 import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
 import { supportCategory } from './supportCategories'
+import { getRelease } from './releaseStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
+import type { ReleaseNote } from '#shared/types/release'
 import type {
   DeepPartial,
   PageSeo,
@@ -219,6 +221,24 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
 
+  // Sürüm notu: meta tabanı markdown dosyasının frontmatter'ından gelir, panelin
+  // sayfa override'ı (seo_pages['/yenilikler/<sürüm>']) üstüne biner. Bilinmeyen
+  // sürüm mevcut bilinmeyen-yol davranışına düşer (sayfa 404 döner).
+  let release: ReleaseNote | null = null
+  if (path.startsWith('/yenilikler/')) {
+    release = await getRelease(path.slice('/yenilikler/'.length))
+    if (release) {
+      const releasePage = makePage({
+        title: `${release.title} (v${release.version}) | afiet sürüm notları`,
+        description: release.summary,
+        ogTitle: `afiet v${release.version}: ${release.title}`,
+        ogDescription: release.summary,
+        sitemap: { include: true, changefreq: 'yearly', priority: 0.4 },
+      })
+      page = deepMerge<PageSeo>(releasePage, overrides.pages[path])
+    }
+  }
+
   const title = page.title || g.defaultTitle
   const description = page.description || g.defaultDescription
   const ogImage = absolutize(page.ogImage || g.defaultOgImage, g.baseUrl)
@@ -379,6 +399,51 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
           item: `${base}/destek/${supportCat.slug}`,
         },
         { '@type': 'ListItem', position: 4, name: supportArticle.title, item: canonical },
+      ],
+    })
+  }
+
+  // ── Sürüm notları şeması ────────────────────────────────────────────────
+  // SoftwareApplication ana sayfada bir kez tanımlı; burada tekrar edilmez.
+  // Sürüm sayfası TechArticle'dır: değişikliği anlatan bir metindir, indirilen
+  // bir sürüm nesnesi değil.
+  if (path === '/yenilikler') {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'afiet sürüm notları',
+      url: `${base}/yenilikler`,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+    })
+  } else if (release) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: `afiet v${release.version}: ${release.title}`,
+      description: release.summary,
+      inLanguage: g.locale.replace('_', '-'),
+      datePublished: release.date,
+      dateModified: release.date,
+      mainEntityOfPage: canonical,
+      articleSection: 'Sürüm notları',
+      about: { '@type': 'SoftwareApplication', name: g.siteName, softwareVersion: release.version },
+      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      publisher: {
+        '@type': 'Organization',
+        name: g.siteName,
+        url: g.baseUrl,
+        logo: { '@type': 'ImageObject', url: absolutize('/icon.svg', g.baseUrl) },
+      },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Sürüm notları', item: `${base}/yenilikler` },
+        { '@type': 'ListItem', position: 3, name: `v${release.version}`, item: canonical },
       ],
     })
   }

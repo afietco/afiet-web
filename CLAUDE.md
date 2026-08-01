@@ -190,6 +190,33 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   motorlarıdır.
 - Ekran görüntüsü: `node scripts/support-shots.mjs` (build sonrası, `.shots/`).
 
+## Sürüm notları (/yenilikler)
+
+- **İçerik REPODA yaşar:** `content/yenilikler/<sürüm>.md`, destek merkeziyle
+  aynı yol (Nitro `serverAssets` → `useStorage('assets:yenilikler')`,
+  `server/utils/releaseStore.ts`). Yayına almak = commit + deploy.
+- Kaynak mobil changelog'dur: `node scripts/surum-notu-taslagi.mjs 0.10.1`
+  `../afiet-mobile/apps/mobile/CHANGELOG.md`ten o sürümün maddelerini alıp
+  emojisine göre gruplar (✨ Yenilikler / 🔧 İyileştirmeler / 🐛 Düzeltmeler)
+  ve üç `TODO` satırı bırakır: başlık, özet, giriş paragrafı. Maddeler
+  YENİDEN YAZILMAZ, yalnız bakım diline kaçan yerler cilalanır.
+- **TODO kalırsa dosya yayına çıkmaz** (`releaseStore` atlar): yarım bir sayfa
+  yayınlamaktansa hiç görünmemesi tercih edilir. Sürüm/tarih frontmatter'dan
+  okunur, dosya adından türetilmez; biçimi tutmayan dosya da atlanır.
+- Sürüm sırası sözlük sırası DEĞİLDİR (`compareVersions`): "0.9.0" > "0.10.0"
+  olurdu ve en yeni sürüm listenin ortasına düşerdi.
+- Bilinmeyen sürüm markalı hata sayfasına düşmez, kendi cümlesini kurar ve
+  yanıt 404'tür. O ekranın içeriği ÇEKİLEN VERİYE BAĞLI OLAMAZ: 404 dönen bir
+  belgede istemci hidrasyonda sunucunun payload'ını kullanmıyor, sunucuda
+  basılan liste ilk render'da boşalıp uyumsuzluk üretiyordu. Uç bu yüzden 200
+  + `release: null` döner, 404'ü sayfa kurar.
+- Bu sayfa uygulamanın "Yenilikler" alt sayfasının uzun hâlidir ve pop-up
+  `afiet.co/yenilikler/<sürüm>` adresine bağlanır: **ilgili sürüm mağazaya
+  çıkmadan önce yayında olmak zorundadır** (afiet-mobile `/release` akışının
+  3. adımı bunu şart koşar).
+- Meta/şema `seoStore.resolvePageMeta` içinde frontmatter'dan türetilir
+  (TechArticle + BreadcrumbList); sitemap ve llms.txt bölümleri otomatiktir.
+
 ## Sosyal hesaplar & otomatik ölçüm (Faz 2)
 
 - Model: `server/utils/socialStore.ts` - `social_accounts` (bağlı hesap +
