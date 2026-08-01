@@ -13,6 +13,7 @@ import { makulMu, sayiyaCevir } from '#shared/hesap/girdi'
  */
 usePageSeo()
 const c = hesapla.bmi
+const icerik = useHesapIcerik(c.slug)
 
 const boy = ref('')
 const kilo = ref('')
@@ -105,6 +106,9 @@ const bicimli = (n: number) => new Intl.NumberFormat('tr-TR', { maximumFractionD
         <NuxtLink to="/hesapla/sofra-payin" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
+
+    <HesapIcerik v-if="icerik" :icerik="icerik" />
+
 
     <HesapAltBilgi :sonuc-var="Boolean(sonuc)" />
   </div>

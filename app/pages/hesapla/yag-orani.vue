@@ -15,6 +15,7 @@ import { makulMu, sayiyaCevir } from '#shared/hesap/girdi'
  */
 usePageSeo()
 const c = hesapla.fat
+const icerik = useHesapIcerik(c.slug)
 
 const sex = ref<Sex>('kadin')
 const boy = ref('')
@@ -141,6 +142,9 @@ const bir = (n: number) => new Intl.NumberFormat('tr-TR', { maximumFractionDigit
         <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
+
+    <HesapIcerik v-if="icerik" :icerik="icerik" />
+
 
     <HesapAltBilgi :sonuc-var="Boolean(sonuc)" />
   </div>

@@ -13,6 +13,7 @@ import { makulMu, sayiyaCevir } from '#shared/hesap/girdi'
  */
 usePageSeo()
 const c = hesapla.water
+const icerik = useHesapIcerik(c.slug)
 
 const sex = ref<Sex>('kadin')
 const yas = ref('')
@@ -131,6 +132,9 @@ const litre = computed(() =>
         <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
+
+    <HesapIcerik v-if="icerik" :icerik="icerik" />
+
 
     <HesapAltBilgi :sonuc-var="Boolean(bardak)" />
   </div>
