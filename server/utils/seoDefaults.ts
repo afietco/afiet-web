@@ -96,7 +96,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - Yalnızca uygulamanın çalışması için gereken veri toplanır (hesap e-postası, profil, öğün ve ölçü kayıtları).
 - Veriler Google Cloud'un Avrupa bölgesindeki sunucularda saklanır; aktarım HTTPS ile şifrelenir.
 - Kimlik doğrulama Stack Auth ile sağlanır.
-- Hesap ve tüm veriler uygulamadan (Profil → Hesabı sil) ya da e-posta ile silinebilir; talep en geç 30 gün içinde işlenir.
+- Hesap ve tüm veriler uygulamadan (menü → Hesap ayarlarım → Hesabı ve tüm verileri sil) ya da e-posta ile silinebilir; talep en geç 30 gün içinde işlenir.
 
 ## Durum
 - Kapalı beta canlı: iOS davetleri TestFlight ile gidiyor, Android daveti çok yakında.
@@ -194,7 +194,8 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       {
         q: 'Hesabımı ve verilerimi silebilir miyim?',
         a:
-          'İstediğin zaman. Uygulamada Profil → Hesabı sil ile öğün, ölçü ve profil ' +
+          'İstediğin zaman. Uygulamada menü → Hesap ayarlarım → Hesabı ve tüm verileri ' +
+          'sil ile öğün, ölçü ve profil ' +
           'kayıtların kalıcı olarak silinir; işlem geri alınamaz. Uygulamaya erişemiyorsan ' +
           'destek@afiet.co adresine yazman yeterli; talebini en geç 30 gün içinde işleriz.',
         href: '/destek/hesap-gizlilik/hesabimi-silmek-istiyorum',

@@ -22,11 +22,9 @@ Bir hafta içinde kendine seçtiğin gün sayısı kadar afiyet günü topladıy
 
 Varsayılan hedef **haftada 5 gün**dür. Yani yedi günün yedisine yetişmen beklenmez; kalan iki gün senin sofra payındır.
 
-```yol
-Vücudum > haftalık hedef
+```dikkat
+Hedefi uygulama içinden değiştiren bir ayar şu an yok; herkeste haftada 5 gün olarak duruyor. Sana başka bir ritim daha uygunsa destek@afiet.co adresine yazabilirsin.
 ```
-
-Hedefini Vücudum sekmesinden değiştirebilirsin.
 
 ## Ritim
 
@@ -46,4 +44,4 @@ Kaçırdığın bir gün hiçbir şeyi geri almaz. Ertesi gün tek bir kayıt ye
 
 ## Nerede görünür
 
-Haftanın gidişatını Bugün sekmesindeki ritim şeridinden izlersin. Geçmiş haftalar ise Bilgilerim ekranında durur.
+Haftanın gidişatını Bugün sekmesindeki ritim şeridinden izlersin. Geçmiş haftalar Beslenme sekmesindeki ritim geçmişi kartında durur.

@@ -48,6 +48,6 @@ Geri al düğmesi kaybolduysa telaşlanma: kaydı yeniden eklemek yeterli, o gü
 
 ## Geçmiş bir günü düzeltmek
 
-Dünkü ya da daha eski bir günün kaydını da aynı şekilde düzenleyebilirsin. Beslenme sekmesinde önce tarihi değiştir, sonra öğünü aç.
+Beslenme sekmesi her zaman bugünü gösterir. Dünkü ya da daha eski bir günün kaydına **Menü > Bilgilerim > Geçmiş** üzerinden ulaşırsın: son yedi gün listelenir, günü açıp satırdaki kalemle düzenler, çöp kutusuyla silersin.
 
 Geçmişe kayıt eklemek "hile" değildir. afiet'in derdi seni yakalamak değil, sofranı doğru göstermek.

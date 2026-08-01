@@ -391,13 +391,15 @@ try {
     'aksansız arama ("olcu") sonuç buluyor',
   )
 
-  // Türkçe ünsüz yumuşaması: kök "grup" yazılır, başlıkta "Gruba" geçer.
-  await searchBox.fill('grup')
+  // Türkçe ünsüz yumuşaması: kök "grup" yazılır, metinde "grubun" geçer.
+  // Belirli bir yazıyı beklemiyoruz (korpus büyüdükçe sıra değişir); yumuşamış
+  // biçimle eşleşen EN AZ BİR sonuç çıkması kuralın çalıştığını kanıtlar.
+  await searchBox.fill('grup adı')
   await page.locator('#destek-sonuclar [role="option"]').first().waitFor({ timeout: 8000 })
-  const groupResults = await page.locator('#destek-sonuclar [role="option"]').allInnerTexts()
+  const softened = await page.locator('#destek-sonuclar [role="option"]').allInnerTexts()
   ok(
-    groupResults.some((t) => t.includes('Gruba nasıl katılırım')),
-    'yumuşayan kök ("grup" → "Gruba") eşleşiyor',
+    softened.some((t) => /grub/i.test(t) && !/grup/i.test(t.split('\n')[0] ?? '')),
+    `yumuşayan kök ("grup" → "grub...") eşleşiyor (${softened.length} sonuç)`,
   )
 
   await searchBox.fill('zzzqqq')

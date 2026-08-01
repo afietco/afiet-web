@@ -36,7 +36,7 @@ Ve hiçbiri yasak değildir. afiet'te "kötü besin" diye bir etiket yoktur.
 
 ## Su
 
-Günlük su hedefi 8 bardaktır ve dengeden ayrı durur. Su kaydı halkaları etkilemez, kendi göstergesi vardır.
+Su, dengeden ayrı durur: su kaydı beş halkayı etkilemez, kendi göstergesi vardır. Günlük hedefin vücut bilgilerinden hesaplanır; bu bilgileri henüz girmediysen 8 bardak olarak başlar.
 
 ## Beşi de dolmazsa
 
