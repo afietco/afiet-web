@@ -3,6 +3,7 @@ import { hesapla } from '~/data/content'
 import { calculateGoals } from '#shared/hesap/motor'
 import { fiberGrams, waterGlassesFromTdee } from '#shared/hesap/vucut'
 import { ACTIVITY_LEVELS, SEXES, type ActivityLevel, type Sex } from '#shared/hesap/tipler'
+import { makulMu, sayiyaCevir } from '#shared/hesap/girdi'
 
 /**
  * "Sofra payın": vücut bilgisinden günlük EL ÖLÇÜSÜ üretir.
@@ -30,35 +31,19 @@ const error = ref('')
 const result = ref<ReturnType<typeof calculateGoals> | null>(null)
 const resultEl = ref<HTMLElement | null>(null)
 
-/** Türkçe klavyede ondalık virgülle yazılır; ikisini de kabul et. */
-const sayi = (v: string): number | null => {
-  const n = Number(v.replace(',', '.').trim())
-  return Number.isFinite(n) ? n : null
-}
-
-const MAKUL = {
-  age: { min: 10, max: 100 },
-  height: { min: 120, max: 230 },
-  weight: { min: 30, max: 300 },
-}
-
 function hesaplaTabak() {
   error.value = ''
-  const a = sayi(age.value)
-  const h = sayi(height.value)
-  const w = sayi(weight.value)
+  const a = sayiyaCevir(age.value)
+  const h = sayiyaCevir(height.value)
+  const w = sayiyaCevir(weight.value)
 
   if (a === null || h === null || w === null) {
-    error.value = c.errorMissing
+    error.value = hesapla.errorMissing
     result.value = null
     return
   }
-  const disarida =
-    a < MAKUL.age.min || a > MAKUL.age.max ||
-    h < MAKUL.height.min || h > MAKUL.height.max ||
-    w < MAKUL.weight.min || w > MAKUL.weight.max
-  if (disarida) {
-    error.value = c.errorRange
+  if (!makulMu('yas', a) || !makulMu('boy', h) || !makulMu('kilo', w)) {
+    error.value = hesapla.errorRange
     result.value = null
     return
   }
@@ -122,59 +107,12 @@ const aralik = (min: number, max: number) => `${tam(min)}-${tam(max)}`
     <form class="mt-9 rounded-3xl border border-line bg-surface p-6 sm:p-7" @submit.prevent="hesaplaTabak">
       <h2 class="font-display text-xl font-semibold tracking-tight text-ink">{{ c.formTitle }}</h2>
 
-      <fieldset class="mt-5">
-        <legend class="text-sm font-extrabold text-soft">{{ c.sexLabel }}</legend>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <label
-            v-for="s in SEXES"
-            :key="s.key"
-            class="cursor-pointer rounded-full border px-5 py-2.5 font-bold transition"
-            :class="
-              sex === s.key
-                ? 'border-brand bg-brand text-white shadow-lift'
-                : 'border-line bg-canvas text-soft hover:border-brand/40'
-            "
-          >
-            <input v-model="sex" type="radio" :value="s.key" class="sr-only" />
-            {{ s.label }}
-          </label>
-        </div>
-      </fieldset>
+      <HesapSecim v-model="sex" :label="c.sexLabel" :secenekler="SEXES" class="mt-5" />
 
       <div class="mt-5 grid gap-4 sm:grid-cols-3">
-        <label class="block">
-          <span class="text-sm font-extrabold text-soft">{{ c.ageLabel }}</span>
-          <input
-            v-model="age"
-            type="text"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="34"
-            class="mt-1.5 w-full rounded-2xl border border-line bg-canvas px-4 py-3 text-lg font-bold text-ink transition placeholder:font-normal placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
-          />
-        </label>
-        <label class="block">
-          <span class="text-sm font-extrabold text-soft">{{ c.heightLabel }} (cm)</span>
-          <input
-            v-model="height"
-            type="text"
-            inputmode="decimal"
-            autocomplete="off"
-            placeholder="172"
-            class="mt-1.5 w-full rounded-2xl border border-line bg-canvas px-4 py-3 text-lg font-bold text-ink transition placeholder:font-normal placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
-          />
-        </label>
-        <label class="block">
-          <span class="text-sm font-extrabold text-soft">{{ c.weightLabel }} (kg)</span>
-          <input
-            v-model="weight"
-            type="text"
-            inputmode="decimal"
-            autocomplete="off"
-            placeholder="74"
-            class="mt-1.5 w-full rounded-2xl border border-line bg-canvas px-4 py-3 text-lg font-bold text-ink transition placeholder:font-normal placeholder:text-muted focus:border-brand focus:ring-4 focus:ring-brand/15 focus:outline-none"
-          />
-        </label>
+        <HesapAlan v-model="age" :label="c.ageLabel" ornek="34" />
+        <HesapAlan v-model="height" :label="c.heightLabel" birim="cm" ornek="172" />
+        <HesapAlan v-model="weight" :label="c.weightLabel" birim="kg" ornek="74" />
       </div>
 
       <fieldset class="mt-5">
@@ -223,31 +161,21 @@ const aralik = (min: number, max: number) => `${tam(min)}-${tam(max)}`
         </h2>
 
         <ul class="mt-5 flex flex-col gap-2.5">
-          <li
+          <HesapSatir
             v-for="el in result.hand ?? []"
             :key="el.key"
-            class="flex items-center gap-4 rounded-2xl border border-line bg-surface px-5 py-4"
-          >
-            <span
-              class="h-9 w-1.5 shrink-0 rounded-full"
-              :class="HAND_STYLE[el.key]?.zemin"
-              aria-hidden="true"
-            />
-            <span class="font-display text-2xl font-semibold text-ink">{{ el.text }}</span>
-            <span class="ml-auto font-extrabold" :class="HAND_STYLE[el.key]?.renk">
-              {{ HAND_STYLE[el.key]?.ad }}
-            </span>
-          </li>
-          <li
+            :deger="el.text"
+            :etiket="HAND_STYLE[el.key]?.ad ?? ''"
+            :zemin="HAND_STYLE[el.key]?.zemin ?? 'bg-muted'"
+            :renk="HAND_STYLE[el.key]?.renk ?? 'text-soft'"
+          />
+          <HesapSatir
             v-if="suBardak"
-            class="flex items-center gap-4 rounded-2xl border border-line bg-surface px-5 py-4"
-          >
-            <span class="h-9 w-1.5 shrink-0 rounded-full bg-sut" aria-hidden="true" />
-            <span class="font-display text-2xl font-semibold text-ink">
-              {{ suBardak }} bardak
-            </span>
-            <span class="ml-auto font-extrabold text-sut">{{ c.waterLabel }}</span>
-          </li>
+            :deger="`${suBardak} bardak`"
+            :etiket="c.waterLabel"
+            zemin="bg-sut"
+            renk="text-sut"
+          />
         </ul>
 
         <p class="mt-4 text-sm leading-relaxed text-soft">{{ c.handNote }}</p>
@@ -328,11 +256,9 @@ const aralik = (min: number, max: number) => `${tam(min)}-${tam(max)}`
         </div>
       </template>
 
-      <p class="mt-8 text-sm leading-relaxed text-muted">{{ c.disclaimer }}</p>
-      <p class="mt-2 text-sm leading-relaxed text-muted">{{ c.privacy }}</p>
     </section>
 
-    <p v-else class="mt-6 text-sm leading-relaxed text-muted">{{ c.privacy }}</p>
+    <HesapAltBilgi :sonuc-var="Boolean(result)" />
   </div>
 </template>
 

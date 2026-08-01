@@ -73,6 +73,37 @@ try {
   await shoot('h6-sonuc-mobil', '/hesapla/sofra-payin', mobile, {
     fullPage: true, before: (p) => doldur(p),
   })
+  await shoot('h7-vki', '/hesapla/vucut-kitle-indeksi', desktop, {
+    fullPage: true,
+    before: async (p) => {
+      await p.getByLabel('Boy (cm)').fill('172')
+      await p.getByLabel('Kilo (kg)').fill('74')
+      await p.getByRole('button', { name: 'İndeksimi göster' }).click()
+      await p.waitForTimeout(500)
+    },
+  })
+  await shoot('h8-su', '/hesapla/gunluk-su', desktop, {
+    fullPage: true,
+    before: async (p) => {
+      await p.getByLabel('Yaş').fill('34')
+      await p.getByLabel('Boy (cm)').fill('172')
+      await p.getByLabel('Kilo (kg)').fill('74')
+      await p.getByRole('button', { name: 'Su ihtiyacımı göster' }).click()
+      await p.waitForTimeout(500)
+    },
+  })
+  await shoot('h9-yag', '/hesapla/yag-orani', desktop, {
+    fullPage: true,
+    before: async (p) => {
+      await p.getByLabel('Boy (cm)').fill('172')
+      await p.getByLabel('Kilo (kg)').fill('74')
+      await p.getByLabel('Bel çevresi (cm)').fill('82')
+      await p.getByLabel('Boyun çevresi (cm)').fill('34')
+      await p.getByLabel('Kalça çevresi (cm)').fill('98')
+      await p.getByRole('button', { name: 'Oranımı göster' }).click()
+      await p.waitForTimeout(500)
+    },
+  })
 
   console.log(`\nEkran görüntüleri: ${OUT}`)
 } finally {

@@ -484,8 +484,122 @@ export const hesapla = {
   toolsTitle: 'Araçlar',
   soonLabel: 'Yakında',
   soonBody:
-    'Vücut kitle indeksi, günlük su ihtiyacı, yağ oranı ve porsiyon çevirici ' +
-    'sırada. Hepsi aynı ilkeyle: önce tabak, sonra sayı.',
+    'Porsiyon çevirici sırada: kataloğumuzdaki iki binden fazla besinin ' +
+    'ölçüsünü ve besin grubunu tek yerde görebileceksin.',
+
+  /** Hub'daki araç kartları. `to` gerçek bir sayfaya işaret etmek zorunda. */
+  tools: [
+    {
+      to: '/hesapla/sofra-payin',
+      title: 'Sofra payın',
+      body: 'Günlük tabağın el ölçüsüyle: kaç avuç içi, kaç yumruk, kaç kapalı avuç.',
+      chips: ['3-4 avuç içi', '4-5 yumruk', '5-6 kapalı avuç'],
+      accent: 'sebze',
+    },
+    {
+      to: '/hesapla/vucut-kitle-indeksi',
+      title: 'Vücut kitle indeksi',
+      body: 'Boy ve kilodan indeks, yargısız bir aralık diliyle. İdeal kilo vermiyoruz.',
+      chips: ['boy', 'kilo'],
+      accent: 'tahil',
+    },
+    {
+      to: '/hesapla/gunluk-su',
+      title: 'Günlük su',
+      body: 'Vücudunun günlük su ihtiyacı, bardak olarak. Uygulamadaki hesabın aynısı.',
+      chips: ['bardak', 'litre'],
+      accent: 'sut',
+    },
+    {
+      to: '/hesapla/yag-orani',
+      title: 'Yağ oranı',
+      body: 'Bel, boyun ve kalça ölçünden vücut yağ oranı ve yağsız kütle.',
+      chips: ['bel', 'boyun', 'kalça'],
+      accent: 'protein',
+    },
+  ],
+
+  /** Tüm hesap sayfalarında ortak alt bilgi. */
+  disclaimer:
+    'Bu hesap yaklaşıktır ve tıbbi tavsiye değildir. Bir rahatsızlığın, ' +
+    'alerjin ya da özel bir beslenme planın varsa hekimine ve diyetisyenine danış.',
+  privacy: 'Girdiğin bilgiler tarayıcından çıkmaz; bize gönderilmez, saklanmaz.',
+  errorMissing: 'Alanları doldurur musun? 🌿',
+  errorRange: 'Bu değerleri bir kontrol eder misin? 🌿',
+
+  /** Vücut kitle indeksi. */
+  bmi: {
+    slug: 'vucut-kitle-indeksi',
+    eyebrow: 'vücut kitle indeksi',
+    title: 'Vücut kitle indeksin kaç?',
+    sub:
+      'Boy ve kilodan hesaplanan kaba bir gösterge. Sana dair bir hüküm değil, ' +
+      'bir nüfus ölçüsü; ideal kilo da vermiyoruz.',
+    submit: 'İndeksimi göster',
+    recalc: 'Yeniden hesapla',
+    resultLabel: 'vücut kitle indeksin',
+    rangeLabel: 'Bu değer şu aralıkta',
+    context:
+      'Vücut kitle indeksi kası ve yağı ayırt edemez. Kaslı biri "denge üstü", ' +
+      'kas kütlesi düşük biri "denge aralığı" çıkabilir. Bu yüzden afiet bu sayıyı ' +
+      'bir hedefe çevirmez; yalnız nerede durduğunu gösterir.',
+    nextTitle: 'Peki tabağın nasıl görünmeli?',
+    nextBody: 'İndeks bir fotoğraf. Günün nasıl kurulacağını sofra payın söyler.',
+    nextCta: 'Sofra payıma bak',
+  },
+
+  /** Günlük su. */
+  water: {
+    slug: 'gunluk-su',
+    eyebrow: 'günlük su',
+    title: 'Günde ne kadar su içmelisin?',
+    sub:
+      'Su ihtiyacı kilonun değil, harcadığın enerjinin peşinden gider. ' +
+      'Bu yüzden birkaç bilgi daha soruyoruz.',
+    submit: 'Su ihtiyacımı göster',
+    recalc: 'Yeniden hesapla',
+    glassLabel: 'su',
+    literLabel: 'yaklaşık',
+    context:
+      'Bir bardağı 200 ml sayıyoruz. Sıcak havada, spor yaptığında ve ' +
+      'hastalandığında ihtiyacın artar; çay ve kahve de sıvı sayılır ama ' +
+      'suyun yerini tutmaz.',
+    nextTitle: 'Suyu takip etmek',
+    nextBody: 'afiet günlük suyunu tek dokunuşla sayar, hatırlatır ve zorlamaz.',
+    nextCta: 'Sofrada yerini ayır',
+  },
+
+  /** Yağ oranı. */
+  fat: {
+    slug: 'yag-orani',
+    eyebrow: 'yağ oranı',
+    title: 'Vücut yağ oranın kaç?',
+    sub:
+      'Bel, boyun ve kalça çevresinden hesaplanır (ABD Donanması yöntemi). ' +
+      'Mezura yeter, tartıya gerek yok.',
+    submit: 'Oranımı göster',
+    recalc: 'Yeniden hesapla',
+    ratioLabel: 'yağ oranın',
+    ffmLabel: 'yağsız kütlen',
+    howTitle: 'Ölçüyü nasıl alırım',
+    howSteps: [
+      'Mezurayı cilde değecek kadar yaklaştır ama sıkma.',
+      'Bel: göbek deliğinin hizasından, nefesini tutmadan ölç.',
+      'Boyun: gırtlağın hemen altından, mezura hafif aşağı eğimli dursun.',
+      'Kalça: en geniş yerinden ölç.',
+    ],
+    context:
+      'Bu yöntem bir tahmindir ve birkaç puanlık hata payı taşır. Aynı koşullarda ' +
+      'ölçtüğünde yönü doğru gösterir; tek bir ölçümü hüküm gibi okuma.',
+    implausible:
+      'Bu ölçülerden makul bir oran çıkmadı. Mezurayı ve girdiğin sayıları bir ' +
+      'kontrol eder misin?',
+    nextTitle: 'Ölçülerini takip etmek',
+    nextBody:
+      'afiet ölçülerini saklar ve yönünü zamanla gösterir; tek bir sayının ' +
+      'üstüne hüküm kurmaz.',
+    nextCta: 'Sofrada yerini ayır',
+  },
 
   // ── Sofra payın ──────────────────────────────────────────────────────────
   plate: {
@@ -533,12 +647,6 @@ export const hesapla = {
       'hatırlatır, akşam tamamlandı mı gösterir ve seni yargılamaz.',
     ctaButton: 'Sofrada yerini ayır',
 
-    disclaimer:
-      'Bu hesap yaklaşıktır ve tıbbi tavsiye değildir. Bir rahatsızlığın, ' +
-      'alerjin ya da özel bir beslenme planın varsa hekimine ve diyetisyenine danış.',
-    privacy: 'Girdiğin bilgiler tarayıcından çıkmaz; bize gönderilmez, saklanmaz.',
-    errorMissing: 'Boy, kilo ve yaşı doldurur musun? 🌿',
-    errorRange: 'Bu değerleri bir kontrol eder misin? 🌿',
   },
 }
 

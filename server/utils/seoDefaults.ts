@@ -307,6 +307,37 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'yapar, sonra onu el ölçüsüne çevirir.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
   }),
+  '/hesapla/vucut-kitle-indeksi': makePage({
+    title: 'Vücut kitle indeksi hesaplama (VKİ) | afiet',
+    description:
+      'Boy ve kilodan vücut kitle indeksini hesapla. afiet yargısız bir aralık dili ' +
+      'kullanır ve ideal kilo vermez; indeksin ne anlattığını ve neyi anlatamadığını söyler.',
+    ogTitle: 'Vücut kitle indeksin kaç?',
+    ogDescription:
+      'Boy ve kilodan hesaplanan kaba bir gösterge. Sana dair bir hüküm değil; ' +
+      'ideal kilo da vermiyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/gunluk-su': makePage({
+    title: 'Günlük su ihtiyacı hesaplama | afiet',
+    description:
+      'Günde kaç bardak su içmelisin? Su ihtiyacı kilonun değil harcadığın enerjinin ' +
+      'peşinden gider; afiet uygulamasındaki hesabın aynısı.',
+    ogTitle: 'Günde ne kadar su içmelisin?',
+    ogDescription:
+      'Bardak ve litre olarak günlük su ihtiyacın. Bir bardağı 200 ml sayıyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/yag-orani': makePage({
+    title: 'Vücut yağ oranı hesaplama | afiet',
+    description:
+      'Bel, boyun ve kalça çevresinden vücut yağ oranını ve yağsız kütleni hesapla ' +
+      '(ABD Donanması yöntemi). Mezura yeter, tartıya gerek yok.',
+    ogTitle: 'Vücut yağ oranın kaç?',
+    ogDescription:
+      'Mezura ölçülerinden yağ oranı ve yağsız kütle. Hüküm kuran bir bant göstermiyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
   '/hesapla/sofra-payin': makePage({
     title: 'Günlük besin ihtiyacı hesaplama | afiet',
     description:

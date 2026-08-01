@@ -203,6 +203,16 @@ try {
     !/kaç haftada|kaç ayda|\bhaftada \d+\s*kilo/i.test(plateHtml),
     'hesap sayfasında süre vaadi YOK',
   )
+  for (const arac of ['vucut-kitle-indeksi', 'gunluk-su', 'yag-orani']) {
+    const res = await fetch(`http://localhost:${PORT}/hesapla/${arac}`)
+    const html = await res.text()
+    ok(res.status === 200, `/hesapla/${arac} 200 (${res.status})`)
+    // Doktrin her araçta geçerli: hiçbiri bir kilo hedefi sunmaz.
+    ok(
+      !/(ideal|hedef)\s+kilo(n|nuz|nuz\b|:)/i.test(html),
+      `${arac} bir kilo hedefi SUNMUYOR`,
+    )
+  }
   ok(sitemap.includes('/hesapla'), 'sitemap /hesapla sayfasını içeriyor')
 
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
@@ -454,7 +464,6 @@ try {
   await page.getByText('Sayıları göster').click()
   await page.waitForTimeout(200)
   ok(/kcal/.test(await plateResult.innerText()), 'kalori ancak açınca görünüyor')
-
   // 18 yaş altı: hedef üretilmez
   await page.getByLabel('Yaş').fill('16')
   await page.getByRole('button', { name: 'Yeniden hesapla' }).click()
@@ -462,6 +471,23 @@ try {
   const minorText = await plateResult.innerText()
   ok(/hedef vermeyeceğiz/.test(minorText), '18 yaş altında hedef üretilmiyor')
   ok(!/avuç içi/.test(minorText), '18 yaş altında el ölçüsü de gösterilmiyor')
+
+  await page.goto(`http://localhost:${PORT}/hesapla/vucut-kitle-indeksi`, { waitUntil: 'networkidle' })
+  await page.getByLabel('Boy (cm)').fill('172')
+  await page.getByLabel('Kilo (kg)').fill('74')
+  await page.getByRole('button', { name: 'İndeksimi göster' }).click()
+  const bmiText = await page.locator('[aria-live="polite"]').innerText()
+  ok(/25/.test(bmiText), `VKİ hesaplanıyor (${bmiText.split('\n')[0]})`)
+  ok(/aralı/i.test(bmiText), 'VKİ yargısız aralık etiketi gösteriyor')
+
+  await page.goto(`http://localhost:${PORT}/hesapla/gunluk-su`, { waitUntil: 'networkidle' })
+  await page.getByLabel('Yaş').fill('34')
+  await page.getByLabel('Boy (cm)').fill('172')
+  await page.getByLabel('Kilo (kg)').fill('74')
+  await page.getByRole('button', { name: 'Su ihtiyacımı göster' }).click()
+  const suText = await page.locator('[aria-live="polite"]').innerText()
+  ok(/bardak/.test(suText) && /litre/.test(suText), 'su ihtiyacı bardak ve litre veriyor')
+
 
   // --- İsteğe bağlı ekran görüntüleri ---
   if (process.env.SHOT_DIR) {
