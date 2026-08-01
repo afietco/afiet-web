@@ -35,6 +35,10 @@ jobs:
 
       - run: npm run typecheck
 
+      # Hesap motoru afiet-mobile'daki @afiet/core'un aynasıdır; bu test
+      # gerçek çekirdekten üretilmiş fikstüre karşı koşar ve sapmayı yakalar.
+      - run: npm test
+
       - run: npm run build
 
       - name: Smoke testi (headless Chrome)
