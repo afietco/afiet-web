@@ -16,7 +16,7 @@ Bildirimlerin tamamı isteğe bağlıdır ve her biri tek tek kapatılabilir.
 Menü > Hesap ayarlarım > Bildirimler
 ```
 
-1. Bugün ekranının sol üstündeki menü simgesine dokun.
+1. Bugün ekranının sağ üstündeki menü simgesine dokun (bildirim zilinin yanında).
 2. **Hesap ayarlarım**'ı seç.
 3. Sayfada **Bildirimler** kartını göreceksin.
 

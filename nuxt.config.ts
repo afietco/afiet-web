@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     compressPublicAssets: true,
     // Destek merkezi yazıları veritabanında DEĞİL repoda yaşar; sunucu paketine
     // asset olarak gömülür ve `useStorage('assets:destek')` ile okunur
-    // (server/utils/destekStore.ts). Yol nitro.srcDir'e (yani `server/`) görelidir.
+    // (server/utils/supportStore.ts). Yol nitro.srcDir'e (yani `server/`) görelidir.
     serverAssets: [{ baseName: 'destek', dir: '../content/destek' }],
   },
 

@@ -602,7 +602,8 @@ export const privacy = {
     {
       title: 'Verini silme',
       body: [
-        'Hesabını ve tüm verilerini uygulamadan silebilirsin: Profil → Hesabı sil. ' +
+        'Hesabını ve tüm verilerini uygulamadan silebilirsin: menü → Hesap ayarlarım → ' +
+          'Hesabı ve tüm verileri sil. ' +
           'Bu işlem öğün, ölçü ve profil kayıtlarını kalıcı olarak kaldırır.',
         'Uygulamaya erişemiyorsan adımlar için “Hesabını sil” sayfasına bakabilir ' +
           'ya da destek@afiet.co adresine yazarak silme talep edebilirsin; talebini ' +
@@ -643,8 +644,8 @@ export const hesapSil = {
   appTitle: 'Uygulamadan (en hızlı)',
   steps: [
     'afiet uygulamasını aç ve giriş yap.',
-    'Profil sekmesine git.',
-    'Hesap bölümünde “Hesabı sil”e dokun ve onayla.',
+    'Sağ üstteki menü simgesine dokun ve “Hesap ayarlarım”ı seç.',
+    'Sayfanın altındaki “Hesabı ve tüm verileri sil”e dokun ve onayla.',
     'Öğün, ölçü ve profil kayıtların dâhil tüm verilerin kalıcı olarak silinir; ' +
       'işlem geri alınamaz.',
   ],

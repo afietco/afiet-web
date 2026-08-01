@@ -16,7 +16,7 @@ Hesabını ve afiet'teki tüm verilerini istediğin zaman silebilirsin. En hızl
 Menü > Hesap ayarlarım > Hesabı ve tüm verileri sil
 ```
 
-1. Bugün ekranının sol üstündeki menü simgesine dokun.
+1. Bugün ekranının sağ üstündeki menü simgesine dokun (bildirim zilinin yanında).
 2. **Hesap ayarlarım**'ı seç.
 3. Sayfanın altındaki **Hesabı ve tüm verileri sil**'e dokun.
 4. Çıkan onay penceresinde **Hesabı sil**'i seç.
