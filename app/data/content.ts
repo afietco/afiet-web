@@ -391,6 +391,7 @@ export const footer = {
     { label: 'Beta', to: '/beta' },
     { label: 'Blog', to: '/blog' },
     { label: 'Destek', to: '/destek' },
+    { label: 'Hesapla', to: '/hesapla' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
 }
@@ -464,6 +465,81 @@ export const support = {
   voteNo: 'Pek olmadı',
   voteThanksYes: 'Sevindik, afiyet olsun 💚',
   voteThanksNo: 'Not aldık, bu yazıyı iyileştireceğiz. 🌿',
+}
+
+/**
+ * Hesaplama araçları (/hesapla). Marka gerilimi bilinçlidir: ziyaretçi bir sayı
+ * aramaya gelir, biz ona tabağını veririz. Kalori ve gram SAKLANMAZ ama öne de
+ * konmaz; katlanmış bir bölümde durur (afiet-hedefler docs/hedeflerim.md § 12).
+ *
+ * Bu araçların ASLA yapmayacakları (§ 9 ve § 12, bağlayıcı):
+ * ideal kilo, hedef kilo, süre vaadi, ondalıklı el ölçüsü, 18 yaş altına hedef.
+ */
+export const hesapla = {
+  eyebrow: 'hesaplama',
+  title: 'Sayıyı biz de biliyoruz. Sana tabağını veriyoruz.',
+  sub:
+    'Çoğu hesaplayıcı bir kalori ve bir "ideal kilo" verip susar. afiet ' +
+    'aynı hesabı yapar, sonra onu sofranın diline çevirir: kaç avuç, kaç yumruk.',
+  toolsTitle: 'Araçlar',
+  soonLabel: 'Yakında',
+  soonBody:
+    'Vücut kitle indeksi, günlük su ihtiyacı, yağ oranı ve porsiyon çevirici ' +
+    'sırada. Hepsi aynı ilkeyle: önce tabak, sonra sayı.',
+
+  // ── Sofra payın ──────────────────────────────────────────────────────────
+  plate: {
+    slug: 'sofra-payin',
+    eyebrow: 'sofra payın',
+    title: 'Günün nasıl görünmeli?',
+    sub:
+      'Birkaç bilgi ver, sana günlük tabağını el ölçüsüyle anlatalım. ' +
+      'Hedef kilo sormuyoruz, süre vaat etmiyoruz.',
+
+    formTitle: 'Seni tanıyalım',
+    sexLabel: 'Cinsiyet',
+    ageLabel: 'Yaş',
+    heightLabel: 'Boy',
+    weightLabel: 'Kilo',
+    activityLabel: 'Gün içinde ne kadar hareket edersin?',
+    submit: 'Tabağımı göster',
+    recalc: 'Yeniden hesapla',
+
+    resultTitle: 'Günün böyle görünür',
+    handNote:
+      'Ölçü senin kendi elin. Bu yüzden boyuna ve vücuduna göre zaten ' +
+      'ölçekleniyor; ayrıca bir düzeltme yapmana gerek yok.',
+    waterLabel: 'su',
+    numbersToggle: 'Sayıları göster',
+    numbersNote:
+      'Bunlar aralıktır, hedef değil. afiet gün içinde bu sayıları sana ' +
+      'saydırmaz; burada duruyorlar çünkü merak etmek en doğal şey.',
+    kcalLabel: 'Günlük enerji',
+    basalLabel: 'Bazal (dinlenirken)',
+    proteinLabel: 'Protein',
+    carbLabel: 'Karbonhidrat',
+    fatLabel: 'Yağ',
+    fiberLabel: 'Lif',
+
+    minorTitle: 'Sana bir hedef vermeyeceğiz',
+    minorBody:
+      'Bu yaşta beslenme değerlendirmesi yaş persentilleriyle yapılır, bir ' +
+      'formülle değil. Denge dili yine senin için geçerli: günde beş besin ' +
+      'grubuna da yer açmaya çalış, gerisi zamanla oturur.',
+
+    ctaTitle: 'Bunu her gün yaşamak',
+    ctaBody:
+      'Tek seferlik bir hesap alışkanlık kurmuyor. afiet bu tabağı sabah ' +
+      'hatırlatır, akşam tamamlandı mı gösterir ve seni yargılamaz.',
+    ctaButton: 'Sofrada yerini ayır',
+
+    disclaimer:
+      'Bu hesap yaklaşıktır ve tıbbi tavsiye değildir. Bir rahatsızlığın, ' +
+      'alerjin ya da özel bir beslenme planın varsa hekimine ve diyetisyenine danış.',
+    privacy: 'Girdiğin bilgiler tarayıcından çıkmaz; bize gönderilmez, saklanmaz.',
+    errorMissing: 'Boy, kilo ve yaşı doldurur musun? 🌿',
+    errorRange: 'Bu değerleri bir kontrol eder misin? 🌿',
+  },
 }
 
 /** Blog (afiet günlüğü) - liste ve yazı sayfası metinleri. */

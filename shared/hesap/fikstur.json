@@ -1,0 +1,340 @@
+[
+  {
+    "ad": "kadin-34-172-74-orta",
+    "girdi": {
+      "sex": "kadin",
+      "ageYears": 34,
+      "heightCm": 172,
+      "weightKg": 74,
+      "activityLevel": "orta"
+    },
+    "bmr": 1484,
+    "bmi": 25.014,
+    "bmiAralik": "denge_ustu",
+    "targetsWithheld": false,
+    "rails": [],
+    "confidence": "low",
+    "hedefKcal": {
+      "min": 2226,
+      "max": 2448.6,
+      "mid": 2337.3
+    },
+    "el": [
+      {
+        "key": "protein",
+        "term": "avuç içi",
+        "text": "4-5 avuç içi"
+      },
+      {
+        "key": "vegetable",
+        "term": "yumruk",
+        "text": "4-5 yumruk"
+      },
+      {
+        "key": "grain",
+        "term": "kapalı avuç",
+        "text": "7-8 kapalı avuç"
+      },
+      {
+        "key": "fat",
+        "term": "başparmak",
+        "text": "3 başparmak"
+      }
+    ],
+    "makro": {
+      "protein": [
+        88.8,
+        118.4
+      ],
+      "fat": [
+        61.83,
+        68.02
+      ],
+      "carb": [
+        298.98,
+        370.31
+      ],
+      "fiber": [
+        31.16,
+        34.28
+      ]
+    },
+    "su": 12,
+    "lif": 32.72
+  },
+  {
+    "ad": "erkek-28-180-82-aktif",
+    "girdi": {
+      "sex": "erkek",
+      "ageYears": 28,
+      "heightCm": 180,
+      "weightKg": 82,
+      "activityLevel": "aktif"
+    },
+    "bmr": 1810,
+    "bmi": 25.309,
+    "bmiAralik": "denge_ustu",
+    "targetsWithheld": false,
+    "rails": [],
+    "confidence": "low",
+    "hedefKcal": {
+      "min": 2986.5,
+      "max": 3258,
+      "mid": 3122.25
+    },
+    "el": [
+      {
+        "key": "protein",
+        "term": "avuç içi",
+        "text": "4 avuç içi"
+      },
+      {
+        "key": "vegetable",
+        "term": "yumruk",
+        "text": "5-6 yumruk"
+      },
+      {
+        "key": "grain",
+        "term": "kapalı avuç",
+        "text": "8-9 kapalı avuç"
+      },
+      {
+        "key": "fat",
+        "term": "başparmak",
+        "text": "3-4 başparmak"
+      }
+    ],
+    "makro": {
+      "protein": [
+        98.4,
+        131.2
+      ],
+      "fat": [
+        82.96,
+        90.5
+      ],
+      "carb": [
+        428.77,
+        512.48
+      ],
+      "fiber": [
+        41.81,
+        45.61
+      ]
+    },
+    "su": 15,
+    "lif": 43.71
+  },
+  {
+    "ad": "kadin-52-158-61-hareketsiz",
+    "girdi": {
+      "sex": "kadin",
+      "ageYears": 52,
+      "heightCm": 158,
+      "weightKg": 61,
+      "activityLevel": "hareketsiz"
+    },
+    "bmr": 1176.5,
+    "bmi": 24.435,
+    "bmiAralik": "denge",
+    "targetsWithheld": false,
+    "rails": [],
+    "confidence": "low",
+    "hedefKcal": {
+      "min": 1411.8,
+      "max": 1588.28,
+      "mid": 1500.04
+    },
+    "el": [
+      {
+        "key": "protein",
+        "term": "avuç içi",
+        "text": "4 avuç içi"
+      },
+      {
+        "key": "vegetable",
+        "term": "yumruk",
+        "text": "3 yumruk"
+      },
+      {
+        "key": "grain",
+        "term": "kapalı avuç",
+        "text": "4-5 kapalı avuç"
+      },
+      {
+        "key": "fat",
+        "term": "başparmak",
+        "text": "2 başparmak"
+      }
+    ],
+    "makro": {
+      "protein": [
+        73.2,
+        97.6
+      ],
+      "fat": [
+        39.22,
+        44.12
+      ],
+      "carb": [
+        167.11,
+        224.6
+      ],
+      "fiber": [
+        19.77,
+        22.24
+      ]
+    },
+    "su": 8,
+    "lif": 21
+  },
+  {
+    "ad": "erkek-19-175-58-cok_aktif",
+    "girdi": {
+      "sex": "erkek",
+      "ageYears": 19,
+      "heightCm": 175,
+      "weightKg": 58,
+      "activityLevel": "cok_aktif"
+    },
+    "bmr": 1583.75,
+    "bmi": 18.939,
+    "bmiAralik": "denge",
+    "targetsWithheld": false,
+    "rails": [],
+    "confidence": "low",
+    "hedefKcal": {
+      "min": 2850.75,
+      "max": 3088.31,
+      "mid": 2969.53
+    },
+    "el": [
+      {
+        "key": "protein",
+        "term": "avuç içi",
+        "text": "3 avuç içi"
+      },
+      {
+        "key": "vegetable",
+        "term": "yumruk",
+        "text": "5-6 yumruk"
+      },
+      {
+        "key": "grain",
+        "term": "kapalı avuç",
+        "text": "8-9 kapalı avuç"
+      },
+      {
+        "key": "fat",
+        "term": "başparmak",
+        "text": "3 başparmak"
+      }
+    ],
+    "makro": {
+      "protein": [
+        69.6,
+        92.8
+      ],
+      "fat": [
+        79.19,
+        85.79
+      ],
+      "carb": [
+        441.72,
+        509.46
+      ],
+      "fiber": [
+        39.91,
+        43.24
+      ]
+    },
+    "su": 15,
+    "lif": 41.57
+  },
+  {
+    "ad": "kadin-16-165-55-az-RESIT-DEGIL",
+    "girdi": {
+      "sex": "kadin",
+      "ageYears": 16,
+      "heightCm": 165,
+      "weightKg": 55,
+      "activityLevel": "az"
+    },
+    "bmr": 1340.25,
+    "bmi": 20.202,
+    "bmiAralik": "denge",
+    "targetsWithheld": true,
+    "rails": [
+      "minor"
+    ],
+    "confidence": "low",
+    "hedefKcal": null,
+    "el": null,
+    "makro": null,
+    "su": 10,
+    "lif": 26.74
+  },
+  {
+    "ad": "kadin-30-160-45-az-TABAN",
+    "girdi": {
+      "sex": "kadin",
+      "ageYears": 30,
+      "heightCm": 160,
+      "weightKg": 45,
+      "activityLevel": "az"
+    },
+    "bmr": 1139,
+    "bmi": 17.578,
+    "bmiAralik": "ince",
+    "targetsWithheld": false,
+    "rails": [],
+    "confidence": "low",
+    "hedefKcal": {
+      "min": 1537.65,
+      "max": 1708.5,
+      "mid": 1623.08
+    },
+    "el": [
+      {
+        "key": "protein",
+        "term": "avuç içi",
+        "text": "3 avuç içi"
+      },
+      {
+        "key": "vegetable",
+        "term": "yumruk",
+        "text": "3 yumruk"
+      },
+      {
+        "key": "grain",
+        "term": "kapalı avuç",
+        "text": "5-6 kapalı avuç"
+      },
+      {
+        "key": "fat",
+        "term": "başparmak",
+        "text": "2 başparmak"
+      }
+    ],
+    "makro": {
+      "protein": [
+        54,
+        72
+      ],
+      "fat": [
+        42.71,
+        47.46
+      ],
+      "carb": [
+        216.31,
+        266.34
+      ],
+      "fiber": [
+        21.53,
+        23.92
+      ]
+    },
+    "su": 8,
+    "lif": 22.72
+  }
+]

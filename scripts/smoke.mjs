@@ -179,6 +179,32 @@ try {
   ok(sitemap.includes(articlePath), 'sitemap destek yazısını içeriyor')
   ok(llms.includes('## Destek merkezi'), 'llms.txt destek bölümü içeriyor')
 
+  // --- Hesaplama araçları ---
+  const hesapHub = await fetch(`http://localhost:${PORT}/hesapla`)
+  const hesapHubHtml = await hesapHub.text()
+  ok(hesapHub.status === 200, `/hesapla 200 (${hesapHub.status})`)
+  ok(
+    hesapHubHtml.includes('Sana tabağını veriyoruz'),
+    '/hesapla başlığı prerender HTML içinde',
+  )
+
+  const plateRes = await fetch(`http://localhost:${PORT}/hesapla/sofra-payin`)
+  const plateHtml = await plateRes.text()
+  ok(plateRes.status === 200, `/hesapla/sofra-payin 200 (${plateRes.status})`)
+  ok(plateHtml.includes('Seni tanıyalım'), 'hesap formu prerender HTML içinde')
+  // Doktrin (hedeflerim.md § 12): bir kilo hedefi ne sorulur ne gösterilir.
+  // Kalıp bilerek dar: sayfa "Hedef kilo sormuyoruz" diyebilmeli, ama bir
+  // kiloyu SUNAN iyelik biçimleri ("ideal kilonuz", "hedef kilon") geçmemeli.
+  ok(
+    !/(ideal|hedef)\s+kilo(n|nuz|nuz\b|:)/i.test(plateHtml),
+    'hesap sayfası bir kilo hedefi SUNMUYOR',
+  )
+  ok(
+    !/kaç haftada|kaç ayda|\bhaftada \d+\s*kilo/i.test(plateHtml),
+    'hesap sayfasında süre vaadi YOK',
+  )
+  ok(sitemap.includes('/hesapla'), 'sitemap /hesapla sayfasını içeriyor')
+
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)
@@ -410,6 +436,32 @@ try {
   await page.locator('#konular a').first().click()
   await page.waitForURL('**/destek/**')
   ok(page.url().includes('/destek/'), 'kategori kartı kategoriye götürüyor')
+
+  // --- Hesap motoru tarayıcıda gerçekten çalışıyor mu ---
+  await page.goto(`http://localhost:${PORT}/hesapla/sofra-payin`, { waitUntil: 'networkidle' })
+  await page.getByLabel('Yaş').fill('34')
+  await page.getByLabel('Boy (cm)').fill('172')
+  await page.getByLabel('Kilo (kg)').fill('74')
+  await page.getByRole('button', { name: 'Tabağımı göster' }).click()
+  const plateResult = page.locator('[aria-live="polite"]')
+  await plateResult.waitFor({ timeout: 8000 })
+  const plateText = await plateResult.innerText()
+  ok(/avuç içi/.test(plateText), 'sonuçta el ölçüsü çıkıyor')
+  ok(/yumruk/.test(plateText) && /kapalı avuç/.test(plateText), 'dört el ölçüsü de var')
+  ok(/bardak/.test(plateText), 'su satırı var')
+  // § 12: kalori katlanmış durur, açılmadan görünmez.
+  ok(!/kcal/.test(plateText), 'kalori varsayılan olarak görünmüyor')
+  await page.getByText('Sayıları göster').click()
+  await page.waitForTimeout(200)
+  ok(/kcal/.test(await plateResult.innerText()), 'kalori ancak açınca görünüyor')
+
+  // 18 yaş altı: hedef üretilmez
+  await page.getByLabel('Yaş').fill('16')
+  await page.getByRole('button', { name: 'Yeniden hesapla' }).click()
+  await page.waitForTimeout(300)
+  const minorText = await plateResult.innerText()
+  ok(/hedef vermeyeceğiz/.test(minorText), '18 yaş altında hedef üretilmiyor')
+  ok(!/avuç içi/.test(minorText), '18 yaş altında el ölçüsü de gösterilmiyor')
 
   // --- İsteğe bağlı ekran görüntüleri ---
   if (process.env.SHOT_DIR) {
