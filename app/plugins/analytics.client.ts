@@ -3,8 +3,12 @@
  * gezinmeleri) ve sayfadan ayrılırken (kalış süresi) `POST /api/track`e gönderir.
  *
  * Gizlilik: dış istek yok; yalnız kendi origin'imize. Ziyaretçi/oturum kimliği
- * sunucuda birinci-taraf httpOnly çerezle tutulur (istemci okumaz/yazmaz). DNT
- * sinyaline ve `afiet_no_track` opt-out'una saygı gösterir.
+ * sunucuda birinci-taraf httpOnly çerezle tutulur (istemci okumaz/yazmaz).
+ * Tarayıcının DNT sinyaline saygı gösterir.
+ *
+ * NOT: burada bir zamanlar `afiet_no_track` opt-out'u anlatılıyordu; kodda
+ * öyle bir kontrol hiç olmadı. Vazgeçmenin iki gerçek yolu var: onay
+ * bildirimindeki "Reddet" (toplama hiç başlamaz) ve DNT.
  *
  * Yalnız production host'larında (runtimeConfig.public.analyticsDomains) çalışır;
  * dev/preview/staging kapalı - paylaşılan Neon kirlenmez. GÖNDERİM yalnız KVKK
