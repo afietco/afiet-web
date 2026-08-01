@@ -27,6 +27,10 @@ export default defineNuxtConfig({
     // Durum sayfası ve API'si: 60 sn tazelik yeterli (cron 5 dk'da bir yazar).
     '/durum': { isr: 60 },
     '/api/status': { isr: 60 },
+    // Destek merkezi: içerik repoda (deploy ile değişir), yine de meta panelden
+    // yönetilebilsin diye diğer sayfalarla aynı ISR penceresi.
+    '/destek': { isr: 60 },
+    '/destek/**': { isr: 60 },
     // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
     // olmadığından statik sunum content-type belirleyemez; Apple bunu
     // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
@@ -37,6 +41,10 @@ export default defineNuxtConfig({
 
   nitro: {
     compressPublicAssets: true,
+    // Destek merkezi yazıları veritabanında DEĞİL repoda yaşar; sunucu paketine
+    // asset olarak gömülür ve `useStorage('assets:destek')` ile okunur
+    // (server/utils/supportStore.ts). Yol nitro.srcDir'e (yani `server/`) görelidir.
+    serverAssets: [{ baseName: 'destek', dir: '../content/destek' }],
   },
 
   runtimeConfig: {

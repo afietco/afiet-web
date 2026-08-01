@@ -27,7 +27,7 @@ export async function ensureAnalyticsTables(sql: Sql) {
       id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
       ts timestamptz NOT NULL DEFAULT now(),
       event text NOT NULL DEFAULT 'pageview'
-        CHECK (event IN ('pageview','engagement')),
+        CHECK (event IN ('pageview','engagement','destek_oy','destek_arama')),
       visitor_id uuid NOT NULL,
       session_id uuid NOT NULL,
       is_new_visitor boolean NOT NULL DEFAULT false,
@@ -50,6 +50,15 @@ export async function ensureAnalyticsTables(sql: Sql) {
       screen_w integer
     )
   `
+  // Tablo prod'da VERİYLE yaşıyor, CREATE TABLE IF NOT EXISTS yetmez: olay
+  // kümesi büyüdüğünde adlandırılmış CHECK düşürülüp yeniden kurulur
+  // (contentStore'daki şema büyütme kuralının aynısı). Düşürme+ekleme
+  // idempotenttir, `ensured` bayrağı sayesinde süreç başına bir kez koşar.
+  await sql`ALTER TABLE analytics_events DROP CONSTRAINT IF EXISTS analytics_events_event_check`
+  await sql`
+    ALTER TABLE analytics_events ADD CONSTRAINT analytics_events_event_check
+      CHECK (event IN ('pageview','engagement','destek_oy','destek_arama'))
+  `
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_ts_idx ON analytics_events (ts)`
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_path_idx ON analytics_events (path)`
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_visitor_idx ON analytics_events (visitor_id)`
@@ -58,7 +67,7 @@ export async function ensureAnalyticsTables(sql: Sql) {
 }
 
 export type EventRow = {
-  event: 'pageview' | 'engagement'
+  event: 'pageview' | 'engagement' | 'destek_oy' | 'destek_arama'
   visitorId: string
   sessionId: string
   isNewVisitor: boolean

@@ -70,7 +70,12 @@ export type SeoSchema = {
   }
 }
 
-export type FaqItem = { q: string; a: string }
+/**
+ * SSS maddesi. `href` isteğe bağlıdır: doluysa cevabın altında destek
+ * merkezindeki ayrıntılı yazıya bağlantı çıkar. Cevaplar destek yazısıyla
+ * birebir KOPYALANMAZ; SSS kısa cevabı, destek merkezi tam anlatımı verir.
+ */
+export type FaqItem = { q: string; a: string; href?: string }
 
 export type SeoFaq = {
   /** FAQPage JSON-LD üretimi. */

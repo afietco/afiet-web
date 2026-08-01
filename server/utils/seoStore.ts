@@ -3,6 +3,9 @@ import type { H3Event } from 'h3'
 import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
 import { getPublishedPost } from './contentStore'
 import type { BlogPost } from './contentTypes'
+import { getSupportArticle } from './supportStore'
+import { supportCategory } from './supportCategories'
+import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type {
   DeepPartial,
   PageSeo,
@@ -193,6 +196,29 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
 
+  // Destek yazısı: meta tabanı markdown dosyasının frontmatter'ından gelir,
+  // panelin sayfa override'ı (seo_pages['/destek/<kategori>/<slug>']) üstüne
+  // biner. Kategori sayfalarının meta'sı DEFAULT_PAGES'ta hazırdır.
+  let supportArticle: SupportArticle | null = null
+  let supportCat: SupportCategory | null = null
+  if (path.startsWith('/destek/')) {
+    const parts = path.slice('/destek/'.length).split('/')
+    supportCat = supportCategory(parts[0] ?? '')
+    if (supportCat && parts.length === 2 && parts[1]) {
+      supportArticle = await getSupportArticle(supportCat.slug, parts[1])
+      if (supportArticle) {
+        const articlePage = makePage({
+          title: `${supportArticle.title} | afiet destek`,
+          description: supportArticle.summary,
+          ogTitle: supportArticle.title,
+          ogDescription: supportArticle.summary,
+          sitemap: { include: true, changefreq: 'monthly', priority: 0.5 },
+        })
+        page = deepMerge<PageSeo>(articlePage, overrides.pages[path])
+      }
+    }
+  }
+
   const title = page.title || g.defaultTitle
   const description = page.description || g.defaultDescription
   const ogImage = absolutize(page.ogImage || g.defaultOgImage, g.baseUrl)
@@ -290,6 +316,73 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       ],
     })
   }
+  // ── Destek merkezi şeması ───────────────────────────────────────────────
+  // Yazılarda HowTo BİLİNÇLİ olarak kullanılmıyor: Google HowTo zengin
+  // sonuçlarını 2023'te büyük ölçüde kaldırdı ve markdown'dan güvenilir adım
+  // nesnesi üretmek uydurma yapıya davetiye. TechArticle hem doğru hem yeterli.
+  if (path === '/destek') {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'afiet destek merkezi',
+      url: `${base}/destek`,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+    })
+  } else if (supportCat && !supportArticle) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: supportCat.title,
+      url: canonical,
+      description,
+      inLanguage: g.locale.replace('_', '-'),
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Destek', item: `${base}/destek` },
+        { '@type': 'ListItem', position: 3, name: supportCat.title, item: canonical },
+      ],
+    })
+  } else if (supportCat && supportArticle) {
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: supportArticle.title,
+      description: supportArticle.summary,
+      inLanguage: g.locale.replace('_', '-'),
+      dateModified: supportArticle.updated,
+      mainEntityOfPage: canonical,
+      articleSection: supportCat.title,
+      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      publisher: {
+        '@type': 'Organization',
+        name: g.siteName,
+        url: g.baseUrl,
+        logo: { '@type': 'ImageObject', url: absolutize('/icon.svg', g.baseUrl) },
+      },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
+        { '@type': 'ListItem', position: 2, name: 'Destek', item: `${base}/destek` },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: supportCat.title,
+          item: `${base}/destek/${supportCat.slug}`,
+        },
+        { '@type': 'ListItem', position: 4, name: supportArticle.title, item: canonical },
+      ],
+    })
+  }
+
   jsonld.push(...page.jsonld)
 
   const showFaq =
@@ -314,9 +407,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     faq: showFaq
       ? { title: settings.faq.title, intro: settings.faq.intro, items: settings.faq.items }
       : null,
-    ogType: post ? 'article' : 'website',
+    ogType: post || supportArticle ? 'article' : 'website',
     ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
     ...(post ? { modifiedAt: post.updatedAt } : {}),
+    ...(supportArticle ? { modifiedAt: supportArticle.updated } : {}),
   }
 }
 
