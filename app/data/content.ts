@@ -391,6 +391,7 @@ export const footer = {
     { label: 'Beta', to: '/beta' },
     { label: 'Blog', to: '/blog' },
     { label: 'Destek', to: '/destek' },
+    { label: 'Hesapla', to: '/hesapla' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
 }
@@ -464,6 +465,234 @@ export const support = {
   voteNo: 'Pek olmadı',
   voteThanksYes: 'Sevindik, afiyet olsun 💚',
   voteThanksNo: 'Not aldık, bu yazıyı iyileştireceğiz. 🌿',
+}
+
+/**
+ * Hesaplama araçları (/hesapla). Marka gerilimi bilinçlidir: ziyaretçi bir sayı
+ * aramaya gelir, biz ona tabağını veririz. Kalori ve gram SAKLANMAZ ama öne de
+ * konmaz; katlanmış bir bölümde durur (afiet-hedefler docs/hedeflerim.md § 12).
+ *
+ * Bu araçların ASLA yapmayacakları (§ 9 ve § 12, bağlayıcı):
+ * ideal kilo, hedef kilo, süre vaadi, ondalıklı el ölçüsü, 18 yaş altına hedef.
+ */
+export const hesapla = {
+  eyebrow: 'hesaplama',
+  title: 'Sayıyı biz de biliyoruz. Sana tabağını veriyoruz.',
+  sub:
+    'Çoğu hesaplayıcı bir kalori ve bir "ideal kilo" verip susar. afiet ' +
+    'aynı hesabı yapar, sonra onu sofranın diline çevirir: kaç avuç, kaç yumruk.',
+  toolsTitle: 'Araçlar',
+  soonLabel: 'Yakında',
+  soonBody:
+    'Sırada besin kataloğunun tamamını gezilebilir hâle getirmek ve ' +
+    'araçları gerçek kullanımla ölçüp işe yaramayanı kaldırmak var.',
+
+  /** Hub'daki araç kartları. `to` gerçek bir sayfaya işaret etmek zorunda. */
+  tools: [
+    {
+      to: '/hesapla/sofra-payin',
+      title: 'Sofra payın',
+      body: 'Günlük tabağın el ölçüsüyle: kaç avuç içi, kaç yumruk, kaç kapalı avuç.',
+      chips: ['3-4 avuç içi', '4-5 yumruk', '5-6 kapalı avuç'],
+      accent: 'sebze',
+    },
+    {
+      to: '/hesapla/vucut-kitle-indeksi',
+      title: 'Vücut kitle indeksi',
+      body: 'Boy ve kilodan indeks, yargısız bir aralık diliyle. İdeal kilo vermiyoruz.',
+      chips: ['boy', 'kilo'],
+      accent: 'tahil',
+    },
+    {
+      to: '/hesapla/gunluk-su',
+      title: 'Günlük su',
+      body: 'Vücudunun günlük su ihtiyacı, bardak olarak. Uygulamadaki hesabın aynısı.',
+      chips: ['bardak', 'litre'],
+      accent: 'sut',
+    },
+    {
+      to: '/hesapla/porsiyon-cevirici',
+      title: 'Porsiyon çevirici',
+      body: 'Bir besin sofrada hangi ölçüyle konuşur? İki binden fazla besin hazır.',
+      chips: ['dilim', 'kase', 'avuç'],
+      accent: 'meyve',
+    },
+    {
+      to: '/hesapla/yag-orani',
+      title: 'Yağ oranı',
+      body: 'Bel, boyun ve kalça ölçünden vücut yağ oranı ve yağsız kütle.',
+      chips: ['bel', 'boyun', 'kalça'],
+      accent: 'protein',
+    },
+  ],
+
+  /** Tüm hesap sayfalarında ortak alt bilgi. */
+  disclaimer:
+    'Bu hesap yaklaşıktır ve tıbbi tavsiye değildir. Bir rahatsızlığın, ' +
+    'alerjin ya da özel bir beslenme planın varsa hekimine ve diyetisyenine danış.',
+  privacy: 'Girdiğin bilgiler tarayıcından çıkmaz; bize gönderilmez, saklanmaz.',
+  errorMissing: 'Alanları doldurur musun? 🌿',
+  errorRange: 'Bu değerleri bir kontrol eder misin? 🌿',
+
+  /** Vücut kitle indeksi. */
+  bmi: {
+    slug: 'vucut-kitle-indeksi',
+    eyebrow: 'vücut kitle indeksi',
+    title: 'Vücut kitle indeksin kaç?',
+    sub:
+      'Boy ve kilodan hesaplanan kaba bir gösterge. Sana dair bir hüküm değil, ' +
+      'bir nüfus ölçüsü; ideal kilo da vermiyoruz.',
+    submit: 'İndeksimi göster',
+    recalc: 'Yeniden hesapla',
+    resultLabel: 'vücut kitle indeksin',
+    rangeLabel: 'Bu değer şu aralıkta',
+    context:
+      'Vücut kitle indeksi kası ve yağı ayırt edemez. Kaslı biri "denge üstü", ' +
+      'kas kütlesi düşük biri "denge aralığı" çıkabilir. Bu yüzden afiet bu sayıyı ' +
+      'bir hedefe çevirmez; yalnız nerede durduğunu gösterir.',
+    nextTitle: 'Peki tabağın nasıl görünmeli?',
+    nextBody: 'İndeks bir fotoğraf. Günün nasıl kurulacağını sofra payın söyler.',
+    nextCta: 'Sofra payıma bak',
+  },
+
+  /** Günlük su. */
+  water: {
+    slug: 'gunluk-su',
+    eyebrow: 'günlük su',
+    title: 'Günde ne kadar su içmelisin?',
+    sub:
+      'Su ihtiyacı kilonun değil, harcadığın enerjinin peşinden gider. ' +
+      'Bu yüzden birkaç bilgi daha soruyoruz.',
+    submit: 'Su ihtiyacımı göster',
+    recalc: 'Yeniden hesapla',
+    glassLabel: 'su',
+    literLabel: 'yaklaşık',
+    context:
+      'Bir bardağı 200 ml sayıyoruz. Sıcak havada, spor yaptığında ve ' +
+      'hastalandığında ihtiyacın artar; çay ve kahve de sıvı sayılır ama ' +
+      'suyun yerini tutmaz.',
+    nextTitle: 'Suyu takip etmek',
+    nextBody: 'afiet günlük suyunu tek dokunuşla sayar, hatırlatır ve zorlamaz.',
+    nextCta: 'Sofrada yerini ayır',
+  },
+
+  /** Yağ oranı. */
+  fat: {
+    slug: 'yag-orani',
+    eyebrow: 'yağ oranı',
+    title: 'Vücut yağ oranın kaç?',
+    sub:
+      'Bel, boyun ve kalça çevresinden hesaplanır (ABD Donanması yöntemi). ' +
+      'Mezura yeter, tartıya gerek yok.',
+    submit: 'Oranımı göster',
+    recalc: 'Yeniden hesapla',
+    ratioLabel: 'yağ oranın',
+    ffmLabel: 'yağsız kütlen',
+    howTitle: 'Ölçüyü nasıl alırım',
+    howSteps: [
+      'Mezurayı cilde değecek kadar yaklaştır ama sıkma.',
+      'Bel: göbek deliğinin hizasından, nefesini tutmadan ölç.',
+      'Boyun: gırtlağın hemen altından, mezura hafif aşağı eğimli dursun.',
+      'Kalça: en geniş yerinden ölç.',
+    ],
+    context:
+      'Bu yöntem bir tahmindir ve birkaç puanlık hata payı taşır. Aynı koşullarda ' +
+      'ölçtüğünde yönü doğru gösterir; tek bir ölçümü hüküm gibi okuma.',
+    implausible:
+      'Bu ölçülerden makul bir oran çıkmadı. Mezurayı ve girdiğin sayıları bir ' +
+      'kontrol eder misin?',
+    nextTitle: 'Ölçülerini takip etmek',
+    nextBody:
+      'afiet ölçülerini saklar ve yönünü zamanla gösterir; tek bir sayının ' +
+      'üstüne hüküm kurmaz.',
+    nextCta: 'Sofrada yerini ayır',
+  },
+
+  /** Porsiyon çevirici. */
+  portion: {
+    slug: 'porsiyon-cevirici',
+    eyebrow: 'porsiyon çevirici',
+    title: 'Bu besin sofrada nasıl ölçülür?',
+    sub:
+      'Bir besin ara, kendi ölçüsünü ve kaç grama denk geldiğini gör. ' +
+      'Kataloğumuzda iki binden fazla yemek ve besin var.',
+    searchLabel: 'Besin ara',
+    searchPlaceholder: 'Mercimek çorbası, beyaz peynir, karpuz…',
+    loading: 'Katalog yükleniyor…',
+    noResults: 'Bu aramaya uyan besin bulamadık. Başka bir kelimeyle dener misin?',
+    hint: 'Yazmaya başla, katalog açılsın.',
+    countSuffix: 'besin',
+    measureTitle: 'Ölçüsü',
+    quantityLabel: 'Miktar',
+    gramLabel: 'yaklaşık',
+    groupsTitle: 'Hangi besin gruplarına sayılır',
+    coreNote: 'Kalın yazılanlar günün beş temel grubundan.',
+    numbersToggle: 'Sayıları göster',
+    numbersNote:
+      'Bu değerler seçtiğin miktar için. Katalogdaki sayılar ortalamadır; ' +
+      'aynı yemeğin evden eve değiştiğini biz de biliyoruz.',
+    kcalLabel: 'Enerji',
+    proteinLabel: 'Protein',
+    carbLabel: 'Karbonhidrat',
+    fatLabel: 'Yağ',
+    fiberLabel: 'Lif',
+    context:
+      'afiet kayıt alırken de bu ölçüleri kullanır. Gram istemiyoruz; ' +
+      'sen kaç dilim, kaç kase dersin, gerisini uygulama halleder.',
+    nextTitle: 'Bunu her gün yaşamak',
+    nextBody:
+      'Tek tek çevirmek zorunda değilsin. afiet besini seçtiğinde ölçüyü ' +
+      'kendisi getirir; sen yalnız miktarı söylersin.',
+    nextCta: 'Sofrada yerini ayır',
+  },
+
+  // ── Sofra payın ──────────────────────────────────────────────────────────
+  plate: {
+    slug: 'sofra-payin',
+    eyebrow: 'sofra payın',
+    title: 'Günün nasıl görünmeli?',
+    sub:
+      'Birkaç bilgi ver, sana günlük tabağını el ölçüsüyle anlatalım. ' +
+      'Hedef kilo sormuyoruz, süre vaat etmiyoruz.',
+
+    formTitle: 'Seni tanıyalım',
+    sexLabel: 'Cinsiyet',
+    ageLabel: 'Yaş',
+    heightLabel: 'Boy',
+    weightLabel: 'Kilo',
+    activityLabel: 'Gün içinde ne kadar hareket edersin?',
+    submit: 'Tabağımı göster',
+    recalc: 'Yeniden hesapla',
+
+    resultTitle: 'Günün böyle görünür',
+    handNote:
+      'Ölçü senin kendi elin. Bu yüzden boyuna ve vücuduna göre zaten ' +
+      'ölçekleniyor; ayrıca bir düzeltme yapmana gerek yok.',
+    waterLabel: 'su',
+    numbersToggle: 'Sayıları göster',
+    numbersNote:
+      'Bunlar aralıktır, hedef değil. afiet gün içinde bu sayıları sana ' +
+      'saydırmaz; burada duruyorlar çünkü merak etmek en doğal şey.',
+    kcalLabel: 'Günlük enerji',
+    basalLabel: 'Bazal (dinlenirken)',
+    proteinLabel: 'Protein',
+    carbLabel: 'Karbonhidrat',
+    fatLabel: 'Yağ',
+    fiberLabel: 'Lif',
+
+    minorTitle: 'Sana bir hedef vermeyeceğiz',
+    minorBody:
+      'Bu yaşta beslenme değerlendirmesi yaş persentilleriyle yapılır, bir ' +
+      'formülle değil. Denge dili yine senin için geçerli: günde beş besin ' +
+      'grubuna da yer açmaya çalış, gerisi zamanla oturur.',
+
+    ctaTitle: 'Bunu her gün yaşamak',
+    ctaBody:
+      'Tek seferlik bir hesap alışkanlık kurmuyor. afiet bu tabağı sabah ' +
+      'hatırlatır, akşam tamamlandı mı gösterir ve seni yargılamaz.',
+    ctaButton: 'Sofrada yerini ayır',
+
+  },
 }
 
 /** Blog (afiet günlüğü) - liste ve yazı sayfası metinleri. */

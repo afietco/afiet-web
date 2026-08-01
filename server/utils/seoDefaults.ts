@@ -107,6 +107,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve Afi'ye soru sorma.
 - [Beta](${SITE_URL}/beta): beta başvurusu ve ilk sofra daveti.
 - [Destek merkezi](${SITE_URL}/destek): uygulamanın kullanım dokümantasyonu; kurulum, öğün kaydı, Afi, gruplar, hesap ve sorun giderme.
+- [Hesaplama araçları](${SITE_URL}/hesapla): günlük besin ihtiyacı hesabı. Sonuç el ölçüsüyle verilir (avuç içi, yumruk, kapalı avuç, başparmak); kalori ve gram isteğe bağlı bir bölümde durur. İdeal kilo, hedef kilo ve süre vaadi ÜRETİLMEZ; 18 yaş altında hedef verilmez.
 - [Destek merkezi tam metin](${SITE_URL}/llms-full.txt): tüm destek yazılarının gövdesi tek dosyada.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
@@ -295,6 +296,70 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
   ...SUPPORT_CATEGORY_PAGES,
+  '/hesapla': makePage({
+    title: 'Hesaplama araçları | afiet',
+    description:
+      'Günlük enerji ve besin ihtiyacını hesapla, sonucu sofranın diliyle gör: kaç avuç ' +
+      'içi protein, kaç yumruk sebze, kaç kapalı avuç tahıl. İdeal kilo vermiyoruz.',
+    ogTitle: 'Sayıyı biz de biliyoruz. Sana tabağını veriyoruz.',
+    ogDescription:
+      'Çoğu hesaplayıcı bir kalori ve bir "ideal kilo" verip susar. afiet aynı hesabı ' +
+      'yapar, sonra onu el ölçüsüne çevirir.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/vucut-kitle-indeksi': makePage({
+    title: 'Vücut kitle indeksi hesaplama (VKİ) | afiet',
+    description:
+      'Boy ve kilodan vücut kitle indeksini hesapla. afiet yargısız bir aralık dili ' +
+      'kullanır ve ideal kilo vermez; indeksin ne anlattığını ve neyi anlatamadığını söyler.',
+    ogTitle: 'Vücut kitle indeksin kaç?',
+    ogDescription:
+      'Boy ve kilodan hesaplanan kaba bir gösterge. Sana dair bir hüküm değil; ' +
+      'ideal kilo da vermiyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/gunluk-su': makePage({
+    title: 'Günlük su ihtiyacı hesaplama | afiet',
+    description:
+      'Günde kaç bardak su içmelisin? Su ihtiyacı kilonun değil harcadığın enerjinin ' +
+      'peşinden gider; afiet uygulamasındaki hesabın aynısı.',
+    ogTitle: 'Günde ne kadar su içmelisin?',
+    ogDescription:
+      'Bardak ve litre olarak günlük su ihtiyacın. Bir bardağı 200 ml sayıyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/yag-orani': makePage({
+    title: 'Vücut yağ oranı hesaplama | afiet',
+    description:
+      'Bel, boyun ve kalça çevresinden vücut yağ oranını ve yağsız kütleni hesapla ' +
+      '(ABD Donanması yöntemi). Mezura yeter, tartıya gerek yok.',
+    ogTitle: 'Vücut yağ oranın kaç?',
+    ogDescription:
+      'Mezura ölçülerinden yağ oranı ve yağsız kütle. Hüküm kuran bir bant göstermiyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/porsiyon-cevirici': makePage({
+    title: 'Porsiyon hesaplama ve besin ölçüleri | afiet',
+    description:
+      'Bir besin sofrada hangi ölçüyle konuşur? İki binden fazla yemek ve besinin ' +
+      'ölçüsü, gram karşılığı ve besin grubu. Bir dilim kaç gram, bir kase ne kadar?',
+    ogTitle: 'Bu besin sofrada nasıl ölçülür?',
+    ogDescription:
+      'Besin ara, kendi ölçüsünü ve kaç grama denk geldiğini gör. İki binden fazla ' +
+      'yemek ve besin hazır.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/hesapla/sofra-payin': makePage({
+    title: 'Günlük besin ihtiyacı hesaplama | afiet',
+    description:
+      'Boy, kilo, yaş ve hareket düzeyinden günlük tabağını el ölçüsüyle hesapla: ' +
+      'avuç içi, yumruk, kapalı avuç, başparmak ve su. Kalori ve gram isteğe bağlı.',
+    ogTitle: 'Günün nasıl görünmeli?',
+    ogDescription:
+      'Birkaç bilgi ver, günlük tabağını el ölçüsüyle görelim. Hedef kilo sormuyoruz, ' +
+      'süre vaat etmiyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:
