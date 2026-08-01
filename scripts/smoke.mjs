@@ -203,7 +203,7 @@ try {
     !/kaç haftada|kaç ayda|\bhaftada \d+\s*kilo/i.test(plateHtml),
     'hesap sayfasında süre vaadi YOK',
   )
-  for (const arac of ['vucut-kitle-indeksi', 'gunluk-su', 'yag-orani']) {
+  for (const arac of ['vucut-kitle-indeksi', 'gunluk-su', 'yag-orani', 'porsiyon-cevirici']) {
     const res = await fetch(`http://localhost:${PORT}/hesapla/${arac}`)
     const html = await res.text()
     ok(res.status === 200, `/hesapla/${arac} 200 (${res.status})`)
@@ -213,6 +213,12 @@ try {
       `${arac} bir kilo hedefi SUNMUYOR`,
     )
   }
+  const besinRes = await fetch(`http://localhost:${PORT}/veri/besinler.json`)
+  const besinBody = await besinRes.json()
+  ok(
+    besinRes.status === 200 && besinBody.sayi > 1900,
+    `besin dizini yayında (${besinBody.sayi ?? '-'} besin)`,
+  )
   ok(sitemap.includes('/hesapla'), 'sitemap /hesapla sayfasını içeriyor')
 
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
@@ -487,6 +493,17 @@ try {
   await page.getByRole('button', { name: 'Su ihtiyacımı göster' }).click()
   const suText = await page.locator('[aria-live="polite"]').innerText()
   ok(/bardak/.test(suText) && /litre/.test(suText), 'su ihtiyacı bardak ve litre veriyor')
+
+  await page.goto(`http://localhost:${PORT}/hesapla/porsiyon-cevirici`, { waitUntil: 'networkidle' })
+  await page.locator('#besin-ara').fill('beyaz peynir')
+  await page.getByRole('button', { name: /Beyaz peynir/ }).first().click()
+  const porsiyon = page.locator('[aria-live="polite"]')
+  await porsiyon.waitFor({ timeout: 8000 })
+  const porsiyonText = await porsiyon.innerText()
+  ok(/dilim/.test(porsiyonText), 'porsiyon çevirici besnin ölçüsünü gösteriyor')
+  ok(/\bg\b/.test(porsiyonText), 'gram karşılığı gösteriliyor')
+  ok(/Süt Ürünü|Protein/.test(porsiyonText), 'besin grupları gösteriliyor')
+  ok(!/kcal/.test(porsiyonText), 'porsiyon çeviricide kalori varsayılan gizli')
 
 
   // --- İsteğe bağlı ekran görüntüleri ---

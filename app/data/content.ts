@@ -484,8 +484,8 @@ export const hesapla = {
   toolsTitle: 'Araçlar',
   soonLabel: 'Yakında',
   soonBody:
-    'Porsiyon çevirici sırada: kataloğumuzdaki iki binden fazla besinin ' +
-    'ölçüsünü ve besin grubunu tek yerde görebileceksin.',
+    'Sırada besin kataloğunun tamamını gezilebilir hâle getirmek ve ' +
+    'araçları gerçek kullanımla ölçüp işe yaramayanı kaldırmak var.',
 
   /** Hub'daki araç kartları. `to` gerçek bir sayfaya işaret etmek zorunda. */
   tools: [
@@ -509,6 +509,13 @@ export const hesapla = {
       body: 'Vücudunun günlük su ihtiyacı, bardak olarak. Uygulamadaki hesabın aynısı.',
       chips: ['bardak', 'litre'],
       accent: 'sut',
+    },
+    {
+      to: '/hesapla/porsiyon-cevirici',
+      title: 'Porsiyon çevirici',
+      body: 'Bir besin sofrada hangi ölçüyle konuşur? İki binden fazla besin hazır.',
+      chips: ['dilim', 'kase', 'avuç'],
+      accent: 'meyve',
     },
     {
       to: '/hesapla/yag-orani',
@@ -598,6 +605,44 @@ export const hesapla = {
     nextBody:
       'afiet ölçülerini saklar ve yönünü zamanla gösterir; tek bir sayının ' +
       'üstüne hüküm kurmaz.',
+    nextCta: 'Sofrada yerini ayır',
+  },
+
+  /** Porsiyon çevirici. */
+  portion: {
+    slug: 'porsiyon-cevirici',
+    eyebrow: 'porsiyon çevirici',
+    title: 'Bu besin sofrada nasıl ölçülür?',
+    sub:
+      'Bir besin ara, kendi ölçüsünü ve kaç grama denk geldiğini gör. ' +
+      'Kataloğumuzda iki binden fazla yemek ve besin var.',
+    searchLabel: 'Besin ara',
+    searchPlaceholder: 'Mercimek çorbası, beyaz peynir, karpuz…',
+    loading: 'Katalog yükleniyor…',
+    noResults: 'Bu aramaya uyan besin bulamadık. Başka bir kelimeyle dener misin?',
+    hint: 'Yazmaya başla, katalog açılsın.',
+    countSuffix: 'besin',
+    measureTitle: 'Ölçüsü',
+    quantityLabel: 'Miktar',
+    gramLabel: 'yaklaşık',
+    groupsTitle: 'Hangi besin gruplarına sayılır',
+    coreNote: 'Kalın yazılanlar günün beş temel grubundan.',
+    numbersToggle: 'Sayıları göster',
+    numbersNote:
+      'Bu değerler seçtiğin miktar için. Katalogdaki sayılar ortalamadır; ' +
+      'aynı yemeğin evden eve değiştiğini biz de biliyoruz.',
+    kcalLabel: 'Enerji',
+    proteinLabel: 'Protein',
+    carbLabel: 'Karbonhidrat',
+    fatLabel: 'Yağ',
+    fiberLabel: 'Lif',
+    context:
+      'afiet kayıt alırken de bu ölçüleri kullanır. Gram istemiyoruz; ' +
+      'sen kaç dilim, kaç kase dersin, gerisini uygulama halleder.',
+    nextTitle: 'Bunu her gün yaşamak',
+    nextBody:
+      'Tek tek çevirmek zorunda değilsin. afiet besini seçtiğinde ölçüyü ' +
+      'kendisi getirir; sen yalnız miktarı söylersin.',
     nextCta: 'Sofrada yerini ayır',
   },
 

@@ -338,6 +338,17 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'Mezura ölçülerinden yağ oranı ve yağsız kütle. Hüküm kuran bir bant göstermiyoruz.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
   }),
+  '/hesapla/porsiyon-cevirici': makePage({
+    title: 'Porsiyon hesaplama ve besin ölçüleri | afiet',
+    description:
+      'Bir besin sofrada hangi ölçüyle konuşur? İki binden fazla yemek ve besinin ' +
+      'ölçüsü, gram karşılığı ve besin grubu. Bir dilim kaç gram, bir kase ne kadar?',
+    ogTitle: 'Bu besin sofrada nasıl ölçülür?',
+    ogDescription:
+      'Besin ara, kendi ölçüsünü ve kaç grama denk geldiğini gör. İki binden fazla ' +
+      'yemek ve besin hazır.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
   '/hesapla/sofra-payin': makePage({
     title: 'Günlük besin ihtiyacı hesaplama | afiet',
     description:

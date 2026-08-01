@@ -105,6 +105,15 @@ try {
     },
   })
 
+  await shoot('h10-porsiyon', '/hesapla/porsiyon-cevirici', desktop, {
+    fullPage: true,
+    before: async (p) => {
+      await p.locator('#besin-ara').fill('mercimek çorbası')
+      await p.getByRole('button', { name: /Mercimek/ }).first().click()
+      await p.waitForTimeout(500)
+    },
+  })
+
   console.log(`\nEkran görüntüleri: ${OUT}`)
 } finally {
   await browser?.close()
