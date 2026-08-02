@@ -799,6 +799,22 @@ export const privacy = {
       ],
     },
     {
+      title: 'Asistan sohbetleri',
+      body: [
+        'Afi, beslenme sohbeti ve destek sohbetinde yazdıkların hesabınla birlikte ' +
+          'sunucumuzda saklanır. Amacı sohbetin cihazlar arasında sürmesi ve ' +
+          'asistanların seni zamanla daha iyi tanımasıdır.',
+        'Sohbetler yapay zekâ modelinin eğitilmesi için kullanılmaz, reklam için ' +
+          'kullanılmaz ve üçüncü taraflarla paylaşılmaz.',
+        'Destek sohbetinde konuşulanlar ruh sağlığıyla ilgili olabilir ve bu, kişisel ' +
+          'verilerin korunması mevzuatında özel nitelikli veri sayılır. Bu yüzden destek ' +
+          'sohbeti yalnızca açık rızanla saklanır; rızanı istediğin an geri çekebilir ve ' +
+          'sohbetlerini silebilirsin.',
+        'Bir sohbeti sildiğinde hem cihazından hem sunucudan silinir. Silinmeyen ' +
+          'sohbetler en fazla 24 ay tutulur.',
+      ],
+    },
+    {
       title: 'Uygulamada Afi’ye fotoğraf gönderme',
       body: [
         'Bilmediğin bir yemeği Afi’ye fotoğrafla sorabilirsin. Fotoğraf, yalnızca ' +
