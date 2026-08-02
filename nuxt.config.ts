@@ -27,6 +27,10 @@ export default defineNuxtConfig({
     // Durum sayfası ve API'si: 60 sn tazelik yeterli (cron 5 dk'da bir yazar).
     '/durum': { isr: 60 },
     '/api/status': { isr: 60 },
+    // Sürüm kapısı: her mobil açılışta okunuyor, kararı günler ölçeğinde bir
+    // bilgi. Yine de zorunlu bir güncelleme yayına alındığında bir dakikadan
+    // fazla beklemesin diye pencere diğerleriyle aynı.
+    '/api/app-version': { isr: 60 },
     // Destek merkezi: içerik repoda (deploy ile değişir), yine de meta panelden
     // yönetilebilsin diye diğer sayfalarla aynı ISR penceresi.
     '/destek': { isr: 60 },
