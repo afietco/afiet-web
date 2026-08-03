@@ -20,6 +20,8 @@ Bu bakışın güzelliği şurada: tek tek yiyecekleri ezberlemek ya da her lokm
 
 Bir de işin renk tarafı var. Her grubun akılda kalan bir rengi olunca, tabağın adeta kendi kendini anlatmaya başlıyor. Şimdi bu aileleri tek tek tanıyalım.
 
+Besin grupları, daha geniş bir resmin en somut parçası. Bu grupların bir araya gelip nasıl bir bütün kurduğunu, tabak oranlarını ve dengenin neden güne değil haftaya yayıldığını [dengeli beslenme nedir](/blog/dengeli-beslenme-nedir) yazımızda toplu halde anlattık.
+
 ## TÜBER 2022'ye göre 5 besin grubu
 
 Sağlık Bakanlığı'nın yayımladığı [Türkiye Beslenme Rehberi (TÜBER 2022)](https://hsgm.saglik.gov.tr/tr/web-uygulamalarimiz/357.html), sağlıklı beslenmeyi beş temel besin grubu üzerinden anlatır:
