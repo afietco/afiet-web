@@ -20,7 +20,7 @@ Gram, mutfakta duran sabit bir sayıdır; senin bedenine göre değişmez. Elin 
 
 Beslenme rehberleri de porsiyonu çoğu zaman gramla değil, gündelik nesnelerle anlatır. Örneğin İngiltere Ulusal Sağlık Servisi'ne göre bir yetişkin için [bir porsiyon meyve ya da sebze 80 gramdır ve günde en az 5 porsiyon](https://www.nhs.uk/live-well/eat-well/5-a-day/portion-sizes/) önerilir. Bu 80 gramı tartmak yerine "bir avuç dolusu çilek" ya da "bir orta boy elma" diye düşünmek, aynı yere çok daha az yorularak varmanı sağlar.
 
-Tartının bir başka sorunu da şu: sayılar zamanla dikkatini yemekten alıp ekrana taşır. Oysa amaç, tabağını görebilmek. Kalori saymadan denge kurmanın daha geniş anlatımı için [kalori saymadan dengeli beslenme rehberimize](/blog/kalori-saymadan-dengeli-beslenme-dilim-kase-avuc-rehberi) göz atabilirsin.
+Tartının bir başka sorunu da şu: sayılar zamanla dikkatini yemekten alıp ekrana taşır. Oysa amaç, tabağını görebilmek. Kalori saymadan denge kurmanın daha geniş anlatımı için [kalori saymadan dengeli beslenme rehberimize](/blog/kalori-saymadan-dengeli-beslenme-dilim-kase-avuc-rehberi), dengenin tanımı ve beş besin grubunun bütünü için de [dengeli beslenme nedir](/blog/dengeli-beslenme-nedir) yazımıza göz atabilirsin.
 
 ## Elindeki ölçü aleti: avuç içi, yumruk, kapalı avuç ve başparmak
 
