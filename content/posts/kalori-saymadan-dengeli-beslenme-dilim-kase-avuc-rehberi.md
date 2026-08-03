@@ -28,6 +28,8 @@ Bir tabağı "iyi" ya da "kötü" diye ayırmak yerine, bu misafirlerin çoğunu
 
 Güzel tarafı: bu dengeyi görmek için mutfak terazisine de gerek yok. Ölçün zaten elinde.
 
+Dengenin tanımını, beş besin grubunu ve haftaya yayılan mantığını baştan sona okumak istersen [dengeli beslenme nedir](/blog/dengeli-beslenme-nedir) yazımız bu rehberin çerçevesini kuruyor.
+
 ## Elin senin ölçün
 
 ![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)

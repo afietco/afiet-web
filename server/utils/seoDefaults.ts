@@ -121,7 +121,19 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       name: 'afiet',
       url: SITE_URL,
       logo: `${SITE_URL}/icon.svg`,
-      sameAs: [],
+      /**
+       * Doğrulanmış dış profiller. `app/data/content.ts > footer.social` ile
+       * BİRLİKTE değişir: görünür link kullanıcıya, sameAs arama motoruna aynı
+       * kimliği söyler.
+       *
+       * ⚠️ PROD'DA OVERRIDE VAR: `seo_settings` tablosunda `schema` satırı
+       * duruyor ve override varsayılanı EZER. Yani buraya adres eklemek prod'u
+       * DEĞİŞTİRMEZ; panelden (admin.afiet.co > Analitik > SEO & GEO) aynı
+       * listeyi girmek gerekir. Burası dev/staging ve boş DB'nin kaynağıdır.
+       *
+       * Var olmayan profile adres YAZILMAZ; hesap açıldıkça tek satır eklenir.
+       */
+      sameAs: ['https://www.instagram.com/afiet.co/'],
       contactEmail: 'destek@afiet.co',
     },
     website: { enabled: true },
