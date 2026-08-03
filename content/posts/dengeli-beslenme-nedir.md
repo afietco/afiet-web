@@ -4,7 +4,7 @@ title: "Dengeli beslenme nedir? Sayı yerine sofrayla kurulan denge"
 description: "Dengeli beslenme nedir, nasıl kurulur? Beş besin grubu, tabak oranları ve el ölçüsüyle kalori saymadan denge kurmanın Türk sofrasına göre pratik rehberi."
 tags: [dengeli beslenme, besin grupları, porsiyon ölçüsü, sağlıklı beslenme, sofra alışkanlığı]
 item_id: 26
-cover_url:
+cover_url: /covers/dengeli-beslenme-tabak.png
 published_at:
 ---
 
