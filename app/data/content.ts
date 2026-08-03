@@ -395,6 +395,18 @@ export const footer = {
     { label: 'Yenilikler', to: '/yenilikler' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
+  /**
+   * Dış profiller (footer'da `rel="me"` ile basılır).
+   *
+   * TEK KAYNAK DEĞİL: buraya eklenen her adres `server/utils/seoDefaults.ts`
+   * içindeki `schema.organization.sameAs` listesine de girmelidir. Görünür link
+   * kullanıcıya, sameAs arama motoruna aynı kimliği söyler; biri eksikse sinyal
+   * yarım kalır. Adres eklerken ikisini birlikte değiştir.
+   *
+   * Yeni hesaplar açıldıkça (Medium, LinkedIn, Substack, Hashnode, dev.to)
+   * buraya tek satır eklenir. Var olmayan profile link VERİLMEZ.
+   */
+  social: [{ label: 'Instagram', href: 'https://www.instagram.com/afiet.co/' }],
 }
 
 /**

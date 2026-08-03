@@ -14,7 +14,10 @@ import { footer } from '~/data/content'
           <div class="text-xs font-bold text-muted">{{ footer.tagline }}</div>
         </div>
       </div>
-      <nav class="flex items-center gap-5" aria-label="Alt bağlantılar">
+      <nav
+        class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+        aria-label="Alt bağlantılar"
+      >
         <NuxtLink
           v-for="l in footer.links"
           :key="l.to"
@@ -23,6 +26,21 @@ import { footer } from '~/data/content'
         >
           {{ l.label }}
         </NuxtLink>
+        <span class="hidden h-3.5 w-px bg-line sm:block" aria-hidden="true" />
+        <!--
+          Dış profiller. rel="me" kimlik doğrulaması içindir ve Organization.sameAs
+          ile birlikte çalışır (bkz. app/data/content.ts > footer.social).
+        -->
+        <a
+          v-for="s in footer.social"
+          :key="s.href"
+          :href="s.href"
+          target="_blank"
+          rel="me noopener noreferrer"
+          class="text-sm font-bold text-muted transition hover:text-brand-deep"
+        >
+          {{ s.label }}
+        </a>
       </nav>
       <p class="text-sm font-bold text-muted">
         <span class="font-display text-base font-medium text-soft italic">{{ footer.signoff }}</span>
