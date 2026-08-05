@@ -5,8 +5,7 @@ import { footer } from '~/data/content'
  * Dış profil ikonları (footer + /iletisim). Liste `footer.social`den gelir;
  * her adres `rel="me"` taşır ve seoDefaults > sameAs ile birlikte yaşar
  * (content.ts'teki uyarıya bak). İkonlar inline SVG'dir (repo kuralı:
- * ikon gereken yerde emoji değil SVG); dev.to bilinçli olarak yazı
- * damgasıdır, logosu zaten "DEV" kutusudur.
+ * ikon gereken yerde emoji değil SVG).
  */
 withDefaults(defineProps<{ size?: 'sm' | 'lg' }>(), { size: 'sm' })
 </script>
@@ -75,26 +74,6 @@ withDefaults(defineProps<{ size?: 'sm' | 'lg' }>(), { size: 'sm' })
           <path
             d="M22.35 8.02 15.98 1.65a5.63 5.63 0 0 0-7.96 0L1.65 8.02a5.63 5.63 0 0 0 0 7.96l6.37 6.37a5.63 5.63 0 0 0 7.96 0l6.37-6.37a5.63 5.63 0 0 0 0-7.96ZM12 15.95a3.95 3.95 0 1 1 0-7.9 3.95 3.95 0 0 1 0 7.9Z"
           />
-        </svg>
-
-        <!-- dev.to: köşeli kutuda DEV damgası -->
-        <svg
-          v-else-if="s.icon === 'devto'"
-          :class="size === 'lg' ? 'h-5 w-5' : 'h-4 w-4'"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-          <rect x="2.4" y="4.4" width="19.2" height="15.2" rx="2.6" stroke="currentColor" stroke-width="1.8" />
-          <text
-            x="12"
-            y="14.9"
-            text-anchor="middle"
-            fill="currentColor"
-            style="font-family: inherit; font-size: 7px; font-weight: 900; letter-spacing: 0.4px"
-          >
-            DEV
-          </text>
         </svg>
 
         <!-- LinkedIn -->
