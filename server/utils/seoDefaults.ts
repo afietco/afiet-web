@@ -424,6 +424,67 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'adımları. İşlem geri alınamaz; kayıtların kalıcı olarak kaldırılır.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
   }),
+  /* ── İngilizce sayfalar (/en/*) ─────────────────────────────────────────
+     TR kök URL'lere dokunulmaz; İngilizce /en altında yaşar. Hangi sayfanın
+     çifti olduğu shared/utils/locales.ts > EN_BY_TR'de durur; hreflang ve
+     sitemap alternates yalnız o haritadan üretilir. Çevirisi olmayan sayfaya
+     /en yolu AÇILMAZ (TR içerik /en altında fallback servis edilmez). */
+  '/en': makePage({
+    title: 'afiet | Stop counting. Start balancing.',
+    description:
+      'Balanced eating without calorie counting: portions in slices, bowls and ' +
+      'handfuls, five food groups as colors, the whole family at the same table. ' +
+      'Born at the Turkish table; English version on the way.',
+    ogTitle: 'afiet | Stop counting. Start balancing.',
+    ogDescription:
+      'Balanced eating without counting: hand-measure portions, five food groups ' +
+      'as colors, no guilt. The app speaks Turkish today; English is on the way.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
+  }),
+  '/en/privacy': makePage({
+    title: 'Privacy Policy | afiet',
+    description:
+      'What data afiet collects and why, where it is stored (Google Cloud, ' +
+      'European region) and how to delete it. No ads, no tracking, no selling data.',
+    ogDescription:
+      'afiet only collects the data the app needs to work. No ads, no tracking, ' +
+      'no selling data. You can delete your data at any time.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  '/en/contact': makePage({
+    title: 'Contact | afiet',
+    description:
+      'Reach the afiet team: write us a postcard with a suggestion, question, ' +
+      'problem or partnership. A real person reads every message and replies.',
+    ogTitle: 'Write us a postcard',
+    ogDescription:
+      'A suggestion, a question, a problem or a partnership: whatever you write, ' +
+      'a real person reads it and replies.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  '/en/delete-account': makePage({
+    title: 'Delete your account | afiet',
+    description:
+      'Delete your afiet account and all your data at any time: in the app via ' +
+      'My account settings, or by email. Records are removed permanently.',
+    ogDescription:
+      'The steps to delete your afiet account and all your data, from the app ' +
+      'or by email. This cannot be undone.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.2 },
+  }),
+  /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
+  '/en/newsletter/confirm': makePage({
+    title: 'Newsletter | afiet',
+    description: 'Confirm your afiet newsletter subscription.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
+  '/en/newsletter/leave': makePage({
+    title: 'Newsletter | afiet',
+    description: 'Leave the afiet newsletter.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
 }
 
 export function makePage(partial: Partial<PageSeo>): PageSeo {

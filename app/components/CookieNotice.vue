@@ -3,8 +3,12 @@
  * KVKK çerez bilgilendirmesi. Yalnız analitik toplanabilecek host'ta ve henüz
  * seçim yapılmadıysa görünür. "Kabul et" → analitik plugin'i (opt-in) devreye
  * girer ve geçerli sayfayı sayar; "Reddet" → hiçbir şey toplanmaz.
+ * /en altında metin İngilizcedir; onay mekanizması iki dilde aynıdır.
  */
 import { onMounted, ref } from 'vue'
+import { cookieEn } from '~/data/content.en'
+
+const { locale } = useSiteLocale()
 
 const KEY = 'afiet_analytics_consent'
 const visible = ref(false)
@@ -42,9 +46,13 @@ function decide(choice: 'accepted' | 'declined') {
       v-if="visible"
       class="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-2xl flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-lift sm:flex-row sm:items-center sm:justify-between sm:gap-5"
       role="dialog"
-      aria-label="Çerez bilgilendirmesi"
+      :aria-label="locale === 'en' ? cookieEn.ariaLabel : 'Çerez bilgilendirmesi'"
     >
-      <p class="text-[13px] leading-relaxed text-soft">
+      <p v-if="locale === 'en'" class="text-[13px] leading-relaxed text-soft">
+        {{ cookieEn.textA }}<strong class="font-bold text-ink">{{ cookieEn.strong }}</strong>{{ cookieEn.textB }}
+        <NuxtLink to="/en/privacy" class="font-bold text-brand underline-offset-2 hover:underline">{{ cookieEn.details }}</NuxtLink>
+      </p>
+      <p v-else class="text-[13px] leading-relaxed text-soft">
         afiet.co'yu geliştirmek için ziyaretleri <strong class="font-bold text-ink">anonim ve toplu</strong> ölçüyoruz
         (kendi sunucumuzda, birinci-taraf çerez; IP saklanmaz, üçüncü tarafla paylaşılmaz).
         <NuxtLink to="/gizlilik" class="font-bold text-brand underline-offset-2 hover:underline">Ayrıntılar</NuxtLink>
@@ -55,14 +63,14 @@ function decide(choice: 'accepted' | 'declined') {
           class="rounded-full border border-line bg-surface px-4 py-2 text-sm font-bold text-ink transition hover:border-brand/40 hover:text-brand-deep active:scale-[0.97]"
           @click="decide('declined')"
         >
-          Reddet
+          {{ locale === 'en' ? cookieEn.decline : 'Reddet' }}
         </button>
         <button
           type="button"
           class="rounded-full bg-brand px-4 py-2 text-sm font-extrabold text-white shadow-lift transition hover:bg-brand-deep active:scale-[0.97]"
           @click="decide('accepted')"
         >
-          Kabul et
+          {{ locale === 'en' ? cookieEn.accept : 'Kabul et' }}
         </button>
       </div>
     </div>

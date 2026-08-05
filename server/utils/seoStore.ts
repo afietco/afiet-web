@@ -9,6 +9,7 @@ import { getRelease } from './releaseStore'
 import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
+import { counterpartOf, localeOf } from '#shared/utils/locales'
 import type {
   DeepPartial,
   PageSeo,
@@ -501,6 +502,24 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
 
   jsonld.push(...page.jsonld)
 
+  // ── Çok dillilik ────────────────────────────────────────────────────────
+  // hreflang YALNIZ iki dilde de var olan çiftlere basılır (EN_BY_TR tek
+  // kaynak). x-default TR'yi gösterir: ana pazar Türkiye, kök URL Türkçedir.
+  // ogLocale sayfanın kendi dilidir; genel ayar (tr_TR) yalnız TR'ye uygulanır.
+  const isEn = localeOf(path) === 'en'
+  const counterpart = counterpartOf(path)
+  let alternates: { hreflang: string; href: string }[] | undefined
+  if (counterpart) {
+    const trPath = isEn ? counterpart : path
+    const enPath = isEn ? path : counterpart
+    const trHref = base + (trPath === '/' ? '/' : trPath)
+    alternates = [
+      { hreflang: 'tr', href: trHref },
+      { hreflang: 'en', href: base + enPath },
+      { hreflang: 'x-default', href: trHref },
+    ]
+  }
+
   const showFaq =
     path === '/' && settings.faq.showOnLanding && settings.faq.items.length > 0
   return {
@@ -515,7 +534,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ogImageAlt: g.ogImageAlt,
     ogUrl: canonical,
     ogSiteName: g.siteName,
-    ogLocale: g.locale,
+    ogLocale: isEn ? 'en_US' : g.locale,
     twitterSite: g.twitterSite,
     themeColor: g.themeColor,
     verification: g.verification,
@@ -527,6 +546,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
     ...(post ? { modifiedAt: post.updatedAt } : {}),
     ...(supportArticle ? { modifiedAt: supportArticle.updated } : {}),
+    ...(alternates ? { alternates } : {}),
   }
 }
 
@@ -569,12 +589,26 @@ export function buildSitemapXml(
   extra: { loc: string; lastmod?: string }[] = [],
 ): string {
   const base = bundle.settings.general.baseUrl.replace(/\/$/, '')
+  const href = (p: string) => base + (p === '/' ? '/' : p)
+  /* hreflang alternates: yalnız iki dilde de var olan çiftlere, sayfadaki
+     link etiketleriyle aynı kaynaktan (EN_BY_TR). İki yön de kendi girdisinde
+     AYNI seti taşımak zorundadır, Google tek yönlü hreflang'i yok sayar. */
+  const alternateLines = (p: string): string[] => {
+    const counterpart = counterpartOf(p)
+    if (!counterpart) return []
+    const [trPath, enPath] = localeOf(p) === 'en' ? [counterpart, p] : [p, counterpart]
+    return [
+      `    <xhtml:link rel="alternate" hreflang="tr" href="${xmlEscape(href(trPath))}" />`,
+      `    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(href(enPath))}" />`,
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(href(trPath))}" />`,
+    ]
+  }
   const entries = KNOWN_PATHS.filter((p) => bundle.pages[p]?.sitemap.include !== false)
     .map((p) => {
       const page = bundle.pages[p]!
-      const loc = xmlEscape(base + (p === '/' ? '/' : p))
+      const loc = xmlEscape(href(p))
       const lastmod = updatedAt[`page:${p}`]
-      const parts = [`  <url>`, `    <loc>${loc}</loc>`]
+      const parts = [`  <url>`, `    <loc>${loc}</loc>`, ...alternateLines(p)]
       if (lastmod) parts.push(`    <lastmod>${new Date(lastmod).toISOString()}</lastmod>`)
       if (page.sitemap.changefreq) parts.push(`    <changefreq>${page.sitemap.changefreq}</changefreq>`)
       if (page.sitemap.priority !== null)
@@ -590,7 +624,8 @@ export function buildSitemapXml(
   }
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n' +
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
     entries.join('\n') +
     '\n</urlset>\n'
   )

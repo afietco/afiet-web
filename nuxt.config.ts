@@ -19,6 +19,11 @@ export default defineNuxtConfig({
   // robots.txt / sitemap.xml / llms.txt dinamik server route'larıdır.
   routeRules: {
     '/': { isr: 60 },
+    // İngilizce sayfalar (/en/*): TR'yle aynı ISR penceresi. Kapsam bilinçli
+    // olarak dardır; hangi sayfaların EN karşılığı olduğu
+    // shared/utils/locales.ts > EN_BY_TR'de durur.
+    '/en': { isr: 60 },
+    '/en/**': { isr: 60 },
     '/beta': { isr: 60 },
     '/blog': { isr: 60 },
     '/blog/**': { isr: 60 },
