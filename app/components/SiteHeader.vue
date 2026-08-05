@@ -27,18 +27,33 @@ watch(
         <span class="text-2xl font-extrabold tracking-tight text-brand">afiet</span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-2 sm:gap-6" aria-label="Sayfa içi">
+      <!-- Dört link + CTA (kullanıcı kararı). sm-md arası dar olduğundan
+           boşluk ve punto kademelidir; linkler sm'de görünür ki hamburger
+           yalnız gerçek mobilde kalsın. -->
+      <nav class="flex items-center gap-2 sm:gap-4 md:gap-6" aria-label="Sayfa içi">
         <NuxtLink
           to="/#neden"
-          class="hidden font-bold text-soft transition hover:text-brand-deep sm:block"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >
           Neden afiet?
         </NuxtLink>
         <NuxtLink
           to="/blog"
-          class="hidden font-bold text-soft transition hover:text-brand-deep sm:block"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >
           Blog
+        </NuxtLink>
+        <NuxtLink
+          to="/hesapla"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          Hesapla
+        </NuxtLink>
+        <NuxtLink
+          to="/yenilikler"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          Yenilikler
         </NuxtLink>
         <NuxtLink to="/beta" class="btn-primary !px-5 !py-2.5 text-sm">Beta’ya katıl</NuxtLink>
 
@@ -86,6 +101,18 @@ watch(
               class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
             >
               Blog
+            </NuxtLink>
+            <NuxtLink
+              to="/hesapla"
+              class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
+            >
+              Hesapla
+            </NuxtLink>
+            <NuxtLink
+              to="/yenilikler"
+              class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
+            >
+              Yenilikler
             </NuxtLink>
             <!-- Destek merkezi masaüstü menüde YOKTUR (kullanıcı kararı):
                  oradaki giriş kapıları alt bilgi, ana sayfadaki SSS bağlantıları
