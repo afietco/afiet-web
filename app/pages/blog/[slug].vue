@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { blog } from '~/data/content'
+import { blog, bulten } from '~/data/content'
 
 const route = useRoute()
 const slug = String(route.params.slug ?? '')
@@ -69,7 +69,16 @@ const fmtDate = (iso: string | null) =>
     <div class="post-body mt-8" v-html="post.html" />
 
     <footer class="mt-12 border-t border-line pt-8">
-      <p class="font-bold text-soft">
+      <!-- Yazıyı bitiren okur en sıcak kitledir: bülten kutusu burada durur. -->
+      <div class="rounded-3xl border border-line bg-surface p-6 shadow-lift sm:p-7">
+        <h2 class="font-display text-xl font-semibold tracking-tight text-ink">
+          {{ bulten.blogTitle }}
+        </h2>
+        <p class="mt-1.5 text-sm leading-relaxed font-semibold text-soft">{{ bulten.blogSub }}</p>
+        <BultenForm source="blog" class="mt-4" />
+      </div>
+
+      <p class="mt-8 font-bold text-soft">
         afiet şimdi beta’da:
         <NuxtLink to="/beta" class="font-extrabold text-brand transition hover:text-brand-deep"
           >sofrada yerini ayır</NuxtLink

@@ -392,7 +392,9 @@ try {
   ok(nearBetaForm, 'beta CTA form bölümüne götürüyor')
 
   // Adım 1 - e-posta
-  await page.getByPlaceholder('e-posta adresin').fill('beta-smoke@afiet.co')
+  // #bf-email: footer'daki bülten formu aynı placeholder'ı taşıdığından
+  // placeholder seçicisi ikili eşleşir; beta formunun kendi kimliği kullanılır.
+  await page.locator('#bf-email').fill('beta-smoke@afiet.co')
   await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
   // Adım 2 - platform + hedef zorunlu
   await page.getByRole('button', { name: 'iPhone' }).click()
