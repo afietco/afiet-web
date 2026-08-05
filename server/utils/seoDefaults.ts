@@ -133,7 +133,14 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
        *
        * Var olmayan profile adres YAZILMAZ; hesap açıldıkça tek satır eklenir.
        */
-      sameAs: ['https://www.instagram.com/afiet.co/'],
+      sameAs: [
+        'https://www.instagram.com/afiet.co/',
+        'https://medium.com/@afiet.co',
+        'https://afiet.substack.com',
+        'https://hashnode.com/@afiet',
+        'https://dev.to/afiet',
+        'https://www.linkedin.com/company/afiet-app',
+      ],
       contactEmail: 'destek@afiet.co',
     },
     website: { enabled: true },
@@ -308,6 +315,31 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
   ...SUPPORT_CATEGORY_PAGES,
+  '/iletisim': makePage({
+    title: 'İletişim | afiet',
+    description:
+      'afiet ekibine ulaş: öneri, soru, sorun ya da iş birliği için bize bir kartpostal ' +
+      'yaz. Beta boyunca her mesajı ürün ekibi okuyor ve dönüyor.',
+    ogTitle: 'Bize bir kartpostal yaz',
+    ogDescription:
+      'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan okur ve ' +
+      'döner. Sofrana afiyet.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.4 },
+  }),
+  /* Bülten onay/çıkış: token'lı işlem sayfaları. Dizine girmez, sitemap'te
+     yer almaz; meta yalnız sekme başlığı içindir. */
+  '/bulten/onay': makePage({
+    title: 'Bülten aboneliği | afiet',
+    description: 'afiet bülten aboneliğini onayla.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
+  '/bulten/cik': makePage({
+    title: 'Bülten aboneliği | afiet',
+    description: 'afiet bülteninden çık.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
   '/yenilikler': makePage({
     title: 'Sürüm notları | afiet',
     description:

@@ -110,6 +110,33 @@ export const cta = {
 }
 
 /**
+ * Ana sayfa vitrin bölümleri: hesap araçları, taze blog yazıları ve son sürüm
+ * şeridi. Araç kartlarının kaynağı `hesapla.tools`tur (tek liste, iki görünüm);
+ * blog ve sürüm verisi kendi API'lerinden akar, boşsa bölüm hiç görünmez.
+ */
+export const homeHesapla = {
+  eyebrow: 'hesaplama araçları',
+  title: 'Sayı mı lazım? Tabağına çevirelim.',
+  sub:
+    'Beş küçük araç: hesabı yapar, sonucu sofranın diline çevirir. ' +
+    'Üyelik yok; girdiğin hiçbir şey tarayıcından çıkmaz.',
+  cta: 'Tüm araçları gör',
+}
+
+export const homeBlog = {
+  eyebrow: 'blog',
+  title: 'Sofradan taze yazılar',
+  sub: 'Dengeli beslenmeyi sofranın diliyle anlatıyoruz: yargısız, kalorisiz, uygulanabilir.',
+  cta: 'Tüm yazıları gör',
+  readingSuffix: 'dk okuma',
+}
+
+export const homeYenilikler = {
+  label: 'Taze çıktı',
+  linkLabel: 'Neler değişti?',
+}
+
+/**
  * "Afi'ye sor" paneli - ana sayfada kendi bölümü, beta sayfasında SSS'in
  * kardeşi. Cevaplar backend'den akar; buradaki metinler yalnızca çerçevedir.
  *
@@ -393,20 +420,121 @@ export const footer = {
     { label: 'Destek', to: '/destek' },
     { label: 'Hesapla', to: '/hesapla' },
     { label: 'Yenilikler', to: '/yenilikler' },
+    { label: 'İletişim', to: '/iletisim' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
   /**
-   * Dış profiller (footer'da `rel="me"` ile basılır).
+   * Dış profiller (SocialIcons.vue `rel="me"` ile basar; footer + /iletisim).
    *
    * TEK KAYNAK DEĞİL: buraya eklenen her adres `server/utils/seoDefaults.ts`
    * içindeki `schema.organization.sameAs` listesine de girmelidir. Görünür link
    * kullanıcıya, sameAs arama motoruna aynı kimliği söyler; biri eksikse sinyal
-   * yarım kalır. Adres eklerken ikisini birlikte değiştir.
+   * yarım kalır. Adres eklerken ikisini birlikte değiştir. ⚠️ Prod'da
+   * `seo_settings.schema` override'ı varsayılanı EZER: listeyi panelden
+   * (admin.afiet.co > Analitik > SEO & GEO) de güncellemek gerekir.
    *
-   * Yeni hesaplar açıldıkça (Medium, LinkedIn, Substack, Hashnode, dev.to)
-   * buraya tek satır eklenir. Var olmayan profile link VERİLMEZ.
+   * Hesaplar 3 Ağu 2026'da açıldı (afiet-brand/GERILLA-30-GUN.md § 7);
+   * LinkedIn şirket sayfası 5 Ağu'da eklendi (kullanıcı onayı). Var olmayan
+   * profile link VERİLMEZ. `icon` anahtarı SocialIcons.vue'daki çizimi seçer.
    */
-  social: [{ label: 'Instagram', href: 'https://www.instagram.com/afiet.co/' }],
+  social: [
+    { label: 'Instagram', href: 'https://www.instagram.com/afiet.co/', icon: 'instagram' },
+    { label: 'Medium', href: 'https://medium.com/@afiet.co', icon: 'medium' },
+    { label: 'Substack', href: 'https://afiet.substack.com', icon: 'substack' },
+    { label: 'Hashnode', href: 'https://hashnode.com/@afiet', icon: 'hashnode' },
+    { label: 'dev.to', href: 'https://dev.to/afiet', icon: 'devto' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/afiet-app', icon: 'linkedin' },
+  ] as { label: string; href: string; icon: SocialIcon }[],
+}
+
+export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'devto' | 'linkedin'
+
+/**
+ * Bülten (kendi altyapımız: aboneler Neon'da, gönderim Resend API ile, dış
+ * servis paneli yok). Çift onay: form → onay maili → /bulten/onay. Landing'in
+ * e-posta toplama İSTİSNASIDIR ve bilinçlidir; /beta başvurusundan ayrı yaşar.
+ * Kayıt noktaları: footer bandı, blog yazı sonu, /iletisim.
+ */
+export const bulten = {
+  eyebrow: 'bülten',
+  title: 'Sofradan mektubun olsun',
+  sub:
+    'Yeni yazılar, yeni sürümler ve sofradan kısa notlar; en fazla haftada bir, ' +
+    'her zaman tek tıkla çıkışlı.',
+  placeholder: 'e-posta adresin',
+  submit: 'Abone ol',
+  sending: 'Gönderiliyor…',
+  success: 'Posta kutunu kontrol et: onay bağlantın yolda 💌',
+  invalid: 'Geçerli bir e-posta girer misin? 🌿',
+  error: 'Bir şey ters gitti. Birazdan yeniden dener misin?',
+  kvkk: 'E-postanı yalnız bülten göndermek için kullanırız. Ayrıntı: gizlilik sayfası.',
+
+  // Blog yazı sonu varyantı.
+  blogTitle: 'Devamı posta kutuna gelsin',
+  blogSub: 'Yeni yazı çıktığında ve sürüm notu düştüğünde kısaca haber verelim.',
+
+  // Onay sayfası (/bulten/onay).
+  confirmTitle: 'Sofraya hoş geldin 💚',
+  confirmBody: 'Aboneliğin onaylandı. İlk mektup yolda; o zamana dek sofrana afiyet.',
+  confirmFailTitle: 'Bu bağlantı çalışmadı',
+  confirmFailBody:
+    'Onay bağlantısı eskimiş ya da daha önce kullanılmış olabilir. ' +
+    'İstersen aşağıdan yeniden abone olabilirsin.',
+
+  // Çıkış sayfası (/bulten/cik).
+  leaveTitle: 'Yolun açık olsun 🌿',
+  leaveBody:
+    'Aboneliğin sonlandı, bir daha mektup almazsın. Fikrini değiştirirsen ' +
+    'sofrada her zaman yerin var.',
+}
+
+/**
+ * İletişim sayfası (/iletisim): kartpostal metaforu. Mesaj Resend ile ekip
+ * posta kutusuna düşer (beta bildirimleriyle aynı yol). KVKK bilinçli olarak
+ * onay kutusu DEĞİL bilgilendirme satırıdır (kullanıcı kararı, 5 Ağu 2026).
+ */
+export const iletisim = {
+  eyebrow: 'iletişim',
+  title: 'Bize bir kartpostal yaz',
+  sub:
+    'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan ' +
+    'okur ve döner. Beta boyunca her mesajı ürün ekibi görüyor.',
+
+  cardTo: 'Sevgili afiet,',
+  stampLegend: 'Pulunu seç',
+  topics: [
+    { key: 'oneri', label: 'Öneri', accent: 'sebze' },
+    { key: 'soru', label: 'Soru', accent: 'sut' },
+    { key: 'sorun', label: 'Sorun', accent: 'tahil' },
+    { key: 'isbirligi', label: 'İş birliği', accent: 'meyve' },
+  ] as { key: string; label: string; accent: Accent }[],
+
+  messageLabel: 'Mesajın',
+  messagePlaceholder: 'Aklından ne geçiyorsa…',
+  nameLabel: 'Kimden',
+  namePlaceholder: 'adın (istersen)',
+  emailLabel: 'E-posta',
+  emailPlaceholder: 'sana dönebileceğimiz adres',
+  submit: 'Postala',
+  sending: 'Postalanıyor…',
+
+  successTitle: 'Kartpostalın yolda 💌',
+  successBody: 'Eline sağlık! En geç iki gün içinde döneriz. Sofrana afiyet.',
+  successAgain: 'Bir kartpostal daha yaz',
+
+  missingMessage: 'Kartpostal boş gitmesin: birkaç kelime yazar mısın? 🌿',
+  invalidEmail: 'Geçerli bir e-posta girer misin? 🌿',
+  error: 'Postane şu an cevap vermedi. Birazdan yeniden dener misin?',
+
+  kvkk:
+    'Postaladığında adını, e-postanı ve mesajını yalnızca sana dönmek için ' +
+    'kullanırız; üçüncü kişiyle paylaşmayız. Ayrıntı: gizlilik sayfası.',
+
+  socialTitle: 'Bizi şuralarda da bulursun',
+  socialSub: 'Sofranın günlüğü ve perde arkası, ayrı ayrı tellerden.',
+  mailTitle: 'Doğrudan yazmak istersen',
+  mailBody: 'Kartpostal işi değilse aynı kapıya e-postayla da gelebilirsin:',
+  mailAddress: 'destek@afiet.co',
 }
 
 /**

@@ -7,8 +7,12 @@ const { faq } = usePageSeo()
 
 <template>
   <HeroSection />
+  <!-- Son sürüm şeridi: hero'nun hemen altında ince duyuru; sürüm yoksa görünmez. -->
+  <YeniliklerBand />
   <ZagSection />
   <VoiceSection />
+  <HesaplaSection />
+  <BlogSection />
   <!-- Afi'ye sor: SSS'nin ÜSTÜNDE kendi başlığıyla durur; SSS boşken de görünür. -->
   <AskAfiSection />
   <FaqSection v-if="faq" :faq="faq" />
