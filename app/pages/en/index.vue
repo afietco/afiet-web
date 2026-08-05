@@ -3,6 +3,7 @@ import {
   heroEn,
   measureChipsEn,
   originEn,
+  toolsEn,
   updatesEn,
   voiceEn,
   zagsEn,
@@ -68,6 +69,14 @@ const spans = [
 
 /* Balonlar hafif kaydırmalarla dizilir (VoiceSection ile aynı). */
 const offsets = ['sm:ml-0', 'sm:ml-14', 'sm:ml-5', 'sm:ml-20']
+
+/* Araç vitrini: kaynak toolsEn.tools (tek liste, iki görünüm - hub ile aynı). */
+const SERIT: Record<string, string> = {
+  sebze: 'bg-sebze',
+  tahil: 'bg-tahil',
+  sut: 'bg-sut',
+  protein: 'bg-protein',
+}
 </script>
 
 <template>
@@ -247,6 +256,46 @@ const offsets = ['sm:ml-0', 'sm:ml-14', 'sm:ml-5', 'sm:ml-20']
             </p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Calculators ──────────────────────────────────────────────────── -->
+  <section aria-labelledby="tools-title">
+    <div class="mx-auto max-w-6xl px-5 pb-24">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-xl">
+          <p v-reveal class="flex items-center gap-3 text-sm font-extrabold tracking-wide text-brand">
+            <span class="h-px w-8 bg-brand/40" aria-hidden="true" />
+            {{ toolsEn.eyebrow }}
+          </p>
+          <h2
+            id="tools-title"
+            v-reveal="80"
+            class="mt-4 font-display text-4xl font-semibold tracking-[-0.015em] text-ink sm:text-5xl"
+          >
+            {{ toolsEn.title }}
+          </h2>
+        </div>
+        <NuxtLink v-reveal="120" to="/en/tools" class="btn-ghost">{{ toolsEn.toolsTitle }} →</NuxtLink>
+      </div>
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
+        <NuxtLink
+          v-for="(tool, i) in toolsEn.tools"
+          :key="tool.to"
+          v-reveal="i * 80"
+          :to="tool.to"
+          class="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-surface p-6 pl-7 shadow-lift transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-float"
+        >
+          <span class="absolute inset-y-0 left-0 w-1.5" :class="SERIT[tool.accent]" aria-hidden="true" />
+          <h3
+            class="font-display text-xl font-semibold tracking-tight text-ink transition group-hover:text-brand-deep"
+          >
+            {{ tool.title }}
+          </h3>
+          <p class="mt-2 text-sm leading-relaxed text-soft">{{ tool.body }}</p>
+        </NuxtLink>
       </div>
     </div>
   </section>

@@ -472,6 +472,67 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'or by email. This cannot be undone.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.2 },
   }),
+  /* İngilizce hesaplama araçları. Başlıklar aranan kalıbı taşır
+     ("bmi calculator"), açıklamalar marka doktrinini tekrarlar: ideal kilo
+     yok, hedef kilo yok, süre vaadi yok. */
+  '/en/tools': makePage({
+    title: 'Free health calculators | afiet',
+    description:
+      'Body mass index, daily water, body fat and daily portions: run the ' +
+      'numbers, then see them as hand measures (palms, fists, cupped hands). ' +
+      'No ideal weight, no sign-up, nothing leaves your browser.',
+    ogTitle: 'We know the number too. We hand you your plate.',
+    ogDescription:
+      'Four free calculators that translate the maths into the language of the ' +
+      'table: palms, fists, cupped hands and thumbs.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/daily-portions-calculator': makePage({
+    title: 'Daily portion calculator (hand measures) | afiet',
+    description:
+      'How much should you eat a day? Get your daily plate in hand measures: ' +
+      'palms of protein, fists of vegetables, cupped hands of grains, thumbs of ' +
+      'fat. Calories optional, no goal weight, no timelines.',
+    ogTitle: 'What should your day look like?',
+    ogDescription:
+      'Your daily plate in hand measures. We do not ask for a goal weight and ' +
+      'promise no timelines.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/bmi-calculator': makePage({
+    title: 'BMI calculator (metric and imperial) | afiet',
+    description:
+      'Calculate your body mass index from height and weight in ft/lb or cm/kg. ' +
+      'afiet uses judgment-free range language and gives no ideal weight; it ' +
+      'also says what the index cannot tell you.',
+    ogTitle: 'What is your body mass index?',
+    ogDescription:
+      'A rough signal from height and weight. Not a verdict about you, and no ' +
+      'ideal weight.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/daily-water-calculator': makePage({
+    title: 'Daily water intake calculator | afiet',
+    description:
+      'How much water should you drink a day? Water needs follow the energy you ' +
+      'burn, not weight alone. Get your daily intake in glasses, liters or fl oz.',
+    ogTitle: 'How much water should you drink a day?',
+    ogDescription:
+      'Your daily water need in glasses. The same calculation the afiet app uses.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/body-fat-calculator': makePage({
+    title: 'Body fat calculator (US Navy method) | afiet',
+    description:
+      'Estimate your body fat percentage and fat free mass from waist, neck and ' +
+      'hip measurements. A tape measure is enough. No judgmental bands, no ' +
+      '"ideal" label.',
+    ogTitle: 'What is your body fat percentage?',
+    ogDescription:
+      'Body fat and fat free mass from tape measurements. We show the number and ' +
+      'the direction, not a verdict.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
   /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
   '/en/newsletter/confirm': makePage({
     title: 'Newsletter | afiet',

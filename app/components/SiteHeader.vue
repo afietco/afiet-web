@@ -167,6 +167,12 @@ const langShort = computed(() => (en.value ? 'TR' : 'EN'))
           {{ siteEn.navWhy }}
         </NuxtLink>
         <NuxtLink
+          to="/en/tools"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navTools }}
+        </NuxtLink>
+        <NuxtLink
           to="/en/contact"
           class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >

@@ -16,6 +16,15 @@ export const EN_BY_TR: Record<string, string> = {
   '/gizlilik': '/en/privacy',
   '/iletisim': '/en/contact',
   '/hesap-sil': '/en/delete-account',
+  // Hesaplama araçları. Porsiyon çevirici (/hesapla/porsiyon-cevirici) BİLEREK
+  // yok: katalog 2007 Türkçe besin adı taşıyor, yarım çevrilmiş liste
+  // yayınlamıyoruz (kullanıcı kararı, 5 Ağu 2026). Çevrildiği gün buraya bir
+  // satır eklemek yeter.
+  '/hesapla': '/en/tools',
+  '/hesapla/sofra-payin': '/en/tools/daily-portions-calculator',
+  '/hesapla/vucut-kitle-indeksi': '/en/tools/bmi-calculator',
+  '/hesapla/gunluk-su': '/en/tools/daily-water-calculator',
+  '/hesapla/yag-orani': '/en/tools/body-fat-calculator',
 }
 
 export const TR_BY_EN: Record<string, string> = Object.fromEntries(

@@ -23,6 +23,7 @@ export const siteEn = {
   navAria: 'Site navigation',
   menuAria: 'Menu',
   navWhy: 'Why afiet?',
+  navTools: 'Calculators',
   navContact: 'Contact',
   cta: 'Get updates',
 }
@@ -153,6 +154,7 @@ export const footerEn = {
   signoff: 'Enjoy your table.',
   links: [
     { label: 'Why afiet?', to: '/en#why' },
+    { label: 'Calculators', to: '/en/tools' },
     { label: 'Contact', to: '/en/contact' },
     { label: 'Privacy', to: '/en/privacy' },
     { label: 'Delete account', to: '/en/delete-account' },
@@ -429,6 +431,258 @@ export const privacyEn = {
   ],
   deleteCta: 'Delete your account →',
   deleteTo: '/en/delete-account',
+}
+
+/**
+ * Hesaplama araçları (/en/tools). TR karşılığı content.ts > hesapla.
+ *
+ * MARKA DOKTRİNİ İngilizce'de de bağlayıcıdır (afiet-hedefler docs/hedeflerim.md
+ * § 9 ve § 12): ideal kilo yok, hedef kilo yok, süre vaadi yok, hüküm kuran
+ * sıfat yok, ondalıklı el ölçüsü yok. Sayı ikinci plandadır, katlanmış durur.
+ *
+ * CTA farkı: TR araçları /beta'ya çağırır, İngilizce araçlar /en#updates'e
+ * (EN'de beta formu yok, uygulama bugün Türkçe).
+ *
+ * Porsiyon çevirici İngilizce'de YOK: katalog 2007 Türkçe besin adı taşıyor,
+ * yarım çevrilmiş bir liste yayınlamıyoruz (kullanıcı kararı, 5 Ağu 2026).
+ */
+export const toolsEn = {
+  eyebrow: 'calculators',
+  title: 'We know the number too. We hand you your plate.',
+  sub:
+    'Most calculators give you a calorie figure and an "ideal weight", then go ' +
+    'quiet. afiet runs the same math, then translates it into the language of ' +
+    'the table: how many palms, how many fists.',
+  toolsTitle: 'Tools',
+  soonLabel: 'Coming soon',
+  soonBody:
+    'Next up: an English portion guide for the 2,000+ dishes inside the app, ' +
+    'and measuring these tools with real use so we can drop whatever does not help.',
+
+  breadcrumbRoot: 'Tools',
+  unitsLabel: 'Units',
+  unitOptions: [
+    { key: 'imperial', label: 'ft, lb' },
+    { key: 'metric', label: 'cm, kg' },
+  ],
+
+  /** Hub kartları. `to` gerçek bir sayfaya işaret etmek zorunda. */
+  tools: [
+    {
+      to: '/en/tools/daily-portions-calculator',
+      title: 'Daily portions',
+      body: 'Your daily plate in hand measures: how many palms, fists, cupped hands and thumbs.',
+      chips: ['3-4 palms', '4-5 fists', '5-6 cupped hands'],
+      accent: 'sebze',
+    },
+    {
+      to: '/en/tools/bmi-calculator',
+      title: 'Body mass index',
+      body: 'Index from your height and weight, in judgment-free range language. No ideal weight.',
+      chips: ['height', 'weight'],
+      accent: 'tahil',
+    },
+    {
+      to: '/en/tools/daily-water-calculator',
+      title: 'Daily water',
+      body: 'How much water your body needs a day, in glasses. The same math the app uses.',
+      // Birim seçicisi iki sistemi de veriyor; çip listesi ikisini de anmalı.
+      chips: ['glasses', 'fl oz', 'liters'],
+      accent: 'sut',
+    },
+    {
+      to: '/en/tools/body-fat-calculator',
+      title: 'Body fat',
+      body: 'Body fat percentage and fat free mass from your waist, neck and hip measurements.',
+      chips: ['waist', 'neck', 'hip'],
+      accent: 'protein',
+    },
+  ] as { to: string; title: string; body: string; chips: string[]; accent: Accent }[],
+
+  /** Tüm araçların altında duran iki cümle. */
+  disclaimer:
+    'This is an estimate, not medical advice. If you have a condition, an ' +
+    'allergy or a specific nutrition plan, talk to your doctor and dietitian.',
+  privacy: 'What you type never leaves your browser; it is not sent to us and not stored.',
+  errorMissing: 'Could you fill in the fields? 🌿',
+  errorRange: 'Could you double-check these values? 🌿',
+
+  // ── Motor Türkçe etiket döndürür; anahtar → İngilizce karşılık ──────────
+  // Anahtarlar (#shared/hesap) sabittir, etiketler burada yaşar. Motor
+  // @afiet/core aynasıdır ve DEĞİŞTİRİLMEZ; çeviri katmanı budur.
+
+  /** `BMI_RANGES[].key` → etiket. Hüküm kuran kelime yok ("obese" vb. YASAK). */
+  bmiRangeLabels: {
+    ince: 'Lighter range',
+    denge: 'Balance range',
+    denge_ustu: 'Above balance',
+    yuksek: 'Higher range',
+  } as Record<string, string>,
+
+  /** `SEXES[].key` → etiket. */
+  sexLabels: { kadin: 'Female', erkek: 'Male' } as Record<string, string>,
+
+  /** `ACTIVITY_LEVELS[].key` → etiket + açıklama. */
+  activityLabels: {
+    hareketsiz: { label: 'Desk-based', description: 'Most of my day is spent sitting' },
+    az: { label: 'Lightly active', description: 'I move around here and there' },
+    orta: { label: 'Active', description: 'I am on my feet for a good part of the day' },
+    aktif: { label: 'Very active', description: 'I am moving often throughout the day' },
+    cok_aktif: {
+      label: 'Physically demanding',
+      description: 'My work or daily routine is physically intense',
+    },
+  } as Record<string, { label: string; description: string }>,
+
+  /**
+   * `HandMeasure.key` → terim + grup adı. Terimler İngilizce el ölçüsü
+   * sözlüğünün yerleşik karşılıklarıdır (palm / fist / cupped hand / thumb);
+   * motorun Türkçe `text` alanı İngilizce sayfada KULLANILMAZ, sayı
+   * `count`tan okunur ve terim buradan gelir.
+   */
+  handTerms: {
+    protein: { term: 'palm', termPlural: 'palms', group: 'protein' },
+    vegetable: { term: 'fist', termPlural: 'fists', group: 'vegetables' },
+    grain: { term: 'cupped hand', termPlural: 'cupped hands', group: 'grains' },
+    fat: { term: 'thumb', termPlural: 'thumbs', group: 'fats' },
+  } as Record<string, { term: string; termPlural: string; group: string }>,
+
+  /** `MINOR_NOTE` karşılığı (motor Türkçe döndürür, ekrana bu basılır). */
+  minorNote:
+    'Under 18 these formulas are only approximate; for children and teens, ' +
+    'assessment is done with age percentiles.',
+
+  /** Vücut kitle indeksi. */
+  bmi: {
+    slug: 'bmi-calculator',
+    eyebrow: 'body mass index',
+    title: 'What is your body mass index?',
+    sub:
+      'A rough signal calculated from your height and weight. It is not a ' +
+      'verdict about you, and we do not hand out an ideal weight.',
+    submit: 'Show my index',
+    recalc: 'Calculate again',
+    resultLabel: 'your body mass index',
+    rangeLabel: 'This value sits in',
+    context:
+      'Body mass index cannot tell muscle from fat. A muscular person can land ' +
+      '"above balance" and someone with low muscle mass can land in the balance ' +
+      'range. That is why afiet never turns this number into a target; it only ' +
+      'shows you where you stand today.',
+    nextTitle: 'So what should your plate look like?',
+    nextBody: 'An index is a snapshot. How to build the day is what your daily portions tell you.',
+    nextCta: 'See my daily portions',
+    nextTo: '/en/tools/daily-portions-calculator',
+  },
+
+  /** Günlük su. */
+  water: {
+    slug: 'daily-water-calculator',
+    eyebrow: 'daily water',
+    title: 'How much water should you drink a day?',
+    sub:
+      'Water needs follow the energy you burn rather than your weight alone. ' +
+      'That is why we ask for a few more details.',
+    submit: 'Show my water need',
+    recalc: 'Calculate again',
+    glassLabel: 'of water',
+    literLabel: 'about',
+    context:
+      'We count a glass as 200 ml (about 6.8 fl oz). You need more in hot ' +
+      'weather, when you exercise and when you are ill; tea and coffee count as ' +
+      'fluid too, but they do not replace water.',
+    nextTitle: 'Keeping track of water',
+    nextBody: 'afiet counts your daily water with a single tap, reminds you and never pushes.',
+    nextCta: 'Get updates',
+    nextTo: '/en#updates',
+  },
+
+  /** Yağ oranı. */
+  fat: {
+    slug: 'body-fat-calculator',
+    eyebrow: 'body fat',
+    title: 'What is your body fat percentage?',
+    sub:
+      'Calculated from your waist, neck and hip measurements (the US Navy ' +
+      'method). A tape measure is enough, no scale needed.',
+    submit: 'Show my percentage',
+    recalc: 'Calculate again',
+    ratioLabel: 'your body fat',
+    ffmLabel: 'your fat free mass',
+    waistLabel: 'Waist',
+    neckLabel: 'Neck',
+    hipLabel: 'Hip',
+    howTitle: 'How to take the measurements',
+    howSteps: [
+      'Bring the tape close enough to touch the skin, but do not pull it tight.',
+      'Waist: measure at the level of your navel, without holding your breath.',
+      'Neck: measure just below the larynx, letting the tape slope slightly down.',
+      'Hip: measure at the widest point.',
+    ],
+    context:
+      'This method is an estimate and carries a margin of a few points. Measured ' +
+      'under the same conditions it shows the direction correctly; do not read a ' +
+      'single measurement as a verdict.',
+    implausible:
+      'These measurements did not produce a plausible percentage. Could you ' +
+      'check the tape and the numbers you entered?',
+    nextTitle: 'Following your measurements',
+    nextBody:
+      'afiet keeps your measurements and shows their direction over time; it ' +
+      'never builds a verdict on a single number.',
+    nextCta: 'Get updates',
+    nextTo: '/en#updates',
+  },
+
+  /** Sofra payın. */
+  plate: {
+    slug: 'daily-portions-calculator',
+    eyebrow: 'daily portions',
+    title: 'What should your day look like?',
+    sub:
+      'Give us a few details and we will describe your daily plate in hand ' +
+      'measures. We do not ask for a goal weight and we promise no timelines.',
+
+    formTitle: 'Tell us about you',
+    sexLabel: 'Sex',
+    ageLabel: 'Age',
+    heightLabel: 'Height',
+    weightLabel: 'Weight',
+    activityLabel: 'How much do you move during the day?',
+    submit: 'Show my plate',
+    recalc: 'Calculate again',
+
+    resultTitle: 'Here is how your day looks',
+    handNote:
+      'The measure is your own hand. That means it already scales to your body ' +
+      'and there is no extra correction to make.',
+    waterLabel: 'water',
+    glassWord: 'glasses',
+    numbersToggle: 'Show the numbers',
+    numbersNote:
+      'These are ranges, not targets. afiet will not make you count them during ' +
+      'the day; they sit here because being curious is the most natural thing.',
+    kcalLabel: 'Daily energy',
+    basalLabel: 'Basal (at rest)',
+    proteinLabel: 'Protein',
+    carbLabel: 'Carbohydrate',
+    fatLabel: 'Fat',
+    fiberLabel: 'Fiber',
+
+    minorTitle: 'We will not give you a target',
+    minorBody:
+      'At this age nutrition is assessed with age percentiles rather than a ' +
+      'formula. The language of balance still holds for you: try to make room ' +
+      'for all five food groups each day, and the rest settles with time.',
+
+    ctaTitle: 'Living this every day',
+    ctaBody:
+      'A one-off calculation does not build a habit. afiet reminds you of this ' +
+      'plate in the morning, shows you in the evening whether it came together, ' +
+      'and never judges you.',
+    ctaButton: 'Get updates',
+    ctaTo: '/en#updates',
+  },
 }
 
 /** Hesap silme (/en/delete-account): content.ts > hesapSil'in karşılığı. */
