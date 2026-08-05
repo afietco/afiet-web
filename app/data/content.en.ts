@@ -207,6 +207,21 @@ export const storeBadgesEn = {
 }
 
 /**
+ * Hata sayfası (app/error.vue). /en altında bir yol tutmadığında Türkçe
+ * "Bu sofrada öyle bir sayfa yok" ekranı çıkıyordu; İngilizce ziyaretçi için
+ * dilin ortasında kopması yanlış. Ton TR ile aynı: suçlama yok, davet var.
+ */
+export const errorEn = {
+  notFoundTitle: 'Page not found | afiet',
+  errorTitle: 'Something went wrong | afiet',
+  titleNotFound: 'There is no such page at this table',
+  titleError: 'Something went wrong',
+  bodyNotFound: 'The page you are looking for may have moved or never existed. Shall we head back to the table?',
+  bodyError: 'Sorry about that, something slipped. You can continue from the home page.',
+  cta: 'Back to home',
+}
+
+/**
  * İletişim (/en/contact): kartpostal metaforunun İngilizce yüzü.
  * Şekli content.ts > iletisim ile BİREBİR aynıdır (KartpostalIletisim.vue
  * ikisini de okur); alan eklerken iki dosyayı birlikte değiştir.
