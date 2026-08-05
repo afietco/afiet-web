@@ -434,20 +434,21 @@ export const footer = {
    * (admin.afiet.co > Analitik > SEO & GEO) de güncellemek gerekir.
    *
    * Hesaplar 3 Ağu 2026'da açıldı (afiet-brand/GERILLA-30-GUN.md § 7);
-   * LinkedIn şirket sayfası 5 Ağu'da eklendi (kullanıcı onayı). Var olmayan
-   * profile link VERİLMEZ. `icon` anahtarı SocialIcons.vue'daki çizimi seçer.
+   * LinkedIn şirket sayfası 5 Ağu'da eklendi, dev.to aynı gün listeden
+   * ÇIKARILDI (kullanıcı kararları). Var olmayan profile link VERİLMEZ.
+   * `icon` anahtarı SocialIcons.vue'daki çizimi seçer. Hashnode adresi
+   * blog alan adıdır (afiet.hashnode.dev), profil sayfası değil.
    */
   social: [
     { label: 'Instagram', href: 'https://www.instagram.com/afiet.co/', icon: 'instagram' },
     { label: 'Medium', href: 'https://medium.com/@afiet.co', icon: 'medium' },
     { label: 'Substack', href: 'https://afiet.substack.com', icon: 'substack' },
-    { label: 'Hashnode', href: 'https://hashnode.com/@afiet', icon: 'hashnode' },
-    { label: 'dev.to', href: 'https://dev.to/afiet', icon: 'devto' },
+    { label: 'Hashnode', href: 'https://afiet.hashnode.dev', icon: 'hashnode' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/afiet-app', icon: 'linkedin' },
   ] as { label: string; href: string; icon: SocialIcon }[],
 }
 
-export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'devto' | 'linkedin'
+export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'linkedin'
 
 /**
  * Bülten (kendi altyapımız: aboneler Neon'da, gönderim Resend API ile, dış

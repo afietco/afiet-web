@@ -19,7 +19,8 @@ const fmtDate = (iso: string) =>
 </script>
 
 <template>
-  <div v-if="latest" class="mx-auto max-w-6xl px-5 pb-4">
+  <!-- pb-24: üstteki bölümün alt boşluğuyla (py-24) simetri kurar. -->
+  <div v-if="latest" class="mx-auto max-w-6xl px-5 pb-24">
     <NuxtLink
       v-reveal
       :to="`/yenilikler/${latest.version}`"
@@ -33,8 +34,10 @@ const fmtDate = (iso: string) =>
         </svg>
         {{ homeYenilikler.label }}
       </span>
+      <!-- Sürüm numarası bilinçli yazılmaz (kullanıcı kararı, 5 Ağu 2026):
+           ziyaretçiye başlık yeter, numara /yenilikler sayfasında yaşar. -->
       <span class="min-w-0 flex-1 truncate font-bold text-ink">
-        {{ latest.version }} · {{ latest.title }}
+        {{ latest.title }}
       </span>
       <span class="text-sm font-bold text-muted">{{ fmtDate(latest.date) }}</span>
       <span

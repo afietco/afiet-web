@@ -7,9 +7,10 @@ const { faq } = usePageSeo()
 
 <template>
   <HeroSection />
-  <!-- Son sürüm şeridi: hero'nun hemen altında ince duyuru; sürüm yoksa görünmez. -->
-  <YeniliklerBand />
   <ZagSection />
+  <!-- Son sürüm şeridi: "Neden afiet?"in altında ince duyuru (kullanıcı kararı,
+       5 Ağu 2026: hero'nun hemen altı fazla öndeydi); sürüm yoksa görünmez. -->
+  <YeniliklerBand />
   <VoiceSection />
   <HesaplaSection />
   <BlogSection />
