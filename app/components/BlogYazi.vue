@@ -124,8 +124,13 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-/* Editoryal giriş: ilk paragrafın ilk harfi Fraunces gömme başlık (drop cap) */
-.post-body :deep(> p:first-child)::first-letter {
+/* Editoryal giriş: ilk paragrafın ilk harfi Fraunces gömme başlık (drop cap).
+   Gövdenin ilk paragrafı KÜNYEDİR (`*Yazan: Afi …*`, yani tek bir <em>), o
+   yüzden gömme başlık ona değil ondan sonraki ilk gerçek paragrafa uygulanır.
+   Eskiden künyenin "Y"si dev harf oluyordu ve yayındaki bütün yazılarda
+   böyleydi; künyesiz bir yazı gelirse ikinci kural onu yakalar. */
+.post-body :deep(> p:first-child:has(> em:only-child) + p)::first-letter,
+.post-body :deep(> p:first-child:not(:has(> em:only-child)))::first-letter {
   float: left;
   margin: 0.06em 0.14em 0 0;
   color: var(--color-ink);
@@ -133,6 +138,13 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
   font-size: 3.1em;
   font-weight: 600;
   line-height: 0.85;
+}
+
+/* Künye: gövdeden ayrışsın, gömme başlığın komşusu olarak sıkışmasın. */
+.post-body :deep(> p:first-child:has(> em:only-child)) {
+  margin-bottom: 1.4em;
+  color: var(--color-muted);
+  font-size: 0.92em;
 }
 .post-body :deep(p) {
   margin: 0.9em 0;

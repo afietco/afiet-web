@@ -52,7 +52,42 @@ export async function requireContentDb(event: H3Event): Promise<Sql> {
   return sql
 }
 
+/**
+ * Kısıtı düşür-ekle: liste kodda büyüyünce DB kısıtı da güncellensin diye.
+ *
+ * Ekleme adımı "zaten var" hatasını YUTAR (42710). Sebep: Postgres'te
+ * `ADD CONSTRAINT IF NOT EXISTS` yok ve bu DDL aynı anda birden çok süreçte
+ * (Vercel'de her lambda ayrı) koşabiliyor. İkisi de düşürüp ikisi de eklemeye
+ * çalıştığında biri hata alıyordu, hata `ensureContentTables`i düşürüyordu ve
+ * çağıran `getPublishedPosts` boş liste dönüyordu: soğuk açılışta eşzamanlı
+ * iki istek blog listesini boş, yazı sayfasını 404 gösteriyordu. Kısıtın
+ * zaten var olması bir arıza değil, yarışın normal sonucudur.
+ */
+async function addCheck(add: () => Promise<unknown>) {
+  try {
+    await add()
+  } catch (err) {
+    // 42710 = duplicate_object; başka bir süreç aynı kısıtı bizden önce ekledi.
+    if ((err as { code?: string })?.code !== '42710') throw err
+  }
+}
+
+/**
+ * Tek uçuş kuralı: aynı süreçte eşzamanlı çağrılar TEK bir DDL turunu
+ * bekler. `ensured` bayrağı yalnız sonda set edildiği için, bayrak
+ * dolmadan gelen ikinci istek DDL'i baştan koşuyordu.
+ */
+let ensuring: Promise<void> | null = null
+
 export async function ensureContentTables(sql: Sql) {
+  if (ensured) return
+  ensuring ??= runContentDdl(sql).finally(() => {
+    ensuring = null
+  })
+  await ensuring
+}
+
+async function runContentDdl(sql: Sql) {
   if (ensured) return
   // Sıra önemli: FK'ler content_items'a bakar.
   await sql`
@@ -99,23 +134,29 @@ export async function ensureContentTables(sql: Sql) {
   // güncellenir. TUZAK: doğrulama listesi contentTypes.ts > CHANNELS /
   // CONTENT_FORMATS'tır; DB kısıtı ile o liste HEP birlikte değişir.
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_channel_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_channel_check
-      CHECK (channel IN ('blog','instagram','x','tiktok','youtube'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_channel_check
+        CHECK (channel IN ('blog','instagram','x','tiktok','youtube'))
+    `,
+  )
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_format_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_format_check
-      CHECK (format IN ('yazi','reel','carousel','story','post','shorts','video'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_format_check
+        CHECK (format IN ('yazi','reel','carousel','story','post','shorts','video'))
+    `,
+  )
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_status_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_status_check
-      CHECK (status IN ('fikir','planlandi','uretimde','yayinda','arsiv'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_status_check
+        CHECK (status IN ('fikir','planlandi','uretimde','yayinda','arsiv'))
+    `,
+  )
   await sql`CREATE INDEX IF NOT EXISTS content_items_planned_at_idx ON content_items (planned_at)`
 
   await sql`

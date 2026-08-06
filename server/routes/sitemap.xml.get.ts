@@ -49,8 +49,20 @@ export default defineEventHandler(async (event) => {
     }
   })
 
+  /* Hub, yazı varken listeye girer. Alternates elle veriliyor çünkü bu girdi
+     KNOWN_PATHS'tan değil buradan geliyor; Türkçe hub'ın alternates'i ise
+     EN_BY_TR üzerinden otomatik basılıyor ve ikisi eşleşmek zorunda. */
   const enBlogHub = posts.some((p) => p.lang === 'en')
-    ? [{ loc: `${base}/en/blog` }]
+    ? [
+        {
+          loc: `${base}/en/blog`,
+          alternates: [
+            { hreflang: 'tr', href: `${base}/blog` },
+            { hreflang: 'en', href: `${base}/en/blog` },
+            { hreflang: 'x-default', href: `${base}/blog` },
+          ],
+        },
+      ]
     : []
 
   const extra = [

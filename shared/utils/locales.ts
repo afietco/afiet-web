@@ -20,6 +20,10 @@ export const EN_BY_TR: Record<string, string> = {
   // yok: katalog 2007 Türkçe besin adı taşıyor, yarım çevrilmiş liste
   // yayınlamıyoruz (kullanıcı kararı, 5 Ağu 2026). Çevrildiği gün buraya bir
   // satır eklemek yeter.
+  // Blog hub'ı: ilk İngilizce yazılar yayınlandığı için (6 Ağu 2026) artık
+  // çifti var. Yazıların KENDİ eşlemesi buradan gelmez, veritabanındaki
+  // `translation_of` kolonundan gelir (yazılar dinamik, harita statik).
+  '/blog': '/en/blog',
   '/hesapla': '/en/tools',
   '/hesapla/sofra-payin': '/en/tools/daily-portions-calculator',
   '/hesapla/vucut-kitle-indeksi': '/en/tools/bmi-calculator',
