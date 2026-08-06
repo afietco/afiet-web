@@ -533,6 +533,20 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'the direction, not a verdict.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
   }),
+  /* İngilizce blog. `sitemap.include` bilinçli olarak FALSE: liste sayfası
+     site haritasına yalnız İngilizce bir yazı yayınlandığında girer ve bunu
+     sitemap route'u dinamik olarak ekler (kullanıcı kararı, 6 Ağu 2026 - içi
+     boş bir liste sayfası indekslenmesin). Meta yine panelden yönetilebilir. */
+  '/en/blog': makePage({
+    title: 'Blog | afiet',
+    description:
+      'Guides on balanced eating without calorie counting, hand-measure ' +
+      'portions and the family table. Written for the way people actually eat.',
+    ogDescription:
+      'Balanced eating without counting: hand-measure portions, five food groups ' +
+      'and the family table.',
+    sitemap: { include: false, changefreq: 'weekly', priority: 0.6 },
+  }),
   /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
   '/en/newsletter/confirm': makePage({
     title: 'Newsletter | afiet',

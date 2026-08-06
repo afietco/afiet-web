@@ -2,21 +2,24 @@ import { getPublishedPosts } from '~~/server/utils/contentStore'
 import { getSeoBundle, xmlEscape } from '~~/server/utils/seoStore'
 
 /**
- * RSS 2.0 - yayındaki TÜRKÇE blog yazıları; kanal metası panel ayarlarından.
- * İngilizce beslemesi ayrıdır (`/en/blog/rss.xml`): tek beslemede iki dil
- * karışsa aboneler okuyamadıkları yazıları alırdı.
+ * RSS 2.0 - yayındaki İNGİLİZCE blog yazıları. Türkçe beslemenin
+ * (`/blog/rss.xml`) kardeşi; şekli birebir aynı, yalnız dil süzgeci, kanal
+ * metni ve `<language>` farklı.
+ *
+ * İngilizce yazı yokken de 200 döner ama içi boştur: besleme adresi bir kere
+ * paylaşıldıktan sonra 404'e düşmemeli, okuyucular aboneliği düşürür.
  */
 export default defineEventHandler(async (event) => {
   const [{ settings }, posts] = await Promise.all([
     getSeoBundle(event),
-    getPublishedPosts(event, 'tr'),
+    getPublishedPosts(event, 'en'),
   ])
   const g = settings.general
   const base = g.baseUrl.replace(/\/$/, '')
 
   const items = posts
     .map((p) => {
-      const url = `${base}/blog/${p.slug}`
+      const url = `${base}/en/blog/${p.slug}`
       const parts = [
         '    <item>',
         `      <title>${xmlEscape(p.title)}</title>`,
@@ -37,11 +40,11 @@ export default defineEventHandler(async (event) => {
     '<rss version="2.0">\n' +
     '  <channel>\n' +
     `    <title>${xmlEscape(`${g.siteName} blog`)}</title>\n` +
-    `    <link>${xmlEscape(`${base}/blog`)}</link>\n` +
+    `    <link>${xmlEscape(`${base}/en/blog`)}</link>\n` +
     `    <description>${xmlEscape(
-      'Kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.',
+      'Balanced eating without calorie counting, hand-measure portions and the family table.',
     )}</description>\n` +
-    '    <language>tr</language>\n' +
+    '    <language>en</language>\n' +
     (items ? items + '\n' : '') +
     '  </channel>\n' +
     '</rss>\n'

@@ -1116,6 +1116,7 @@ export const epostaDogrula = {
 export type IletisimCopy = typeof iletisim
 export type PrivacyCopy = typeof privacy
 export type HesapSilCopy = typeof hesapSil
+export type BlogCopy = typeof blog
 
 /**
  * Grup davet inişi (/katil/{code}): uygulamadaki GroupHome’un paylaştığı

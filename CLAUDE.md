@@ -77,6 +77,26 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
 - İngilizce uzun içerik `content/hesapla/en/<slug>.md`; SSS başlığı
   `Frequently asked questions` (store iki başlığı da tanır). 600 kelime eşiği
   İngilizce sayfalar için de smoke'ta korunur.
+- **İngilizce blog** (`/en/blog`): yazılar `blog_posts.lang` ile ayrılır
+  (varsayılan `tr`, ALTER ile geldi). Bir yazı YALNIZ kendi dilinin yolundan
+  açılır; yanlış dilde istenen slug 404'tür (`getPublishedPost(event, slug,
+  lang)`). Liste, RSS ve sitemap hep dile göre süzülür.
+- Yazı eşlemesi `blog_posts.translation_of` (karşı yazının slug'ı, çoğu yazıda
+  NULL). Eşleme TEK SATIRA yazılır ama hreflang ÇİFT YÖNLÜ olmak zorunda, o
+  yüzden arama iki yönlüdür (`findTranslationPair`): yalnız ileri yönde
+  arayan bir sürüm Türkçe uçta hreflang basmıyordu ve Google tek yönlüyü yok
+  sayar. Karşı yazı yayında değilse ya da aynı dildeyse hiç basılmaz.
+- `/en/blog` İngilizce yazı YOKKEN sitemap'e, menüye ve llms.txt'ye girmez
+  (kullanıcı kararı, 6 Ağu 2026): sayfa çalışır, boş durumu gösterir, hiçbir
+  yerden bağlanmaz. Üç koşul sırasıyla `sitemap.xml.get.ts`, `useEnBlog`
+  (`SiteHeader`/`SiteFooter`) ve `llms.txt.get.ts` içinde; smoke üçünü de
+  kontrol eder. `EN_BY_TR`ye `/blog` → `/en/blog` satırı bilinçli EKLENMEDİ:
+  ilk İngilizce yazı yayınlandığında eklenecek (o zamana kadar hub'lar
+  birbirine hreflang vermemeli).
+- İlk İngilizce yazı yayınlanınca yapılacaklar: `EN_BY_TR`ye hub satırı,
+  `content/posts/en/<slug>.md` yedeği, frontmatter'da `lang: en` (+ çeviriyse
+  `translation_of`). Panel (afiet-admin) dil rozetini AYRI bir turda alacak;
+  o güne dek `BlogPostSummary`ye `lang` EKLENMEZ, iki repo aynası bozulmasın.
 
 ## Veritabanı: her ortam kendi Neon branch'i
 
