@@ -165,6 +165,12 @@ export type ResolvedPageMeta = {
   ogType?: 'website' | 'article'
   publishedAt?: string
   modifiedAt?: string
+  /**
+   * hreflang bağlantıları (tr + en + x-default). YALNIZ iki dilde de gerçekten
+   * var olan sayfalarda dolu (shared/utils/locales.ts > EN_BY_TR); çevirisi
+   * olmayan sayfada hiç basılmaz.
+   */
+  alternates?: { hreflang: string; href: string }[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

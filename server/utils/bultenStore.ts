@@ -38,6 +38,13 @@ export async function ensureBultenTable(sql: Sql) {
       unsubscribed_at timestamptz
     )
   `
+  // Tablo prod'da veriyle yaşıyor; yeni kolon eklemeli ALTER ile gelir
+  // (contentStore deseninin aynısı). lang: abonenin dili - İngilizce duyuru
+  // yalnız 'en' kesimine gider, gönderim script'i bu kolonu okur.
+  await sql`
+    ALTER TABLE bulten_subscribers
+    ADD COLUMN IF NOT EXISTS lang text NOT NULL DEFAULT 'tr'
+  `
   ensured = true
 }
 
@@ -45,24 +52,28 @@ export async function ensureBultenTable(sql: Sql) {
  * Kayıt açar ya da tazeler. Yeniden abone olan `cikti` satırı `beklemede`ye
  * döner ve YENİ token alır (eski çıkış bağlantıları ölür); zaten `onayli`
  * olan dokunulmadan bırakılır ki onay maili yeniden gitmesin.
+ * Dil son başvurunun dilidir: TR'den abone olup sonra /en'den yazan kişi
+ * İngilizce listeye geçer (kendi tercihinin en tazesi kazanır).
  */
 export async function upsertSubscriber(
   sql: Sql,
   email: string,
   source: string,
+  lang: 'tr' | 'en' = 'tr',
 ): Promise<{ status: string; token: string; isNew: boolean }> {
   await ensureBultenTable(sql)
   const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '')
 
   const rows = await sql`
-    INSERT INTO bulten_subscribers (email, token, source)
-    VALUES (${email}, ${token}, ${source})
+    INSERT INTO bulten_subscribers (email, token, source, lang)
+    VALUES (${email}, ${token}, ${source}, ${lang})
     ON CONFLICT (email) DO UPDATE SET
       status = CASE WHEN bulten_subscribers.status = 'onayli'
                     THEN 'onayli' ELSE 'beklemede' END,
       token = CASE WHEN bulten_subscribers.status = 'onayli'
                    THEN bulten_subscribers.token ELSE EXCLUDED.token END,
-      source = EXCLUDED.source
+      source = EXCLUDED.source,
+      lang = EXCLUDED.lang
     RETURNING status, token, (created_at = now()) AS is_new
   `
   const r = rows[0]!

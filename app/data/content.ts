@@ -1109,6 +1109,15 @@ export const epostaDogrula = {
 }
 
 /**
+ * İki dilde de yaşayan sayfaların kopya şekilleri: bileşen (KartpostalIletisim,
+ * PrivacyArticle, DeleteAccountArticle) bu tiple okur, EN karşılıkları
+ * content.en.ts'te aynı şekli doldurur. Alan eklerken iki dosya birlikte değişir.
+ */
+export type IletisimCopy = typeof iletisim
+export type PrivacyCopy = typeof privacy
+export type HesapSilCopy = typeof hesapSil
+
+/**
  * Grup davet inişi (/katil/{code}): uygulamadaki GroupHome’un paylaştığı
  * davet linkinin karşılama noktası. afiet yüklüyse bağlantı doğrudan
  * uygulamada açılır (universal link) ve bu sayfa hiç görünmez; görünüyorsa

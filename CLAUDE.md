@@ -2,7 +2,7 @@
 
 afiet.co tanıtım sitesi (landing). Uygulama yalnızca native mobilde yaşar -
 bu sitede uygulamaya/PWA'ya link verilmez; CTA'lar store rozetleri ("yakında")
-ve /beta başvurusudur. UI dili tamamen Türkçe.
+ve /beta başvurusudur. UI dili Türkçe + sınırlı İngilizce (/en, aşağı bkz.).
 
 Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
 (cümle başında bile; `uppercase` sınıfı isme asla değmez), tagline
@@ -36,6 +36,47 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
   Kilo/kalori/sayı SORULMAZ (marka gereği). Okuma: `GET /api/admin/beta`.
   Landing'de başka e-posta toplama noktası yok; eski bekleme listesi
   (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırıldı.
+
+## Çok dillilik (/en)
+
+- TR kökte yaşar ve URL'leri DEĞİŞMEZ; İngilizce `/en` altındadır
+  (`app/pages/en/`). i18n modülü BİLİNÇLİ olarak yok: kopya zaten
+  `content.ts` deseninde, meta/hreflang panel yönetimli `usePageSeo`tan
+  akıyor; modülün mesaj kataloğu ve head yönetimi bu iki sistemle çatışırdı.
+- TR↔EN sayfa eşlemesinin TEK kaynağı `shared/utils/locales.ts > EN_BY_TR`.
+  Üç tüketicisi var: hreflang alternates (`seoStore.resolvePageMeta`),
+  sitemap `xhtml:link` (`buildSitemapXml`), dil düğmesi (`SiteHeader`,
+  `useSiteLocale`). Yeni sayfa çevrildiğinde haritaya satır + `DEFAULT_PAGES`e
+  EN meta kaydı eklenir; başka yere dokunulmaz.
+- KURAL: çevirisi olmayan sayfaya `/en` yolu AÇILMAZ ve TR içerik `/en`
+  altında fallback servis edilmez (duplicate/soft-404). hreflang yalnız
+  gerçekten iki dilde yaşayan çiftlere basılır; `x-default` TR'dir.
+- Accept-Language/IP yönlendirmesi YAPILMAZ (Googlebot ABD'den tarar);
+  dil geçişi yalnız header'daki düğmedir ve karşılığı olmayan sayfada görünmez.
+- EN kopya `app/data/content.en.ts`te; ton kuralları ve em dash yasağı
+  İngilizce için de geçerli. EN'de beta formu YOK (kullanıcı kararı, 5 Ağu
+  2026): uygulama Türkçe, EN dönüşümü bülten (`lang='en'` aboneliği; onay
+  maili İngilizce gider, iniş `/en/newsletter/confirm`). `bulten-gonder.mjs`
+  varsayılan tr gönderir, İngilizce duyuru `--lang en` ister.
+- İki dilde yaşayan gövdeler tek bileşendedir (`KartpostalIletisim`,
+  `PrivacyArticle`, `DeleteAccountArticle`); TR politika metni değişirse
+  `privacyEn` de birlikte değişir.
+- **İngilizce hesaplayıcılar** (`/en/tools/*`, dört araç): motor AYNI
+  (`#shared/hesap`, @afiet/core aynası) ve ona İngilizce SIZMAZ. Motor Türkçe
+  etiket döndürdüğü için sayfalar sabit ANAHTARDAN çevirir
+  (`content.en.ts > toolsEn`: `bmiRangeLabels`, `activityLabels`, `handTerms`,
+  `minorNote`); el ölçüsü metni `HandMeasure.text`ten değil `count`tan kurulur.
+  Smoke aynı girdide TR ve EN'in aynı sayıyı verdiğini doğrular.
+- Birim seçici (metrik/imperial) YALNIZ girdi katmanındadır
+  (`shared/hesap/birim.ts` + `ToolField.vue`): kullanıcı ft/in/lb yazar, sayfa
+  cm/kg'ye çevirir, `makulMu` denetimi metrik tabanda kalır. Varsayılan
+  imperial (`useUnitSystem`, localStorage; tercih onMounted'da okunur, yoksa
+  hidrasyon uyumsuzluğu olur).
+- Porsiyon çevirici İngilizce'de BİLEREK yok: katalog 2007 Türkçe besin adı
+  taşıyor. Smoke `/en/tools/portion-converter`ın 404 kaldığını kontrol eder.
+- İngilizce uzun içerik `content/hesapla/en/<slug>.md`; SSS başlığı
+  `Frequently asked questions` (store iki başlığı da tanır). 600 kelime eşiği
+  İngilizce sayfalar için de smoke'ta korunur.
 
 ## Veritabanı: her ortam kendi Neon branch'i
 

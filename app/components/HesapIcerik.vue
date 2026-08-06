@@ -14,10 +14,16 @@ import type { HesapIcerik } from '#shared/types/hesap-icerik'
  *
  * SSS bölümü ayrı durur çünkü aynı soru/cevaplar FAQPage şemasına da giriyor
  * (seoStore.resolvePageMeta) ve ikisi tek kaynaktan gelmek zorunda.
+ *
+ * SSS başlığı gövdeden gelmez (store onu bölüm listesinden ayırır), bu yüzden
+ * dilini yol söyler: /en altında İngilizce başlık basılır.
  */
 defineProps<{ icerik: HesapIcerik }>()
 
-const faqBaslik = 'Sık sorulanlar'
+const { locale } = useSiteLocale()
+const faqBaslik = computed(() =>
+  locale.value === 'en' ? 'Frequently asked questions' : 'Sık sorulanlar',
+)
 </script>
 
 <template>
