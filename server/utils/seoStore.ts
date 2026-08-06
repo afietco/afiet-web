@@ -9,6 +9,7 @@ import { getRelease } from './releaseStore'
 import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
+import { counterpartOf, localeOf } from '#shared/utils/locales'
 import type {
   DeepPartial,
   PageSeo,
@@ -246,6 +247,12 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   const canonical = page.canonical || g.baseUrl.replace(/\/$/, '') + (path === '/' ? '/' : path)
   const robots = settings.robots.indexable ? page.robots : 'noindex, nofollow'
 
+  // Sayfanın dili: /en altı İngilizce (shared/utils/locales.ts). Şemadaki
+  // `inLanguage` ve og:locale bunu izler; genel ayardaki locale (tr_TR)
+  // yalnız Türkçe sayfalar içindir.
+  const isEn = localeOf(path) === 'en'
+  const inLanguage = isEn ? 'en-US' : g.locale.replace('_', '-')
+
   const jsonld: Record<string, unknown>[] = []
   if (path === '/') {
     const graph: Record<string, unknown>[] = []
@@ -265,7 +272,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         '@type': 'WebSite',
         name: g.siteName,
         url: g.baseUrl,
-        inLanguage: g.locale.replace('_', '-'),
+        inLanguage,
       })
     }
     if (s.mobileApp.enabled) {
@@ -304,7 +311,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       name: `${g.siteName} blog`,
       url: `${base}/blog`,
       description,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
     })
   }
   if (post) {
@@ -313,7 +320,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       '@type': 'BlogPosting',
       headline: post.title,
       description: post.description,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
       ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
       dateModified: post.updatedAt,
       mainEntityOfPage: canonical,
@@ -348,7 +355,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       name: 'afiet destek merkezi',
       url: `${base}/destek`,
       description,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
       isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
     })
   } else if (supportCat && !supportArticle) {
@@ -358,7 +365,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       name: supportCat.title,
       url: canonical,
       description,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
     })
     jsonld.push({
       '@context': 'https://schema.org',
@@ -375,7 +382,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       '@type': 'TechArticle',
       headline: supportArticle.title,
       description: supportArticle.summary,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
       dateModified: supportArticle.updated,
       mainEntityOfPage: canonical,
       articleSection: supportCat.title,
@@ -415,7 +422,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       name: 'afiet sürüm notları',
       url: `${base}/yenilikler`,
       description,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
       isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
     })
   } else if (release) {
@@ -424,7 +431,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       '@type': 'TechArticle',
       headline: `afiet v${release.version}: ${release.title}`,
       description: release.summary,
-      inLanguage: g.locale.replace('_', '-'),
+      inLanguage,
       datePublished: release.date,
       dateModified: release.date,
       mainEntityOfPage: canonical,
@@ -459,30 +466,48 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   // birlikte yapay zekâ motorlarının soruyu doğru cevapla eşleştirmesine yarar,
   // panelin adı da bu yüzden "SEO & GEO". Sorular ekranda görünen SSS ile AYNI
   // kaynaktan (content/hesapla/<slug>.md) gelir; boşsa şema hiç basılmaz.
-  if (path.startsWith('/hesapla/')) {
-    const slug = path.slice('/hesapla/'.length)
+  //
+  // İngilizce araçlar (/en/tools/<slug>) AYNI şemayı üretir; değişen yalnız
+  // kırıntı yolunun adları, tarayıcı gereksinimi cümlesi ve para birimidir.
+  // SSS iki dilde de kendi markdown dosyasından gelir (slug İngilizce'de
+  // `bmi-calculator`, Türkçe'de `vucut-kitle-indeksi`).
+  const isTool = path.startsWith('/hesapla/') || path.startsWith('/en/tools/')
+  if (isTool) {
+    const slug = isEn ? path.slice('/en/tools/'.length) : path.slice('/hesapla/'.length)
     // Şemadaki ad marka ekini taşımaz: "| afiet" başlık çubuğu içindir.
-    const aracAdi = title.replace(/\s*\|\s*afiet\s*$/, '')
+    const toolName = title.replace(/\s*\|\s*afiet\s*$/, '')
+    const hubPath = isEn ? '/en/tools' : '/hesapla'
+    const homePath = isEn ? '/en' : '/'
     jsonld.push({
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
-      name: aracAdi,
+      name: toolName,
       url: canonical,
       description,
       applicationCategory: 'HealthApplication',
-      browserRequirements: 'JavaScript gerektirir',
-      inLanguage: g.locale.replace('_', '-'),
+      browserRequirements: isEn ? 'Requires JavaScript' : 'JavaScript gerektirir',
+      inLanguage,
       isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: isEn ? 'USD' : 'TRY' },
       publisher: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
     })
     jsonld.push({
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
-        { '@type': 'ListItem', position: 2, name: 'Hesapla', item: `${base}/hesapla` },
-        { '@type': 'ListItem', position: 3, name: aracAdi, item: canonical },
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: isEn ? 'Home' : 'Ana sayfa',
+          item: `${base}${homePath === '/' ? '/' : homePath}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: isEn ? 'Tools' : 'Hesapla',
+          item: `${base}${hubPath}`,
+        },
+        { '@type': 'ListItem', position: 3, name: toolName, item: canonical },
       ],
     })
     const faq = await hesapFaqItems(slug)
@@ -499,7 +524,58 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
 
+  // İngilizce ana sayfa: marka VARLIĞI iki dilde de aynı olmalı (aynı
+  // Organization, aynı sameAs) ki üretken motorlar afiet'i tek kimlik olarak
+  // tanısın. WebSite bilerek tekrar edilmez; site tektir, dili sayfaya aittir.
+  if (path === '/en') {
+    const s = settings.schema
+    const graph: Record<string, unknown>[] = []
+    if (s.organization.enabled) {
+      graph.push({
+        '@type': 'Organization',
+        name: s.organization.name,
+        url: s.organization.url,
+        logo: absolutize(s.organization.logo, g.baseUrl),
+        ...(s.organization.sameAs.length ? { sameAs: s.organization.sameAs } : {}),
+        ...(s.organization.contactEmail ? { email: s.organization.contactEmail } : {}),
+      })
+    }
+    if (s.mobileApp.enabled) {
+      graph.push({
+        '@type': 'SoftwareApplication',
+        name: s.mobileApp.name,
+        applicationCategory: s.mobileApp.category,
+        operatingSystem: s.mobileApp.operatingSystem,
+        // Panelin açıklaması Türkçedir; İngilizce sayfada sayfanın kendi
+        // (İngilizce) açıklaması kullanılır.
+        description,
+        inLanguage,
+        ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
+          ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
+          : {}),
+      })
+    }
+    if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
+  }
+
   jsonld.push(...page.jsonld)
+
+  // ── Çok dillilik ────────────────────────────────────────────────────────
+  // hreflang YALNIZ iki dilde de var olan çiftlere basılır (EN_BY_TR tek
+  // kaynak). x-default TR'yi gösterir: ana pazar Türkiye, kök URL Türkçedir.
+  // ogLocale sayfanın kendi dilidir; genel ayar (tr_TR) yalnız TR'ye uygulanır.
+  const counterpart = counterpartOf(path)
+  let alternates: { hreflang: string; href: string }[] | undefined
+  if (counterpart) {
+    const trPath = isEn ? counterpart : path
+    const enPath = isEn ? path : counterpart
+    const trHref = base + (trPath === '/' ? '/' : trPath)
+    alternates = [
+      { hreflang: 'tr', href: trHref },
+      { hreflang: 'en', href: base + enPath },
+      { hreflang: 'x-default', href: trHref },
+    ]
+  }
 
   const showFaq =
     path === '/' && settings.faq.showOnLanding && settings.faq.items.length > 0
@@ -515,7 +591,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ogImageAlt: g.ogImageAlt,
     ogUrl: canonical,
     ogSiteName: g.siteName,
-    ogLocale: g.locale,
+    ogLocale: isEn ? 'en_US' : g.locale,
     twitterSite: g.twitterSite,
     themeColor: g.themeColor,
     verification: g.verification,
@@ -527,6 +603,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ...(post?.publishedAt ? { publishedAt: post.publishedAt } : {}),
     ...(post ? { modifiedAt: post.updatedAt } : {}),
     ...(supportArticle ? { modifiedAt: supportArticle.updated } : {}),
+    ...(alternates ? { alternates } : {}),
   }
 }
 
@@ -569,12 +646,26 @@ export function buildSitemapXml(
   extra: { loc: string; lastmod?: string }[] = [],
 ): string {
   const base = bundle.settings.general.baseUrl.replace(/\/$/, '')
+  const href = (p: string) => base + (p === '/' ? '/' : p)
+  /* hreflang alternates: yalnız iki dilde de var olan çiftlere, sayfadaki
+     link etiketleriyle aynı kaynaktan (EN_BY_TR). İki yön de kendi girdisinde
+     AYNI seti taşımak zorundadır, Google tek yönlü hreflang'i yok sayar. */
+  const alternateLines = (p: string): string[] => {
+    const counterpart = counterpartOf(p)
+    if (!counterpart) return []
+    const [trPath, enPath] = localeOf(p) === 'en' ? [counterpart, p] : [p, counterpart]
+    return [
+      `    <xhtml:link rel="alternate" hreflang="tr" href="${xmlEscape(href(trPath))}" />`,
+      `    <xhtml:link rel="alternate" hreflang="en" href="${xmlEscape(href(enPath))}" />`,
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(href(trPath))}" />`,
+    ]
+  }
   const entries = KNOWN_PATHS.filter((p) => bundle.pages[p]?.sitemap.include !== false)
     .map((p) => {
       const page = bundle.pages[p]!
-      const loc = xmlEscape(base + (p === '/' ? '/' : p))
+      const loc = xmlEscape(href(p))
       const lastmod = updatedAt[`page:${p}`]
-      const parts = [`  <url>`, `    <loc>${loc}</loc>`]
+      const parts = [`  <url>`, `    <loc>${loc}</loc>`, ...alternateLines(p)]
       if (lastmod) parts.push(`    <lastmod>${new Date(lastmod).toISOString()}</lastmod>`)
       if (page.sitemap.changefreq) parts.push(`    <changefreq>${page.sitemap.changefreq}</changefreq>`)
       if (page.sitemap.priority !== null)
@@ -590,7 +681,8 @@ export function buildSitemapXml(
   }
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n' +
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
     entries.join('\n') +
     '\n</urlset>\n'
   )

@@ -10,28 +10,51 @@ import { bultenSql, upsertSubscriber } from '~~/server/utils/bultenStore'
  */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-async function sendConfirmMail(apiKey: string, email: string, confirmUrl: string): Promise<void> {
+/** Onay maili abonenin dilinde gider; kayıt lang='en' ise metin İngilizcedir. */
+async function sendConfirmMail(
+  apiKey: string,
+  email: string,
+  confirmUrl: string,
+  lang: 'tr' | 'en',
+): Promise<void> {
+  const en = lang === 'en'
   await $fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}` },
     body: {
       from: 'afiet <bulten@posta.afiet.co>',
       to: [email],
-      subject: 'Sofraya bir adım kaldı: aboneliğini onayla',
-      text: [
-        'Merhaba,',
-        '',
-        'afiet bültenine abone olmak istediğini aldık. Seni listeye eklememiz',
-        'için tek bir adım kaldı: aşağıdaki bağlantıya dokunman yeter.',
-        '',
-        confirmUrl,
-        '',
-        'Bu isteği sen yapmadıysan bu maili görmezden gelebilirsin; hiçbir',
-        'şey gönderilmez.',
-        '',
-        'Sofrana afiyet.',
-        'afiet · Sayma, dengele.',
-      ].join('\n'),
+      subject: en
+        ? 'One step to the table: confirm your subscription'
+        : 'Sofraya bir adım kaldı: aboneliğini onayla',
+      text: en
+        ? [
+            'Hello,',
+            '',
+            'We received your request to subscribe to the afiet newsletter.',
+            'There is one step left to add you to the list: just tap the link below.',
+            '',
+            confirmUrl,
+            '',
+            'If this was not you, you can ignore this email; nothing will be sent.',
+            '',
+            'Enjoy your table.',
+            'afiet · Stop counting. Start balancing.',
+          ].join('\n')
+        : [
+            'Merhaba,',
+            '',
+            'afiet bültenine abone olmak istediğini aldık. Seni listeye eklememiz',
+            'için tek bir adım kaldı: aşağıdaki bağlantıya dokunman yeter.',
+            '',
+            confirmUrl,
+            '',
+            'Bu isteği sen yapmadıysan bu maili görmezden gelebilirsin; hiçbir',
+            'şey gönderilmez.',
+            '',
+            'Sofrana afiyet.',
+            'afiet · Sayma, dengele.',
+          ].join('\n'),
     },
   })
 }
@@ -52,16 +75,19 @@ export default defineEventHandler(async (event): Promise<{ status: string }> => 
   const source = String(body?.source ?? '')
     .trim()
     .slice(0, 40)
+  // Yalnız bilinen değer kabul edilir; ne gelirse gelsin 'en' değilse 'tr'.
+  const lang: 'tr' | 'en' = body?.lang === 'en' ? 'en' : 'tr'
 
   const sql = bultenSql(event)
   if (!sql) throw createError({ statusCode: 503, statusMessage: 'soon' })
 
-  const sub = await upsertSubscriber(sql, email, source)
+  const sub = await upsertSubscriber(sql, email, source, lang)
 
   // Zaten onaylı aboneye onay maili yeniden gitmez; form yine "ok" görür.
   if (sub.status === 'onayli') return { status: 'ok' }
 
-  const confirmUrl = `${getRequestURL(event).origin}/bulten/onay?token=${sub.token}`
+  const confirmPath = lang === 'en' ? '/en/newsletter/confirm' : '/bulten/onay'
+  const confirmUrl = `${getRequestURL(event).origin}${confirmPath}?token=${sub.token}`
   const apiKey = String(useRuntimeConfig(event).resendApiKey || '')
   if (!apiKey) {
     console.warn('[bulten] RESEND anahtarı yok; onay bağlantısı:', confirmUrl)
@@ -69,7 +95,7 @@ export default defineEventHandler(async (event): Promise<{ status: string }> => 
   }
 
   try {
-    await sendConfirmMail(apiKey, email, confirmUrl)
+    await sendConfirmMail(apiKey, email, confirmUrl, lang)
   } catch (err) {
     // Mail düşerse kayıt durur; kullanıcıya dürüst bir hata döneriz ki
     // "onay yolda" deyip hiç gelmeyen bir maili bekletmeyelim.

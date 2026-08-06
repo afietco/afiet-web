@@ -1,6 +1,9 @@
 <script setup lang="ts">
-/** Uygulama henüz mağazalarda değil; rozetler "yakında" bilgisi taşır. */
-defineProps<{ size?: 'sm' | 'lg' }>()
+/** Uygulama henüz mağazalarda değil; rozetler "yakında" bilgisi taşır.
+ *  `soonLabel` /en sayfalarında "Coming soon" olarak geçilir. */
+withDefaults(defineProps<{ size?: 'sm' | 'lg'; soonLabel?: string }>(), {
+  soonLabel: 'Yakında',
+})
 </script>
 
 <template>
@@ -40,7 +43,7 @@ defineProps<{ size?: 'sm' | 'lg' }>()
         <path d="M6 4.5v15l12-7.5z" />
       </svg>
       <span class="leading-tight">
-        <span class="block text-[10px] font-bold tracking-wide text-muted uppercase">Yakında</span>
+        <span class="block text-[10px] font-bold tracking-wide text-muted uppercase">{{ soonLabel }}</span>
         <span class="block font-extrabold" :class="size === 'lg' ? 'text-base' : 'text-sm'">
           {{ store }}
         </span>

@@ -4,8 +4,11 @@
  * `bulten_subscribers` tablosudur, gönderim bu script'tir.
  *
  * Kullanım:
- *   node scripts/bulten-gonder.mjs content/bulten/<dosya>.md            # onaylılara
+ *   node scripts/bulten-gonder.mjs content/bulten/<dosya>.md            # TR onaylılara
  *   node scripts/bulten-gonder.mjs content/bulten/<dosya>.md --test a@b # tek adrese prova
+ *   ... [--lang en]  yalnız İngilizce abonelere (lang kolonu; çıkış linki ve
+ *                    alt bilgi de İngilizce olur). Varsayılan tr: TR gönderimi
+ *                    İngilizce aboneye ASLA gitmez.
  *   ... [--yes]  onay sorusunu atlar
  *
  * Frontmatter (--- blokları):
@@ -32,6 +35,9 @@ const args = process.argv.slice(2)
 const yes = args.includes('--yes')
 const testIdx = args.indexOf('--test')
 const testTo = testIdx !== -1 ? args[testIdx + 1] : null
+const langIdx = args.indexOf('--lang')
+const lang = langIdx !== -1 ? args[langIdx + 1] : 'tr'
+const en = lang === 'en'
 const file = args.find((a) => a.endsWith('.md'))
 
 const die = (msg) => {
@@ -58,6 +64,7 @@ async function confirm(question) {
 }
 
 // ── Girdi ────────────────────────────────────────────────────────────────────
+if (lang !== 'tr' && lang !== 'en') die('--lang yalnız tr ya da en olabilir.')
 if (!file) die('Kullanım: node scripts/bulten-gonder.mjs content/bulten/<dosya>.md')
 const fullPath = join(root, file)
 if (!existsSync(fullPath)) die(`Dosya yok: ${file}`)
@@ -83,21 +90,29 @@ if (subject.startsWith('TODO') || bodyMd.startsWith('TODO')) die('TODO kalmış;
 const md = new MarkdownIt({ html: false, linkify: true })
 const bodyHtml = md.render(bodyMd)
 
+/* Dil bazlı sabitler: tagline, alt bilgi ve çıkış inişi abonenin dilinde. */
+const TAGLINE = en ? 'Stop counting. Start balancing.' : 'Sayma, dengele.'
+const FOOTER_NOTE = en
+  ? 'You received this email because you subscribed to the afiet newsletter.'
+  : 'Bu maili afiet bültenine abone olduğun için aldın.'
+const UNSUB_LABEL = en ? 'One-click unsubscribe' : 'Tek tıkla çık'
+const UNSUB_PATH = en ? '/en/newsletter/leave' : '/bulten/cik'
+
 /** Tek kolonlu, inline stilli, koyu moddan bağımsız sade şablon. */
 function emailHtml(unsubUrl) {
   return `<!doctype html>
-<html lang="tr">
+<html lang="${lang}">
 <body style="margin:0;padding:0;background:#fdfaf3">
   <div style="max-width:560px;margin:0 auto;padding:28px 20px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#322f2a;font-size:16px;line-height:1.65">
     <p style="margin:0 0 24px">
       <span style="font-size:22px;font-weight:800;color:#059669">afiet</span>
-      <span style="color:#97907f;font-size:13px;font-weight:700"> · Sayma, dengele.</span>
+      <span style="color:#97907f;font-size:13px;font-weight:700"> · ${TAGLINE}</span>
     </p>
     ${bodyHtml}
     <hr style="border:none;border-top:1px solid #ece4d4;margin:32px 0 16px">
     <p style="color:#97907f;font-size:13px;margin:0">
-      Bu maili afiet bültenine abone olduğun için aldın.
-      <a href="${unsubUrl}" style="color:#97907f">Tek tıkla çık</a> ·
+      ${FOOTER_NOTE}
+      <a href="${unsubUrl}" style="color:#97907f">${UNSUB_LABEL}</a> ·
       <a href="${SITE}" style="color:#97907f">afiet.co</a>
     </p>
   </div>
@@ -106,11 +121,13 @@ function emailHtml(unsubUrl) {
 }
 
 function emailText(unsubUrl) {
-  return `${bodyMd}\n\n---\nBu maili afiet bültenine abone olduğun için aldın.\nÇıkmak için: ${unsubUrl}\n${SITE}`
+  return en
+    ? `${bodyMd}\n\n---\n${FOOTER_NOTE}\nUnsubscribe: ${unsubUrl}\n${SITE}`
+    : `${bodyMd}\n\n---\n${FOOTER_NOTE}\nÇıkmak için: ${unsubUrl}\n${SITE}`
 }
 
 function payload(to, token) {
-  const unsubUrl = `${SITE}/bulten/cik?token=${token}`
+  const unsubUrl = `${SITE}${UNSUB_PATH}?token=${token}`
   return {
     from: FROM,
     to: [to],
@@ -150,15 +167,20 @@ if (!dbUrl) die('NUXT_DATABASE_URL yok.')
 const host = new URL(dbUrl).hostname
 const sql = neon(dbUrl)
 
+/* lang kolonu abone.post.ts'in ALTER'ıyla gelir; hiç EN abone yazılmamış eski
+   DB'de kolon olmayabilir - COALESCE yerine kolonun varlığını yoklamak yerine
+   sunucuyla aynı ensure ALTER'ını koşmak en ucuzu. */
+await sql`ALTER TABLE bulten_subscribers ADD COLUMN IF NOT EXISTS lang text NOT NULL DEFAULT 'tr'`
 const subs = await sql`
   SELECT email, token FROM bulten_subscribers
-  WHERE status = 'onayli'
+  WHERE status = 'onayli' AND lang = ${lang}
   ORDER BY id
 `
-if (subs.length === 0) die('Onaylı abone yok; gönderilecek kimse bulunamadı.')
+if (subs.length === 0) die(`Onaylı ${lang} abonesi yok; gönderilecek kimse bulunamadı.`)
 
 console.log(`Konu   : ${subject}`)
 console.log(`Neon   : ${host}`)
+console.log(`Dil    : ${lang}`)
 console.log(`Alıcı  : ${subs.length} onaylı abone`)
 if (!(await confirm('Gönderilsin mi?'))) die('Vazgeçildi.')
 
