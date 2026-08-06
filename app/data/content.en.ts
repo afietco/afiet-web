@@ -24,6 +24,7 @@ export const siteEn = {
   menuAria: 'Menu',
   navWhy: 'Why afiet?',
   navTools: 'Calculators',
+  navBlog: 'Blog',
   navContact: 'Contact',
   cta: 'Get updates',
 }
@@ -176,6 +177,10 @@ export const bultenEn = {
   kvkk: 'We only use your email to send the newsletter. Details:',
   privacyLabel: 'Privacy page',
 
+  // Blog yazı sonu varyantı (TR'deki bulten.blogTitle/blogSub karşılığı).
+  blogTitle: 'Get the next one in your inbox',
+  blogSub: 'A short note when a new post goes up or a new release lands.',
+
   // Onay sayfası (/en/newsletter/confirm).
   confirmTitle: 'Welcome to the table 💚',
   confirmBody: 'Your subscription is confirmed. The first letter is on its way; until then, enjoy your table.',
@@ -190,6 +195,42 @@ export const bultenEn = {
   leaveBody:
     'You are unsubscribed and will not receive any more letters. If you ' +
     'change your mind, there is always a place for you at the table.',
+}
+
+/**
+ * Blog (/en/blog). TR karşılığı content.ts > blog.
+ *
+ * İngilizce yazılar Türkçe yazıların ÇEVİRİSİ DEĞİLDİR: İngilizce arama ve
+ * istem diline göre ayrıca kurgulanır. Bir yazı gerçekten çevrildiğinde
+ * veritabanındaki `translation_of` alanı doldurulur ve iki yazı birbirine
+ * hreflang verir; eşlemesi olmayan yazı tek başına yaşar.
+ */
+export const blogEn = {
+  eyebrow: 'the afiet journal',
+  title: 'Notes from the table',
+  sub:
+    'Short guides on balanced eating without calorie counting, hand-measure ' +
+    'portions and the family table.',
+  rss: 'Follow with RSS',
+  empty: 'The first post is in the oven. 🌿',
+  back: '← All posts',
+  readingSuffix: 'min read',
+  searchLabel: 'Search posts',
+  searchPlaceholder: 'Search a topic: portions, breakfast, balance...',
+  sortLabel: 'Sort',
+  sortNew: 'Newest',
+  sortOld: 'Oldest',
+  noResults: 'No post matched that search. Try another word?',
+  pagesLabel: 'Blog pages',
+  pagePrev: 'Previous page',
+  pageNext: 'Next page',
+  navLabel: 'Blog',
+  updatedPrefix: 'Updated',
+  // Yazı sonu: TR'de beta çağrısı var, İngilizce'de beta YOK (uygulama
+  // Türkçe), o yüzden okur bültene davet edilir.
+  endLead: 'afiet is in beta, in Turkish today:',
+  endCta: 'get updates when English is ready',
+  endTo: '/en#updates',
 }
 
 export const cookieEn = {
