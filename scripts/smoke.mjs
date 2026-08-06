@@ -321,6 +321,30 @@ try {
   const enPorsiyon = await fetch(`http://localhost:${PORT}/en/tools/portion-converter`)
   ok(enPorsiyon.status === 404, `İngilizce porsiyon çevirici açılmamış (${enPorsiyon.status})`)
 
+  // --- İngilizce blog: yazı YOKKEN görünmezlik ---
+  // Smoke veritabanısız koşar, yani burası tam olarak "hiç İngilizce yazı yok"
+  // hâlidir ve kural şudur: sayfa çalışır ama hiçbir yere bağlanmaz. Yazı
+  // varken davranış (dil süzgeci, çift yönlü hreflang, yanlış dilde 404)
+  // veritabanı gerektirdiği için geliştirme ortamında elle doğrulanır.
+  const enBlogRes = await fetch(`http://localhost:${PORT}/en/blog`)
+  const enBlogHtml = await enBlogRes.text()
+  ok(enBlogRes.status === 200, `/en/blog açılıyor (${enBlogRes.status})`)
+  ok(enBlogHtml.includes('lang="en"'), '/en/blog html lang="en"')
+  ok(!sitemap.includes('<loc>https://afiet.co/en/blog</loc>'), 'boş /en/blog sitemap’e GİRMİYOR')
+  ok(!enBlogHtml.includes('href="/en/blog"'), 'boş blog menüde/alt bilgide GÖRÜNMÜYOR')
+
+  const enPosts = await (await fetch(`http://localhost:${PORT}/api/blog/posts?lang=en`)).json()
+  ok(Array.isArray(enPosts.posts) && enPosts.posts.length === 0, 'İngilizce yazı listesi boş')
+
+  const enRss = await fetch(`http://localhost:${PORT}/en/blog/rss.xml`)
+  const enRssBody = await enRss.text()
+  ok(enRss.status === 200, `/en/blog/rss.xml yayında (${enRss.status})`)
+  ok(enRssBody.includes('<language>en</language>'), 'İngilizce besleme dilini en olarak veriyor')
+  ok(!enRssBody.includes('<item>'), 'boş beslemede yazı yok')
+
+  const enPost404 = await fetch(`http://localhost:${PORT}/en/blog/olmayan-yazi`)
+  ok(enPost404.status === 404, `bilinmeyen İngilizce yazı gerçek 404 (${enPost404.status})`)
+
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)

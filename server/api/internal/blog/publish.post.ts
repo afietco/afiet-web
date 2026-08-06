@@ -10,6 +10,8 @@ import { requireInternalSecret } from '~~/server/utils/internalAuth'
  *   - Onay sorusu yok: insan onayı maildeki "ok" ile zaten verildi.
  */
 
+import { blogPath } from '#shared/utils/locales'
+
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const SITE = 'https://afiet.co'
 
@@ -26,6 +28,8 @@ export default defineEventHandler(async (event) => {
     tags?: string[]
     coverUrl?: string
     itemId?: number
+    lang?: string
+    translationOf?: string
   }>(event)
 
   const slug = String(body?.slug ?? '').trim()
@@ -37,9 +41,22 @@ export default defineEventHandler(async (event) => {
     : []
   const coverUrl = typeof body?.coverUrl === 'string' && body.coverUrl.trim() !== '' ? body.coverUrl.trim() : null
   const itemId = typeof body?.itemId === 'number' && Number.isInteger(body.itemId) ? body.itemId : null
+  // Dil verilmezse Türkçe (hattın bugünkü davranışı). Tanınmayan bir değer
+  // sessizce Türkçeye düşmez, açıkça reddedilir: yanlış dile düşen bir yazı
+  // yanlış listede görünür ve bunu kimse fark etmez.
+  const rawLang = body?.lang === undefined ? 'tr' : String(body.lang)
+  if (rawLang !== 'tr' && rawLang !== 'en')
+    throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:lang' })
+  const lang = rawLang
+  const translationOf =
+    typeof body?.translationOf === 'string' && body.translationOf.trim() !== ''
+      ? body.translationOf.trim()
+      : null
 
   if (!SLUG_RE.test(slug) || slug.length > 120)
     throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:slug' })
+  if (translationOf && !SLUG_RE.test(translationOf))
+    throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:translationOf' })
   if (!title || title.length > 300)
     throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:title' })
   if (!description) throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:description' })
@@ -53,13 +70,14 @@ export default defineEventHandler(async (event) => {
   const minutes = readingMinutes(contentMd)
   await sql`
     INSERT INTO blog_posts
-      (slug, title, description, content_md, tags, cover_url, status, reading_minutes, item_id, published_at)
+      (slug, title, description, content_md, tags, cover_url, status, reading_minutes, item_id,
+       published_at, lang, translation_of)
     VALUES
       (${slug}, ${title}, ${description}, ${contentMd}, ${JSON.stringify(tags)}::jsonb,
-       ${coverUrl}, 'yayinda', ${minutes}, ${itemId}, now())
+       ${coverUrl}, 'yayinda', ${minutes}, ${itemId}, now(), ${lang}, ${translationOf})
   `
 
-  const url = `${SITE}/blog/${slug}`
+  const url = `${SITE}${blogPath(lang, slug)}`
   if (itemId) {
     await sql`
       UPDATE content_items SET

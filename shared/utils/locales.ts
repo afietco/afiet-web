@@ -38,6 +38,15 @@ export function localeOf(path: string): SiteLocale {
   return path === '/en' || path.startsWith('/en/') ? 'en' : 'tr'
 }
 
+/**
+ * Bir blog yazısının kendi dilindeki yolu. Yazılar veritabanında yaşadığı için
+ * EN_BY_TR haritasına giremezler; yol dilden TÜRETİLİR ve bu fonksiyon o
+ * türetmenin tek kaynağıdır (sayfa, sitemap, RSS ve hreflang aynı yolu kurar).
+ */
+export function blogPath(lang: SiteLocale, slug: string): string {
+  return lang === 'en' ? `/en/blog/${slug}` : `/blog/${slug}`
+}
+
 /** Sayfanın öteki dildeki karşılığı; çifti yoksa null (dil düğmesi gizlenir). */
 export function counterpartOf(path: string): string | null {
   const p = path.length > 1 ? path.replace(/\/+$/, '') : path

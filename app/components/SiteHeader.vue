@@ -27,6 +27,12 @@ watch(
 
 const { locale, counterpart } = useSiteLocale()
 const en = computed(() => locale.value === 'en')
+/* Blog linki yalnız İngilizce yazı varken; boş liste menüde durmaz.
+   Composable KOŞULSUZ çağrılır: başlık app.vue'da yaşıyor ve sayfalar arası
+   yeniden kurulmuyor, koşullu çağrı TR'den EN'e geçen ziyaretçide linki
+   sonsuza dek gizli bırakırdı. Maliyeti bir boş dizi (uç 60 sn cache'li ve
+   SSR'da ağ turu yok). */
+const { hasPosts: enBlogVar } = useEnBlog()
 const home = computed(() => (en.value ? '/en' : '/'))
 /* Dil düğmesinin etiketi HEDEF dildir (o dili arayan kendi dilinde görsün). */
 const langLabel = computed(() => (en.value ? 'Türkçe' : 'English'))
@@ -171,6 +177,13 @@ const langShort = computed(() => (en.value ? 'TR' : 'EN'))
           class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >
           {{ siteEn.navTools }}
+        </NuxtLink>
+        <NuxtLink
+          v-if="enBlogVar"
+          to="/en/blog"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navBlog }}
         </NuxtLink>
         <NuxtLink
           to="/en/contact"
