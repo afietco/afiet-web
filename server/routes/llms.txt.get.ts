@@ -1,8 +1,10 @@
 import { supportLlmsSection } from '~~/server/utils/supportStore'
 import { releaseLlmsSection } from '~~/server/utils/releaseStore'
 import { getSeoBundle } from '~~/server/utils/seoStore'
+import { getPublishedPosts } from '~~/server/utils/contentStore'
 import { DEFAULT_PAGES } from '~~/server/utils/seoDefaults'
-import { EN_BY_TR } from '#shared/utils/locales'
+import { EN_BY_TR, blogPath } from '#shared/utils/locales'
+import type { BlogPost } from '~~/server/utils/contentTypes'
 
 /**
  * llms.txt (llmstxt.org) - içerik panelden düzenlenir, kapatılırsa 404.
@@ -14,8 +16,12 @@ import { EN_BY_TR } from '#shared/utils/locales'
  * ne olursa olsun bu dizinler doğru kalır.
  */
 
-/** İngilizce sayfa dizini: eşleme haritasından üretilir, elle liste tutulmaz. */
-function englishSection(base: string): string {
+/**
+ * İngilizce sayfa dizini: eşleme haritasından üretilir, elle liste tutulmaz.
+ * İngilizce blog yazıları veritabanında yaşadığı için haritada değiller;
+ * yayında olanlar sona eklenir ve HİÇ yoksa blog satırı da liste de yazılmaz.
+ */
+function englishSection(base: string, enPosts: BlogPost[]): string {
   const links = Object.values(EN_BY_TR)
     .filter((p) => DEFAULT_PAGES[p])
     .map((p) => {
@@ -23,6 +29,13 @@ function englishSection(base: string): string {
       const name = page.title.replace(/\s*\|\s*afiet\s*$/, '').replace(/^afiet \| /, 'Home: ')
       return `- [${name}](${base}${p}): ${page.description}`
     })
+  if (enPosts.length) {
+    const blogPage = DEFAULT_PAGES['/en/blog']
+    if (blogPage) links.push(`- [Blog](${base}/en/blog): ${blogPage.description}`)
+    for (const post of enPosts) {
+      links.push(`- [${post.title}](${base}${blogPath('en', post.slug)}): ${post.description}`)
+    }
+  }
   if (!links.length) return ''
   return [
     '## English',
@@ -42,13 +55,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'llms_kapali' })
   }
   const base = settings.general.baseUrl.replace(/\/$/, '')
-  const [supportSection, releaseSection] = await Promise.all([
+  const [supportSection, releaseSection, enPosts] = await Promise.all([
     supportLlmsSection(base),
     releaseLlmsSection(base),
+    getPublishedPosts(event, 'en'),
   ])
   setHeader(event, 'Content-Type', 'text/plain; charset=utf-8')
   setHeader(event, 'Cache-Control', 'public, max-age=0, s-maxage=300')
-  return [settings.llms.content.trimEnd(), supportSection, releaseSection, englishSection(base)]
+  return [
+    settings.llms.content.trimEnd(),
+    supportSection,
+    releaseSection,
+    englishSection(base, enPosts),
+  ]
     .filter((part) => part.trim())
     .join('\n\n')
 })

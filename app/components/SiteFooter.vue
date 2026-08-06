@@ -25,9 +25,21 @@ const bandGizli = computed(
 const { locale } = useSiteLocale()
 const en = computed(() => locale.value === 'en')
 const band = computed(() => (en.value ? bultenEn : bulten))
+
+/* İngilizce blog linki yalnız yayında yazı varken (başlıktaki kuralın aynısı);
+   araçlardan hemen sonra, iletişimden önce durur. */
+const { hasPosts: enBlogVar } = useEnBlog()
+const enLinks = computed(() => {
+  if (!enBlogVar.value) return footerEn.links
+  const out = [...footerEn.links]
+  const at = out.findIndex((l) => l.to === '/en/tools')
+  out.splice(at === -1 ? out.length : at + 1, 0, { label: 'Blog', to: '/en/blog' })
+  return out
+})
+
 const alt = computed(() =>
   en.value
-    ? { tagline: footerEn.tagline, signoff: footerEn.signoff, links: footerEn.links }
+    ? { tagline: footerEn.tagline, signoff: footerEn.signoff, links: enLinks.value }
     : { tagline: footer.tagline, signoff: footer.signoff, links: footer.links },
 )
 </script>

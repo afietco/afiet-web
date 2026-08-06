@@ -13,6 +13,7 @@ import type {
   ContentMetric,
   ContentMetricInput,
   ContentMusic,
+  SiteLang,
 } from './contentTypes'
 import { CONTENT_TZ, emptyBrief } from './contentTypes'
 import { storageReady } from './gcsSign'
@@ -51,7 +52,42 @@ export async function requireContentDb(event: H3Event): Promise<Sql> {
   return sql
 }
 
+/**
+ * Kısıtı düşür-ekle: liste kodda büyüyünce DB kısıtı da güncellensin diye.
+ *
+ * Ekleme adımı "zaten var" hatasını YUTAR (42710). Sebep: Postgres'te
+ * `ADD CONSTRAINT IF NOT EXISTS` yok ve bu DDL aynı anda birden çok süreçte
+ * (Vercel'de her lambda ayrı) koşabiliyor. İkisi de düşürüp ikisi de eklemeye
+ * çalıştığında biri hata alıyordu, hata `ensureContentTables`i düşürüyordu ve
+ * çağıran `getPublishedPosts` boş liste dönüyordu: soğuk açılışta eşzamanlı
+ * iki istek blog listesini boş, yazı sayfasını 404 gösteriyordu. Kısıtın
+ * zaten var olması bir arıza değil, yarışın normal sonucudur.
+ */
+async function addCheck(add: () => Promise<unknown>) {
+  try {
+    await add()
+  } catch (err) {
+    // 42710 = duplicate_object; başka bir süreç aynı kısıtı bizden önce ekledi.
+    if ((err as { code?: string })?.code !== '42710') throw err
+  }
+}
+
+/**
+ * Tek uçuş kuralı: aynı süreçte eşzamanlı çağrılar TEK bir DDL turunu
+ * bekler. `ensured` bayrağı yalnız sonda set edildiği için, bayrak
+ * dolmadan gelen ikinci istek DDL'i baştan koşuyordu.
+ */
+let ensuring: Promise<void> | null = null
+
 export async function ensureContentTables(sql: Sql) {
+  if (ensured) return
+  ensuring ??= runContentDdl(sql).finally(() => {
+    ensuring = null
+  })
+  await ensuring
+}
+
+async function runContentDdl(sql: Sql) {
   if (ensured) return
   // Sıra önemli: FK'ler content_items'a bakar.
   await sql`
@@ -98,23 +134,29 @@ export async function ensureContentTables(sql: Sql) {
   // güncellenir. TUZAK: doğrulama listesi contentTypes.ts > CHANNELS /
   // CONTENT_FORMATS'tır; DB kısıtı ile o liste HEP birlikte değişir.
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_channel_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_channel_check
-      CHECK (channel IN ('blog','instagram','x','tiktok','youtube'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_channel_check
+        CHECK (channel IN ('blog','instagram','x','tiktok','youtube'))
+    `,
+  )
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_format_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_format_check
-      CHECK (format IN ('yazi','reel','carousel','story','post','shorts','video'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_format_check
+        CHECK (format IN ('yazi','reel','carousel','story','post','shorts','video'))
+    `,
+  )
   await sql`ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_status_check`
-  await sql`
-    ALTER TABLE content_items
-      ADD CONSTRAINT content_items_status_check
-      CHECK (status IN ('fikir','planlandi','uretimde','yayinda','arsiv'))
-  `
+  await addCheck(
+    () => sql`
+      ALTER TABLE content_items
+        ADD CONSTRAINT content_items_status_check
+        CHECK (status IN ('fikir','planlandi','uretimde','yayinda','arsiv'))
+    `,
+  )
   await sql`CREATE INDEX IF NOT EXISTS content_items_planned_at_idx ON content_items (planned_at)`
 
   await sql`
@@ -133,6 +175,29 @@ export async function ensureContentTables(sql: Sql) {
       updated_at timestamptz NOT NULL DEFAULT now()
     )
   `
+  /**
+   * Çok dillilik. Tablo prod'da veriyle yaşıyor, o yüzden ekleme ALTER ile
+   * gelir ve `lang` varsayılanı 'tr'dir: mevcut yazıların hepsi Türkçedir ve
+   * hiçbiri dokunulmadan doğru dilde kalır.
+   *
+   * `translation_of` KARŞI DİLDEKİ yazının slug'ıdır ve NULL olabilir.
+   * İngilizce yazıların çoğu bağımsız yaşayacak (çeviri değil, İngilizce
+   * arama diline göre kurgulanmış); dolu olduğunda ve karşı yazı GERÇEKTEN
+   * yayındaysa iki yazı birbirine hreflang verir. Foreign key bilinçli olarak
+   * YOK: yazılar birbirinden bağımsız yayınlanır/kaldırılır, kırık bir eşleme
+   * yayını engellememeli. Kırıklığı render anında `seoStore` yakalar ve
+   * hreflang'i hiç basmaz.
+   *
+   * DB CHECK de yok: dil listesi kodda (`shared/utils/locales.ts`) ve yazma
+   * uçları doğruluyor. Enum ile kod listesini iki yerde tutmak, birinin
+   * unutulduğu gün sessiz 400'lere yol açıyor.
+   */
+  await sql`
+    ALTER TABLE blog_posts
+      ADD COLUMN IF NOT EXISTS lang text NOT NULL DEFAULT 'tr',
+      ADD COLUMN IF NOT EXISTS translation_of text
+  `
+  await sql`CREATE INDEX IF NOT EXISTS blog_posts_lang_idx ON blog_posts (lang)`
   await sql`
     CREATE TABLE IF NOT EXISTS content_metrics (
       id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -313,6 +378,11 @@ function mapPost(r: Row): BlogPost {
     tags: readStrArr(r.tags),
     coverUrl: (r.cover_url as string | null) ?? null,
     createdAt: toIso(r.created_at),
+    // Kolon ALTER ile geldi; eski satırlarda DEFAULT 'tr' basılı olsa da
+    // okuma tarafı yine de savunmalı: tanımadığı bir değer 'tr' sayılır ki
+    // bir yazı hiçbir listede görünmez hâle gelmesin.
+    lang: r.lang === 'en' ? 'en' : 'tr',
+    translationOf: (r.translation_of as string | null) ?? null,
   }
 }
 
@@ -479,8 +549,19 @@ export async function listPostsSummary(sql: Sql): Promise<BlogPostSummary[]> {
   return rows.map(mapPostSummary)
 }
 
-/** Yayındaki yazılar (gövdesiz kullanım için de tam satır) - 60 sn cache'li. */
-export async function getPublishedPosts(event: H3Event): Promise<BlogPost[]> {
+/**
+ * Yayındaki yazılar (gövdesiz kullanım için de tam satır) - 60 sn cache'li.
+ *
+ * `lang` verilirse yalnız o dildekiler döner. Sorgu DİLE GÖRE DEĞİL, hepsini
+ * çekip bellekte süzer: yazı sayısı üç haneli bile değil ve tek cache iki dile
+ * birden hizmet ettiğinde ikinci dil bedava gelir.
+ */
+export async function getPublishedPosts(event: H3Event, lang?: SiteLang): Promise<BlogPost[]> {
+  const all = await loadPublishedPosts(event)
+  return lang ? all.filter((p) => p.lang === lang) : all
+}
+
+async function loadPublishedPosts(event: H3Event): Promise<BlogPost[]> {
   if (postsCache && Date.now() - postsCache.at < POSTS_CACHE_TTL_MS) return postsCache.posts
   const sql = sqlClient(event)
   if (!sql) return []
@@ -499,9 +580,43 @@ export async function getPublishedPosts(event: H3Event): Promise<BlogPost[]> {
   }
 }
 
-export async function getPublishedPost(event: H3Event, slug: string): Promise<BlogPost | null> {
-  const posts = await getPublishedPosts(event)
-  return posts.find((p) => p.slug === slug) ?? null
+/**
+ * Yazının karşı dildeki eşi. Eşleme HER İKİ YÖNDE de aranır: `translation_of`
+ * tek bir satıra yazılır (genelde çeviriye), ama hreflang ÇİFT YÖNLÜ olmak
+ * zorundadır - tek yönlü hreflang Google tarafından yok sayılır ve iki sayfa
+ * da kazancı kaybeder.
+ *
+ * Eş ancak GERÇEKTEN yayında ve GERÇEKTEN öteki dildeyse döner; yayından
+ * kaldırılan bir çeviri, kalanı yarım bir eşlemeyle bırakmaz.
+ */
+export function findTranslationPair(post: BlogPost, all: BlogPost[]): BlogPost | null {
+  const found = post.translationOf
+    ? all.find((p) => p.slug === post.translationOf)
+    : all.find((p) => p.translationOf === post.slug)
+  return found && found.lang !== post.lang ? found : null
+}
+
+/** `findTranslationPair`in yayındaki yazıları kendi çeken hâli. */
+export async function getTranslationPair(
+  event: H3Event,
+  post: BlogPost,
+): Promise<BlogPost | null> {
+  return findTranslationPair(post, await loadPublishedPosts(event))
+}
+
+/**
+ * Slug'a göre yayındaki yazı. `lang` verilirse yazı O DİLDE değilse null döner:
+ * bir yazı yalnız kendi dilinin yolundan açılmalı, yoksa aynı içerik iki URL'de
+ * (ve yanlış dil çerçevesinde) yaşar.
+ */
+export async function getPublishedPost(
+  event: H3Event,
+  slug: string,
+  lang?: SiteLang,
+): Promise<BlogPost | null> {
+  const post = (await loadPublishedPosts(event)).find((p) => p.slug === slug) ?? null
+  if (!post) return null
+  return lang && post.lang !== lang ? null : post
 }
 
 // ── Panel payload'ı ──────────────────────────────────────────────────────────

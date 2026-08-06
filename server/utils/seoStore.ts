@@ -1,7 +1,7 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
 import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
-import { getPublishedPost } from './contentStore'
+import { getPublishedPost, getTranslationPair } from './contentStore'
 import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
 import { supportCategory } from './supportCategories'
@@ -9,7 +9,7 @@ import { getRelease } from './releaseStore'
 import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
-import { counterpartOf, localeOf } from '#shared/utils/locales'
+import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import type {
   DeepPartial,
   PageSeo,
@@ -185,8 +185,15 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   // (seo_pages['/blog/<slug>']) ham haliyle üstüne biner. Yayında olmayan/
   // bilinmeyen slug mevcut bilinmeyen-yol davranışına düşer (sayfa 404 verir).
   let post: BlogPost | null = null
-  if (path.startsWith('/blog/') && path !== '/blog') {
-    post = await getPublishedPost(event, path.slice('/blog/'.length))
+  // Yazı KENDİ dilinin yolundan okunur: /blog/<slug> yalnız Türkçe,
+  // /en/blog/<slug> yalnız İngilizce yazıyı bulur. Yanlış dilde istenen slug
+  // bilinmeyen yol davranışına düşer (sayfa 404 verir).
+  const isEnBlogPost = path.startsWith('/en/blog/') && path !== '/en/blog'
+  const isTrBlogPost = path.startsWith('/blog/') && path !== '/blog'
+  if (isTrBlogPost || isEnBlogPost) {
+    post = isEnBlogPost
+      ? await getPublishedPost(event, path.slice('/en/blog/'.length), 'en')
+      : await getPublishedPost(event, path.slice('/blog/'.length), 'tr')
     if (post) {
       const postPage = makePage({
         title: `${post.title} | afiet`,
@@ -304,12 +311,12 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
   const base = g.baseUrl.replace(/\/$/, '')
-  if (path === '/blog') {
+  if (path === '/blog' || path === '/en/blog') {
     jsonld.push({
       '@context': 'https://schema.org',
       '@type': 'Blog',
       name: `${g.siteName} blog`,
-      url: `${base}/blog`,
+      url: `${base}${path}`,
       description,
       inLanguage,
     })
@@ -338,8 +345,18 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Ana sayfa', item: `${base}/` },
-        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${base}/blog` },
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: post.lang === 'en' ? 'Home' : 'Ana sayfa',
+          item: `${base}${post.lang === 'en' ? '/en' : '/'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Blog',
+          item: `${base}${post.lang === 'en' ? '/en/blog' : '/blog'}`,
+        },
         { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
       ],
     })
@@ -575,6 +592,24 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       { hreflang: 'en', href: base + enPath },
       { hreflang: 'x-default', href: trHref },
     ]
+  } else if (post) {
+    /* Blog yazıları statik haritaya giremez (veritabanında yaşıyorlar), eşleme
+       `translation_of` kolonundadır ve TEK BİR SATIRA yazılır. Bu yüzden eş
+       çift yönlü aranır (`findTranslationPair`): yalnız ileri yönde arasaydık
+       çevirisi olan Türkçe yazı hreflang basmaz, eşleme tek yönlü kalır ve
+       Google tek yönlü hreflang'i yok sayar. Kural sayfalardakiyle AYNI: karşı
+       yazı gerçekten yayında ve öteki dilde değilse hiç basılmaz. */
+    const pair = await getTranslationPair(event, post)
+    if (pair) {
+      const trSlug = post.lang === 'tr' ? post.slug : pair.slug
+      const enSlug = post.lang === 'en' ? post.slug : pair.slug
+      const trHref = base + blogPath('tr', trSlug)
+      alternates = [
+        { hreflang: 'tr', href: trHref },
+        { hreflang: 'en', href: base + blogPath('en', enSlug) },
+        { hreflang: 'x-default', href: trHref },
+      ]
+    }
   }
 
   const showFaq =
@@ -643,7 +678,12 @@ export function xmlEscape(s: string): string {
 export function buildSitemapXml(
   bundle: SeoBundle,
   updatedAt: Record<string, string> = {},
-  extra: { loc: string; lastmod?: string }[] = [],
+  /**
+   * Kod sayfalarının dışındaki girdiler (blog yazıları, destek yazıları,
+   * sürüm notları). `alternates` yalnız blog yazılarında dolar: sayfa
+   * eşlemeleri EN_BY_TR'den gelirken yazı eşlemeleri veritabanındadır.
+   */
+  extra: { loc: string; lastmod?: string; alternates?: { hreflang: string; href: string }[] }[] = [],
 ): string {
   const base = bundle.settings.general.baseUrl.replace(/\/$/, '')
   const href = (p: string) => base + (p === '/' ? '/' : p)
@@ -674,7 +714,14 @@ export function buildSitemapXml(
       return parts.join('\n')
     })
   for (const e of extra) {
-    const parts = [`  <url>`, `    <loc>${xmlEscape(e.loc)}</loc>`]
+    const parts = [
+      `  <url>`,
+      `    <loc>${xmlEscape(e.loc)}</loc>`,
+      ...(e.alternates ?? []).map(
+        (a) =>
+          `    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${xmlEscape(a.href)}" />`,
+      ),
+    ]
     if (e.lastmod) parts.push(`    <lastmod>${new Date(e.lastmod).toISOString()}</lastmod>`)
     parts.push('  </url>')
     entries.push(parts.join('\n'))
