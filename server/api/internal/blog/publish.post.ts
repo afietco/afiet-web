@@ -13,7 +13,24 @@ import { requireInternalSecret } from '~~/server/utils/internalAuth'
 import { blogPath } from '#shared/utils/locales'
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
-const SITE = 'https://afiet.co'
+const SITE_FALLBACK = 'https://afiet.co'
+
+/**
+ * Yayınlanan yazının adresi, isteğin GELDİĞİ origin'den kurulur; sabit
+ * afiet.co DEĞİL. Production'da ikisi zaten aynı (backend oraya afiet.co ile
+ * gelir), ama preview'da sabit adres yalanlıyordu: dev'de yayınlanan yazı
+ * "https://afiet.co/blog/..." diye raporlanıyor, o adres 404 veriyor ve aynı
+ * adres türevlerin canonical'ına yazılıyordu. Medium'a canonical olarak var
+ * olmayan bir sayfa vermek, yanlış bir adres vermekten daha kötüdür.
+ */
+function siteOrigin(event: Parameters<typeof getRequestURL>[0]): string {
+  try {
+    const origin = getRequestURL(event).origin
+    return origin && origin.startsWith('http') ? origin : SITE_FALLBACK
+  } catch {
+    return SITE_FALLBACK
+  }
+}
 
 const readingMinutes = (src: string) =>
   Math.max(1, Math.round(src.trim().split(/\s+/).filter(Boolean).length / 200))
@@ -77,7 +94,7 @@ export default defineEventHandler(async (event) => {
        ${coverUrl}, 'yayinda', ${minutes}, ${itemId}, now(), ${lang}, ${translationOf})
   `
 
-  const url = `${SITE}${blogPath(lang, slug)}`
+  const url = `${siteOrigin(event)}${blogPath(lang, slug)}`
   if (itemId) {
     await sql`
       UPDATE content_items SET
