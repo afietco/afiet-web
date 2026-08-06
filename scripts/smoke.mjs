@@ -287,6 +287,40 @@ try {
   )
   ok(sitemap.includes('/hesapla'), 'sitemap /hesapla sayfasını içeriyor')
 
+  // --- İngilizce araçlar (/en/tools) ---
+  // Aynı eşik aynı sebeple: hesap istemcide döner, uzun içerik olmazsa arama
+  // motoru burada da boş sayfa görür. Ek olarak hreflang ÇİFTİ kontrol edilir:
+  // tek yönlü hreflang Google tarafından yok sayılır, yani "iki dilde de var"
+  // iddiası ancak iki uçta da alternate varsa doğrudur.
+  for (const [enSlug, trPath] of [
+    ['bmi-calculator', '/hesapla/vucut-kitle-indeksi'],
+    ['daily-water-calculator', '/hesapla/gunluk-su'],
+    ['body-fat-calculator', '/hesapla/yag-orani'],
+    ['daily-portions-calculator', '/hesapla/sofra-payin'],
+  ]) {
+    const enPath = `/en/tools/${enSlug}`
+    const html = await (await fetch(`http://localhost:${PORT}${enPath}`)).text()
+    const kelime = kelimeSay(html)
+    ok(html.includes('hesap-katlanir'), `${enSlug} uzun içeriği SSR HTML'inde`)
+    ok(kelime > 600, `${enSlug} sunucudan dolu geliyor (${kelime} kelime)`)
+    ok(html.includes('lang="en"'), `${enSlug} html lang="en"`)
+    ok(html.includes('"@type":"FAQPage"'), `${enSlug} FAQPage şeması içeriyor`)
+    ok(
+      html.includes(`hreflang="tr" href="https://afiet.co${trPath}"`),
+      `${enSlug} Türkçe karşılığına hreflang veriyor`,
+    )
+    const trHtml = await (await fetch(`http://localhost:${PORT}${trPath}`)).text()
+    ok(
+      trHtml.includes(`hreflang="en" href="https://afiet.co${enPath}"`),
+      `${trPath} İngilizce karşılığına hreflang veriyor (çift yönlü)`,
+    )
+    ok(sitemap.includes(`<loc>https://afiet.co${enPath}</loc>`), `sitemap ${enSlug} içeriyor`)
+  }
+  // Porsiyon çevirici İngilizce'de BİLEREK yok (katalog Türkçe). Sessizce
+  // açılırsa yarım çevrilmiş bir sayfa yayınlanmış olur.
+  const enPorsiyon = await fetch(`http://localhost:${PORT}/en/tools/portion-converter`)
+  ok(enPorsiyon.status === 404, `İngilizce porsiyon çevirici açılmamış (${enPorsiyon.status})`)
+
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)
@@ -572,6 +606,64 @@ try {
   ok(/\bg\b/.test(porsiyonText), 'gram karşılığı gösteriliyor')
   ok(/Süt Ürünü|Protein/.test(porsiyonText), 'besin grupları gösteriliyor')
   ok(!/kcal/.test(porsiyonText), 'porsiyon çeviricide kalori varsayılan gizli')
+
+  // --- İngilizce araçlar tarayıcıda: iki birim sistemi + TR ile AYNI sayı ---
+  // Motor (@afiet/core aynası) metrik konuşur; imperial dönüşüm formun
+  // kapısında olur. Bu blok iki şeyi korur: dönüşümün doğruluğu ve "site
+  // aynı hesabı iki dilde de aynı veriyor" iddiası.
+  await page.goto(`http://localhost:${PORT}/en/tools/bmi-calculator`, { waitUntil: 'networkidle' })
+  // Varsayılan imperial: 5 ft 8 in + 163 lb ≈ 172,7 cm + 73,9 kg → ~24,8
+  await page.getByLabel('Height (feet)').fill('5')
+  await page.getByLabel('Height (inches)').fill('8')
+  await page.getByLabel('Weight (lb)').fill('163')
+  await page.getByRole('button', { name: 'Show my index' }).click()
+  const enBmiImperial = await page.locator('[aria-live="polite"]').innerText()
+  ok(/24\.8/.test(enBmiImperial), `imperial VKİ doğru çevriliyor (${enBmiImperial.split('\n')[0]})`)
+  ok(/Balance range/.test(enBmiImperial), 'VKİ aralığı İngilizce ve yargısız')
+
+  // Metriğe geçince alanlar sıfırlanır (yazılan sayı öteki sistemde anlamsız).
+  await page.getByText('cm, kg').click()
+  await page.getByLabel('Height (cm)').fill('172')
+  await page.getByLabel('Weight (kg)').fill('74')
+  await page.getByRole('button', { name: /Show my index|Calculate again/ }).click()
+  const enBmiMetric = await page.locator('[aria-live="polite"]').innerText()
+  ok(/25/.test(enBmiMetric), `metrik VKİ TR sayfayla aynı (${enBmiMetric.split('\n')[0]})`)
+
+  await page.goto(`http://localhost:${PORT}/en/tools/daily-portions-calculator`, {
+    waitUntil: 'networkidle',
+  })
+  await page.getByText('cm, kg').click()
+  await page.getByLabel('Age').fill('34')
+  await page.getByLabel('Height (cm)').fill('172')
+  await page.getByLabel('Weight (kg)').fill('74')
+  await page.getByRole('button', { name: 'Show my plate' }).click()
+  const enPlate = page.locator('[aria-live="polite"]')
+  await enPlate.waitFor({ timeout: 8000 })
+  const enPlateText = await enPlate.innerText()
+  ok(/palms?/.test(enPlateText), 'İngilizce el ölçüsü çıkıyor (palm)')
+  ok(
+    /fists?/.test(enPlateText) && /cupped hands?/.test(enPlateText) && /thumbs?/.test(enPlateText),
+    'dört el ölçüsü de İngilizce',
+  )
+  ok(/glasses/.test(enPlateText), 'su satırı var')
+  ok(!/kcal/.test(enPlateText), 'kalori varsayılan olarak görünmüyor')
+  // Aynı girdi, aynı sayı: TR sayfadan okunan avuç içi sayısı ile EN palm aynı.
+  const trPalm = /(\d+(?:-\d+)?)\s+avuç içi/.exec(plateText)?.[1]
+  const enPalm = /(\d+(?:-\d+)?)\s+palms?/.exec(enPlateText)?.[1]
+  ok(
+    Boolean(trPalm) && trPalm === enPalm,
+    `aynı girdide TR ve EN aynı sayıyı veriyor (${trPalm} = ${enPalm})`,
+  )
+  await page.getByText('Show the numbers').click()
+  await page.waitForTimeout(200)
+  ok(/kcal/.test(await enPlate.innerText()), 'kalori ancak açınca görünüyor')
+  // 18 yaş altı rayı İngilizce'de de geçerli.
+  await page.getByLabel('Age').fill('16')
+  await page.getByRole('button', { name: 'Calculate again' }).click()
+  await page.waitForTimeout(300)
+  const enMinor = await enPlate.innerText()
+  ok(/will not give you a target/.test(enMinor), '18 yaş altında hedef üretilmiyor')
+  ok(!/palms?/.test(enMinor), '18 yaş altında el ölçüsü de gösterilmiyor')
 
 
   // --- İsteğe bağlı ekran görüntüleri ---

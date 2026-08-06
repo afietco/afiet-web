@@ -36,7 +36,21 @@ export function usePageSeo() {
   })
 
   useHead(() => ({
-    link: meta.value ? [{ rel: 'canonical', href: meta.value.canonical, key: 'canonical' }] : [],
+    // <html lang>: sayfanın kendi dili sunucudaki meta'dan türer (ogLocale
+    // /en altında en_US döner). nuxt.config'teki lang="tr" yalnız fallback'tir.
+    htmlAttrs: { lang: meta.value?.ogLocale?.startsWith('en') ? 'en' : 'tr' },
+    link: meta.value
+      ? [
+          { rel: 'canonical', href: meta.value.canonical, key: 'canonical' },
+          // hreflang: yalnız iki dilde de var olan sayfalarda sunucudan gelir.
+          ...(meta.value.alternates ?? []).map((a) => ({
+            rel: 'alternate',
+            hreflang: a.hreflang,
+            href: a.href,
+            key: `alternate-${a.hreflang}`,
+          })),
+        ]
+      : [],
     meta: [
       ...(meta.value?.verification.google
         ? [{ name: 'google-site-verification', content: meta.value.verification.google }]
