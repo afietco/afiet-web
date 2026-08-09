@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Afi maskot · kasik · ilk kayit bos durumu: "hadi baslayalim" daveti.
+       Tahta kasik kaseye yaslanir (tahil/amber tonu), Afi degismez. -->
+  <ellipse cx="256" cy="437" rx="128" ry="14" fill="#022c22" opacity=".08"/>
+  <g>
+    <ellipse cx="0" cy="-30" rx="25" ry="33" transform="translate(134 270) rotate(24)" fill="#f59e0b"/>
+    <ellipse cx="0" cy="-32" rx="15" ry="22" transform="translate(134 270) rotate(24)" fill="#022c22" opacity=".16"/>
+    <rect x="-8" y="0" width="16" height="160" rx="8" transform="translate(134 270) rotate(24)" fill="#f59e0b"/>
+  </g>
+  <g transform="translate(256 288) scale(1.07) translate(-256 -288)">
+    <g fill="none" stroke-linecap="round">
+      <path d="M207 232c0-19 17-23 17-42s-17-21-17-40" stroke="#a7f3d0" stroke-width="21"/>
+      <path d="M300 238c0-21 19-25 19-48s-19-23-19-46" stroke="#059669" stroke-width="23"/>
+    </g>
+    <path d="M116 276h280a140 108 0 0 1-280 0z" fill="#ffffff" stroke="#ece4d4" stroke-width="4"/>
+    <g fill="none" stroke="#047857" stroke-linecap="round">
+      <path d="M180 316q23-21 46 0" stroke-width="15"/>
+      <path d="M286 316q23-21 46 0" stroke-width="15"/>
+      <path d="M238 342q18 14 36 0" stroke-width="13"/>
+    </g>
+    <rect x="210" y="394" width="92" height="20" rx="10" fill="#ffffff" stroke="#ece4d4" stroke-width="4"/>
+  </g>
+  <path d="M112 172l5 12 12 5-12 5-5 12-5-12-12-5 12-5z" fill="#a7f3d0"/>
+</svg>
