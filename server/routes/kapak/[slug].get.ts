@@ -77,6 +77,14 @@ function isPose(v: string): v is PoseKey {
   return v in POSES
 }
 
+/** Ham asset'i metne çevirir; sürücü zaten metin döndürdüyse olduğu gibi. */
+function decodeSvg(raw: unknown): string {
+  if (typeof raw === 'string') return raw
+  if (raw instanceof Uint8Array) return new TextDecoder().decode(raw)
+  if (raw instanceof ArrayBuffer) return new TextDecoder().decode(new Uint8Array(raw))
+  return ''
+}
+
 export default defineEventHandler(async (event) => {
   const slug = String(getRouterParam(event, 'slug') ?? '').replace(/\.png$/, '')
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug))
@@ -100,10 +108,18 @@ export default defineEventHandler(async (event) => {
   const [bold, extra, poseSvg] = await Promise.all([
     store.getItemRaw('fonts/Nunito-Bold.ttf'),
     store.getItemRaw('fonts/Nunito-ExtraBold.ttf'),
-    store.getItem<string>(`maskot/afi-${pose}.svg`),
+    // getItemRaw + TextDecoder, getItem DEĞİL: getItem sürücüye göre içeriği
+    // yorumlayabiliyor ve Vercel derlemesinde metin yerine başka bir şey
+    // döndürdü. String(...) o değeri sessizce "[object Object]" yaptığı için
+    // iç içe SVG hiç basılmadı ve kapak BOŞ DİSKLE 200 döndü: hata yok, log
+    // yok, yalnız eksik maskot.
+    store.getItemRaw(`maskot/afi-${pose}.svg`),
   ])
   if (!bold || !extra) throw createError({ statusCode: 500, statusMessage: 'font_yok' })
-  if (!poseSvg) throw createError({ statusCode: 500, statusMessage: 'maskot_yok' })
+
+  const mascot = decodeSvg(poseSvg)
+  // Boş disk basmaktansa hata ver: sessiz eksik, görülmesi en zor kusur.
+  if (!mascot.includes('<svg')) throw createError({ statusCode: 500, statusMessage: 'maskot_okunamadi' })
 
   return new ImageResponse(
     h(
@@ -190,7 +206,7 @@ export default defineEventHandler(async (event) => {
         h(
           'div',
           { style: { width: '440px', display: 'flex', justifyContent: 'center', alignItems: 'center' } },
-          h('img', { src: dataUri(sahneSvg(String(poseSvg))), width: 430, height: 430 }),
+          h('img', { src: dataUri(sahneSvg(mascot)), width: 430, height: 430 }),
         ),
       ),
       // Alt şerit
