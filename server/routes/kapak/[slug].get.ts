@@ -1,6 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import { getPublishedPost } from '~~/server/utils/contentStore'
-import { dataUri, LOGO_SVG, motifSvg, MOTIFS, type MotifKey } from '~~/server/utils/kapakSvg'
+import { dataUri, LOGO_SVG, POSES, sahneSvg, type PoseKey } from '~~/server/utils/kapakSvg'
 
 /**
  * Blog kapağı, istekte çizilir: /kapak/<slug>.png
@@ -73,8 +73,8 @@ function shorten(text: string, max: number): string {
   return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[,;:.\s]+$/, '')}…`
 }
 
-function isMotif(v: string): v is MotifKey {
-  return v in MOTIFS
+function isPose(v: string): v is PoseKey {
+  return v in POSES
 }
 
 export default defineEventHandler(async (event) => {
@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
   if (!post) throw createError({ statusCode: 404, statusMessage: 'yazi_bulunamadi' })
 
   const q = getQuery(event)
-  const motif: MotifKey = typeof q.motif === 'string' && isMotif(q.motif) ? q.motif : 'sofra'
+  const pose: PoseKey = typeof q.poz === 'string' && isPose(q.poz) ? q.poz : 'temel'
   const tag = typeof q.etiket === 'string' && q.etiket.trim() ? q.etiket.trim().slice(0, 24) : 'afiet blog'
 
   const [head, accent] = splitTitle(post.title)
@@ -97,11 +97,13 @@ export default defineEventHandler(async (event) => {
   // ayrıştırıcısı fvar tablosunda düşüyor (`parseFvarAxis` undefined). İki
   // ağırlık repoda duruyor ve `fontTools.varLib.instancer` ile üretildi.
   const store = useStorage('assets:server')
-  const [bold, extra] = await Promise.all([
+  const [bold, extra, poseSvg] = await Promise.all([
     store.getItemRaw('fonts/Nunito-Bold.ttf'),
     store.getItemRaw('fonts/Nunito-ExtraBold.ttf'),
+    store.getItem<string>(`maskot/afi-${pose}.svg`),
   ])
   if (!bold || !extra) throw createError({ statusCode: 500, statusMessage: 'font_yok' })
+  if (!poseSvg) throw createError({ statusCode: 500, statusMessage: 'maskot_yok' })
 
   return new ImageResponse(
     h(
@@ -188,7 +190,7 @@ export default defineEventHandler(async (event) => {
         h(
           'div',
           { style: { width: '440px', display: 'flex', justifyContent: 'center', alignItems: 'center' } },
-          h('img', { src: dataUri(motifSvg(motif)), width: 430, height: 430 }),
+          h('img', { src: dataUri(sahneSvg(String(poseSvg))), width: 430, height: 430 }),
         ),
       ),
       // Alt şerit

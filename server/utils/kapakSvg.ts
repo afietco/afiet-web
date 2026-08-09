@@ -1,11 +1,13 @@
 /**
  * Kapak görselinin SVG parçaları.
  *
- * Satori CSS filtresi (blur) ve karmaşık SVG'yi doğrudan çizemez; bu yüzden
- * marka şablonundaki (`afiet-brand/social/templates/blog-*.html`) çizimler
- * buraya SVG olarak taşındı ve `<img>` içinde data URI olarak basılıyor.
- * Renkler ve oranlar o şablonlarla BİREBİR aynıdır: beş besin grubu rengi
- * uygulamadaki renklerdir, sebze her zaman en büyük kaptır.
+ * Satori CSS filtresi (blur) ve karmaşık düzeni doğrudan çizemez; çizim bu
+ * yüzden tek bir SVG olarak kurulup `<img>` içinde data URI ile basılıyor.
+ *
+ * Sahne kuralı marka şablonlarından alındı (`afiet-brand/social/templates/
+ * blog-diyet-yapmadan.html`): Afi beyaz bir disk içinde durur, altında beş
+ * besin grubu renginden "denge imzası" sırası vardır. Disk 400, figür 336;
+ * bu oran şablonlarda sabittir ve bozulursa figür diskten taşar.
  */
 
 /** Marka ikonu (public/icon.svg ile aynı çizim, kapak boyutuna sadeleşmiş). */
@@ -22,78 +24,56 @@ export const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51
 <rect x="210" y="394" width="92" height="20" rx="10" fill="#fff"/></g></svg>`
 
 /**
- * Sofra motifi: beyaz sini üstünde beş besin grubu.
+ * Kullanılabilir Afi pozları. Dosyalar afiet-brand'den KOPYALANDI, yeniden
+ * çizilmedi: maskotun tek kaynağı orasıdır ve buhar telleri, yüz ifadesi gibi
+ * kuralları taşır (BRAND.md > Logo). Poz yazının konusuna göre seçilir.
+ */
+export const POSES = {
+  temel: 'Afi olduğu gibi duruyor',
+  su: 'Afi elinde bardakla',
+  kasik: 'Afi kaşığıyla',
+  merak: 'Afi merak ediyor',
+  selam: 'Afi selam veriyor',
+  kutlama: 'Afi kutluyor',
+} as const
+export type PoseKey = keyof typeof POSES
+
+/** Beş besin grubunun uygulamadaki renkleri; sıra da uygulamadaki sıradır. */
+const GRUP_RENKLERI = ['#10b981', '#fbbf24', '#fb923c', '#fb7185', '#38bdf8']
+
+/**
+ * Maskot çizimini disk ve denge imzasıyla birlikte tek SVG'ye kurar.
  *
- * P2 hub kapağının çizimi. Oran anlamlıdır: sebze merkezde ve en büyüktür,
- * yazının tezi ne olursa olsun bu oran değişmez (marka doktrini).
+ * Poz dosyası dıştaki `<svg>` etiketiyle geliyor; iç içe SVG olarak
+ * yerleştirmek için o etikete konum ve boyut veriliyor, gövdesine
+ * dokunulmuyor. Böylece marka dosyası güncellenince kapak da güncellenir.
  */
-const SOFRA = `
-<ellipse cx="236" cy="482" rx="132" ry="13" fill="#022c22" opacity=".07"/>
-<circle cx="236" cy="268" r="196" fill="#ffffff" stroke="#ece4d4" stroke-width="5"/>
-<g stroke="#ffffff" stroke-width="7">
-<circle cx="236" cy="268" r="78" fill="#10b981"/>
-<circle cx="236" cy="132" r="52" fill="#fbbf24"/>
-<circle cx="368" cy="250" r="50" fill="#fb923c"/>
-<circle cx="250" cy="400" r="48" fill="#fb7185"/>
-<circle cx="108" cy="290" r="46" fill="#38bdf8"/></g>
-<g font-family="Nunito" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-.5">
-<text x="236" y="281" font-size="34">sebze</text><text x="236" y="142" font-size="24">tahıl</text>
-<text x="368" y="258" font-size="20">protein</text><text x="250" y="409" font-size="22">meyve</text>
-<text x="108" y="300" font-size="23">süt</text></g>`
+export function sahneSvg(poseSvg: string): string {
+  const inner = poseSvg
+    .replace(/<\?xml[^>]*\?>/g, '')
+    .replace(/<svg[^>]*>/, '<svg x="52" y="16" width="336" height="336" viewBox="0 0 512 512">')
 
-/**
- * Tabak motifi: tek tabak, oranlar dilim olarak. P1 hub kapağının dili;
- * "tek öğün" anlatan yazılarda sofra motifinden daha doğru.
- */
-const TABAK = `
-<ellipse cx="236" cy="482" rx="132" ry="13" fill="#022c22" opacity=".07"/>
-<circle cx="236" cy="268" r="196" fill="#ffffff" stroke="#ece4d4" stroke-width="5"/>
-<g stroke="#ffffff" stroke-width="6">
-<path d="M236 268 L236 96 A172 172 0 0 1 236 440 Z" fill="#10b981"/>
-<path d="M236 268 L236 440 A172 172 0 0 1 114 390 Z" fill="#fbbf24"/>
-<path d="M236 268 L114 390 A172 172 0 0 1 96 200 Z" fill="#fb923c"/>
-<path d="M236 268 L96 200 A172 172 0 0 1 236 96 Z" fill="#38bdf8"/></g>
-<circle cx="236" cy="268" r="46" fill="#ffffff"/>
-<g font-family="Nunito" font-weight="900" fill="#ffffff" text-anchor="middle">
-<text x="348" y="278" font-size="30">sebze</text><text x="196" y="386" font-size="22">tahıl</text>
-<text x="146" y="286" font-size="20">protein</text><text x="196" y="176" font-size="20">süt</text></g>`
+  const dots = GRUP_RENKLERI.map(
+    (c, i) => `<circle cx="${157 + i * 27}" cy="404" r="7" fill="${c}"/>`,
+  ).join('')
 
-/**
- * Ölçü motifi: el ölçüsü rehberlerinin dili. Renkler yine besin gruplarıdır,
- * terminoloji yayındaki yazılarla sabit: avuç içi protein, yumruk sebze.
- */
-const OLCU = `
-<ellipse cx="236" cy="482" rx="132" ry="13" fill="#022c22" opacity=".07"/>
-<circle cx="236" cy="268" r="196" fill="#ffffff" stroke="#ece4d4" stroke-width="5"/>
-<g stroke="#ffffff" stroke-width="7">
-<circle cx="160" cy="196" r="66" fill="#10b981"/><circle cx="312" cy="196" r="60" fill="#fb923c"/>
-<circle cx="160" cy="342" r="58" fill="#fbbf24"/><circle cx="312" cy="342" r="52" fill="#38bdf8"/></g>
-<g font-family="Nunito" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="-.5">
-<text x="160" y="190" font-size="26">yumruk</text><text x="160" y="220" font-size="19">sebze</text>
-<text x="312" y="190" font-size="24">avuç içi</text><text x="312" y="219" font-size="18">protein</text>
-<text x="160" y="336" font-size="22">kapalı</text><text x="160" y="362" font-size="18">tahıl</text>
-<text x="312" y="338" font-size="18">başparmak</text><text x="312" y="362" font-size="17">yağ</text></g>`
-
-export const MOTIFS = { sofra: SOFRA, tabak: TABAK, olcu: OLCU }
-export type MotifKey = keyof typeof MOTIFS
-
-export function motifSvg(key: MotifKey): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="430" height="430">${MOTIFS[key]}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 440" width="430" height="430">
+<circle cx="220" cy="196" r="196" fill="#ffffff" stroke="#ece4d4" stroke-width="2"/>
+${inner}
+${dots}
+</svg>`
 }
 
 /**
  * Satori `<img>` yalnız data URI okur ve URI'yi btoa ile çözer; btoa Latin-1
- * dışını kabul etmediği için çizimdeki Türkçe harfler ("tahıl", "süt",
- * "başparmak") ham utf8 gömmede "Invalid character" veriyordu. UTF-8'i önce
- * base64'e çevirmek bunu tamamen çözer.
+ * dışını kabul etmediği için çizimdeki Türkçe harfler ham utf8 gömmede
+ * "Invalid character" veriyordu. UTF-8'i önce base64'e çevirmek bunu çözer.
  */
 export const dataUri = (svg: string) => `data:image/svg+xml;base64,${utf8ToBase64(svg.replace(/\n/g, ''))}`
 
 /**
  * UTF-8 metni base64'e çevirir. `Buffer` KULLANILMAZ: repoda bilinçli olarak
  * `@types/node` yok (gcsSign.ts da bu yüzden Web Crypto ile imzalıyor).
- * Bayta tek tek çevirip parça parça birleştiriyoruz; tek seferde spread etmek
- * büyük çizimlerde çağrı yığınını taşırır.
  */
 function utf8ToBase64(text: string): string {
   const bytes = new TextEncoder().encode(text)
