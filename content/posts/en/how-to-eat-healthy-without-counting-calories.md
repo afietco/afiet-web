@@ -3,6 +3,7 @@ slug: how-to-eat-healthy-without-counting-calories
 title: "How to eat healthy without counting calories"
 description: "How to eat healthy without counting calories: use hand measures, five food groups and no rules. A calm guide to balance you can keep for years."
 tags: [balanced eating, no calorie counting, hand portions, food groups]
+cover_url: /kapak/how-to-eat-healthy-without-counting-calories.png?poz=selam
 lang: en
 published_at:
 ---
