@@ -3,6 +3,7 @@ slug: what-is-a-balanced-plate
 title: "What is a balanced plate? The five food groups, simply"
 description: "What is a balanced plate? Five food groups, plate proportions from the NHS and Harvard, and how to build one without weighing or counting anything."
 tags: [balanced plate, food groups, healthy plate, nutrition basics]
+cover_url: /kapak/what-is-a-balanced-plate.png?poz=temel
 lang: en
 published_at:
 ---

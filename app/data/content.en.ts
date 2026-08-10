@@ -233,6 +233,23 @@ export const blogEn = {
   endTo: '/en#updates',
 }
 
+/**
+ * /en ana sayfadaki taze yazılar şeridi. TR karşılığı content.ts > homeBlog.
+ *
+ * Eyebrow ve okuma soneki BİLEREK blogEn ile aynı sözcükleri kullanır: şerit
+ * ile /en/blog aynı yerin iki görüntüsüdür, ikisinde ayrı isim okumak
+ * ziyaretçiye iki ayrı bölüm varmış gibi gelir.
+ */
+export const homeBlogEn = {
+  eyebrow: 'the afiet journal',
+  title: 'Fresh from the table',
+  sub:
+    'Balanced eating in the language of the table: no judgement, no calorie ' +
+    'counting, small enough to try at dinner tonight.',
+  cta: 'See all posts',
+  readingSuffix: 'min read',
+}
+
 export const cookieEn = {
   ariaLabel: 'Cookie notice',
   textA: 'To improve afiet.co we measure visits ',
