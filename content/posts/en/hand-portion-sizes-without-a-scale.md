@@ -3,6 +3,7 @@ slug: hand-portion-sizes-without-a-scale
 title: "Hand portion sizes: measure your plate without a scale"
 description: "Hand portion sizes explained: palm, fist, cupped hand and thumb, with gram equivalents and real meals. Judge any plate in seconds, no scale needed."
 tags: [hand portions, portion sizes, portion control, no weighing]
+cover_url: /kapak/hand-portion-sizes-without-a-scale.png?poz=kasik
 lang: en
 published_at:
 ---

@@ -77,6 +77,18 @@ function isPose(v: string): v is PoseKey {
   return v in POSES
 }
 
+/**
+ * Alt şerit yazının DİLİNDEN kurulur. İkisi de sabit metin olduğu için ilk
+ * sürümde Türkçe basılıyordu ve İngilizce bir yazının kapağı altında
+ * "afiet.co/blog" + "Sayma, dengele." duruyordu: yanlış hub (yazı orada
+ * açılmaz, /en/blog'da açılır) ve markanın en görünür yerinde dil karışması.
+ * İngilizce tagline karşılığı content.en.ts > footerEn.tagline ile aynıdır.
+ */
+const FOOTER = {
+  tr: { hub: 'afiet.co/blog', tagline: 'Sayma, dengele.' },
+  en: { hub: 'afiet.co/en/blog', tagline: 'Stop counting. Start balancing.' },
+} as const
+
 /** Ham asset'i metne çevirir; sürücü zaten metin döndürdüyse olduğu gibi. */
 function decodeSvg(raw: unknown): string {
   if (typeof raw === 'string') return raw
@@ -97,6 +109,7 @@ export default defineEventHandler(async (event) => {
   const pose: PoseKey = typeof q.poz === 'string' && isPose(q.poz) ? q.poz : 'temel'
   const tag = typeof q.etiket === 'string' && q.etiket.trim() ? q.etiket.trim().slice(0, 24) : 'afiet blog'
 
+  const footer = FOOTER[post.lang]
   const [head, accent] = splitTitle(post.title)
   const sub = shorten(post.description.split(/(?<=[.!?])\s/)[0] ?? '', 92)
   const chips = post.tags.slice(0, 3)
@@ -213,11 +226,11 @@ export default defineEventHandler(async (event) => {
       h(
         'div',
         { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '20px', fontWeight: 700, color: FAINT } },
-        h('div', { style: { display: 'flex', color: BODY } }, 'afiet.co/blog'),
+        h('div', { style: { display: 'flex', color: BODY } }, footer.hub),
         h(
           'div',
           { style: { display: 'flex', gap: '8px' } },
-          h('span', { style: { color: EMERALD, fontWeight: 800 } }, 'Sayma, dengele.'),
+          h('span', { style: { color: EMERALD, fontWeight: 800 } }, footer.tagline),
           h('span', {}, '· afiet.co'),
         ),
       ),
