@@ -3,6 +3,7 @@ slug: is-turkish-food-healthy
 title: "Is Turkish food healthy? An honest look at the table"
 description: "Is Turkish food healthy? Lentils, olive oil dishes and yogurt say yes; bread, salt and dessert need watching. A balanced look with real numbers."
 tags: [turkish food, turkish cuisine, mediterranean diet, balanced eating]
+cover_url: /kapak/is-turkish-food-healthy.png?poz=kutlama
 lang: en
 published_at:
 ---

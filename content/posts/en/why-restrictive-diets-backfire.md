@@ -3,6 +3,7 @@ slug: why-restrictive-diets-backfire
 title: "Why restrictive diets backfire, and what works instead"
 description: "Why restrictive diets backfire: the rule, the rebound and the guilt loop. What the evidence says about regain, and how to build balance without rules."
 tags: [restrictive diets, yo-yo dieting, sustainable eating, food guilt]
+cover_url: /kapak/why-restrictive-diets-backfire.png?poz=merak
 lang: en
 published_at:
 ---
