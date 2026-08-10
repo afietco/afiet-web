@@ -6,7 +6,8 @@
  *
  * Blog bölümü yerel dev veritabanında boş olabileceğinden /api/blog/posts
  * isteği CANLI prod API'sinin (herkese açık uç) cevabıyla doldurulur; hiçbir
- * veritabanına yazılmaz.
+ * veritabanına yazılmaz. Cevap İSTENEN DİLE göre verilir: tek liste dolduran
+ * bir sürüm /en ekranına Türkçe yazılar basar ve görüntü yalan söyler.
  */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
@@ -18,18 +19,21 @@ const CHROME =
 
 mkdirSync(OUT, { recursive: true })
 
-const livePosts = await fetch('https://afiet.co/api/blog/posts')
-  .then((r) => (r.ok ? r.json() : { posts: [] }))
-  .catch(() => ({ posts: [] }))
+const fetchPosts = (lang) =>
+  fetch(`https://afiet.co/api/blog/posts?lang=${lang}`)
+    .then((r) => (r.ok ? r.json() : { posts: [] }))
+    .catch(() => ({ posts: [] }))
+const [livePosts, livePostsEn] = await Promise.all([fetchPosts('tr'), fetchPosts('en')])
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 
 async function shot(name, path, { width = 1440, height = 900, full = true, before } = {}) {
   const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2 })
   const page = await ctx.newPage()
-  await page.route('**/api/blog/posts', (route) =>
-    route.fulfill({ json: livePosts, contentType: 'application/json' }),
-  )
+  await page.route('**/api/blog/posts**', (route) => {
+    const lang = new URL(route.request().url()).searchParams.get('lang')
+    route.fulfill({ json: lang === 'en' ? livePostsEn : livePosts, contentType: 'application/json' })
+  })
   await page.goto(`${BASE}${path}`, { waitUntil: 'networkidle' })
   // reveal animasyonlari: support-shots.mjs ile ayni desen, IO'ya zaman tani
   await page.evaluate(async () => {
@@ -63,6 +67,8 @@ await shot('05-iletisim-dolu', '/iletisim', {
 await shot('06-iletisim-mobil', '/iletisim', { width: 390, height: 844 })
 await shot('07-navbar-tablet', '/', { width: 768, height: 500, full: false })
 await shot('08-blog-yazi-sonu', `/blog/${livePosts.posts?.[0]?.slug ?? ''}`)
+await shot('09-en-ana-masaustu', '/en')
+await shot('10-en-ana-mobil', '/en', { width: 390, height: 844 })
 
 await browser.close()
 console.log(`Görseller: ${OUT}/`)

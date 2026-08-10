@@ -131,6 +131,9 @@ export const homeBlog = {
   readingSuffix: 'dk okuma',
 }
 
+/** İki dilde de aynı şerit basılır; İngilizce karşılığı content.en.ts > homeBlogEn. */
+export type HomeBlogCopy = typeof homeBlog
+
 export const homeYenilikler = {
   label: 'Taze çıktı',
   linkLabel: 'Neler değişti?',

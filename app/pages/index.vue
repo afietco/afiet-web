@@ -2,6 +2,8 @@
 // Ana sayfa (vitrin). Bölümler app.vue'dan buraya taşındı ki pages/ yönlendirmesi
 // çalışsın; header/footer app.vue'da paylaşılır. Bileşenler Nuxt'ta oto-import.
 // Meta + JSON-LD + SSS içeriği panelden yönetilir (usePageSeo → /api/seo/meta).
+import { homeBlog } from '~/data/content'
+
 const { faq } = usePageSeo()
 </script>
 
@@ -13,7 +15,7 @@ const { faq } = usePageSeo()
   <YeniliklerBand />
   <VoiceSection />
   <HesaplaSection />
-  <BlogSection />
+  <BlogSection :copy="homeBlog" lang="tr" />
   <!-- Afi'ye sor: SSS'nin ÜSTÜNDE kendi başlığıyla durur; SSS boşken de görünür. -->
   <AskAfiSection />
   <FaqSection v-if="faq" :faq="faq" />

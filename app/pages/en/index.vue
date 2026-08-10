@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   heroEn,
+  homeBlogEn,
   measureChipsEn,
   originEn,
   toolsEn,
@@ -346,6 +347,13 @@ const SERIT: Record<string, string> = {
       </div>
     </div>
   </section>
+
+  <!-- ── Taze yazılar ─────────────────────────────────────────────────────
+       TR ana sayfadaki şeridin aynısı (BlogSection, dile göre süzülür). Bu
+       bölüm 10 Ağu 2026'da eklendi: /en'den bloga tek giriş menüdeki linkti,
+       yani en güçlü İngilizce sayfadan yazılara hiç iç bağlantı akmıyordu.
+       İngilizce yazı yoksa bölüm kendini gizler. -->
+  <BlogSection :copy="homeBlogEn" lang="en" />
 
   <!-- ── Updates: beta değil bülten (kullanıcı kararı) ────────────────── -->
   <section id="updates" class="scroll-mt-20" aria-labelledby="updates-title">
