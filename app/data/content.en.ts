@@ -398,10 +398,12 @@ export const aboutEn = {
       accent: 'tahil',
     },
     {
-      title: 'A person is accountable for every published line',
+      title: 'Afi helps, a person is accountable',
       body:
-        'We use AI while drafting. Every post is read end to end and approved ' +
-        'by me before it goes live, and I check each source myself.',
+        'Afi lends a hand while we draft; it knows the language of the table. ' +
+        'But every post is read end to end and approved by me before it goes ' +
+        'live, and I check each source myself. A person is accountable for ' +
+        'every published line.',
       accent: 'meyve',
     },
     {
