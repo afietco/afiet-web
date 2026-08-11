@@ -423,6 +423,7 @@ export const footer = {
     { label: 'Destek', to: '/destek' },
     { label: 'Hesapla', to: '/hesapla' },
     { label: 'Yenilikler', to: '/yenilikler' },
+    { label: 'Hakkında', to: '/hakkinda' },
     { label: 'İletişim', to: '/iletisim' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
@@ -542,6 +543,121 @@ export const iletisim = {
 }
 
 /**
+ * Yazar sayfası (/hakkinda). İngilizce karşılığı content.en.ts > aboutEn,
+ * gövde ikisinde de HakkindaSayfasi.vue.
+ *
+ * NEDEN VAR: beslenme YMYL bir alan; blog ve destek yazılarının Person şeması
+ * bu sayfanın adresine bağlanır (shared/utils/author.ts). Yani burası bir
+ * "hakkımızda" sayfası değil, yazar kimliğinin URL'idir.
+ *
+ * Yazarın adı ve unvanı BURADA DEĞİL author.ts'te: sayfa da künye de şema da
+ * aynı kaydı okur. Buradaki metin o kaydın uzun anlatımıdır.
+ *
+ * Ton: birinci tekil (sayfanın sahibi bir kişi), marka doktrini yine bağlayıcı
+ * (hedef kilo yok, süre vaadi yok, hüküm kuran sıfat yok).
+ */
+export const hakkinda = {
+  eyebrow: 'hakkında',
+  title: 'Bu yazıları kim yazıyor?',
+  sub:
+    'Beslenme üzerine okuduğun her metnin arkasında bir insan var. Burada kim ' +
+    'olduğumu, neye dayanarak yazdığımı ve neyi bilerek yapmadığımızı ' +
+    'anlatıyorum.',
+
+  bioTitle: 'Merhaba',
+  bio: [
+    'Adım Berk Karataş. afiet’i ben kurdum; uygulamayı, bu siteyi ve buradaki ' +
+      'yazıları da ben yazıyorum.',
+    'Diyetisyen değilim, yazılımcıyım. afiet kendi soframda başlayan bir ' +
+      'sorudan çıktı: her lokmayı sayarak geçen bir günün sonunda neden daha ' +
+      'iyi değil de daha yorgun hissediyorum? Sayı bir şey anlatıyordu ama ' +
+      'sofrayı anlatmıyordu. afiet bu yüzden kalori değil ölçü diliyle ' +
+      'konuşuyor: dilim, kase, avuç.',
+    'Aynı ayrımı yazılarda da koruyorum. Burada okuduğun hiçbir metin sana ' +
+      'kişiye özel bir plan vermez; genel bilgi verir ve o bilginin nereden ' +
+      'geldiğini söyler.',
+  ],
+
+  principlesTitle: 'Yazıları nasıl hazırlıyoruz',
+  principles: [
+    {
+      title: 'Kaynağı görünür',
+      body:
+        'Beslenme bilgisi halka açık resmî kaynaklara dayanır. Bir sayı ya da ' +
+        'öneri veriyorsak nereden geldiğini yazının içinde bağlarız; ' +
+        'kaynaksız rakam yayınlamayız.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Tıbbi tavsiye değil',
+      body:
+        'Yazılar genel bir rehberdir. Bir rahatsızlığın, alerjin, gebeliğin ya ' +
+        'da özel bir beslenme planın varsa hekimine ve diyetisyenine danış; ' +
+        'buradaki hiçbir cümle o konuşmanın yerine geçmez.',
+      accent: 'sut',
+    },
+    {
+      title: 'Hedef kilo yok, süre vaadi yok',
+      body:
+        '“Şu kadar haftada şu kadar kilo” cümlesi afiet’te kurulmaz. İdeal ' +
+        'kilo vermeyiz, tarih vermeyiz, suçluluk dili kullanmayız. Ölçümüz ' +
+        'süreklilik, kusursuzluk değil.',
+      accent: 'tahil',
+    },
+    {
+      title: 'Yayınlanan her cümlenin sorumlusu bir insan',
+      body:
+        'Taslak hazırlarken yapay zekâdan yararlanıyoruz. Yayına çıkan her ' +
+        'yazıyı yayınlamadan önce baştan sona ben okuyup onaylıyorum; ' +
+        'kaynakları da tek tek ben kontrol ediyorum.',
+      accent: 'meyve',
+    },
+    {
+      title: 'Eskiyen düzeltilir',
+      body:
+        'Her yazı son güncelleme tarihini taşır. Yanlış ya da eskimiş bir ' +
+        'cümleyi düzeltmek, yeni yazı yazmaktan önce gelir.',
+      accent: 'protein',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  sourcesTitle: 'Sık başvurduğumuz kaynaklar',
+  sourcesSub:
+    'Yazılarda bağlanan kaynaklar bunlarla sınırlı değil, ama çoğu buradan ' +
+    'çıkıyor.',
+  sources: [
+    {
+      label: 'T.C. Sağlık Bakanlığı, Türkiye Beslenme Rehberi (TÜBER)',
+      href: 'https://hsgm.saglik.gov.tr/tr/web-uygulamalarimiz/357.html',
+    },
+    {
+      label: 'Dünya Sağlık Örgütü, Healthy diet',
+      href: 'https://www.who.int/news-room/fact-sheets/detail/healthy-diet',
+    },
+    {
+      label: 'Harvard T.H. Chan, The Healthy Eating Plate',
+      href: 'https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/',
+    },
+    {
+      label: 'NHS, The Eatwell Guide',
+      href: 'https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/',
+    },
+    {
+      label: 'British Dietetic Association, Portion sizes',
+      href: 'https://www.bda.uk.com/resource/food-facts-portion-sizes.html',
+    },
+  ],
+
+  contactTitle: 'Bir şey sormak ya da düzeltmek istersen',
+  contactBody:
+    'Yazıda bir hata gördüysen, eksik bulduysan ya da sadece merhaba demek ' +
+    'istiyorsan yaz: her mesajı gerçekten okuyorum.',
+  contactCta: 'Bize bir kartpostal yaz',
+  contactTo: '/iletisim',
+  mailAddress: 'destek@afiet.co',
+}
+
+/**
  * Destek merkezi metinleri. Yazıların kendisi `content/destek/**.md` içinde;
  * burası yalnız çerçevedir (hub, kategori ve yazı sayfasının sabit metinleri).
  *
@@ -595,6 +711,8 @@ export const support = {
   menuTitle: 'Konular',
   menuToggle: 'Konular arasında gezin',
   updatedPrefix: 'Son güncelleme',
+  // Yazar künyesi; ad ve unvan shared/utils/author.ts'ten gelir.
+  authorPrefix: 'Yazan',
   relatedTitle: 'İlgili yazılar',
   prevLabel: 'Önceki',
   nextLabel: 'Sonraki',
@@ -860,6 +978,12 @@ export const blog = {
   pagesLabel: 'Blog sayfaları',
   pagePrev: 'Önceki sayfa',
   pageNext: 'Sonraki sayfa',
+  /* Yazar künyesi. Ad ve unvan burada DEĞİL shared/utils/author.ts'te; burası
+     yalnız künyenin çevrilebilir sözcükleridir (kimlik iki dilde de tektir). */
+  authorPrefix: 'Yazan',
+  updatedPrefix: 'Son güncelleme',
+  authorCardTitle: 'Bu yazıyı kim yazdı?',
+  authorCardCta: 'Yazar ve yayın ilkeleri',
 }
 
 /**
@@ -1120,6 +1244,7 @@ export type IletisimCopy = typeof iletisim
 export type PrivacyCopy = typeof privacy
 export type HesapSilCopy = typeof hesapSil
 export type BlogCopy = typeof blog
+export type HakkindaCopy = typeof hakkinda
 
 /**
  * Grup davet inişi (/katil/{code}): uygulamadaki GroupHome’un paylaştığı
