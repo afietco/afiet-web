@@ -116,7 +116,8 @@ export function detectAiBot(ua: string): string | null {
  * JSON uçlarımızı taramıyor, kayıp sinyal yok.
  *
  * `/__`: Nuxt hata sayfasını `/__nuxt_error?...` iç isteğiyle render ediyor;
- * o alt istek 200 döner ve gerçek 404'ün yerine geçerdi.
+ * o alt istek 200 döner ve gerçek 404'ün yerine geçerdi. Plugin o adresi bu
+ * filtreye UĞRAMADAN önce ele alır ve gerçek yol/durumu sorgusundan okur.
  *
  * DİKKAT: `.txt` ve `.xml` bilerek DIŞARIDA BIRAKILMADI - robots.txt,
  * sitemap.xml ve llms.txt bu ölçümün en değerli sinyalleridir.
