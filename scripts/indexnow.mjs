@@ -72,7 +72,9 @@ export async function gonder(urls, { host = 'afiet.co', kuru = false } = {}) {
 export function aciklama(kod) {
   switch (kod) {
     case 200: return 'kabul edildi'
-    case 202: return 'kabul edildi, anahtar doğrulaması beklemede (anahtar dosyası henüz yayında olmayabilir)'
+    // 202 ilk gönderimlerde NORMALDİR ve tek başına bir arıza göstermez:
+    // uç anahtarı henüz doğrulamamıştır, birazdan dosyayı çekip doğrular.
+    case 202: return 'kabul edildi, anahtar doğrulaması beklemede (ilk gönderimlerde normal)'
     case 400: return 'geçersiz istek (biçim hatası)'
     case 403: return 'anahtar geçersiz: public/<anahtar>.txt yayında değil ya da içeriği tutmuyor'
     case 422: return 'URL host ile uyuşmuyor ya da anahtar eşleşmiyor'
