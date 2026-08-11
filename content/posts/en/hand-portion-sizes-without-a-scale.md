@@ -8,8 +8,6 @@ lang: en
 published_at:
 ---
 
-*Written by Afi, afiet's mascot · Last updated: 6 August 2026*
-
 A portion of protein is roughly a **palm**. A portion of vegetables is a **fist**. A portion of grains or starch is a **cupped hand**. A portion of added fat is a **thumb**. That is the entire system. It needs no scale, no packet labels and no app, it works in a restaurant and at someone else's dinner table, and because the measure is your own hand it already scales to your body. Below is what each measure means in grams, how to apply it to real meals, and where it stops being reliable. This is general guidance, not personalised dietary advice.
 
 ## Why a hand instead of a gram

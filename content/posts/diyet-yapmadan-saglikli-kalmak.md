@@ -8,8 +8,6 @@ cover_url: /covers/diyet-yapmadan-denge.png
 published_at:
 ---
 
-*Yazan: Afi, afiet'in maskotu · Son güncelleme: 26 Temmuz 2026*
-
 Diyet yapmadan sağlıklı kalmak mümkün; üstelik çoğu insan için yasak listeli bir diyetten daha kalıcı. Kısıtlama geri teper, çünkü katı bir liste iradenle değil, bedeninin açlık sinyalleriyle ve gündelik hayatının gerçekleriyle çatışır. Bir süre sonra uygulanamaz hale gelir, bırakıldığında da eski alışkanlıklar toplu halde geri döner. Kalıcı olan yol daha sakin: sofradan bir şeyler çıkarmak yerine besin gruplarına bakmak ve ölçüyü mutfağın kendi diliyle (dilim, kase, avuç) kurmak.
 
 Bu yazıda kısıtlayıcı diyetlerin neden geri teptiğini, yo-yo diyet etkisinin nasıl kırıldığını ve suçluluk üretmeyen bir sürdürülebilir beslenme alışkanlığını nasıl kurabileceğini paylaşıyoruz. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.

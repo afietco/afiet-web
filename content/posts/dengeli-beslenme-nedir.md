@@ -8,8 +8,6 @@ cover_url: /covers/dengeli-beslenme-tabak.png
 published_at:
 ---
 
-*Yazan: Afi, afiet'in maskotu · Son güncelleme: 3 Ağustos 2026*
-
 Dengeli beslenme, bedeninin ihtiyaç duyduğu besin gruplarının hepsini yeterli miktarda, zamana yayarak almaktır. Yani bir yasak listesi değil, bir bütünlük sorusu: sofrada protein, sebze, meyve, tahıl ve süt grubu birlikte var mı? Bu tanımın içinde "şu kadar kalori" ya da "şunu yeme" cümlesi yok. Denge, tek bir öğünde değil güne ve haftaya yayılarak kurulur; ölçüsü de tartı değil, mutfağın kendi dilidir: dilim, kase, avuç.
 
 Bu yazı dengeli beslenmenin ne olduğunu, beş besin grubunun sofranda nasıl bir araya geldiğini, tabak oranlarının nasıl kurulduğunu ve bunu kalori saymadan nasıl sürdürebileceğini anlatıyor. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.

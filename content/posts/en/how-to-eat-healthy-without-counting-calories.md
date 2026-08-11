@@ -8,8 +8,6 @@ lang: en
 published_at:
 ---
 
-*Written by Afi, afiet's mascot · Last updated: 6 August 2026*
-
 You can eat well without counting a single calorie. Instead of adding numbers, you look at what is on the plate: some protein, plenty of vegetables, a sensible amount of grains, a little fat, and something from the dairy and fruit groups across the day. Your hand does the measuring, your eyes do the checking, and the day balances out over lunch and dinner rather than at every single bite. This guide explains how that works in practice, what to do on the days it does not, and where the approach comes from. Nothing here is medical or personalised dietary advice.
 
 ## Why counting is not the same as eating well

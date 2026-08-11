@@ -1,6 +1,6 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
-import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, makePage } from './seoDefaults'
+import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, ROBOTS_DIRECTIVES, makePage } from './seoDefaults'
 import { getPublishedPost, getTranslationPair } from './contentStore'
 import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
@@ -10,6 +10,7 @@ import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
+import { AUTHOR, personSchema } from '#shared/utils/author'
 import type {
   DeepPartial,
   PageSeo,
@@ -252,7 +253,14 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   const description = page.description || g.defaultDescription
   const ogImage = absolutize(page.ogImage || g.defaultOgImage, g.baseUrl)
   const canonical = page.canonical || g.baseUrl.replace(/\/$/, '') + (path === '/' ? '/' : path)
-  const robots = settings.robots.indexable ? page.robots : 'noindex, nofollow'
+  /* Site kapatıldıysa her sayfa noindex; açıkken sayfanın kendi override'ı
+     (panelden) varsa o, yoksa global direktif satırı basılır. Override
+     BİRLEŞTİRİLMEZ: panelde bir yola robots yazan kişi o sayfanın tamamını
+     kastediyordur (örn. 'noindex, nofollow' satırına max-snippet eklemek
+     anlamsız olurdu). */
+  const robots = settings.robots.indexable
+    ? page.robots || ROBOTS_DIRECTIVES
+    : 'noindex, nofollow'
 
   // Sayfanın dili: /en altı İngilizce (shared/utils/locales.ts). Şemadaki
   // `inLanguage` ve og:locale bunu izler; genel ayardaki locale (tr_TR)
@@ -333,7 +341,12 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       mainEntityOfPage: canonical,
       ...(post.tags.length ? { keywords: post.tags.join(', ') } : {}),
       ...(post.coverUrl ? { image: absolutize(post.coverUrl, g.baseUrl) } : {}),
-      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      /* Yazar Organization DEĞİL Person: beslenme YMYL bir alan ve hem klasik
+         arama hem üretken motorlar "bunu kim yazdı" sorusunun makine okunur
+         cevabını arıyor. Düğüm sayfadaki görünür yazar bloğuyla AYNI kaynaktan
+         gelir (shared/utils/author.ts), yoksa şema sayfanın söylemediğini
+         iddia eder. Yayıncı kurum olarak kalır: yazan kişi, yayınlayan afiet. */
+      author: personSchema(g.baseUrl, post.lang === 'en' ? 'en' : 'tr'),
       publisher: {
         '@type': 'Organization',
         name: g.siteName,
@@ -403,7 +416,9 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       dateModified: supportArticle.updated,
       mainEntityOfPage: canonical,
       articleSection: supportCat.title,
-      author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      // Blogdaki gerekçenin aynısı: destek yazıları da bir kişi tarafından
+      // yazılıyor ve sayfada künyesi görünüyor (destek yazı sayfası).
+      author: personSchema(g.baseUrl, 'tr'),
       publisher: {
         '@type': 'Organization',
         name: g.siteName,
@@ -539,6 +554,42 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         })),
       })
     }
+  }
+
+  // ── Yazar sayfası (/hakkinda, /en/about) ────────────────────────────────
+  // ProfilePage + mainEntity Person: sayfanın KONUSU bir kişidir. Blog ve
+  // destek yazılarındaki `author` düğümü bu sayfanın `@id`siyle aynı kimliği
+  // taşır (shared/utils/author.ts), yani dağınık yüzeyler motorların gözünde
+  // TEK varlığa toplanır. `@id` iki dilde de Türkçe yola bağlıdır: kimlik
+  // dile göre çoğalmaz, yalnız anlatımı çevrilir.
+  if (path === AUTHOR.path.tr || path === AUTHOR.path.en) {
+    const lang = isEn ? 'en' : 'tr'
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'ProfilePage',
+      name: title,
+      url: canonical,
+      description,
+      inLanguage,
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+      mainEntity: {
+        ...personSchema(g.baseUrl, lang),
+        worksFor: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
+      },
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: isEn ? 'Home' : 'Ana sayfa',
+          item: `${base}${isEn ? '/en' : '/'}`,
+        },
+        { '@type': 'ListItem', position: 2, name: isEn ? 'About' : 'Hakkında', item: canonical },
+      ],
+    })
   }
 
   // İngilizce ana sayfa: marka VARLIĞI iki dilde de aynı olmalı (aynı

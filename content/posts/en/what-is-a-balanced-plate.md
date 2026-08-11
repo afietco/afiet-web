@@ -8,8 +8,6 @@ lang: en
 published_at:
 ---
 
-*Written by Afi, afiet's mascot · Last updated: 6 August 2026*
-
 A balanced plate is one where roughly half is vegetables and fruit, a quarter is grains or starch, and a quarter is protein food, with a little fat and something from the dairy group somewhere in the day. That is the whole answer. You do not need to hit it at every meal, and you certainly do not need to weigh anything to get close. Below is where those proportions come from, what each of the five food groups is actually for, and how to build the shape with ordinary meals. This is general information rather than personalised dietary advice.
 
 ## The proportions, from two independent sources

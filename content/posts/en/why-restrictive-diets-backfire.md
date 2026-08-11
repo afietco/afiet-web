@@ -8,8 +8,6 @@ lang: en
 published_at:
 ---
 
-*Written by Afi, afiet's mascot · Last updated: 6 August 2026*
-
 Restrictive diets tend to backfire for a reason that has little to do with willpower. A rule creates a forbidden food, the forbidden food gets more attention rather than less, breaking the rule feels like a personal failure instead of a Tuesday, and the failure becomes the argument for quitting altogether. Meanwhile the eating pattern was never designed to survive a birthday, a holiday or a hard week. What follows is what the evidence says about that cycle, and what a version without rules looks like. This is general information, not medical or personalised dietary advice.
 
 ## The loop, step by step

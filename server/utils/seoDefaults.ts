@@ -47,6 +47,25 @@ const defaultAiBotPolicy: Record<string, boolean> = Object.fromEntries(
   AI_BOTS.map((b) => [b.agent, b.agent !== 'Bytespider']),
 )
 
+/**
+ * İndekslenen her sayfanın `robots` meta'sı. Üç direktif de bir SINIRI KALDIRIR,
+ * yeni bir izin istemez:
+ *   - `max-snippet:-1`        → arama sonucundaki metin parçasına uzunluk sınırı yok
+ *   - `max-image-preview:large` → görsel önizlemesi büyük boy çıkabilir
+ *   - `max-video-preview:-1`  → video önizlemesine süre sınırı yok
+ * Varsayılan davranış Google'da zaten bunlara yakındır ama AÇIKÇA verilmediğinde
+ * motor kendi sınırını uygular; AI Overviews/alıntı yüzeyinde alıntılanabilir
+ * metnin uzunluğu doğrudan bu satıra bakar. `index, follow` bilinçli olarak
+ * başta durur: tek meta etiketinde hem indeksleme hem sınır bilgisi bulunsun.
+ *
+ * Bu değer PANELDEN YÖNETİLMEZ (kullanıcı kararı, 11 Ağu 2026): pratikte hiç
+ * değişmeyen bir sabit için iki repoya alan açmanın karşılığı yok. Sayfa bazlı
+ * istisna yine panelden verilebilir - `seo_pages[<yol>].robots` doluysa o
+ * değer bu satırın TAMAMININ yerine geçer (birleştirilmez).
+ */
+export const ROBOTS_DIRECTIVES =
+  'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
+
 export const DEFAULT_SETTINGS: SeoSettings = {
   general: {
     siteName: 'afiet',
@@ -110,6 +129,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - [Hesaplama araçları](${SITE_URL}/hesapla): günlük besin ihtiyacı hesabı. Sonuç el ölçüsüyle verilir (avuç içi, yumruk, kapalı avuç, başparmak); kalori ve gram isteğe bağlı bir bölümde durur. İdeal kilo, hedef kilo ve süre vaadi ÜRETİLMEZ; 18 yaş altında hedef verilmez.
 - [Destek merkezi tam metin](${SITE_URL}/llms-full.txt): tüm destek yazılarının gövdesi tek dosyada.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
+- [Hakkında](${SITE_URL}/hakkinda): yazıları kimin yazdığı, hangi kaynaklara dayandığı ve yayın ilkeleri.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
 - İletişim: destek@afiet.co
@@ -314,6 +334,21 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
   ...SUPPORT_CATEGORY_PAGES,
+  /* Yazar sayfası. Blog ve destek yazılarının Person şeması buraya bağlanır
+     (shared/utils/author.ts), yani bu sayfa yalnız bir "hakkımızda" değil,
+     yazar kimliğinin URL'idir: kaldırılırsa şemadaki `url`/`@id` boşa düşer. */
+  '/hakkinda': makePage({
+    title: 'Hakkında | afiet’i kim yazıyor?',
+    description:
+      'afiet’i kuran ve buradaki yazıları yazan kişi, yazıların hangi kaynaklara ' +
+      'dayandığı ve neyi bilerek yapmadığımız: hedef kilo yok, süre vaadi yok, ' +
+      'tıbbi tavsiye yok.',
+    ogTitle: 'Bu yazıları kim yazıyor?',
+    ogDescription:
+      'Beslenme üzerine okuduğun her metnin arkasında bir insan var. afiet.co’da ' +
+      'kim olduğumuzu ve neye dayanarak yazdığımızı açıkça anlatıyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.5 },
+  }),
   '/iletisim': makePage({
     title: 'İletişim | afiet',
     description:
@@ -546,6 +581,22 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'Balanced eating without counting: hand-measure portions, five food groups ' +
       'and the family table.',
     sitemap: { include: false, changefreq: 'weekly', priority: 0.6 },
+  }),
+  /* İngilizce yazar sayfası. /en 6 Ağu 2026'da park edilmişti; bu sayfa
+     bilinçli istisnadır (kullanıcı kararı, 11 Ağu 2026): /en/blog prod'da
+     canlı olduğu için İngilizce yazının yazar bağlantısı da İngilizce bir
+     sayfaya düşmeli, okur dil değiştirmeye zorlanmamalı. */
+  '/en/about': makePage({
+    title: 'About | who writes afiet',
+    description:
+      'Who founded afiet and writes these guides, which public health sources ' +
+      'they follow, and what we deliberately never do: no target weight, no ' +
+      'timelines, no medical advice.',
+    ogTitle: 'Who writes these guides?',
+    ogDescription:
+      'There is a person behind every text you read about food. Here is who ' +
+      'writes afiet and what the guides are based on.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.4 },
   }),
   /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
   '/en/newsletter/confirm': makePage({
