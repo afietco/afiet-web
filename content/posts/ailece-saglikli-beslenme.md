@@ -8,8 +8,6 @@ cover_url: /covers/aile-sofrasi-rehberi.png
 published_at:
 ---
 
-*Yazan: afiet ekibi · Son güncelleme: 20 Temmuz 2026*
-
 Ailece sağlıklı beslenme, buzdolabına yeni bir kurallar listesi asmakla değil, birlikte tekrarlanan küçük bir sofra ritüeliyle kurulur. İşin özü sade bir iş bölümünde: sen ne sunacağını, nerede ve ne zaman yiyeceğinizi ayarlarsın; çocuk kendi iştahını, ne kadar yiyeceğini keşfeder. Kalori ya da gram hesabı yapmana gerek yok. Besin gruplarına ve sofranın kendi ölçülerine (dilim, kase, avuç) bakmak, çoğu aile için hem daha kolay hem daha kalıcı.
 
 Bu yazıda yaklaşık 2 ile 10 yaş arası çocuğu olan ebeveynler için, seçici yeme ve akşam telaşı gerçeğini yok saymadan, suçluluk üretmeyen bir aile sofrası alışkanlığını nasıl kurabileceğini paylaşıyoruz. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.

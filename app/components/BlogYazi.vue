@@ -10,12 +10,14 @@ import type { SiteLocale } from '#shared/utils/locales'
  * Yazı sonundaki çağrı dile göre değişir: Türkçe okuru /beta'ya, İngilizce
  * okuru bültene davet eder (uygulama bugün Türkçe, EN'de beta formu yok).
  */
-defineProps<{
+const props = defineProps<{
   post: {
     title: string
     tags: string[]
     coverUrl: string | null
     publishedAt: string | null
+    /** Yayın tarihinden farklıysa künyede "son güncelleme" olarak görünür. */
+    updatedAt?: string | null
     readingMinutes: number | null
     html: string
   }
@@ -33,6 +35,16 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
         year: 'numeric',
       }).format(new Date(iso))
     : ''
+
+/* Güncelleme tarihi yalnız yayın GÜNÜNDEN farklıysa gösterilir: her yayında
+   saat düzeyinde değişen bir alanı künyeye basmak "bugün güncellendi" gibi
+   yanlış bir tazelik iddiası olurdu. */
+const updated = computed(() => {
+  const u = props.post.updatedAt
+  if (!u) return null
+  const day = (iso: string) => iso.slice(0, 10)
+  return props.post.publishedAt && day(u) === day(props.post.publishedAt) ? null : u
+})
 </script>
 
 <template>
@@ -44,14 +56,23 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
       <h1 class="mt-4 font-display text-4xl leading-tight font-semibold tracking-[-0.02em] text-ink sm:text-[2.75rem]">
         {{ post.title }}
       </h1>
-      <p class="mt-3 text-sm font-bold text-muted">
-        <time v-if="post.publishedAt" :datetime="post.publishedAt">{{
-          fmtDate(post.publishedAt, lang)
-        }}</time>
-        <template v-if="post.readingMinutes">
-          · {{ post.readingMinutes }} {{ copy.readingSuffix }}</template
-        >
-      </p>
+      <!-- Yazar künyesi: yazının kim tarafından yazıldığı okumaya başlamadan
+           görünür. Ad/unvan shared/utils/author.ts'ten; aynı kayıt Person
+           JSON-LD'sini de besliyor (seoStore), yani ikisi ayrışamaz. -->
+      <YazarSatiri :prefix="copy.authorPrefix" :lang="lang" class="mt-5">
+        <template #meta>
+          <time v-if="post.publishedAt" :datetime="post.publishedAt">{{
+            fmtDate(post.publishedAt, lang)
+          }}</time>
+          <template v-if="post.readingMinutes">
+            · {{ post.readingMinutes }} {{ copy.readingSuffix }}</template
+          >
+          <template v-if="updated">
+            · {{ copy.updatedPrefix }}:
+            <time :datetime="updated">{{ fmtDate(updated, lang) }}</time>
+          </template>
+        </template>
+      </YazarSatiri>
       <p v-if="post.tags.length" class="mt-4 flex flex-wrap gap-2">
         <span
           v-for="t in post.tags"
@@ -78,6 +99,16 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
     <div class="post-body mt-8" v-html="post.html" />
 
     <footer class="mt-12 border-t border-line pt-8">
+      <!-- Yazar kartı: metni bitiren okurun "bunu yazan kim" sorusu tam burada
+           doğar; bülten kutusundan ÖNCE durur ki güven sorusu çağrıdan önce
+           cevaplansın. -->
+      <YazarKarti
+        :title="copy.authorCardTitle"
+        :cta="copy.authorCardCta"
+        :lang="lang"
+        class="mb-6"
+      />
+
       <!-- Yazıyı bitiren okur en sıcak kitledir: bülten kutusu burada durur. -->
       <div class="rounded-3xl border border-line bg-surface p-6 shadow-lift sm:p-7">
         <h2 class="font-display text-xl font-semibold tracking-tight text-ink">
@@ -125,10 +156,11 @@ const fmtDate = (iso: string | null, lang: SiteLocale) =>
   letter-spacing: -0.01em;
 }
 /* Editoryal giriş: ilk paragrafın ilk harfi Fraunces gömme başlık (drop cap).
-   Gövdenin ilk paragrafı KÜNYEDİR (`*Yazan: Afi …*`, yani tek bir <em>), o
-   yüzden gömme başlık ona değil ondan sonraki ilk gerçek paragrafa uygulanır.
-   Eskiden künyenin "Y"si dev harf oluyordu ve yayındaki bütün yazılarda
-   böyleydi; künyesiz bir yazı gelirse ikinci kural onu yakalar. */
+   Künye 11 Ağu 2026'da gövdeden ÇIKARILDI (artık YazarSatiri bileşeninde ve
+   tek kaynağı shared/utils/author.ts), yani normalde ilk paragraf gerçek
+   paragraftır ve ikinci kural çalışır. Birinci kural DURUYOR: yayındaki
+   yazılar yeniden yayınlanana kadar veritabanındaki gövdelerde künye satırı
+   (`*Yazan: …*`, tek bir <em>) hâlâ var ve onun "Y"si dev harf olmamalı. */
 .post-body :deep(> p:first-child:has(> em:only-child) + p)::first-letter,
 .post-body :deep(> p:first-child:not(:has(> em:only-child)))::first-letter {
   float: left;
