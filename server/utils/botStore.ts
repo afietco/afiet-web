@@ -17,10 +17,16 @@ import { AI_BOTS } from '~~/server/utils/seoDefaults'
  * bir yol (taze ya da bayat) doğrudan CDN'den servis edilir, fonksiyonumuz hiç
  * çalışmaz, dolayısıyla bu kayıt da düşmez. Bayat kayıtta tetiklenen tazeleme
  * AYRI bir iç istektir (UA'sı "node") ve botun kendi isteği değildir.
- * Pratikte tam kapsanan yollar `routeRules`ta ISR'siz olanlardır:
- * /robots.txt, /sitemap.xml, /llms.txt, /llms-full.txt. Tarayıcılar taramadan
- * önce robots.txt'yi hep çektiği için bu "hangi bot aktif" nabzı GÜVENİLİRDİR;
- * sayfa bazlı sayılar ise ALT SINIRDIR, gerçek tarama bundan fazladır.
+ * ISR'siz olan yollar (/robots.txt, /sitemap.xml, /llms.txt, /llms-full.txt)
+ * çok daha iyi kapsanır ama hepsi eşit değildir, çünkü ISR olmasa da
+ * handler'ları `s-maxage` verip CDN'e cache'letiyor:
+ *   - /robots.txt   : s-maxage YOK (bu ölçüm için bilerek kaldırıldı) → TAM
+ *   - /sitemap.xml  : s-maxage=300 → aynı 5 dk'ya düşen ikinci istek görünmez
+ *   - /llms.txt     : s-maxage=300 → aynı
+ *   - /llms-full.txt: s-maxage=900 → aynı, 15 dk
+ * Tarayıcılar taramaya robots.txt'den başladığı ve orası artık cache'siz
+ * olduğu için "hangi bot aktif, ne zaman geldi" nabzı GÜVENİLİRDİR. Sayfa
+ * bazlı sayılar ise ALT SINIRDIR, gerçek tarama bundan fazladır.
  * Tam kapsam Log Drains (Pro ve üstü) ya da Vercel log API'sinden aktarım ister.
  *
  * ⚠️ 429 SINIRI: platform seviyesinde (Vercel DDoS/firewall) verilen 429 bizim
