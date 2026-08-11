@@ -12,8 +12,13 @@ import { parseRange } from '~~/server/utils/analyticsReport'
  */
 const GUN: Record<string, number> = { '7d': 7, '30d': 30, '90d': 90 }
 
-/** ISR'siz oldukları için tam kapsanan yollar (tarayıcı nabzı). */
+/**
+ * Tarayıcı nabzı: ISR'siz yollar. Aralarında YALNIZ /robots.txt tamdır
+ * (CDN cache'i bu ölçüm için kaldırıldı); diğerleri `s-maxage` ile 5-15 dakika
+ * cache'lendiği için aynı pencereye düşen ikinci isteği göstermez.
+ */
 const NABIZ_YOLLARI = ['/robots.txt', '/sitemap.xml', '/llms.txt', '/llms-full.txt']
+const TAM_KAPSANAN = ['/robots.txt']
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -101,12 +106,18 @@ export default defineEventHandler(async (event) => {
     nabiz,
     sonHatalar,
     kapsam: {
-      tamKapsananYollar: NABIZ_YOLLARI,
+      tamKapsananYollar: TAM_KAPSANAN,
+      nabizYollari: NABIZ_YOLLARI,
       not:
         'Sayfa bazlı sayılar ALT SINIRDIR: içerik sayfaları ISR ile CDN`de ' +
         'cache`lendiği için cache`ten dönen bot istekleri sunucuya ulaşmaz ve ' +
-        'buraya düşmez. Yukarıdaki yollar ISR`siz olduğundan tam kapsanır. ' +
-        'Platform seviyesinde verilen 429 da bu tabloda görünmez.',
+        'buraya düşmez. Nabız yolları ISR`siz olduğu için çok daha iyi ' +
+        'kapsanır, ama tam olan yalnız /robots.txt`tir (CDN cache`i bu ölçüm ' +
+        'için kaldırıldı); sitemap ve llms yolları s-maxage ile 5-15 dakika ' +
+        'cache`lendiğinden aynı pencereye düşen ikinci isteği göstermez. ' +
+        'Tarayıcılar taramaya robots.txt`ten başladığı için "hangi bot aktif" ' +
+        'sorusu yine güvenilir cevaplanır. Platform seviyesinde verilen 429 ' +
+        'fonksiyona ulaşmadığı için bu tabloda hiç görünmez.',
     },
   }
 })
