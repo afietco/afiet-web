@@ -367,6 +367,27 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Token/sır loglanmaz: Graph hataları URL'siz, yalnız type+code+message olarak
   yazılır (URL'de access_token olabilir).
 
+## Basın kiti (/basin + /en/press)
+
+- **Tek cümlelik marka tanımı** `shared/utils/marka.ts > MARKA_TANIM`tadır ve
+  TEK KAYNAKTIR (kullanıcı kararı, 11 Ağu 2026). Ana sayfanın meta
+  description'ı, `SoftwareApplication` şeması ve basın sayfası aynı cümleyi
+  İÇERİ AKTARIR; hiçbir yere elle kopyalanmaz. Karakter sınırı yüzünden
+  kısaltılan üç yer (App Store Subtitle 30, Play kısa açıklama 80, Wikidata)
+  dosyanın başında istisna olarak sayılıdır. Künye alanları (slogan, lansman
+  penceresi, platformlar) `MARKA_KUNYE`den gelir.
+- Gövde `BasinKiti.vue`, kopya `content.ts > basin` / `content.en.ts > pressEn`
+  (anahtarlar birebir aynı). Sayfa gazeteciyi ikna etmez, işini kolaylaştırır:
+  hiçbir malzeme form arkasında durmaz ve kanıtlanamayan rakam yazılmaz.
+- **Dosyalar `public/basin-kiti/` altında, sayfanın yolu `/basin`.** İkisi
+  BİLEREK ayrı adtadır: public/ altında rotayla aynı adı taşıyan bir klasör o
+  rotayı gölgeler ve `/basin` isteği `/basin/` dizinine 301'lenir. Smoke bunu
+  `redirect: 'manual'` ile kontrol eder.
+- Malzeme `npm run basin-kiti` ile afiet-brand'den üretilir (logolar + App
+  Store ekranları + ZIP). Script yalnız bu Mac'te koşar (afiet-brand uzakta
+  yok), çıktısı repoda yaşar; CI onu üretmez, var kabul eder. Koyu zemin için
+  beyaz kilit brand'de YOK, script iki dokümante rengi değiştirerek türetir.
+
 ## Komutlar
 
 - `npm run dev` / `build` / `preview`
@@ -375,6 +396,8 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   bu Mac'te sistem Chrome'u, CI'da `CHROME_PATH`
 - `npm run assets` - `public/og.png` ve `public/favicon.ico`'yu yeniden üretir
   (`scripts/generate-assets.mjs`)
+- `npm run basin-kiti` - basın malzemesini afiet-brand'den yeniden üretir
+  (`scripts/basin-kiti.mjs`, çıktı `public/basin-kiti/`)
 
 ## Bilinen tuhaflıklar
 

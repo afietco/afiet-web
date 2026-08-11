@@ -11,3 +11,4 @@ dist
 *.log
 .shots
 .shots-ui
+.basin-stage

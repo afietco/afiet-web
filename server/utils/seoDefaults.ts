@@ -4,6 +4,7 @@ import type {
   SeoBundle,
   SeoSettings,
 } from './seoTypes'
+import { MARKA_TANIM } from '#shared/utils/marka'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -14,9 +15,12 @@ import { SUPPORT_CATEGORIES } from './supportCategories'
 
 const SITE_URL = 'https://afiet.co'
 const TITLE = 'afiet | Sayma, dengele.'
-const DESCRIPTION =
-  'Kalori saydırmadan, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) ' +
-  'ailece dengeli beslenme alışkanlığı. Beta şimdi açık; App Store ve Google Play yakında.'
+/**
+ * Ana sayfanın meta açıklaması = tek cümlelik marka tanımının KENDİSİ
+ * (`#shared/utils/marka`). Buraya ayrı bir metin yazma: tanım tek yerde
+ * yaşar, kampanya/CTA cümlesi `ogDescription`a ve panele bırakılır.
+ */
+const DESCRIPTION = MARKA_TANIM.tr
 
 /**
  * AI botları - Temmuz 2026 durumu (kaynaklar: sağlayıcıların resmi crawler
@@ -168,10 +172,9 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       name: 'afiet',
       operatingSystem: 'iOS, Android',
       category: 'HealthApplication',
-      description:
-        'afiet, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) kalori ' +
-        'saydırmadan ailece dengeli beslenme alışkanlığı kurmana yardımcı olan bir ' +
-        'mobil uygulamadır. Beş besin grubunu renklerle gösterir, yargılamaz.',
+      /* İlk cümle tanımın kendisidir (tek kaynak); ikinci cümle şemaya özgü
+         ayrıntıdır, tanımın yerine geçmez. */
+      description: `${MARKA_TANIM.tr} Beş besin grubunu renklerle gösterir, yargılamaz.`,
       appStoreUrl: '',
       playStoreUrl: '',
     },
@@ -449,6 +452,21 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'süre vaat etmiyoruz.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
   }),
+  /* Basın kiti. Hedef okuru gazetecidir, arama kullanıcısı değil: meta'sı
+     "afiet nedir" sorusuna değil "bu markanın basın malzemesi nerede"
+     sorusuna cevap verir. Sayfanın kendisi indekslenir (altbilgiden bağlıdır)
+     ama sitemap önceliği düşüktür. */
+  '/basin': makePage({
+    title: 'Basın kiti | afiet',
+    description:
+      'afiet basın kiti: logo paketi, uygulama ekran görüntüleri, tek cümlelik ' +
+      'tanım, kurucu künyesi ve iletişim. Yayınlarda serbestçe kullanılabilir.',
+    ogTitle: 'afiet basın kiti',
+    ogDescription:
+      'Logo, ekran görüntüleri, marka tanımı ve iletişim tek sayfada. ' +
+      'Haber ve incelemelerde serbestçe kullanabilirsin.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:
@@ -599,6 +617,17 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'monthly', priority: 0.4 },
   }),
   /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
+  '/en/press': makePage({
+    title: 'Press kit | afiet',
+    description:
+      'afiet press kit: logo pack, app screenshots, the one-sentence ' +
+      'description, founder details and contact. Free to use in coverage.',
+    ogTitle: 'afiet press kit',
+    ogDescription:
+      'Logos, screenshots, the brand description and contact details on one ' +
+      'page. Free to use in articles and reviews.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
   '/en/newsletter/confirm': makePage({
     title: 'Newsletter | afiet',
     description: 'Confirm your afiet newsletter subscription.',
