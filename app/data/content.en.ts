@@ -157,6 +157,7 @@ export const footerEn = {
     { label: 'Why afiet?', to: '/en#why' },
     { label: 'Calculators', to: '/en/tools' },
     { label: 'About', to: '/en/about' },
+    { label: 'Press', to: '/en/press' },
     { label: 'Contact', to: '/en/contact' },
     { label: 'Privacy', to: '/en/privacy' },
     { label: 'Delete account', to: '/en/delete-account' },
@@ -873,6 +874,132 @@ export const deleteAccountEn = {
     'destek@afiet.co from your registered email address. After verifying your ' +
     'identity we delete your account and all your data within 30 days at the latest.',
   emailCta: 'Send an email',
+}
+
+/**
+ * Press kit (/en/press). Türkçesinin AYNI gövdesini basar (BasinKiti.vue);
+ * burada yalnız kopya çevrilir. Anahtarlar `content.ts > basin` ile birebir
+ * aynıdır, biri eklenirse öteki de eklenir.
+ *
+ * İngilizce sayfa BİLİNÇLİ olarak yaşıyor (kullanıcı kararı, 11 Ağu 2026):
+ * /en genel olarak park edilmiş olsa da yabancı basına verilecek adres budur
+ * ve gazeteciye Türkçe sayfa gönderilmez.
+ */
+export const pressEn = {
+  eyebrow: 'press',
+  title: 'afiet press kit',
+  sub:
+    'Everything you need for an article, a review or a roundup is on this ' +
+    'page. All of it is free to use in coverage; you do not need to ask first.',
+
+  tanimTitle: 'One-sentence description',
+  tanimNote: 'This is the official sentence describing afiet. Use it as it is.',
+  kopyala: 'Copy',
+  kopyalandi: 'Copied',
+
+  kunyeTitle: 'Fact sheet',
+  kunyeLabels: {
+    ad: 'Name',
+    tagline: 'Tagline',
+    kategori: 'Category',
+    platformlar: 'Platforms',
+    lansman: 'Launch',
+    ulke: 'Based in',
+    dil: 'App language',
+    site: 'Web',
+    eposta: 'Contact',
+  },
+  kategori: 'Nutrition and health app',
+  adNot: 'The name is always lowercase: afiet. It stays lowercase even at the start of a sentence.',
+
+  uzunTitle: 'Long description',
+  uzunNote: 'For the "about afiet" paragraph at the end of an article.',
+  uzun: [
+    'The app asks for portions in the measures people actually use at the ' +
+      'table: how many slices, how many bowls, one handful. More than two ' +
+      'thousand Turkish dishes and foods ship with it. The day is shown as the ' +
+      'balance of five food groups in colors; it never asks for a target weight ' +
+      'and never promises a timeline. You can also start a group with the people ' +
+      'you eat with and follow the balance together.',
+    'afiet is built in Türkiye and launches on iOS and Android in August 2026. ' +
+      'It is not a medical device and does not give medical advice.',
+  ],
+
+  yanlisTitle: 'Three things to get right',
+  yanlis: [
+    {
+      title: 'Not a calorie counter',
+      body:
+        'afiet does not frame the day around a calorie target. Energy and macro ' +
+        'figures sit in the app as information; the measure of the day is the ' +
+        'balance of the five groups.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Not a diet app',
+      body:
+        'No banned lists, no restriction plans, no "lose this much in that many ' +
+        'weeks". The metric is consistency, not perfection.',
+      accent: 'meyve',
+    },
+    {
+      title: 'The name is never capitalised',
+      body:
+        'Not "Afiet" and not "AFIET", always "afiet". It stays lowercase at the ' +
+        'start of a sentence, and in the logo too.',
+      accent: 'tahil',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  varlikTitle: 'Downloads',
+  varlikSub:
+    'Everything in one archive, or file by file. You may crop and resize the ' +
+    'images; just do not alter what is in them.',
+  zipLabel: 'Download the press kit',
+  zipNote: 'Logo pack (SVG + PNG) and six screenshots in a single archive.',
+
+  logoTitle: 'Logo',
+  logoSub: 'Use the primary lockup on light backgrounds and the white one on dark.',
+  logoIndir: 'SVG',
+
+  ekranTitle: 'Screenshots',
+  ekranSub: 'Click an image to open it at full resolution (1284 × 2778).',
+
+  varlikAdlari: {
+    kilit: 'Horizontal lockup',
+    kelime: 'Wordmark',
+    afi: 'Afi (icon)',
+    beyaz: 'White lockup for dark backgrounds',
+    bugun: 'Today screen',
+    kayit: 'Quick meal entry',
+    denge: 'Balance of the day',
+    grubum: 'My group',
+    vucudum: 'My body',
+    rehber: 'Food guide',
+  } as Record<string, string>,
+
+  kurallarTitle: 'Brand usage',
+  kurallarYapTitle: 'Do',
+  kurallarYap: [
+    'Use the logo exactly as it comes in the pack.',
+    'Leave clear space of at least the height of Afi around it.',
+    'Switch to the white version on dark backgrounds.',
+  ],
+  kurallarYapmaTitle: 'Do not',
+  kurallarYapma: [
+    'Recolour it, or add shadows and outlines.',
+    'Stretch, skew or rotate it.',
+    'Add text over a screenshot and present it as an official image.',
+  ],
+
+  kurucuTitle: 'Founder',
+  kurucuNot: 'For interviews, a demo or extra images, write directly.',
+
+  iletisimTitle: 'If you need anything else',
+  iletisimBody:
+    'Ask if you need an image, a screen recording or a figure that is not ' +
+    'listed here. Press messages get an answer the same day.',
+  mailAddress: 'destek@afiet.co',
 }
 
 export type { Accent, SocialIcon }

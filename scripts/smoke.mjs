@@ -132,6 +132,33 @@ try {
     'İngilizce sayfa İngilizce unvan basıyor ama kimlik (@id) aynı kalıyor',
   )
 
+  /* --- Basın kiti (/basin + /en/press) ---
+     İki tuzağı birden bekler:
+     1. `public/basin-kiti/` klasörü sayfayla AYNI adı taşısaydı statik sunucu
+        /basin isteğini dizine 301'lerdi; 200 beklemek bunu yakalar.
+     2. Sayfadaki tek cümlelik tanım `shared/utils/marka.ts`ten gelir. Kopyası
+        çıkarılırsa metin ayrışır, bu yüzden cümlenin kendisi aranır. */
+  const basinRes = await fetch(`http://localhost:${PORT}/basin`, { redirect: 'manual' })
+  const basinHtml = await basinRes.text()
+  ok(basinRes.status === 200, `/basin 200, yönlendirme yok (${basinRes.status})`)
+  ok(
+    basinHtml.includes('ailelerin dengeli beslenme alışkanlığı kurmasına'),
+    '/basin tek cümlelik marka tanımını basıyor',
+  )
+  ok(basinHtml.includes('Berk Karataş'), '/basin kurucu künyesini gösteriyor')
+  ok(sitemap.includes('/basin'), 'sitemap /basin sayfasını içeriyor')
+
+  const kitRes = await fetch(`http://localhost:${PORT}/basin-kiti/afiet-basin-kiti.zip`)
+  ok(kitRes.status === 200, `basın kiti arşivi indirilebiliyor (${kitRes.status})`)
+
+  const pressEnRes = await fetch(`http://localhost:${PORT}/en/press`)
+  const pressEnHtml = await pressEnRes.text()
+  ok(pressEnRes.status === 200, `/en/press 200 (${pressEnRes.status})`)
+  ok(
+    pressEnHtml.includes('hreflang="tr"') && pressEnHtml.includes('/basin'),
+    '/en/press Türkçe eşine hreflang veriyor',
+  )
+
   // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---
   const blogRes = await fetch(`http://localhost:${PORT}/blog`)
   const blogHtml = await blogRes.text()

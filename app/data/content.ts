@@ -424,6 +424,7 @@ export const footer = {
     { label: 'Hesapla', to: '/hesapla' },
     { label: 'Yenilikler', to: '/yenilikler' },
     { label: 'Hakkında', to: '/hakkinda' },
+    { label: 'Basın', to: '/basin' },
     { label: 'İletişim', to: '/iletisim' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
@@ -656,6 +657,135 @@ export const hakkinda = {
   contactTo: '/iletisim',
   mailAddress: 'destek@afiet.co',
 }
+
+/**
+ * Basın kiti (/basin). Okuru gazetecidir: burada ikna edilmez, İŞİ
+ * KOLAYLAŞTIRILIR. Kural, sayfadaki her cümlenin ya doğrulanabilir bir olgu ya
+ * da doğrudan kopyalanabilir bir metin olmasıdır. Kullanıcı/indirme sayısı gibi
+ * kanıtlanamayan rakam BURAYA GİRMEZ (basına verilen her sayı geri sorulur).
+ *
+ * Tek cümlelik tanım ve künye alanları buradan DEĞİL `#shared/utils/marka`dan
+ * gelir; bu dosya yalnız etiketleri ve çerçeve metnini taşır.
+ */
+export const basin = {
+  eyebrow: 'basın',
+  title: 'afiet basın kiti',
+  sub:
+    'Haber, inceleme ya da liste yazısı hazırlıyorsan ihtiyacın olan her şey bu ' +
+    'sayfada. Malzemenin tamamı yayınlarda serbestçe kullanılabilir, ayrıca izin ' +
+    'istemene gerek yok.',
+
+  tanimTitle: 'Tek cümlelik tanım',
+  tanimNote: 'afiet’i tarif eden resmî cümle budur; yazında olduğu gibi kullanabilirsin.',
+  kopyala: 'Kopyala',
+  kopyalandi: 'Kopyalandı',
+
+  kunyeTitle: 'Künye',
+  kunyeLabels: {
+    ad: 'Ad',
+    tagline: 'Slogan',
+    kategori: 'Kategori',
+    platformlar: 'Platformlar',
+    lansman: 'Lansman',
+    ulke: 'Merkez',
+    dil: 'Uygulama dili',
+    site: 'Web',
+    eposta: 'İletişim',
+  },
+  kategori: 'Beslenme ve sağlık uygulaması',
+  adNot: 'Adı her yerde küçük harfle yazılır: afiet. Cümle başında bile büyütülmez.',
+
+  uzunTitle: 'Uzun tanım',
+  uzunNote: 'Haberin sonundaki “afiet hakkında” paragrafı için.',
+  uzun: [
+    'Uygulama porsiyonu gram yerine sofranın kendi ölçüsüyle sorar: kaç dilim, ' +
+      'kaç kase, bir avuç. Menemenden mercimek çorbasına iki binden fazla Türk ' +
+      'yemeği ve besin hazır gelir. Gün, beş besin grubunun dengesi üzerinden ' +
+      'renklerle görünür; hedef kilo sorulmaz, süre vaat edilmez. Sevdiklerinle ' +
+      'grup kurup dengeyi birlikte takip edebilirsin.',
+    'afiet Türkiye’de geliştiriliyor ve iOS ile Android’de Ağustos 2026’da ' +
+      'yayına giriyor. Bir tıbbi cihaz değildir, tıbbi tavsiye vermez.',
+  ],
+
+  yanlisTitle: 'Sık düşülen üç hata',
+  yanlis: [
+    {
+      title: 'Kalori sayma uygulaması değil',
+      body:
+        'afiet günü kalori hedefi üzerinden anlatmaz. Enerji ve makro bilgisi ' +
+        'uygulamada bilgi olarak durur, günün ölçüsü beş grubun dengesidir.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Diyet uygulaması değil',
+      body:
+        'Yasak listesi, kısıtlama planı ya da “şu kadar haftada şu kadar kilo” ' +
+        'vaadi yok. Ölçü süreklilik, kusursuzluk değil.',
+      accent: 'meyve',
+    },
+    {
+      title: 'Adı büyük harfle yazılmaz',
+      body:
+        '“Afiet” ya da “AFIET” değil, her yerde “afiet”. Cümle başında da ' +
+        'küçük kalır; logoda da öyle.',
+      accent: 'tahil',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  varlikTitle: 'İndirilebilir malzeme',
+  varlikSub:
+    'Hepsi tek dosyada ya da tek tek. Görselleri kırpabilir, yeniden ' +
+    'boyutlandırabilirsin; içeriğine dokunma yeter.',
+  zipLabel: 'Basın kitini indir',
+  zipNote: 'Logo paketi (SVG + PNG) ve altı ekran görüntüsü, tek arşivde.',
+
+  logoTitle: 'Logo',
+  logoSub: 'Açık zeminde ana kilit, koyu zeminde beyaz sürüm kullanılır.',
+  logoIndir: 'SVG',
+
+  ekranTitle: 'Ekran görüntüleri',
+  ekranSub: 'Görsele tıklayınca tam çözünürlüklü hâli (1284 × 2778) açılır.',
+
+  /* Anahtarlar `#shared/utils/marka > BASIN_VARLIKLARI` ile birebir eşleşir;
+     dosya yolu orada, adı burada yaşar. */
+  varlikAdlari: {
+    kilit: 'Yatay kilit',
+    kelime: 'Kelime markası',
+    afi: 'Afi (simge)',
+    beyaz: 'Koyu zemin için beyaz kilit',
+    bugun: 'Bugün ekranı',
+    kayit: 'Hızlı öğün kaydı',
+    denge: 'Günün dengesi',
+    grubum: 'Grubum',
+    vucudum: 'Vücudum',
+    rehber: 'Besin rehberi',
+  } as Record<string, string>,
+
+  kurallarTitle: 'Marka kullanımı',
+  kurallarYapTitle: 'Yapılır',
+  kurallarYap: [
+    'Logo paketten geldiği gibi kullanılır.',
+    'Etrafında en az Afi’nin yüksekliği kadar boşluk bırakılır.',
+    'Koyu zeminde beyaz sürüme geçilir.',
+  ],
+  kurallarYapmaTitle: 'Yapılmaz',
+  kurallarYapma: [
+    'Rengi değiştirilmez, gölge ya da kontur eklenmez.',
+    'Gerilmez, eğilmez, döndürülmez.',
+    'Ekran görüntüsünün üstüne metin eklenip resmî görsel gibi gösterilmez.',
+  ],
+
+  kurucuTitle: 'Kurucu',
+  kurucuNot: 'Röportaj, demo ya da ek görsel talebi için doğrudan yaz.',
+
+  iletisimTitle: 'Bir şey lazım olursa',
+  iletisimBody:
+    'Listede olmayan bir görsel, ekran kaydı ya da rakam gerekiyorsa sor. ' +
+    'Basın mesajlarına aynı gün dönüyoruz.',
+  mailAddress: 'destek@afiet.co',
+}
+
+export type BasinCopy = typeof basin
 
 /**
  * Destek merkezi metinleri. Yazıların kendisi `content/destek/**.md` içinde;

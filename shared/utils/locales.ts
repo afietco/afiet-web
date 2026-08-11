@@ -27,6 +27,9 @@ export const EN_BY_TR: Record<string, string> = {
   // Yazar sayfası: iki dilde de gerçekten yaşıyor (İngilizce blog yazılarının
   // künyesi /en/about'a bağlanıyor), o yüzden hreflang çifti kurulur.
   '/hakkinda': '/en/about',
+  // Basın kiti: gövde iki dilde de gerçekten yaşıyor (yabancı basına da aynı
+  // adres verilecek), o yüzden hreflang çifti kurulur.
+  '/basin': '/en/press',
   '/hesapla': '/en/tools',
   '/hesapla/sofra-payin': '/en/tools/daily-portions-calculator',
   '/hesapla/vucut-kitle-indeksi': '/en/tools/bmi-calculator',
