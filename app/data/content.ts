@@ -605,11 +605,12 @@ export const hakkinda = {
       accent: 'tahil',
     },
     {
-      title: 'Yayınlanan her cümlenin sorumlusu bir insan',
+      title: 'Afi yardım eder, sorumluluk insanda',
       body:
-        'Taslak hazırlarken yapay zekâdan yararlanıyoruz. Yayına çıkan her ' +
-        'yazıyı yayınlamadan önce baştan sona ben okuyup onaylıyorum; ' +
-        'kaynakları da tek tek ben kontrol ediyorum.',
+        'Taslak aşamasında Afi’nin yardımını alıyoruz; sofranın dilini iyi ' +
+        'biliyor. Ama yayına çıkan her yazıyı baştan sona ben okuyup ' +
+        'onaylıyorum, kaynakları da tek tek ben kontrol ediyorum. Yayınlanan ' +
+        'her cümlenin sorumlusu bir insandır.',
       accent: 'meyve',
     },
     {
