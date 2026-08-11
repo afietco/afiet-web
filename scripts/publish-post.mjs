@@ -23,6 +23,7 @@ import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { neon } from '@neondatabase/serverless'
+import { gonder } from './indexnow.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const SITE = 'https://afiet.co'
@@ -44,6 +45,61 @@ function databaseUrl() {
   const m = readFileSync(envPath, 'utf8').match(/^NUXT_DATABASE_URL=["']?([^"'\n]+)["']?\s*$/m)
   if (!m) die('.env içinde NUXT_DATABASE_URL bulunamadı.')
   return m[1].trim()
+}
+
+// ── IndexNow bildirimi ───────────────────────────────────────────────────────
+/**
+ * `SITE` sabit olduğu için (https://afiet.co) yalnız PROD yayınında bildirim
+ * anlamlıdır: development veritabanına yazılan bir yazı o adreste yok, onu
+ * bildirmek Bing'e 404 taratmak olur. Prod işareti bu depoda `.env.prod-url`
+ * dosyasıdır (prod bağlantısı hep oradan tek seferlik veriliyor).
+ */
+function prodMu(url) {
+  const p = join(root, '.env.prod-url')
+  if (!existsSync(p)) return false
+  return readFileSync(p, 'utf8').trim() === url.trim()
+}
+
+/**
+ * Sayfa CANLI OLMADAN bildirim yapılmaz: yazı ISR + bellek cache yüzünden
+ * ~2 dk sonra görünüyor, önce bildirirsek Bing 404 görüp URL'i yok sayabilir.
+ * Bu yüzden yayına çıkmasını bekleyip öyle bildiriyoruz; bekleme aynı zamanda
+ * "yazı gerçekten canlı mı" sorusunu da cevaplıyor.
+ */
+async function durumBekle(url, beklenen, saniye = 210) {
+  const bitis = Date.now() + saniye * 1000
+  while (Date.now() < bitis) {
+    try {
+      if ((await fetch(url, { redirect: 'manual' })).status === beklenen) return true
+    } catch { /* ağ dalgalanması: yeniden dene */ }
+    await new Promise((r) => setTimeout(r, 15000))
+  }
+  return false
+}
+
+/**
+ * Bildirim EN İYİ ÇABA'dır: hatası yayını başarısız saymaz, yazı zaten yayında.
+ * `beklenenDurum` yayında 200, yayından kaldırmada 404'tür - iki durumda da
+ * motora "şimdi bak" demeden önce sayfanın yeni hâlini almış olması gerekir.
+ */
+async function indexNowBildir(url, dbUrl, beklenenDurum = 200) {
+  if (!prodMu(dbUrl)) {
+    console.log('  IndexNow: atlandı (hedef production değil)')
+    return
+  }
+  try {
+    process.stdout.write(`  IndexNow: sayfa ${beklenenDurum} olana kadar bekleniyor…`)
+    if (!(await durumBekle(url, beklenenDurum))) {
+      console.log(`\n  IndexNow: sayfa süresinde ${beklenenDurum} olmadı, bildirim YAPILMADI.`)
+      console.log(`  Sonra elle: node scripts/indexnow-gonder.mjs ${url}`)
+      return
+    }
+    const s = await gonder([url])
+    console.log(`\r  IndexNow: HTTP ${s.durum} - ${s.mesaj}                              `)
+  } catch (err) {
+    console.log(`\n  IndexNow: bildirilemedi (${err.message}); yayın etkilenmedi.`)
+    console.log(`  Elle: node scripts/indexnow-gonder.mjs ${url}`)
+  }
 }
 
 async function confirm(question) {
@@ -174,6 +230,9 @@ if (unpublishIdx !== -1) {
     `
   }
   console.log(`✓ '${slug}' taslağa çekildi (sayfa ≤ ~2 dk içinde 404 olur; sitemap/RSS ≤ 5 dk).`)
+  // Kaldırma da bir değişikliktir: bildirmezsek arama motoru ölü sayfayı
+  // kendi tarama sırası gelene kadar sonuçlarda tutmaya devam eder.
+  await indexNowBildir(`${SITE}${yol}`, url, 404)
   process.exit(0)
 }
 
@@ -260,3 +319,5 @@ if (post.itemId) {
 console.log(`✓ Yayında: ${SITE}${postPath(post.slug, post.lang)}`)
 console.log('  görünürlük: sayfa ≤ ~2 dk (bellek cache 60 sn + ISR 60 sn) · sitemap/RSS ≤ 5 dk')
 console.log('  hatırlatma: md dosyasını commit\'le - yedek dosyada, runtime kaynağı DB\'de.')
+
+await indexNowBildir(`${SITE}${postPath(post.slug, post.lang)}`, url)
