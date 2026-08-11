@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Accent, HakkindaCopy } from '~/data/content'
 import type { SiteLocale } from '#shared/utils/locales'
-import { authorProfile } from '#shared/utils/author'
+import { AUTHOR, authorProfile } from '#shared/utils/author'
 
 /**
  * Yazar sayfasının gövdesi; /hakkinda (content.ts > hakkinda) ve /en/about
@@ -58,6 +58,21 @@ const ACCENT_DOT: Record<Accent, string> = {
             {{ author.name }}
           </p>
           <p class="text-sm font-extrabold text-brand-deep">{{ author.jobTitle }}</p>
+          <!-- Yazarın kendi profilleri: aynı liste Person şemasında sameAs
+               olarak da çıkar (shared/utils/author.ts). Görünür link okura,
+               sameAs motora AYNI kimliği söyler; biri eksikse sinyal yarım. -->
+          <p v-if="AUTHOR.profiles.length" class="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
+            <a
+              v-for="p in AUTHOR.profiles"
+              :key="p.href"
+              :href="p.href"
+              target="_blank"
+              rel="me noopener noreferrer"
+              class="text-sm font-bold text-muted underline decoration-brand-mint decoration-2 underline-offset-4 transition hover:text-brand-deep"
+            >
+              {{ p.label }}
+            </a>
+          </p>
         </div>
       </div>
       <div class="mt-5 flex flex-col gap-3">

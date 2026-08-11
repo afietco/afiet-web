@@ -12,9 +12,14 @@ import type { SiteLocale } from './locales'
  * görünür HEM makine okunur bir cevabı olmasıdır. İkisi ayrı kaynaktan
  * beslenirse biri eskir ve şema sayfanın söylemediği bir şeyi iddia eder.
  *
- * `sameAs` YAZARIN KENDİ doğrulanabilir profilleridir; kurumun profilleri
- * ayrıdır (seoDefaults.ts > schema.organization.sameAs). Var olmayan profile
- * adres YAZILMAZ: liste boşken Person şemasına sameAs hiç basılmaz.
+ * `profiles` YAZARIN KENDİ doğrulanabilir profilleridir; kurumun profilleri
+ * AYRI bir listedir (seoDefaults.ts > schema.organization.sameAs) ve ikisi
+ * karıştırılmaz. Var olmayan profile adres YAZILMAZ: liste boşken Person
+ * şemasına sameAs hiç basılmaz.
+ *
+ * Liste hem /hakkinda sayfasında GÖRÜNÜR link hem şemada `sameAs` olarak
+ * çıkar; footer'daki kurum profillerinde olduğu gibi biri eksikse kimlik
+ * sinyali yarım kalır (content.ts > footer.social açıklamasının aynısı).
  */
 export const AUTHOR = {
   name: 'Berk Karataş',
@@ -37,7 +42,14 @@ export const AUTHOR = {
       'balance around the measures people actually use. The nutrition here follows ' +
       'public health sources and is not personal advice.',
   } as Record<SiteLocale, string>,
-  sameAs: [] as string[],
+  /**
+   * Yazarın kendi profilleri. Adres kanonik biçimde yazılır (LinkedIn sondaki
+   * eğik çizgiyi 301'le atıyor; şemaya yönlendirilen adres konmaz).
+   */
+  profiles: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/rberkkaratas' }] as {
+    label: string
+    href: string
+  }[],
 }
 
 export type AuthorProfile = {
@@ -72,6 +84,6 @@ export function personSchema(baseUrl: string, lang: SiteLocale): Record<string, 
     url,
     jobTitle: AUTHOR.jobTitle[lang],
     description: AUTHOR.bio[lang],
-    ...(AUTHOR.sameAs.length ? { sameAs: AUTHOR.sameAs } : {}),
+    ...(AUTHOR.profiles.length ? { sameAs: AUTHOR.profiles.map((p) => p.href) } : {}),
   }
 }
