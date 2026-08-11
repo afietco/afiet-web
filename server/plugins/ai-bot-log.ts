@@ -9,27 +9,29 @@ import { botSql, detectAiBot, ensureBotTables, insertBotHit, loglanirMi } from '
  * koşar, orada durum kodu henüz yoktur; sorunun yarısı ("2xx mi dönüyor,
  * 429 var mı") tam olarak durum kodudur.
  *
- * NEDEN İKİ KANCA: ölçüldü (Nuxt 4.4.8 / Nitro 2.13.4 / h3 1.15.11) -
- * bir istek hata ile bitince h3'ün hata yolu yanıtı kendisi gönderip
- * `event.handled`ı işaretliyor ve `afterResponse`a HİÇ uğramıyor. O yolda
- * `afterResponse` yalnız Nuxt'un hata sayfasını render eden iç
- * `/__nuxt_error?...` isteği için, üstelik 200 durumuyla ateşleniyor. Yani
- * tek başına `afterResponse` bütün 404/5xx'leri sessizce kaybederdi, ki
- * ölçmek istediğimiz şeylerin başında onlar geliyor. Bu yüzden başarı yolu
- * `afterResponse`, hata yolu `error` kancasıdır; `event.context` üzerindeki
- * bayrak bir isteğin iki kez yazılmasını engeller.
+ * NEDEN `afterResponse` DEĞİL `beforeResponse` (PROD'DA ÖLÇÜLDÜ, 11 Ağu 2026):
+ * ilk sürüm `afterResponse` kullanıyordu ve yerelde kusursuz çalıştı, PROD'DA
+ * TEK SATIR YAZMADI. Vercel'in Node runtime'ı yanıt flush edilir edilmez
+ * invocation'ı dondurduğu için yanıttan SONRA başlayan iş bitmiyor; hata bile
+ * loglanmıyor, çünkü kod oraya hiç varmıyor. Teşhisin kanıtı: `ai_bot_hits`
+ * tablosu prod'da OLUŞMUŞTU (ensureBotTables koştu) ama INSERT düşmemişti.
+ * Bu, Cloud Run'ın "yanıt yazılınca CPU'yu kesmesi" tuzağının aynısıdır.
+ * `beforeResponse` ise h3 tarafından yanıt gövdesi yazılmadan ÖNCE await
+ * edilir (`await options.onBeforeResponse(...)` → `handleHandlerResponse(...)`),
+ * yani yazım bitmeden istek kapanmaz. Bedeli: bot isteklerine bir Neon gidiş
+ * dönüşü kadar gecikme eklenir. İnsan trafiği etkilenmez, orada yapılan tek
+ * iş user agent'ın taranmasıdır. `afterResponse`a GERİ DÖNME.
  *
- * DAYANIKLILIK: `afterResponse` Nitro tarafından await edilir, yani 2xx
- * yazımı serverless'ta bitmeden fonksiyon dondurulmaz. `error` kancası await
- * EDİLMEZ ama Nitro promise'i `event.waitUntil`e devreder; platform bunu
- * sağlamıyorsa nadiren bir hata satırı düşebilir. Ödünç bilinçli: hata
- * yanıtları seyrek, 2xx yolu ise garanti.
- *
- * HİÇBİR KOŞULDA SİTEYİ KIRMAZ: her iki kanca da yutucu try/catch içinde,
- * DB yoksa (dev, boş env) sessizce çıkar. İnsan trafiğinde yapılan tek iş
- * UA'nın taranmasıdır.
+ * HATA YANITLARI: bir istek hata ile bitince h3'ün hata yolu yanıtı kendisi
+ * gönderip `event.handled`ı işaretliyor, yani GERÇEK event hiçbir yanıt
+ * kancasına uğramıyor. Nuxt o sırada hata sayfasını ayrı bir iç istekle
+ * (`/__nuxt_error?url=...&statusCode=...`) render ediyor ve o istek gelen
+ * isteğin header'larını (dolayısıyla bot UA'sını) miras alıyor. Gerçek yol ve
+ * gerçek durum kodu o adresin sorgu parametrelerindedir; 404/5xx'i yakalamanın
+ * güvenilir yolu bu. Nuxt iç sözleşmesine dayandığı için savunmacı yazıldı:
+ * parametreler okunamazsa satır yazılmaz, hiçbir şey kırılmaz.
  */
-async function kaydet(event: H3Event, status: number) {
+async function kaydet(event: H3Event, path: string, status: number) {
   try {
     const ctx = event.context as { aiBotYazildi?: boolean }
     if (ctx.aiBotYazildi) return
@@ -37,15 +39,12 @@ async function kaydet(event: H3Event, status: number) {
     const ua = getRequestHeader(event, 'user-agent') || ''
     const bot = detectAiBot(ua)
     if (!bot) return
-
-    const path = (event.path || '/').split('?')[0] || '/'
     if (!loglanirMi(path)) return
 
     const sql = botSql(event)
     if (!sql) return
 
-    // Bayrak DB'ye gitmeden önce dikilir: iki kanca da koşarsa ikincisi
-    // yazmadan döner.
+    // Bayrak DB'ye gitmeden önce dikilir ki aynı event iki kez yazmasın.
     ctx.aiBotYazildi = true
 
     await ensureBotTables(sql)
@@ -65,16 +64,20 @@ async function kaydet(event: H3Event, status: number) {
 }
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook('afterResponse', async (event) => {
-    await kaydet(event, getResponseStatus(event))
-  })
+  nitroApp.hooks.hook('beforeResponse', async (event) => {
+    const raw = event.path || '/'
 
-  nitroApp.hooks.hook('error', async (error, ctx) => {
-    if (!ctx.event) return
-    const status = (error as { statusCode?: number })?.statusCode ?? 500
-    // captureError yanıtı 200 ile biten yakalanmış hatalar için de çağrılıyor;
-    // yalnız gerçekten hata yanıtına dönüşenler kaydedilir.
-    if (status < 400) return
-    await kaydet(ctx.event, status)
+    if (raw.startsWith('/__nuxt_error')) {
+      const q = getQuery(event)
+      const gercekYol = typeof q.url === 'string' ? q.url.split('?')[0] : ''
+      const durum = Number(q.statusCode)
+      // Yalnız gerçekten hata olan render kaydedilir; bu iç isteğin kendi
+      // durumu 200'dür ve gerçek kodun yerine geçemez.
+      if (!gercekYol || !Number.isFinite(durum) || durum < 400) return
+      await kaydet(event, gercekYol, durum)
+      return
+    }
+
+    await kaydet(event, raw.split('?')[0] || '/', getResponseStatus(event))
   })
 })
