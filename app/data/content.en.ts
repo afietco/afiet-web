@@ -156,6 +156,7 @@ export const footerEn = {
   links: [
     { label: 'Why afiet?', to: '/en#why' },
     { label: 'Calculators', to: '/en/tools' },
+    { label: 'About', to: '/en/about' },
     { label: 'Contact', to: '/en/contact' },
     { label: 'Privacy', to: '/en/privacy' },
     { label: 'Delete account', to: '/en/delete-account' },
@@ -226,6 +227,10 @@ export const blogEn = {
   pageNext: 'Next page',
   navLabel: 'Blog',
   updatedPrefix: 'Updated',
+  // Yazar künyesi; ad ve unvan shared/utils/author.ts'ten gelir.
+  authorPrefix: 'Written by',
+  authorCardTitle: 'Who wrote this?',
+  authorCardCta: 'The author and our editorial rules',
   // Yazı sonu: TR'de beta çağrısı var, İngilizce'de beta YOK (uygulama
   // Türkçe), o yüzden okur bültene davet edilir.
   endLead: 'afiet is in beta, in Turkish today:',
@@ -336,6 +341,110 @@ export const contactEn = {
 
   bultenTitle: 'A letter from our table',
   bultenSub: 'A postcard is one-off; the newsletter is regular. Happy to send both.',
+}
+
+/**
+ * Yazar sayfası (/en/about). TR karşılığı content.ts > hakkinda; şekil aynıdır
+ * (HakkindaSayfasi.vue ikisini de okur) ve İÇERİK olarak senkron tutulur.
+ *
+ * /en 6 Ağu 2026'da park edilmişti; bu sayfa bilinçli istisnadır (kullanıcı
+ * kararı, 11 Ağu 2026): /en/blog canlı olduğu için İngilizce yazının yazar
+ * künyesi de İngilizce bir sayfaya bağlanmalı.
+ */
+export const aboutEn = {
+  eyebrow: 'about',
+  title: 'Who writes these guides?',
+  sub:
+    'There is a person behind every text you read about food. Here is who I ' +
+    'am, what I base these guides on, and what we deliberately never do.',
+
+  bioTitle: 'Hello',
+  bio: [
+    'My name is Berk Karataş. I founded afiet, and I write the app, this site ' +
+      'and these guides.',
+    'I am not a dietitian; I am a developer. afiet started with a question at ' +
+      'my own table: why does a day spent counting every bite end in tiredness ' +
+      'rather than confidence? The number said something, but it never ' +
+      'described the table. That is why afiet speaks in measures instead of ' +
+      'calories: slices, bowls, handfuls.',
+    'The guides keep the same line. Nothing here is a personal plan; it is ' +
+      'general information that always says where it came from.',
+  ],
+
+  principlesTitle: 'How these guides are written',
+  principles: [
+    {
+      title: 'Sources stay visible',
+      body:
+        'Nutrition claims follow public health sources. When we give a number ' +
+        'or a recommendation, we link where it came from inside the post. No ' +
+        'unsourced figures.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Not medical advice',
+      body:
+        'These are general guides. If you have a condition, an allergy, a ' +
+        'pregnancy or a prescribed plan, talk to your doctor and dietitian; ' +
+        'nothing here replaces that conversation.',
+      accent: 'sut',
+    },
+    {
+      title: 'No target weight, no timelines',
+      body:
+        'You will never read “lose this much in this many weeks” here. No ' +
+        'ideal weight, no deadlines, no guilt. We measure consistency, not ' +
+        'perfection.',
+      accent: 'tahil',
+    },
+    {
+      title: 'A person is accountable for every published line',
+      body:
+        'We use AI while drafting. Every post is read end to end and approved ' +
+        'by me before it goes live, and I check each source myself.',
+      accent: 'meyve',
+    },
+    {
+      title: 'What ages gets fixed',
+      body:
+        'Every post carries its last updated date. Correcting a wrong or ' +
+        'outdated line comes before writing a new post.',
+      accent: 'protein',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  sourcesTitle: 'Sources we keep coming back to',
+  sourcesSub: 'Posts link beyond this list, but most of it starts here.',
+  sources: [
+    {
+      label: 'World Health Organization, Healthy diet',
+      href: 'https://www.who.int/news-room/fact-sheets/detail/healthy-diet',
+    },
+    {
+      label: 'Harvard T.H. Chan, The Healthy Eating Plate',
+      href: 'https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/',
+    },
+    {
+      label: 'NHS, The Eatwell Guide',
+      href: 'https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/',
+    },
+    {
+      label: 'British Dietetic Association, Portion sizes',
+      href: 'https://www.bda.uk.com/resource/food-facts-portion-sizes.html',
+    },
+    {
+      label: 'Ministry of Health of Türkiye, national dietary guidelines (TÜBER)',
+      href: 'https://hsgm.saglik.gov.tr/tr/web-uygulamalarimiz/357.html',
+    },
+  ],
+
+  contactTitle: 'If you want to ask or correct something',
+  contactBody:
+    'Spotted a mistake, found something missing, or just want to say hello? ' +
+    'Write to us: every message is actually read.',
+  contactCta: 'Send us a postcard',
+  contactTo: '/en/contact',
+  mailAddress: 'destek@afiet.co',
 }
 
 /**

@@ -8,8 +8,6 @@ lang: en
 published_at:
 ---
 
-*Written by Afi, afiet's mascot · Last updated: 6 August 2026*
-
 Mostly yes, with two honest caveats. The everyday Turkish table is built on legumes, olive oil vegetables, yogurt, bulgur and fresh produce, which is close to the pattern most national guidelines describe as balanced. The parts that need attention are bread, salt and sugar, and the evidence on salt in particular is striking. What follows is a fair look at both sides, plus how to build a balanced plate from Turkish dishes rather than around them. This is general information, not personalised dietary advice.
 
 ## What the table already gets right

@@ -133,6 +133,24 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Sayfalar `usePageSeo()` composable'ı ile `/api/seo/meta?path=`ten meta çeker
   (title/description/og/twitter/canonical/robots/doğrulama kodları/JSON-LD).
   Elle `useHead` meta bloğu YAZMA - panel yönetimini kırar.
+- **Global robots meta:** indekslenen her sayfa `seoDefaults.ts >
+  ROBOTS_DIRECTIVES` satırını basar (`index, follow, max-snippet:-1,
+  max-image-preview:large, max-video-preview:-1`). Üçü de bir SINIRI kaldırır;
+  açıkça verilmezse motor kendi sınırını uygular ve alıntılanabilir metin
+  kısalır. Panelden yönetilmez (kullanıcı kararı, 11 Ağu 2026); sayfa bazlı
+  istisna `seo_pages[<yol>].robots` ile verilir ve o değer bu satırın TAMAMININ
+  yerine geçer (birleştirilmez, örn. noindex sayfasına max-snippet eklenmez).
+- **Yazar kimliği (E-E-A-T):** blog ve destek yazılarının `author`ı
+  Organization değil **Person**'dır ve tek kaynağı `shared/utils/author.ts`tir.
+  Aynı kayıt hem Person JSON-LD'sini (seoStore) hem sayfadaki görünür künyeyi
+  (`YazarSatiri.vue`, blog sonunda `YazarKarti.vue`) besler - ikisi ayrışırsa
+  şema sayfanın söylemediğini iddia eder. Kimlik `@id` ile tektir
+  (`/hakkinda#yazar`) ve İngilizce sayfada da AYNI kalır; yalnız unvan/biyografi
+  çevrilir. Yayıncı kurum olarak kalır (yazan kişi, yayınlayan afiet).
+- Yazar sayfası `/hakkinda` (+ `/en/about`) yalnız bir "hakkımızda" değil,
+  Person şemasının URL'idir: yolu değişirse `author.ts`, `EN_BY_TR` ve
+  `seoDefaults`taki sayfa kaydı BİRLİKTE değişir. Gövde `HakkindaSayfasi.vue`,
+  kopya `content.ts > hakkinda` / `content.en.ts > aboutEn`.
 - JSON-LD: ana sayfada Organization+WebSite+SoftwareApplication grafiği +
   (doluysa) FAQPage. SSS maddeleri hem görünür bölüm (`FaqSection.vue`, boşsa
   render edilmez) hem şemadır - ikisi hep aynı kaynaktan gelir.
@@ -197,6 +215,13 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Yazı meta'sı/JSON-LD'si (BlogPosting + BreadcrumbList) `seoStore.resolvePageMeta`
   içinde üretilir; panelin `seo_pages['/blog/<slug>']` override'ı üstüne biner.
   Sitemap yayındaki yazıları otomatik ekler; RSS: `/blog/rss.xml`.
+- **Künye gövdeye YAZILMAZ** (11 Ağu 2026): yazının başındaki `*Yazan: … · Son
+  güncelleme: …*` satırı 10 md dosyasından çıkarıldı, yerini bileşendeki yazar
+  künyesi aldı (`YazarSatiri.vue`, tek kaynak `shared/utils/author.ts`).
+  Yeni yazıda o satırı geri ekleme; afiet-admin'deki üretim promptu da bunu
+  artık istemiyor. Tarih künyeden değil DB'den gelir (`publishedAt`/`updatedAt`).
+  Prod'da yayındaki yazıların gövdesinde satır HÂLÂ var, yeniden yayınlanana
+  kadar duracak (bu yüzden BlogYazi'deki gömme başlık kuralı iki hâli de tanır).
 - Yayınlama (deploy YOK): panel prompt'u → Claude Code yazıyı
   `content/posts/<slug>.md`e yazar → onay → `node scripts/publish-post.mjs
   content/posts/<slug>.md` (Neon host'u gösterip onay ister; upsert + bağlı

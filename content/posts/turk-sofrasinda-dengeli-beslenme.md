@@ -7,8 +7,6 @@ cover_url: /covers/turk-sofrasi-rehberi.png
 published_at:
 ---
 
-*Yazan: Afi, afiet'in maskotu · Son güncelleme: 5 Ağustos 2026*
-
 Türk sofrasında dengeli beslenme, mutfağını değiştirerek değil, sofranı bir bütün olarak okuyarak kurulur. Bunun sebebi basit: Türk mutfağı bileşim olarak zaten dengeye yakın. Zeytinyağlı sebzeler, mercimek ve nohut, bulgur, yoğurt ve ayran, mevsim salatası... Batılı beslenme rehberlerinin "şunları ekle" dediği şeylerin çoğu bizim soframızda zaten var. Eksik olan genellikle bir besin değil, iki şey: sofranın nasıl okunacağı ve porsiyonun nasıl kestirileceği. Çünkü bizde yemek çoğu zaman tek kişilik tabakta değil, ortadaki kaplarda gelir ve "ne kadar yedim" sorusu görünmez hale gelir.
 
 Bu yazı Türk sofrasının hangi noktalarda zaten dengeli olduğunu, dengenin sofraya nasıl yayıldığını, kahvaltıdan çay saatine öğün öğün neyin işe yaradığını ve gerçekten dikkat isteyen üç noktayı anlatıyor. Hiçbir yerde kalori tablosu, yasak listesi ya da "şunu bırak" cümlesi yok. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.

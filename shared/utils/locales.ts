@@ -24,6 +24,9 @@ export const EN_BY_TR: Record<string, string> = {
   // çifti var. Yazıların KENDİ eşlemesi buradan gelmez, veritabanındaki
   // `translation_of` kolonundan gelir (yazılar dinamik, harita statik).
   '/blog': '/en/blog',
+  // Yazar sayfası: iki dilde de gerçekten yaşıyor (İngilizce blog yazılarının
+  // künyesi /en/about'a bağlanıyor), o yüzden hreflang çifti kurulur.
+  '/hakkinda': '/en/about',
   '/hesapla': '/en/tools',
   '/hesapla/sofra-payin': '/en/tools/daily-portions-calculator',
   '/hesapla/vucut-kitle-indeksi': '/en/tools/bmi-calculator',

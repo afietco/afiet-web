@@ -98,6 +98,40 @@ try {
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
 
+  /* Global robots meta: üç direktif de bir SINIRI kaldırır ve açıkça
+     verilmezse motor kendi sınırını uygular (alıntılanabilir metnin uzunluğu
+     buna bakar). Sayfa bazlı override yine panelden gelir, o yüzden bu satır
+     yalnız varsayılan yolda beklenir. */
+  ok(
+    html.includes('max-snippet:-1') &&
+      html.includes('max-image-preview:large') &&
+      html.includes('max-video-preview:-1'),
+    'robots meta üç önizleme direktifini de veriyor',
+  )
+  const noindexHtml = await (await fetch(`http://localhost:${PORT}/bulten/onay`)).text()
+  ok(
+    noindexHtml.includes('noindex') && !noindexHtml.includes('max-snippet'),
+    'sayfa override’ı (noindex) global direktifle KARIŞMIYOR',
+  )
+
+  // --- Yazar sayfası (/hakkinda) ve Person kimliği ---
+  const authorRes = await fetch(`http://localhost:${PORT}/hakkinda`)
+  const authorHtml = await authorRes.text()
+  ok(authorRes.status === 200, `/hakkinda 200 (${authorRes.status})`)
+  ok(authorHtml.includes('Berk Karataş'), '/hakkinda yazarın adını gösteriyor')
+  ok(authorHtml.includes('ProfilePage'), '/hakkinda ProfilePage şeması içeriyor')
+  ok(authorHtml.includes('#yazar'), 'Person düğümü sabit @id taşıyor')
+  ok(sitemap.includes('/hakkinda'), 'sitemap /hakkinda sayfasını içeriyor')
+
+  const aboutEnRes = await fetch(`http://localhost:${PORT}/en/about`)
+  const aboutEnHtml = await aboutEnRes.text()
+  ok(aboutEnRes.status === 200, `/en/about 200 (${aboutEnRes.status})`)
+  ok(aboutEnHtml.includes('hreflang="tr"'), '/en/about Türkçe eşine hreflang veriyor')
+  ok(
+    aboutEnHtml.includes('founder of afiet') && aboutEnHtml.includes('/hakkinda#yazar'),
+    'İngilizce sayfa İngilizce unvan basıyor ama kimlik (@id) aynı kalıyor',
+  )
+
   // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---
   const blogRes = await fetch(`http://localhost:${PORT}/blog`)
   const blogHtml = await blogRes.text()
@@ -163,6 +197,13 @@ try {
   ok(articleHtml.includes('destek-govde'), 'destek yazısının gövdesi HTML içinde')
   ok(articleHtml.includes('TechArticle'), 'destek yazısı TechArticle şeması içeriyor')
   ok(articleHtml.includes('BreadcrumbList'), 'destek yazısı BreadcrumbList içeriyor')
+  // Yazar: şemadaki Person ile sayfadaki görünür künye AYNI kayıttan gelmeli
+  // (shared/utils/author.ts). Biri kalırsa öteki yalan söyler.
+  ok(articleHtml.includes('"@type":"Person"'), 'destek yazısı Person yazarı içeriyor')
+  ok(
+    articleHtml.includes('rel="author"') && articleHtml.includes('href="/hakkinda"'),
+    'destek yazısında görünür yazar künyesi var ve yazar sayfasına bağlanıyor',
+  )
 
   const category404 = await fetch(`http://localhost:${PORT}/destek/yok-boyle-bir-sey`)
   ok(category404.status === 404, `bilinmeyen destek başlığı 404 (${category404.status})`)

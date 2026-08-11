@@ -114,10 +114,18 @@ const formatDate = (iso: string) =>
         <!-- Gövde: sunucuda üretilmiş güvenli HTML -->
         <div class="destek-govde mt-8" v-html="article.html" />
 
-        <p class="mt-10 text-sm font-bold text-muted">
-          {{ support.updatedPrefix }}:
-          <time :datetime="article.updated">{{ formatDate(article.updated) }}</time>
-        </p>
+        <!-- Yazar künyesi: destek yazısının da TechArticle şemasında Person
+             yazarı var (seoStore), sayfada görünen künye onun karşılığıdır.
+             Gövdenin SONUNDA durur: dokümantasyonda okur önce cevabı arar,
+             "kim yazdı" sorusu cevaptan sonra gelir. -->
+        <div class="mt-10 border-t border-line pt-6">
+          <YazarSatiri :prefix="support.authorPrefix" compact>
+            <template #meta>
+              {{ support.updatedPrefix }}:
+              <time :datetime="article.updated">{{ formatDate(article.updated) }}</time>
+            </template>
+          </YazarSatiri>
+        </div>
 
         <div class="mt-5">
           <SupportVote :path="path" />

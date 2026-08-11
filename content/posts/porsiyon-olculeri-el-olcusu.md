@@ -8,8 +8,6 @@ cover_url: /covers/el-porsiyon-rehberi.png
 published_at:
 ---
 
-*Yazan: afiet ekibi · Son güncelleme: 22 Temmuz 2026*
-
 1 porsiyon ne kadar? Kısa cevap: bunu anlamak için tartıya gerek yok, elin fazlasıyla yeterli. Bir porsiyon protein kabaca **avuç içi** kadar, bir porsiyon sebze **yumruğun** kadar, bir porsiyon tahıl (pilav, makarna, bulgur) **kapalı avucuna** sığan kadar, bir porsiyon yağ ise **başparmağın** kadardır. Hepsi bu. Mutfakta terazi aramana, etiket çevirmene ya da uygulama açmana gerek kalmadan tabağına bakıp "ne kadar yemeliyim?" sorusuna makul bir cevap verebilirsin.
 
 Bu yazıda el ölçüsü porsiyon yöntemini menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerle somutlaştırıyoruz. Baştan söyleyelim: buradaki ölçüler katı kurallar değil, nazik birer pusula. Anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
