@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+  <!-- Afi tek renk: kase+ayak tek renk, yüz KNOCKOUT (oyuk) — hangi zemine
+       konursa yüz o zemin rengiyle okunur. Buhar iki telden tek tona iner.
+       Rengi CSS 'color' ile ver; hazır renkli türevler: afi-white/ink/emerald.svg -->
+  <mask id="afi-face" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+    <g transform="translate(256 288) scale(1.07) translate(-256 -288)">
+      <path d="M116 276h280a140 108 0 0 1-280 0z" fill="#fff"/>
+      <rect x="210" y="394" width="92" height="20" rx="10" fill="#fff"/>
+      <g fill="none" stroke="#000" stroke-linecap="round">
+        <path d="M180 316q23-21 46 0" stroke-width="15"/>
+        <path d="M286 316q23-21 46 0" stroke-width="15"/>
+        <path d="M238 342q18 14 36 0" stroke-width="13"/>
+      </g>
+    </g>
+  </mask>
+  <g transform="translate(256 288) scale(1.07) translate(-256 -288)" fill="none" stroke="currentColor" stroke-linecap="round">
+    <path d="M207 232c0-19 17-23 17-42s-17-21-17-40" stroke-width="21"/>
+    <path d="M300 238c0-21 19-25 19-48s-19-23-19-46" stroke-width="23"/>
+  </g>
+  <rect width="512" height="512" mask="url(#afi-face)"/>
+</svg>

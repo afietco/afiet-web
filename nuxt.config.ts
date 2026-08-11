@@ -29,6 +29,8 @@ export default defineNuxtConfig({
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },
+    // Basın kiti: içerik neredeyse hiç değişmez, meta yine panelden yönetilir.
+    '/basin': { isr: 60 },
     // Durum sayfası ve API'si: 60 sn tazelik yeterli (cron 5 dk'da bir yazar).
     '/durum': { isr: 60 },
     '/api/status': { isr: 60 },
