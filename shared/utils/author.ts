@@ -70,16 +70,28 @@ export function authorProfile(lang: SiteLocale): AuthorProfile {
 }
 
 /**
- * Person JSON-LD düğümü. `@id` her sayfada AYNI olmalı: blog yazısındaki
- * yazar ile /hakkinda sayfasındaki kişi motorların gözünde tek varlık olsun
- * diye şema düğümü kimliğini yazar sayfasından alır.
+ * Yazarın makine okunur kimliği. `@id` her sayfada AYNI olmalı: blog
+ * yazısındaki yazar, /hakkinda'daki kişi ve basın kitindeki `founder`
+ * motorların gözünde tek varlık olsun diye hepsi bu adresi taşır. Çapa
+ * (`#yazar`) BURADA yaşar; şemaya elle yazan ikinci bir yer açılırsa iki
+ * kimlik doğar ve varlık ikiye bölünür.
+ *
+ * Dil ne olursa olsun Türkçe yola bağlıdır: kimlik dile göre çoğalmaz,
+ * yalnız anlatımı çevrilir.
+ */
+export function personId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}${AUTHOR.path.tr}#yazar`
+}
+
+/**
+ * Person JSON-LD düğümü. Kimliğini `personId`den alır (yukarı bkz.).
  */
 export function personSchema(baseUrl: string, lang: SiteLocale): Record<string, unknown> {
   const base = baseUrl.replace(/\/$/, '')
   const url = base + AUTHOR.path[lang]
   return {
     '@type': 'Person',
-    '@id': `${base}${AUTHOR.path.tr}#yazar`,
+    '@id': personId(baseUrl),
     name: AUTHOR.name,
     url,
     jobTitle: AUTHOR.jobTitle[lang],

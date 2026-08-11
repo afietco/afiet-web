@@ -10,7 +10,8 @@ import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
-import { AUTHOR, personSchema } from '#shared/utils/author'
+import { AUTHOR, personId, personSchema } from '#shared/utils/author'
+import { MARKA_TANIM } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -175,6 +176,33 @@ function normalizePath(path: string): string {
   return p
 }
 
+/**
+ * Kurumun makine okunur kimliği. Organization düğümü üç sayfada birden basılır
+ * (ana sayfa, /en, basın kiti) ve üçünde de AYNI `@id`yi taşır: aynı `@id`
+ * motorlar için "bu üç tarif tek varlığın" demektir, `@id`siz üç düğüm ise
+ * birbirinden habersiz üç adaydır. Yolu `AUTHOR`ın deseninin ikizidir
+ * (kişi `/hakkinda#yazar`, kurum `/#organization`).
+ */
+function organizationId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}/#organization`
+}
+
+/** Organization düğümü - panelin şema ayarından üretilir, üç sayfa da bunu kullanır. */
+function organizationNode(
+  org: SeoSettings['schema']['organization'],
+  baseUrl: string,
+): Record<string, unknown> {
+  return {
+    '@type': 'Organization',
+    '@id': organizationId(baseUrl),
+    name: org.name,
+    url: org.url,
+    logo: absolutize(org.logo, baseUrl),
+    ...(org.sameAs.length ? { sameAs: org.sameAs } : {}),
+    ...(org.contactEmail ? { email: org.contactEmail } : {}),
+  }
+}
+
 /** Bir sayfanın render edilecek nihai meta seti. Bilinmeyen path'ler de tutarlı üretir (404 sayfası dahil). */
 export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<ResolvedPageMeta> {
   const path = normalizePath(rawPath)
@@ -273,14 +301,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     const graph: Record<string, unknown>[] = []
     const s = settings.schema
     if (s.organization.enabled) {
-      graph.push({
-        '@type': 'Organization',
-        name: s.organization.name,
-        url: s.organization.url,
-        logo: absolutize(s.organization.logo, g.baseUrl),
-        ...(s.organization.sameAs.length ? { sameAs: s.organization.sameAs } : {}),
-        ...(s.organization.contactEmail ? { email: s.organization.contactEmail } : {}),
-      })
+      graph.push(organizationNode(s.organization, g.baseUrl))
     }
     if (s.website.enabled) {
       graph.push({
@@ -592,6 +613,69 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     })
   }
 
+  // ── Basın kiti (/basin, /en/press) ──────────────────────────────────────
+  // /hakkinda'nın kurumsal ikizi: orada sayfanın konusu bir KİŞİ (ProfilePage
+  // + Person), burada bir KURUM (AboutPage + Organization). Gazeteciye ve
+  // üretken motora aynı cevabı iki biçimde verir - biri gözle okunur, biri
+  // makineyle. Basın kiti, "afiet nedir, kim yapıyor, nasıl ulaşılır"
+  // sorusunun toplandığı tek sayfa olduğu için şemasız kalması en pahalı
+  // yerdeki boşluktu.
+  //
+  // Organization ana sayfayla AYNI `@id`yi taşır (organizationNode), yani bu
+  // sayfa yeni bir kurum tarif etmez, var olanı zenginleştirir: description
+  // tek cümlelik marka tanımıdır ve `founder` doğrudan yazar kimliğine
+  // (`/hakkinda#yazar`) bağlanır. Böylece kurum ↔ kurucu ↔ yazar üçü tek
+  // grafikte birleşir.
+  if (path === '/basin' || path === '/en/press') {
+    const s = settings.schema
+    if (s.organization.enabled) {
+      jsonld.push({
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        name: title,
+        url: canonical,
+        description,
+        inLanguage,
+        isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+        mainEntity: {
+          ...organizationNode(s.organization, g.baseUrl),
+          /* Kurumun açıklaması panelden değil marka tanımından gelir: basın
+             sayfasının tamamı zaten o cümlenin etrafında kurulu. */
+          description: MARKA_TANIM[isEn ? 'en' : 'tr'],
+          /* `@id` düğümü /hakkinda'daki Person'a bağlar; `@type` ve `name` bu
+             sayfada da durur çünkü çıplak bir referans doğrulayıcıya kurucunun
+             KİM olduğunu söylemez - basın kitinde cevabı sayfanın kendisinde
+             olmalı. Tam anlatım (unvan, biyografi, profiller) yine tek yerde,
+             `personSchema` düğümünde yaşar. */
+          founder: {
+            '@type': 'Person',
+            '@id': personId(g.baseUrl),
+            name: AUTHOR.name,
+            url: `${base}${AUTHOR.path[isEn ? 'en' : 'tr']}`,
+          },
+        },
+      })
+    }
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: isEn ? 'Home' : 'Ana sayfa',
+          item: `${base}${isEn ? '/en' : '/'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: isEn ? 'Press kit' : 'Basın kiti',
+          item: canonical,
+        },
+      ],
+    })
+  }
+
   // İngilizce ana sayfa: marka VARLIĞI iki dilde de aynı olmalı (aynı
   // Organization, aynı sameAs) ki üretken motorlar afiet'i tek kimlik olarak
   // tanısın. WebSite bilerek tekrar edilmez; site tektir, dili sayfaya aittir.
@@ -599,14 +683,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     const s = settings.schema
     const graph: Record<string, unknown>[] = []
     if (s.organization.enabled) {
-      graph.push({
-        '@type': 'Organization',
-        name: s.organization.name,
-        url: s.organization.url,
-        logo: absolutize(s.organization.logo, g.baseUrl),
-        ...(s.organization.sameAs.length ? { sameAs: s.organization.sameAs } : {}),
-        ...(s.organization.contactEmail ? { email: s.organization.contactEmail } : {}),
-      })
+      graph.push(organizationNode(s.organization, g.baseUrl))
     }
     if (s.mobileApp.enabled) {
       graph.push({
