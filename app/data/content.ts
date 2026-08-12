@@ -1223,6 +1223,24 @@ export const privacy = {
       ],
     },
     {
+      title: 'Senin için tutulan not',
+      body: [
+        'afiet, kayıtlarından yola çıkarak senin hakkında kısa bir not tutar: ne ' +
+          'için geldiğin, nasıl beslendiğin, ritminin nerede tuttuğu ve nerede ' +
+          'kaydığı, vücudundaki eğilim, kiminle yediğin ve açık kalan konular. ' +
+          'Bu notu yapay zekâ yazar.',
+        'Notta sayı yoktur; öğün listen, ölçülerin ve kilon kendi tablolarında ' +
+          'durur. Tutulan şey yorumdur: “hafta içi düzenli, hafta sonu kayıyor” ' +
+          'gibi. Sohbetlerin bu nota GİRMEZ.',
+        'Var olma sebebi asistanların seni her seferinde baştan tanımak zorunda ' +
+          'kalmamasıdır; Afi ve uzman asistanlar konuşurken bu notu okur.',
+        'Notu ekibimiz de okuyabilir ve bir bölümünü elle yazabilir; destek ' +
+          'isteğine bakan kişinin senin durumunu anlaması için. Her sürümü ' +
+          'saklanır, böylece yanlış bir yorum geri alınabilir.',
+        'Hesabını sildiğinde bu not da silinir.',
+      ],
+    },
+    {
       title: 'Abonelik ve ödeme',
       body: [
         'afiet+ aboneliğini App Store ya da Google Play üzerinden alırsın. Ödeme ' +

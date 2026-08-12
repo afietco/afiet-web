@@ -516,6 +516,25 @@ export const privacyEn = {
       ],
     },
     {
+      title: 'The note we keep about you',
+      body: [
+        'Starting from your logs, afiet keeps a short note about you: what you came ' +
+          'for, how you eat, where your rhythm holds and where it slips, the trend ' +
+          'in your body, who you eat with and topics left open. This note is ' +
+          'written by AI.',
+        'The note holds no numbers; your meal list, your measurements and your ' +
+          'weight stay in their own tables. What is kept is the interpretation, ' +
+          'such as "steady on weekdays, slips at the weekend". Your conversations ' +
+          'do NOT go into this note.',
+        'It exists so the assistants do not have to get to know you from scratch ' +
+          'every time; Afi and the specialist assistants read it while talking to you.',
+        'Our team can also read the note and write one of its sections by hand, so ' +
+          'that whoever answers a support request understands your situation. Every ' +
+          'version is kept, so a wrong interpretation can be rolled back.',
+        'Deleting your account deletes this note too.',
+      ],
+    },
+    {
       title: 'Subscription and payment',
       body: [
         'You buy the afiet+ subscription through the App Store or Google Play. ' +

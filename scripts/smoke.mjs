@@ -214,6 +214,10 @@ try {
   ok(gizlilikHtml.includes('RevenueCat'), '/gizlilik abonelik işlemcisini adıyla söylüyor')
   ok(gizlilikHtml.includes('Gruplar ve sofra'), '/gizlilik grupta ne göründüğünü anlatıyor')
   ok(
+    gizlilikHtml.includes('Senin için tutulan not'),
+    '/gizlilik hakkında tutulan yapay zekâ notunu anlatıyor',
+  )
+  ok(
     gizlilikHtml.includes('12 Ağustos 2026'),
     '/gizlilik yürürlük tarihi yayın gününe çekilmiş',
   )
