@@ -151,6 +151,43 @@ try {
   const kitRes = await fetch(`http://localhost:${PORT}/basin-kiti/afiet-basin-kiti.zip`)
   ok(kitRes.status === 200, `basın kiti arşivi indirilebiliyor (${kitRes.status})`)
 
+  /* --- Kullanım Koşulları (/kosullar) ---
+     Bu sayfanın 200 dönmesi bir SEO tercihi değil, gönderim şartı: mobildeki
+     paywall doğrudan buraya bağlanır ve App Store 3.1.2 bağlantıyı hem
+     uygulamada hem mağaza kaydında arar, 404 red sebebidir. Sayfa bir kez
+     yayına girdikten sonra yolu da değişemez, çünkü mağazadaki build eski
+     adresi taşımaya devam eder.
+
+     Sağlık uyarısı ve abonelik bölümü ayrıca aranır: ikisi de metnin
+     kaldırılması en kolay, kaldırılınca en pahalı parçaları. */
+  const kosullarRes = await fetch(`http://localhost:${PORT}/kosullar`, { redirect: 'manual' })
+  const kosullarHtml = await kosullarRes.text()
+  ok(kosullarRes.status === 200, `/kosullar 200, yönlendirme yok (${kosullarRes.status})`)
+  ok(
+    kosullarHtml.includes('bir sağlık hizmeti değildir'),
+    '/kosullar sağlık uyarısını basıyor',
+  )
+  ok(kosullarHtml.includes('afiet+ aboneliği'), '/kosullar abonelik bölümünü basıyor')
+  ok(
+    kosullarHtml.includes('en az 24 saat önce iptal etmezsen kendiliğinden yenilenir'),
+    '/kosullar otomatik yenilemeyi 24 saat kuralıyla söylüyor',
+  )
+  ok(
+    kosullarHtml.includes('İptali uygulamanın içinden yapamazsın'),
+    '/kosullar iptalin mağazadan yapıldığını söylüyor',
+  )
+  ok(kosullarHtml.includes('Cayma hakkı'), '/kosullar cayma hakkı bölümünü taşıyor')
+  /* Korumalı unvan kuralı ASİSTANLAR içindir: satılan şeyi "psikolog" diye
+     anlatmak yasak, kullanıcıyı gerçek bir diyetisyene yönlendirmek ise tam
+     tersine istenen şey. Bu yüzden aranan, asistanların uygulamadaki adlarıyla
+     anılması ve "psikolog" kelimesinin hiç geçmemesidir. */
+  ok(!kosullarHtml.includes('psikolog'), '/kosullar korumalı unvanla satış yapmıyor')
+  ok(
+    kosullarHtml.includes('beslenme uzmanı') && kosullarHtml.includes('destek uzmanı'),
+    '/kosullar asistanları uygulamadaki adlarıyla anıyor',
+  )
+  ok(sitemap.includes('/kosullar'), 'sitemap /kosullar sayfasını içeriyor')
+
   const pressEnRes = await fetch(`http://localhost:${PORT}/en/press`)
   const pressEnHtml = await pressEnRes.text()
   ok(pressEnRes.status === 200, `/en/press 200 (${pressEnRes.status})`)
@@ -196,6 +233,31 @@ try {
   )
   ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
   ok(sitemap.includes('/beta'), 'sitemap /beta sayfasını içeriyor')
+
+  /* --- Gizlilik politikası: uygulamanın gerçekten yaptığı şeyler ---
+     Bu dört bölüm bir üslup tercihi değil, uygulamanın canlı veri akışlarının
+     karşılığı. Mağaza incelemesi politikayı uygulamanın davranışıyla
+     karşılaştırır ve eksik beyan bilinen bir red sebebi. Bölümler metin
+     düzenlemesi sırasında sessizce düşebildiği için tek tek aranıyor. */
+  const gizlilikRes = await fetch(`http://localhost:${PORT}/gizlilik`)
+  const gizlilikHtml = await gizlilikRes.text()
+  ok(gizlilikRes.status === 200, `/gizlilik 200 (${gizlilikRes.status})`)
+  ok(gizlilikHtml.includes('Asistan sohbetleri'), '/gizlilik sohbet saklamayı anlatıyor')
+  ok(
+    gizlilikHtml.includes('açık rızanla saklanır'),
+    '/gizlilik destek sohbetinin açık rızaya bağlı olduğunu söylüyor',
+  )
+  ok(gizlilikHtml.includes('Abonelik ve ödeme'), '/gizlilik abonelik verisini anlatıyor')
+  ok(gizlilikHtml.includes('RevenueCat'), '/gizlilik abonelik işlemcisini adıyla söylüyor')
+  ok(gizlilikHtml.includes('Gruplar ve sofra'), '/gizlilik grupta ne göründüğünü anlatıyor')
+  ok(
+    gizlilikHtml.includes('Senin için tutulan not'),
+    '/gizlilik hakkında tutulan yapay zekâ notunu anlatıyor',
+  )
+  ok(
+    gizlilikHtml.includes('12 Ağustos 2026'),
+    '/gizlilik yürürlük tarihi yayın gününe çekilmiş',
+  )
 
   // --- Destek merkezi: sunucu tarafı sözleşmeleri ---
   const supportHub = await fetch(`http://localhost:${PORT}/destek`)
