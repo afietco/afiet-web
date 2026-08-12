@@ -197,6 +197,27 @@ try {
   ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
   ok(sitemap.includes('/beta'), 'sitemap /beta sayfasını içeriyor')
 
+  /* --- Gizlilik politikası: uygulamanın gerçekten yaptığı şeyler ---
+     Bu dört bölüm bir üslup tercihi değil, uygulamanın canlı veri akışlarının
+     karşılığı. Mağaza incelemesi politikayı uygulamanın davranışıyla
+     karşılaştırır ve eksik beyan bilinen bir red sebebi. Bölümler metin
+     düzenlemesi sırasında sessizce düşebildiği için tek tek aranıyor. */
+  const gizlilikRes = await fetch(`http://localhost:${PORT}/gizlilik`)
+  const gizlilikHtml = await gizlilikRes.text()
+  ok(gizlilikRes.status === 200, `/gizlilik 200 (${gizlilikRes.status})`)
+  ok(gizlilikHtml.includes('Asistan sohbetleri'), '/gizlilik sohbet saklamayı anlatıyor')
+  ok(
+    gizlilikHtml.includes('açık rızanla saklanır'),
+    '/gizlilik destek sohbetinin açık rızaya bağlı olduğunu söylüyor',
+  )
+  ok(gizlilikHtml.includes('Abonelik ve ödeme'), '/gizlilik abonelik verisini anlatıyor')
+  ok(gizlilikHtml.includes('RevenueCat'), '/gizlilik abonelik işlemcisini adıyla söylüyor')
+  ok(gizlilikHtml.includes('Gruplar ve sofra'), '/gizlilik grupta ne göründüğünü anlatıyor')
+  ok(
+    gizlilikHtml.includes('12 Ağustos 2026'),
+    '/gizlilik yürürlük tarihi yayın gününe çekilmiş',
+  )
+
   // --- Destek merkezi: sunucu tarafı sözleşmeleri ---
   const supportHub = await fetch(`http://localhost:${PORT}/destek`)
   const supportHtml = await supportHub.text()

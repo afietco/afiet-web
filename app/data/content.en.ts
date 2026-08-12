@@ -459,7 +459,7 @@ export const aboutEn = {
 export const privacyEn = {
   title: 'Privacy Policy',
   effectiveLabel: 'Effective',
-  effective: 'July 31, 2026',
+  effective: 'August 12, 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet helps you build balanced eating habits with your family. We only ' +
@@ -474,7 +474,11 @@ export const privacyEn = {
         'Health and nutrition: your meal and food logs, food groups, water intake, ' +
           'body measurements (weight, waist, neck, hip) and values calculated from ' +
           'them such as BMI, BMR and TDEE.',
-        'Usage: your logging dates and in-app activity such as streaks.',
+        'Usage: your logging dates and in-app activity such as your afiyet rhythm, ' +
+          'plus usage events such as which screens you opened, how long you stayed ' +
+          'and how long the app took to launch. We keep these to fix the product, ' +
+          'not for advertising or profiling: they answer the question "is this where ' +
+          'people get stuck". What you ate or wrote never goes into an event.',
         'Notifications: if you allow them, your device\'s anonymous push token so ' +
           'we can send reminders and announcements. You can turn notifications off ' +
           'in your device settings at any time.',
@@ -487,6 +491,55 @@ export const privacyEn = {
           'and showing you balanced eating summaries.',
         'We do not show ads, we do not sell your data, we do not share it with ' +
           'third parties and we do not track you.',
+      ],
+    },
+    {
+      title: 'Assistant conversations',
+      body: [
+        'What you write to Afi, to the nutrition assistant and to the support ' +
+          'assistant is stored on our server together with your account, so that a ' +
+          'conversation carries across devices and the assistants come to know you ' +
+          'over time.',
+        'What we store is what you wrote and what the assistant wrote. We do not ' +
+          'derive summaries, scores or labels from your conversations.',
+        'To produce a reply, your message is forwarded to Microsoft Azure\'s AI ' +
+          'service in the European region; it is not used for model training there.',
+        'Conversations are never used to train AI models, never used for ' +
+          'advertising and never shared with third parties.',
+        'What is discussed in the support conversation may relate to mental health, ' +
+          'which data protection law treats as a special category. The support ' +
+          'conversation is therefore stored only with your explicit consent; you can ' +
+          'withdraw that consent at any time and delete your conversations.',
+        'Deleting a conversation removes it from your device and from the server. ' +
+          'Deleting your account deletes your conversations too. Conversations you ' +
+          'do not delete are kept for at most 24 months.',
+      ],
+    },
+    {
+      title: 'Subscription and payment',
+      body: [
+        'You buy the afiet+ subscription through the App Store or Google Play. ' +
+          'Payment goes through your store account; your card details, billing ' +
+          'address and payment information never reach us and are never stored by us.',
+        'We use a service called RevenueCat to track the state of your ' +
+          'subscription. What goes to it is the store purchase record and your afiet ' +
+          'account id; your name, your email and your nutrition data do not.',
+        'We also keep the state of your subscription (which product, which store, ' +
+          'valid until when) on our own server, because that is what decides which ' +
+          'features the app unlocks.',
+      ],
+    },
+    {
+      title: 'Groups and the shared table',
+      body: [
+        'When you join a group, the other members see your name, your emoji, your ' +
+          'level, whether you logged your table that day and how balanced the day ' +
+          'was. You can say "afiyet olsun" to each other and those greetings are visible.',
+        'What you ate, your measurements and your weight do NOT go to the group. ' +
+          'Nobody can see your meal list or your body records.',
+        'If you would rather not appear at the shared table, you can turn it off in ' +
+          'the group settings; you stay in the group but your rhythm and balance are ' +
+          'not shown to the others.',
       ],
     },
     {
