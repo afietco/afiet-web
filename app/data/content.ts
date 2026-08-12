@@ -427,6 +427,7 @@ export const footer = {
     { label: 'Basın', to: '/basin' },
     { label: 'İletişim', to: '/iletisim' },
     { label: 'Gizlilik', to: '/gizlilik' },
+    { label: 'Koşullar', to: '/kosullar' },
   ],
   /**
    * Dış profiller (SocialIcons.vue `rel="me"` ile basar; footer + /iletisim).
@@ -1367,12 +1368,209 @@ export const epostaDogrula = {
 }
 
 /**
+ * Kullanım Koşulları (/kosullar). Gövde TermsArticle.vue'dedir.
+ *
+ * NEDEN VAR: abonelik satan bir uygulamada App Store 3.1.2 bu bağlantıyı HEM
+ * uygulamanın içinde HEM mağaza kaydında arar ve 404 bilinen bir red sebebidir.
+ * Mobildeki paywall (afiet-mobile > src/app/premium.tsx) doğrudan buraya
+ * bağlanır; Play tarafı da aynı adresi ister. Yani bu sayfa kaldırılamaz ve
+ * yolu değiştirilemez, önce mobil sürüm çıkmadan.
+ *
+ * Bu bir sözleşme metnidir. Marka sesi korunur (sen dili, yargı yok) ama
+ * cümleler bağlayıcıdır: "genelde", "çoğunlukla" gibi yumuşatıcılar
+ * kullanılmaz, çünkü bir taahhüdün sınırı belirsizse taahhüt değildir.
+ *
+ * Üç şey bilerek burada YOK:
+ *   1. Fiyat rakamı. Fiyatı mağaza söyler, mağazada değişir ve buraya yazılan
+ *      sayı sessizce yanlışa döner. Uygulamada da aynı kural geçerli.
+ *   2. Açık adres. Künye "işletmeci adı + e-posta" olarak yayınlanır
+ *      (kullanıcı kararı, 12 Ağu 2026); mağaza kayıtları adresi ayrıca sorar.
+ *   3. Korumalı unvanlar. Asistanlar uygulamadaki adlarıyla anılır
+ *      ("beslenme uzmanı", "destek uzmanı"); "diyetisyen" ve "psikolog"
+ *      yayınlanan hiçbir metinde geçmez ([[fiyat-politikasi]] kararı).
+ *
+ * Yürürlük tarihi `privacy.effective`ten AYRIDIR: iki ayrı belge, aynı gün
+ * değişmek zorunda değil.
+ */
+export const terms = {
+  title: 'Kullanım Koşulları',
+  effective: '12 Ağustos 2026',
+  contact: 'destek@afiet.co',
+  intro:
+    'Bu sayfa afiet’i kullanırken ikimizin de neye söz verdiğini anlatır. ' +
+    'Kısaca: afiet sofranı dengelemene yardım eden bir uygulamadır, bir sağlık ' +
+    'hizmeti değildir, ve tuttuğun kayıtlar senindir.',
+  sections: [
+    {
+      title: 'afiet’i kim işletiyor',
+      body: [
+        'afiet’i Berk Karataş işletir; bu koşullardaki “biz” odur. Her konuda ' +
+          'destek@afiet.co adresine yazabilirsin, gerçek bir insan okur.',
+        'Bu koşullar hem afiet mobil uygulamasını hem afiet.co’yu kapsar.',
+      ],
+    },
+    {
+      title: 'Koşulları kabul etmek',
+      body: [
+        'afiet’i kurup kullanmaya başladığında bu koşulları kabul etmiş olursun. ' +
+          'Kabul etmiyorsan uygulamayı kullanma; hesabını istediğin an kapatabilirsin.',
+        'afiet 18 yaş ve üzeri kullanıcılar içindir.',
+      ],
+    },
+    {
+      title: 'afiet ne yapar, ne yapmaz',
+      body: [
+        'afiet ne yediğini kaydetmene, günün dengesini görmene ve bir ritim ' +
+          'kurmana yardım eder. Kalori saydırmaz, hedef kilo koymaz, süre vaat etmez.',
+        'afiet bir sağlık hizmeti değildir. Uygulamadaki hiçbir metin, sayı ya da ' +
+          'öneri tıbbi tavsiye, teşhis ya da tedavi yerine geçmez. Beslenme düzeninde ' +
+          'bir değişiklik yapmadan önce, özellikle bir hastalığın ya da gebeliğin ' +
+          'varsa veya düzenli ilaç kullanıyorsan, hekimine ya da bir diyetisyene danış.',
+        'Acil bir durumda uygulamayı bekletme: 112’yi ara.',
+        'Yeme bozukluğu yaşıyorsan ya da yaşayabileceğini düşünüyorsan, kayıt ' +
+          'tutmanın sana iyi gelip gelmeyeceğini önce bir uzmanla konuşmanı öneririz.',
+      ],
+    },
+    {
+      title: 'Hesabın',
+      body: [
+        'Hesap e-posta adresinle açılır ve senindir; giriş bilgilerini paylaşma.',
+        'Girdiğin bilgilerin doğruluğu hesapların doğruluğu demektir: boy ve doğum ' +
+          'tarihi gibi alanları doğru gir.',
+        'Hesabını uygulamadan (Profil, sonra “Hesabı sil”) ya da destek@afiet.co ' +
+          'adresine yazarak silebilirsin. Silme geri alınamaz.',
+      ],
+    },
+    {
+      title: 'afiet+ aboneliği',
+      body: [
+        'Kayıt tutmak, denge tabağı, afiyet ritmi, lig ve fotoğraftan tanıma ' +
+          'ücretsizdir ve ücretsiz kalır.',
+        'afiet+ aboneliği, Afi’nin iki uzman asistanını (beslenme uzmanı ve destek ' +
+          'uzmanı) üçüncü mesajdan sonra da açar ve haftalık ikram kesene mesaj hakkı ' +
+          'ekler. Ne aldığını satın alma ekranında uygulamanın kendi hesapladığı ' +
+          'sayıyla görürsün; “sınırsız” diye bir vaat vermiyoruz.',
+        'Aboneliği App Store ya da Google Play üzerinden alırsın. Ücret, dönem ' +
+          'uzunluğu ve varsa indirim mağazada yazılıdır; tahsilat mağaza hesabından ' +
+          'yapılır ve satıcı mağazadır. Kart bilgin bize hiç ulaşmaz.',
+        'Abonelik, dönem bitmeden en az 24 saat önce iptal etmezsen kendiliğinden ' +
+          'yenilenir ve ücret, dönem bitiminden önceki 24 saat içinde tahsil edilir.',
+        'İptali uygulamanın içinden yapamazsın, mağazadan yaparsın: iPhone’da ' +
+          'Ayarlar, sonra Apple hesabın, sonra Abonelikler; Android’de Google Play, ' +
+          'sonra Abonelikler. İptal ettiğinde ödediğin dönemin sonuna kadar afiet+ ' +
+          'açık kalır.',
+        'İade talebi de mağazaya yapılır: Apple için reportaproblem.apple.com, ' +
+          'Google için Play Store sipariş geçmişin. Doğrudan iade yapma yetkimiz ' +
+          'yoktur. Yine de bir sorun olursa destek@afiet.co’ya yaz, elimizden geleni ' +
+          'yaparız.',
+        'Fiyat değişirse mağaza seni yenilemeden önce bilgilendirir; kabul etmezsen ' +
+          'aboneliği iptal edebilirsin.',
+      ],
+    },
+    {
+      title: 'Cayma hakkı',
+      body: [
+        'Abonelik, satın aldığın anda ifa edilen bir dijital hizmettir. 6502 sayılı ' +
+          'Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği, ' +
+          'bu tür hizmetlerde cayma hakkına bir istisna tanır.',
+        'Bu, iade alamayacaksın demek değildir: satış mağaza üzerinden yapıldığı ' +
+          'için mesafeli satış sözleşmesinin karşı tarafı ilgili mağazadır ve ' +
+          'mağazaların iade politikaları çoğu zaman bundan daha geniştir. Talebini ' +
+          'yukarıdaki adreslerden mağazaya iletirsin.',
+      ],
+    },
+    {
+      title: 'Yapay zekâ asistanları',
+      body: [
+        'Afi ve uzman asistanlar yapay zekâ ile çalışır. Yanılabilirler; ' +
+          'söylediklerini bir uzmanın görüşü gibi değil, bir başlangıç noktası gibi al.',
+        'Destek asistanı bir terapi hizmeti ya da kriz hattı değildir. Kendine zarar ' +
+          'verme düşüncen varsa lütfen 112’yi ara ya da yanındaki birine söyle.',
+        'Asistanlara yazdıkların hesabınla birlikte saklanır; ayrıntısı gizlilik ' +
+          'politikasındadır. Destek sohbeti yalnızca açık rızanla saklanır ve rızanı ' +
+          'istediğin an geri çekebilirsin.',
+      ],
+    },
+    {
+      title: 'Senin içeriğin, bizim içeriğimiz',
+      body: [
+        'Kayıtların, ölçümlerin, kendi eklediğin besinler ve yazdıkların sana aittir.',
+        'Bize yalnızca uygulamayı çalıştırmak için gereken izni verirsin: verini ' +
+          'saklamak, sana göstermek ve özetlerini hesaplamak. Verini satmayız, reklam ' +
+          'için kullanmayız, üçüncü taraflarla paylaşmayız.',
+        'Uygulamanın kendisi, arayüzü, metinleri, besin kataloğu ve afiet markası ' +
+          'bize aittir. Kişisel kullanımın dışında çoğaltılamaz ya da dağıtılamaz.',
+      ],
+    },
+    {
+      title: 'Yapmaman gerekenler',
+      body: [
+        'afiet’i yasa dışı bir amaçla kullanmak, başkasının hesabına girmeye ' +
+          'çalışmak, servise otomatik istek yağdırmak, uygulamayı kaynak koduna ' +
+          'çevirmeye çalışmak ya da güvenlik önlemlerini aşmak.',
+        'Gruplarda başkasını rahatsız edecek, hedef gösterecek ya da tehdit edecek ' +
+          'şeyler yazmak. Sofra ortak bir masadır.',
+        'Bu kurallara aykırı bir kullanımda hesabını askıya alabilir ya da ' +
+          'kapatabiliriz.',
+      ],
+    },
+    {
+      title: 'Hizmetin değişmesi ve durması',
+      body: [
+        'afiet gelişen bir üründür: özellikler değişir, eklenir, bazen kaldırılır. ' +
+          'Önemli bir değişikliği uygulama içinde ya da bu sitede duyururuz.',
+        'Ücretli bir özelliği kaldırırsak ya da hizmeti tamamen durdurursak bunu sana ' +
+          'önceden bildiririz; aboneliğinin kalan dönemi için mağazanın iade kuralları ' +
+          'geçerlidir.',
+      ],
+    },
+    {
+      title: 'Sorumluluk',
+      body: [
+        'afiet’i olduğu gibi sunuyoruz; kesintisiz ve hatasız çalışacağını taahhüt ' +
+          'edemeyiz. Servislerin anlık durumunu afiet.co/durum adresinden görebilirsin.',
+        'Uygulamadaki bilgilere dayanarak verdiğin sağlık kararlarının sonucundan ' +
+          'sorumlu değiliz. Sorumluluğumuz her hâlde yasanın izin verdiği ölçüde ' +
+          'sınırlıdır ve tüketici olarak sahip olduğun haklara dokunmaz.',
+      ],
+    },
+    {
+      title: 'Uygulanacak hukuk',
+      body: [
+        'Bu koşullara Türkiye Cumhuriyeti hukuku uygulanır. Tüketici ' +
+          'uyuşmazlıklarında tüketici hakem heyetlerine ve tüketici mahkemelerine ' +
+          'başvurabilirsin.',
+      ],
+    },
+    {
+      title: 'Değişiklikler',
+      body: [
+        'Bu koşulları zaman zaman güncelleyebiliriz; önemli değişiklikleri bu sayfada ' +
+          'duyururuz. Yürürlük tarihi yukarıda yazılıdır.',
+      ],
+    },
+    {
+      title: 'İletişim',
+      body: ['Aklına takılan her şey için: destek@afiet.co'],
+    },
+  ],
+}
+
+/**
  * İki dilde de yaşayan sayfaların kopya şekilleri: bileşen (KartpostalIletisim,
  * PrivacyArticle, DeleteAccountArticle) bu tiple okur, EN karşılıkları
  * content.en.ts'te aynı şekli doldurur. Alan eklerken iki dosya birlikte değişir.
  */
 export type IletisimCopy = typeof iletisim
 export type PrivacyCopy = typeof privacy
+
+/**
+ * Koşullar TEK DİLDE yaşar, o yüzden yukarıdaki bloğun dışında durur:
+ * çevirisi olmadığı için /en/terms yolu AÇILMAZ (CLAUDE.md > Çok dillilik).
+ * İngilizce sürüm yazıldığında bu satır yukarıdaki listeye taşınır ve
+ * EN_BY_TR'ye eşleme eklenir.
+ */
+export type TermsCopy = typeof terms
 export type HesapSilCopy = typeof hesapSil
 export type BlogCopy = typeof blog
 export type HakkindaCopy = typeof hakkinda
