@@ -1167,7 +1167,7 @@ export const releases = {
  */
 export const privacy = {
   title: 'Gizlilik Politikası',
-  effective: '31 Temmuz 2026',
+  effective: '12 Ağustos 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
@@ -1182,7 +1182,12 @@ export const privacy = {
         'Sağlık ve beslenme: öğün ve besin kayıtların, besin grupları, su tüketimin, ' +
           'vücut ölçülerin (kilo, bel, boyun, kalça) ve bunlardan hesaplanan BMI, BMR, ' +
           'TDEE gibi değerler.',
-        'Kullanım: kayıt tarihlerin ve seri (streak) gibi uygulama içi etkinliğin.',
+        'Kullanım: kayıt tarihlerin ve afiyet ritmin gibi uygulama içi etkinliğin; ' +
+          'ayrıca hangi ekranları açtığın, nerede ne kadar kaldığın ve uygulamanın ' +
+          'ne kadar sürede açıldığı gibi kullanım olayları. Bunları ürünü ' +
+          'düzeltmek için tutarız: reklam ya da profilleme için değil, ' +
+          '“insanlar burada takılıyor mu” sorusuna cevap bulmak için. Olayların ' +
+          'içine ne yediğin ya da ne yazdığın girmez.',
         'Bildirimler: izin verirsen, hatırlatma ve duyuru gönderebilmek için cihazının ' +
           'anonim bildirim adresi (push token). Bildirimleri istediğin zaman cihaz ' +
           'ayarlarından kapatabilirsin.',
@@ -1195,6 +1200,70 @@ export const privacy = {
           'yönetmek ve sana dengeli beslenme özetleri göstermek.',
         'Reklam göstermiyoruz, verini satmıyoruz, üçüncü taraflarla paylaşmıyoruz ve ' +
           'seni izlemiyoruz.',
+      ],
+    },
+    {
+      title: 'Asistan sohbetleri',
+      body: [
+        'Afi, beslenme sohbeti ve destek sohbetinde yazdıkların hesabınla birlikte ' +
+          'sunucumuzda saklanır. Amacı sohbetin cihazlar arasında sürmesi ve ' +
+          'asistanların seni zamanla daha iyi tanımasıdır.',
+        'Saklanan şey senin yazdığın ve asistanın yazdığıdır. Sohbetlerinden ' +
+          'çıkarılmış bir özet, puan ya da etiket üretmiyoruz.',
+        'Cevabı üretmek için mesajın Microsoft Azure’un Avrupa bölgesindeki yapay ' +
+          'zekâ servisine iletilir; orada model eğitimi için kullanılmaz.',
+        'Sohbetler yapay zekâ modelinin eğitilmesi için kullanılmaz, reklam için ' +
+          'kullanılmaz ve üçüncü taraflarla paylaşılmaz.',
+        'Destek sohbetinde konuşulanlar ruh sağlığıyla ilgili olabilir ve bu, kişisel ' +
+          'verilerin korunması mevzuatında özel nitelikli veri sayılır. Bu yüzden destek ' +
+          'sohbeti yalnızca açık rızanla saklanır; rızanı istediğin an geri çekebilir ve ' +
+          'sohbetlerini silebilirsin.',
+        'Bir sohbeti sildiğinde hem cihazından hem sunucudan silinir. Hesabını ' +
+          'sildiğinde sohbetlerin de gider. Silinmeyen sohbetler en fazla 24 ay tutulur.',
+      ],
+    },
+    {
+      title: 'Senin için tutulan not',
+      body: [
+        'afiet, kayıtlarından yola çıkarak senin hakkında kısa bir not tutar: ne ' +
+          'için geldiğin, nasıl beslendiğin, ritminin nerede tuttuğu ve nerede ' +
+          'kaydığı, vücudundaki eğilim, kiminle yediğin ve açık kalan konular. ' +
+          'Bu notu yapay zekâ yazar.',
+        'Notta sayı yoktur; öğün listen, ölçülerin ve kilon kendi tablolarında ' +
+          'durur. Tutulan şey yorumdur: “hafta içi düzenli, hafta sonu kayıyor” ' +
+          'gibi. Sohbetlerin bu nota GİRMEZ.',
+        'Var olma sebebi asistanların seni her seferinde baştan tanımak zorunda ' +
+          'kalmamasıdır; Afi ve uzman asistanlar konuşurken bu notu okur.',
+        'Notu ekibimiz de okuyabilir ve bir bölümünü elle yazabilir; destek ' +
+          'isteğine bakan kişinin senin durumunu anlaması için. Her sürümü ' +
+          'saklanır, böylece yanlış bir yorum geri alınabilir.',
+        'Hesabını sildiğinde bu not da silinir.',
+      ],
+    },
+    {
+      title: 'Abonelik ve ödeme',
+      body: [
+        'afiet+ aboneliğini App Store ya da Google Play üzerinden alırsın. Ödeme ' +
+          'mağaza hesabından geçer; kart bilgin, fatura adresin ya da ödeme ' +
+          'bilgilerinin hiçbiri bize ulaşmaz ve bizde saklanmaz.',
+        'Aboneliğin hangi durumda olduğunu izlemek için RevenueCat adlı hizmeti ' +
+          'kullanırız. Ona giden şey mağazanın satın alma kaydı ve afiet hesap ' +
+          'kimliğindir; adın, e-postan ya da beslenme verin gitmez.',
+        'Aboneliğin durumunu (hangi ürün, hangi mağaza, ne zamana kadar geçerli) ' +
+          'kendi sunucumuzda da tutarız, çünkü uygulamanın hangi özelliği açacağına ' +
+          'karar veren yer orasıdır.',
+      ],
+    },
+    {
+      title: 'Gruplar ve sofra',
+      body: [
+        'Bir gruba katıldığında diğer üyeler adını, emojini, seviyeni, o gün ' +
+          'sofranı yazıp yazmadığını ve günün ne kadar dengelendiğini görür. ' +
+          'Birbirinize “afiyet olsun” diyebilirsiniz ve bu selamlar görünür.',
+        'Ne yediğin, ölçülerin ve kilon gruba GİRMEZ. Kimse senin öğün listeni ' +
+          'ya da vücut kayıtlarını göremez.',
+        'Sofrada görünmeyi istemiyorsan grup ayarlarından kapatabilirsin; grupta ' +
+          'kalırsın ama ritmin ve dengen diğerlerine gösterilmez.',
       ],
     },
     {
