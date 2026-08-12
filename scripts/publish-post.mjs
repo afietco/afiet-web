@@ -9,7 +9,10 @@
  *
  * Frontmatter (--- blokları):
  *   slug, title, description zorunlu; tags: [a, b] · item_id · cover_url ·
- *   published_at (boşsa ilk yayında now() basılır, güncellemede korunur).
+ *   published_at (boşsa ilk yayında now() basılır, güncellemede korunur) ·
+ *   lang (tr|en, varsayılan tr) · translation_of (karşı dildeki yazının slug'ı).
+ *   İngilizce yazılar /en/blog/<slug> altında yayınlanır ve md yedekleri
+ *   content/posts/en/ dizininde durur.
  *
  * DB: .env'deki NUXT_DATABASE_URL (ya da ortam değişkeni). Script hedef Neon
  * host'unu gösterip onay ister - yanlış ortama yazmayı engeller.
@@ -20,6 +23,7 @@ import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { neon } from '@neondatabase/serverless'
+import { gonder } from './indexnow.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const SITE = 'https://afiet.co'
@@ -41,6 +45,61 @@ function databaseUrl() {
   const m = readFileSync(envPath, 'utf8').match(/^NUXT_DATABASE_URL=["']?([^"'\n]+)["']?\s*$/m)
   if (!m) die('.env içinde NUXT_DATABASE_URL bulunamadı.')
   return m[1].trim()
+}
+
+// ── IndexNow bildirimi ───────────────────────────────────────────────────────
+/**
+ * `SITE` sabit olduğu için (https://afiet.co) yalnız PROD yayınında bildirim
+ * anlamlıdır: development veritabanına yazılan bir yazı o adreste yok, onu
+ * bildirmek Bing'e 404 taratmak olur. Prod işareti bu depoda `.env.prod-url`
+ * dosyasıdır (prod bağlantısı hep oradan tek seferlik veriliyor).
+ */
+function prodMu(url) {
+  const p = join(root, '.env.prod-url')
+  if (!existsSync(p)) return false
+  return readFileSync(p, 'utf8').trim() === url.trim()
+}
+
+/**
+ * Sayfa CANLI OLMADAN bildirim yapılmaz: yazı ISR + bellek cache yüzünden
+ * ~2 dk sonra görünüyor, önce bildirirsek Bing 404 görüp URL'i yok sayabilir.
+ * Bu yüzden yayına çıkmasını bekleyip öyle bildiriyoruz; bekleme aynı zamanda
+ * "yazı gerçekten canlı mı" sorusunu da cevaplıyor.
+ */
+async function durumBekle(url, beklenen, saniye = 210) {
+  const bitis = Date.now() + saniye * 1000
+  while (Date.now() < bitis) {
+    try {
+      if ((await fetch(url, { redirect: 'manual' })).status === beklenen) return true
+    } catch { /* ağ dalgalanması: yeniden dene */ }
+    await new Promise((r) => setTimeout(r, 15000))
+  }
+  return false
+}
+
+/**
+ * Bildirim EN İYİ ÇABA'dır: hatası yayını başarısız saymaz, yazı zaten yayında.
+ * `beklenenDurum` yayında 200, yayından kaldırmada 404'tür - iki durumda da
+ * motora "şimdi bak" demeden önce sayfanın yeni hâlini almış olması gerekir.
+ */
+async function indexNowBildir(url, dbUrl, beklenenDurum = 200) {
+  if (!prodMu(dbUrl)) {
+    console.log('  IndexNow: atlandı (hedef production değil)')
+    return
+  }
+  try {
+    process.stdout.write(`  IndexNow: sayfa ${beklenenDurum} olana kadar bekleniyor…`)
+    if (!(await durumBekle(url, beklenenDurum))) {
+      console.log(`\n  IndexNow: sayfa süresinde ${beklenenDurum} olmadı, bildirim YAPILMADI.`)
+      console.log(`  Sonra elle: node scripts/indexnow-gonder.mjs ${url}`)
+      return
+    }
+    const s = await gonder([url])
+    console.log(`\r  IndexNow: HTTP ${s.durum} - ${s.mesaj}                              `)
+  } catch (err) {
+    console.log(`\n  IndexNow: bildirilemedi (${err.message}); yayın etkilenmedi.`)
+    console.log(`  Elle: node scripts/indexnow-gonder.mjs ${url}`)
+  }
 }
 
 async function confirm(question) {
@@ -87,6 +146,13 @@ async function ensureTables(sql) {
       updated_at timestamptz NOT NULL DEFAULT now()
     )
   `
+  // Çok dillilik: kolonlar contentStore.ts'teki ensureContentTables ile AYNI.
+  // Tablo prod'da veriyle yaşıyor, o yüzden ekleme ALTER ile gelir.
+  await sql`
+    ALTER TABLE blog_posts
+      ADD COLUMN IF NOT EXISTS lang text NOT NULL DEFAULT 'tr',
+      ADD COLUMN IF NOT EXISTS translation_of text
+  `
 }
 
 // ── Frontmatter ──────────────────────────────────────────────────────────────
@@ -127,6 +193,11 @@ function parseFrontmatter(raw, file) {
     itemId: fm.item_id && /^\d+$/.test(fm.item_id) ? Number(fm.item_id) : null,
     coverUrl: fm.cover_url || null,
     publishedAt: fm.published_at || null,
+    // Dil belirtilmezse Türkçe: mevcut yazıların hepsi Türkçe ve hiçbir eski
+    // dosya bu alanı taşımıyor.
+    lang: fm.lang === 'en' ? 'en' : 'tr',
+    // Karşı dildeki yazının slug'ı; yalnız gerçekten çeviriyse doldurulur.
+    translationOf: fm.translation_of || null,
     body,
   }
 }
@@ -146,9 +217,10 @@ if (unpublishIdx !== -1) {
   const slug = args[unpublishIdx + 1]
   if (!slug || !SLUG_RE.test(slug)) die('--unpublish <slug> gerekli.')
   await ensureTables(sql)
-  const rows = await sql`SELECT slug, title, item_id FROM blog_posts WHERE slug = ${slug}`
+  const rows = await sql`SELECT slug, title, item_id, lang FROM blog_posts WHERE slug = ${slug}`
   if (!rows.length) die(`'${slug}' bulunamadı.`)
-  console.log(`Yayından kaldırılacak: ${rows[0].title} (${SITE}/blog/${slug})`)
+  const yol = rows[0].lang === 'en' ? `/en/blog/${slug}` : `/blog/${slug}`
+  console.log(`Yayından kaldırılacak: ${rows[0].title} (${SITE}${yol})`)
   if (!(await confirm('Devam edilsin mi?'))) die('Vazgeçildi.')
   await sql`UPDATE blog_posts SET status = 'taslak', updated_at = now() WHERE slug = ${slug}`
   if (rows[0].item_id) {
@@ -158,6 +230,9 @@ if (unpublishIdx !== -1) {
     `
   }
   console.log(`✓ '${slug}' taslağa çekildi (sayfa ≤ ~2 dk içinde 404 olur; sitemap/RSS ≤ 5 dk).`)
+  // Kaldırma da bir değişikliktir: bildirmezsek arama motoru ölü sayfayı
+  // kendi tarama sırası gelene kadar sonuçlarda tutmaya devam eder.
+  await indexNowBildir(`${SITE}${yol}`, url, 404)
   process.exit(0)
 }
 
@@ -168,6 +243,8 @@ const path = join(root, file)
 if (!existsSync(path)) die(`Dosya yok: ${file}`)
 
 const post = parseFrontmatter(readFileSync(path, 'utf8'), file)
+/** Yazı KENDİ dilinin yolunda yayınlanır (shared/utils/locales.ts > blogPath). */
+const postPath = (slug, lang) => (lang === 'en' ? `/en/blog/${slug}` : `/blog/${slug}`)
 if (!post.slug || !SLUG_RE.test(post.slug) || post.slug.length > 120)
   die('Geçersiz slug (küçük harf-rakam-tire, ≤120).')
 if (!post.title || post.title.length > 300) die('title zorunlu (≤300).')
@@ -175,6 +252,8 @@ if (!post.description) die('description zorunlu.')
 if (!post.body) die('Gövde boş.')
 if (post.publishedAt && Number.isNaN(new Date(post.publishedAt).getTime()))
   die('published_at geçersiz tarih.')
+if (post.translationOf && !SLUG_RE.test(post.translationOf))
+  die('translation_of geçersiz slug.')
 
 const minutes = readingMinutes(post.body)
 const words = post.body.trim().split(/\s+/).length
@@ -186,8 +265,9 @@ const existing = await sql`SELECT slug, status FROM blog_posts WHERE slug = ${po
 const mode = existing.length ? `GÜNCELLEME (mevcut: ${existing[0].status})` : 'YENİ YAZI'
 
 console.log('─'.repeat(60))
-console.log(`${mode}  →  ${SITE}/blog/${post.slug}`)
+console.log(`${mode}  →  ${SITE}${postPath(post.slug, post.lang)}`)
 console.log(`başlık      : ${post.title}`)
+console.log(`dil         : ${post.lang}${post.translationOf ? ` (çeviri: ${post.translationOf})` : ''}`)
 console.log(`açıklama    : ${post.description.slice(0, 80)}… (${post.description.length}ch)`)
 console.log(`etiketler   : ${post.tags.join(', ') || '-'}`)
 console.log(`gövde       : ${words} kelime · ~${minutes} dk okuma`)
@@ -197,11 +277,13 @@ if (!(await confirm('Yayınlansın mı?'))) die('Vazgeçildi.')
 
 await sql`
   INSERT INTO blog_posts
-    (slug, title, description, content_md, tags, cover_url, status, reading_minutes, item_id, published_at)
+    (slug, title, description, content_md, tags, cover_url, status, reading_minutes, item_id,
+     published_at, lang, translation_of)
   VALUES
     (${post.slug}, ${post.title}, ${post.description}, ${post.body},
      ${JSON.stringify(post.tags)}::jsonb, ${post.coverUrl}, 'yayinda', ${minutes},
-     ${post.itemId}, COALESCE(${post.publishedAt}::timestamptz, now()))
+     ${post.itemId}, COALESCE(${post.publishedAt}::timestamptz, now()),
+     ${post.lang}, ${post.translationOf})
   ON CONFLICT (slug) DO UPDATE SET
     title = EXCLUDED.title,
     description = EXCLUDED.description,
@@ -212,6 +294,8 @@ await sql`
     reading_minutes = EXCLUDED.reading_minutes,
     item_id = EXCLUDED.item_id,
     published_at = COALESCE(${post.publishedAt}::timestamptz, blog_posts.published_at, now()),
+    lang = EXCLUDED.lang,
+    translation_of = EXCLUDED.translation_of,
     updated_at = now()
 `
 
@@ -219,7 +303,7 @@ if (post.itemId) {
   const updated = await sql`
     UPDATE content_items SET
       status = 'yayinda',
-      published_url = ${`${SITE}/blog/${post.slug}`},
+      published_url = ${`${SITE}${postPath(post.slug, post.lang)}`},
       slug = ${post.slug},
       updated_at = now()
     WHERE id = ${post.itemId}
@@ -232,6 +316,8 @@ if (post.itemId) {
   )
 }
 
-console.log(`✓ Yayında: ${SITE}/blog/${post.slug}`)
+console.log(`✓ Yayında: ${SITE}${postPath(post.slug, post.lang)}`)
 console.log('  görünürlük: sayfa ≤ ~2 dk (bellek cache 60 sn + ISR 60 sn) · sitemap/RSS ≤ 5 dk')
 console.log('  hatırlatma: md dosyasını commit\'le - yedek dosyada, runtime kaynağı DB\'de.')
+
+await indexNowBildir(`${SITE}${postPath(post.slug, post.lang)}`, url)

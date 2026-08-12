@@ -98,6 +98,67 @@ try {
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
 
+  /* Global robots meta: üç direktif de bir SINIRI kaldırır ve açıkça
+     verilmezse motor kendi sınırını uygular (alıntılanabilir metnin uzunluğu
+     buna bakar). Sayfa bazlı override yine panelden gelir, o yüzden bu satır
+     yalnız varsayılan yolda beklenir. */
+  ok(
+    html.includes('max-snippet:-1') &&
+      html.includes('max-image-preview:large') &&
+      html.includes('max-video-preview:-1'),
+    'robots meta üç önizleme direktifini de veriyor',
+  )
+  const noindexHtml = await (await fetch(`http://localhost:${PORT}/bulten/onay`)).text()
+  ok(
+    noindexHtml.includes('noindex') && !noindexHtml.includes('max-snippet'),
+    'sayfa override’ı (noindex) global direktifle KARIŞMIYOR',
+  )
+
+  // --- Yazar sayfası (/hakkinda) ve Person kimliği ---
+  const authorRes = await fetch(`http://localhost:${PORT}/hakkinda`)
+  const authorHtml = await authorRes.text()
+  ok(authorRes.status === 200, `/hakkinda 200 (${authorRes.status})`)
+  ok(authorHtml.includes('Berk Karataş'), '/hakkinda yazarın adını gösteriyor')
+  ok(authorHtml.includes('ProfilePage'), '/hakkinda ProfilePage şeması içeriyor')
+  ok(authorHtml.includes('#yazar'), 'Person düğümü sabit @id taşıyor')
+  ok(sitemap.includes('/hakkinda'), 'sitemap /hakkinda sayfasını içeriyor')
+
+  const aboutEnRes = await fetch(`http://localhost:${PORT}/en/about`)
+  const aboutEnHtml = await aboutEnRes.text()
+  ok(aboutEnRes.status === 200, `/en/about 200 (${aboutEnRes.status})`)
+  ok(aboutEnHtml.includes('hreflang="tr"'), '/en/about Türkçe eşine hreflang veriyor')
+  ok(
+    aboutEnHtml.includes('founder of afiet') && aboutEnHtml.includes('/hakkinda#yazar'),
+    'İngilizce sayfa İngilizce unvan basıyor ama kimlik (@id) aynı kalıyor',
+  )
+
+  /* --- Basın kiti (/basin + /en/press) ---
+     İki tuzağı birden bekler:
+     1. `public/basin-kiti/` klasörü sayfayla AYNI adı taşısaydı statik sunucu
+        /basin isteğini dizine 301'lerdi; 200 beklemek bunu yakalar.
+     2. Sayfadaki tek cümlelik tanım `shared/utils/marka.ts`ten gelir. Kopyası
+        çıkarılırsa metin ayrışır, bu yüzden cümlenin kendisi aranır. */
+  const basinRes = await fetch(`http://localhost:${PORT}/basin`, { redirect: 'manual' })
+  const basinHtml = await basinRes.text()
+  ok(basinRes.status === 200, `/basin 200, yönlendirme yok (${basinRes.status})`)
+  ok(
+    basinHtml.includes('ailelerin dengeli beslenme alışkanlığı kurmasına'),
+    '/basin tek cümlelik marka tanımını basıyor',
+  )
+  ok(basinHtml.includes('Berk Karataş'), '/basin kurucu künyesini gösteriyor')
+  ok(sitemap.includes('/basin'), 'sitemap /basin sayfasını içeriyor')
+
+  const kitRes = await fetch(`http://localhost:${PORT}/basin-kiti/afiet-basin-kiti.zip`)
+  ok(kitRes.status === 200, `basın kiti arşivi indirilebiliyor (${kitRes.status})`)
+
+  const pressEnRes = await fetch(`http://localhost:${PORT}/en/press`)
+  const pressEnHtml = await pressEnRes.text()
+  ok(pressEnRes.status === 200, `/en/press 200 (${pressEnRes.status})`)
+  ok(
+    pressEnHtml.includes('hreflang="tr"') && pressEnHtml.includes('/basin'),
+    '/en/press Türkçe eşine hreflang veriyor',
+  )
+
   // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---
   const blogRes = await fetch(`http://localhost:${PORT}/blog`)
   const blogHtml = await blogRes.text()
@@ -163,6 +224,13 @@ try {
   ok(articleHtml.includes('destek-govde'), 'destek yazısının gövdesi HTML içinde')
   ok(articleHtml.includes('TechArticle'), 'destek yazısı TechArticle şeması içeriyor')
   ok(articleHtml.includes('BreadcrumbList'), 'destek yazısı BreadcrumbList içeriyor')
+  // Yazar: şemadaki Person ile sayfadaki görünür künye AYNI kayıttan gelmeli
+  // (shared/utils/author.ts). Biri kalırsa öteki yalan söyler.
+  ok(articleHtml.includes('"@type":"Person"'), 'destek yazısı Person yazarı içeriyor')
+  ok(
+    articleHtml.includes('rel="author"') && articleHtml.includes('href="/hakkinda"'),
+    'destek yazısında görünür yazar künyesi var ve yazar sayfasına bağlanıyor',
+  )
 
   const category404 = await fetch(`http://localhost:${PORT}/destek/yok-boyle-bir-sey`)
   ok(category404.status === 404, `bilinmeyen destek başlığı 404 (${category404.status})`)
@@ -287,6 +355,64 @@ try {
   )
   ok(sitemap.includes('/hesapla'), 'sitemap /hesapla sayfasını içeriyor')
 
+  // --- İngilizce araçlar (/en/tools) ---
+  // Aynı eşik aynı sebeple: hesap istemcide döner, uzun içerik olmazsa arama
+  // motoru burada da boş sayfa görür. Ek olarak hreflang ÇİFTİ kontrol edilir:
+  // tek yönlü hreflang Google tarafından yok sayılır, yani "iki dilde de var"
+  // iddiası ancak iki uçta da alternate varsa doğrudur.
+  for (const [enSlug, trPath] of [
+    ['bmi-calculator', '/hesapla/vucut-kitle-indeksi'],
+    ['daily-water-calculator', '/hesapla/gunluk-su'],
+    ['body-fat-calculator', '/hesapla/yag-orani'],
+    ['daily-portions-calculator', '/hesapla/sofra-payin'],
+  ]) {
+    const enPath = `/en/tools/${enSlug}`
+    const html = await (await fetch(`http://localhost:${PORT}${enPath}`)).text()
+    const kelime = kelimeSay(html)
+    ok(html.includes('hesap-katlanir'), `${enSlug} uzun içeriği SSR HTML'inde`)
+    ok(kelime > 600, `${enSlug} sunucudan dolu geliyor (${kelime} kelime)`)
+    ok(html.includes('lang="en"'), `${enSlug} html lang="en"`)
+    ok(html.includes('"@type":"FAQPage"'), `${enSlug} FAQPage şeması içeriyor`)
+    ok(
+      html.includes(`hreflang="tr" href="https://afiet.co${trPath}"`),
+      `${enSlug} Türkçe karşılığına hreflang veriyor`,
+    )
+    const trHtml = await (await fetch(`http://localhost:${PORT}${trPath}`)).text()
+    ok(
+      trHtml.includes(`hreflang="en" href="https://afiet.co${enPath}"`),
+      `${trPath} İngilizce karşılığına hreflang veriyor (çift yönlü)`,
+    )
+    ok(sitemap.includes(`<loc>https://afiet.co${enPath}</loc>`), `sitemap ${enSlug} içeriyor`)
+  }
+  // Porsiyon çevirici İngilizce'de BİLEREK yok (katalog Türkçe). Sessizce
+  // açılırsa yarım çevrilmiş bir sayfa yayınlanmış olur.
+  const enPorsiyon = await fetch(`http://localhost:${PORT}/en/tools/portion-converter`)
+  ok(enPorsiyon.status === 404, `İngilizce porsiyon çevirici açılmamış (${enPorsiyon.status})`)
+
+  // --- İngilizce blog: yazı YOKKEN görünmezlik ---
+  // Smoke veritabanısız koşar, yani burası tam olarak "hiç İngilizce yazı yok"
+  // hâlidir ve kural şudur: sayfa çalışır ama hiçbir yere bağlanmaz. Yazı
+  // varken davranış (dil süzgeci, çift yönlü hreflang, yanlış dilde 404)
+  // veritabanı gerektirdiği için geliştirme ortamında elle doğrulanır.
+  const enBlogRes = await fetch(`http://localhost:${PORT}/en/blog`)
+  const enBlogHtml = await enBlogRes.text()
+  ok(enBlogRes.status === 200, `/en/blog açılıyor (${enBlogRes.status})`)
+  ok(enBlogHtml.includes('lang="en"'), '/en/blog html lang="en"')
+  ok(!sitemap.includes('<loc>https://afiet.co/en/blog</loc>'), 'boş /en/blog sitemap’e GİRMİYOR')
+  ok(!enBlogHtml.includes('href="/en/blog"'), 'boş blog menüde/alt bilgide GÖRÜNMÜYOR')
+
+  const enPosts = await (await fetch(`http://localhost:${PORT}/api/blog/posts?lang=en`)).json()
+  ok(Array.isArray(enPosts.posts) && enPosts.posts.length === 0, 'İngilizce yazı listesi boş')
+
+  const enRss = await fetch(`http://localhost:${PORT}/en/blog/rss.xml`)
+  const enRssBody = await enRss.text()
+  ok(enRss.status === 200, `/en/blog/rss.xml yayında (${enRss.status})`)
+  ok(enRssBody.includes('<language>en</language>'), 'İngilizce besleme dilini en olarak veriyor')
+  ok(!enRssBody.includes('<item>'), 'boş beslemede yazı yok')
+
+  const enPost404 = await fetch(`http://localhost:${PORT}/en/blog/olmayan-yazi`)
+  ok(enPost404.status === 404, `bilinmeyen İngilizce yazı gerçek 404 (${enPost404.status})`)
+
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)
@@ -392,7 +518,9 @@ try {
   ok(nearBetaForm, 'beta CTA form bölümüne götürüyor')
 
   // Adım 1 - e-posta
-  await page.getByPlaceholder('e-posta adresin').fill('beta-smoke@afiet.co')
+  // #bf-email: footer'daki bülten formu aynı placeholder'ı taşıdığından
+  // placeholder seçicisi ikili eşleşir; beta formunun kendi kimliği kullanılır.
+  await page.locator('#bf-email').fill('beta-smoke@afiet.co')
   await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
   // Adım 2 - platform + hedef zorunlu
   await page.getByRole('button', { name: 'iPhone' }).click()
@@ -570,6 +698,64 @@ try {
   ok(/\bg\b/.test(porsiyonText), 'gram karşılığı gösteriliyor')
   ok(/Süt Ürünü|Protein/.test(porsiyonText), 'besin grupları gösteriliyor')
   ok(!/kcal/.test(porsiyonText), 'porsiyon çeviricide kalori varsayılan gizli')
+
+  // --- İngilizce araçlar tarayıcıda: iki birim sistemi + TR ile AYNI sayı ---
+  // Motor (@afiet/core aynası) metrik konuşur; imperial dönüşüm formun
+  // kapısında olur. Bu blok iki şeyi korur: dönüşümün doğruluğu ve "site
+  // aynı hesabı iki dilde de aynı veriyor" iddiası.
+  await page.goto(`http://localhost:${PORT}/en/tools/bmi-calculator`, { waitUntil: 'networkidle' })
+  // Varsayılan imperial: 5 ft 8 in + 163 lb ≈ 172,7 cm + 73,9 kg → ~24,8
+  await page.getByLabel('Height (feet)').fill('5')
+  await page.getByLabel('Height (inches)').fill('8')
+  await page.getByLabel('Weight (lb)').fill('163')
+  await page.getByRole('button', { name: 'Show my index' }).click()
+  const enBmiImperial = await page.locator('[aria-live="polite"]').innerText()
+  ok(/24\.8/.test(enBmiImperial), `imperial VKİ doğru çevriliyor (${enBmiImperial.split('\n')[0]})`)
+  ok(/Balance range/.test(enBmiImperial), 'VKİ aralığı İngilizce ve yargısız')
+
+  // Metriğe geçince alanlar sıfırlanır (yazılan sayı öteki sistemde anlamsız).
+  await page.getByText('cm, kg').click()
+  await page.getByLabel('Height (cm)').fill('172')
+  await page.getByLabel('Weight (kg)').fill('74')
+  await page.getByRole('button', { name: /Show my index|Calculate again/ }).click()
+  const enBmiMetric = await page.locator('[aria-live="polite"]').innerText()
+  ok(/25/.test(enBmiMetric), `metrik VKİ TR sayfayla aynı (${enBmiMetric.split('\n')[0]})`)
+
+  await page.goto(`http://localhost:${PORT}/en/tools/daily-portions-calculator`, {
+    waitUntil: 'networkidle',
+  })
+  await page.getByText('cm, kg').click()
+  await page.getByLabel('Age').fill('34')
+  await page.getByLabel('Height (cm)').fill('172')
+  await page.getByLabel('Weight (kg)').fill('74')
+  await page.getByRole('button', { name: 'Show my plate' }).click()
+  const enPlate = page.locator('[aria-live="polite"]')
+  await enPlate.waitFor({ timeout: 8000 })
+  const enPlateText = await enPlate.innerText()
+  ok(/palms?/.test(enPlateText), 'İngilizce el ölçüsü çıkıyor (palm)')
+  ok(
+    /fists?/.test(enPlateText) && /cupped hands?/.test(enPlateText) && /thumbs?/.test(enPlateText),
+    'dört el ölçüsü de İngilizce',
+  )
+  ok(/glasses/.test(enPlateText), 'su satırı var')
+  ok(!/kcal/.test(enPlateText), 'kalori varsayılan olarak görünmüyor')
+  // Aynı girdi, aynı sayı: TR sayfadan okunan avuç içi sayısı ile EN palm aynı.
+  const trPalm = /(\d+(?:-\d+)?)\s+avuç içi/.exec(plateText)?.[1]
+  const enPalm = /(\d+(?:-\d+)?)\s+palms?/.exec(enPlateText)?.[1]
+  ok(
+    Boolean(trPalm) && trPalm === enPalm,
+    `aynı girdide TR ve EN aynı sayıyı veriyor (${trPalm} = ${enPalm})`,
+  )
+  await page.getByText('Show the numbers').click()
+  await page.waitForTimeout(200)
+  ok(/kcal/.test(await enPlate.innerText()), 'kalori ancak açınca görünüyor')
+  // 18 yaş altı rayı İngilizce'de de geçerli.
+  await page.getByLabel('Age').fill('16')
+  await page.getByRole('button', { name: 'Calculate again' }).click()
+  await page.waitForTimeout(300)
+  const enMinor = await enPlate.innerText()
+  ok(/will not give you a target/.test(enMinor), '18 yaş altında hedef üretilmiyor')
+  ok(!/palms?/.test(enMinor), '18 yaş altında el ölçüsü de gösterilmiyor')
 
 
   // --- İsteğe bağlı ekran görüntüleri ---

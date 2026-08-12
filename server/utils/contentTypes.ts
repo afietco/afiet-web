@@ -171,7 +171,26 @@ export type BlogPost = {
   publishedAt: string | null
   createdAt: string
   updatedAt: string
+  /**
+   * Yazının dili. TR yazılar /blog altında, İngilizce yazılar /en/blog altında
+   * listelenir ve bir yazı yalnız KENDİ dilinin yolundan açılır.
+   *
+   * NOT: `BlogPostSummary`ye bilinçli olarak eklenmedi. Özet tipi afiet-admin
+   * `src/services/content.ts` ile BİREBİR aynadır; panel dil desteğini ayrı
+   * bir turda alacak (kullanıcı kararı, 6 Ağu 2026) ve o güne kadar iki repo
+   * senkron kalır.
+   */
+  lang: SiteLang
+  /**
+   * Karşı dildeki yazının slug'ı; çoğu yazıda null (İngilizce yazılar çeviri
+   * değil, kendi arama diline göre kurgulanmış). Dolu VE karşı yazı yayında
+   * ise iki yazı birbirine hreflang verir.
+   */
+  translationOf: string | null
 }
+
+/** Blog yazısının dili; site dilleriyle aynı küme (shared/utils/locales.ts). */
+export type SiteLang = 'tr' | 'en'
 
 /** Panel listesi için gövdesiz özet. */
 export type BlogPostSummary = Pick<

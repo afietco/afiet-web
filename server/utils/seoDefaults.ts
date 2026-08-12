@@ -4,6 +4,7 @@ import type {
   SeoBundle,
   SeoSettings,
 } from './seoTypes'
+import { MARKA_TANIM } from '#shared/utils/marka'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -14,9 +15,12 @@ import { SUPPORT_CATEGORIES } from './supportCategories'
 
 const SITE_URL = 'https://afiet.co'
 const TITLE = 'afiet | Sayma, dengele.'
-const DESCRIPTION =
-  'Kalori saydırmadan, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) ' +
-  'ailece dengeli beslenme alışkanlığı. Beta şimdi açık; App Store ve Google Play yakında.'
+/**
+ * Ana sayfanın meta açıklaması = tek cümlelik marka tanımının KENDİSİ
+ * (`#shared/utils/marka`). Buraya ayrı bir metin yazma: tanım tek yerde
+ * yaşar, kampanya/CTA cümlesi `ogDescription`a ve panele bırakılır.
+ */
+const DESCRIPTION = MARKA_TANIM.tr
 
 /**
  * AI botları - Temmuz 2026 durumu (kaynaklar: sağlayıcıların resmi crawler
@@ -46,6 +50,25 @@ export const AI_BOTS: AiBotInfo[] = [
 const defaultAiBotPolicy: Record<string, boolean> = Object.fromEntries(
   AI_BOTS.map((b) => [b.agent, b.agent !== 'Bytespider']),
 )
+
+/**
+ * İndekslenen her sayfanın `robots` meta'sı. Üç direktif de bir SINIRI KALDIRIR,
+ * yeni bir izin istemez:
+ *   - `max-snippet:-1`        → arama sonucundaki metin parçasına uzunluk sınırı yok
+ *   - `max-image-preview:large` → görsel önizlemesi büyük boy çıkabilir
+ *   - `max-video-preview:-1`  → video önizlemesine süre sınırı yok
+ * Varsayılan davranış Google'da zaten bunlara yakındır ama AÇIKÇA verilmediğinde
+ * motor kendi sınırını uygular; AI Overviews/alıntı yüzeyinde alıntılanabilir
+ * metnin uzunluğu doğrudan bu satıra bakar. `index, follow` bilinçli olarak
+ * başta durur: tek meta etiketinde hem indeksleme hem sınır bilgisi bulunsun.
+ *
+ * Bu değer PANELDEN YÖNETİLMEZ (kullanıcı kararı, 11 Ağu 2026): pratikte hiç
+ * değişmeyen bir sabit için iki repoya alan açmanın karşılığı yok. Sayfa bazlı
+ * istisna yine panelden verilebilir - `seo_pages[<yol>].robots` doluysa o
+ * değer bu satırın TAMAMININ yerine geçer (birleştirilmez).
+ */
+export const ROBOTS_DIRECTIVES =
+  'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
 
 export const DEFAULT_SETTINGS: SeoSettings = {
   general: {
@@ -110,6 +133,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - [Hesaplama araçları](${SITE_URL}/hesapla): günlük besin ihtiyacı hesabı. Sonuç el ölçüsüyle verilir (avuç içi, yumruk, kapalı avuç, başparmak); kalori ve gram isteğe bağlı bir bölümde durur. İdeal kilo, hedef kilo ve süre vaadi ÜRETİLMEZ; 18 yaş altında hedef verilmez.
 - [Destek merkezi tam metin](${SITE_URL}/llms-full.txt): tüm destek yazılarının gövdesi tek dosyada.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
+- [Hakkında](${SITE_URL}/hakkinda): yazıları kimin yazdığı, hangi kaynaklara dayandığı ve yayın ilkeleri.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
 - İletişim: destek@afiet.co
@@ -121,7 +145,25 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       name: 'afiet',
       url: SITE_URL,
       logo: `${SITE_URL}/icon.svg`,
-      sameAs: [],
+      /**
+       * Doğrulanmış dış profiller. `app/data/content.ts > footer.social` ile
+       * BİRLİKTE değişir: görünür link kullanıcıya, sameAs arama motoruna aynı
+       * kimliği söyler.
+       *
+       * ⚠️ PROD'DA OVERRIDE VAR: `seo_settings` tablosunda `schema` satırı
+       * duruyor ve override varsayılanı EZER. Yani buraya adres eklemek prod'u
+       * DEĞİŞTİRMEZ; panelden (admin.afiet.co > Analitik > SEO & GEO) aynı
+       * listeyi girmek gerekir. Burası dev/staging ve boş DB'nin kaynağıdır.
+       *
+       * Var olmayan profile adres YAZILMAZ; hesap açıldıkça tek satır eklenir.
+       */
+      sameAs: [
+        'https://www.instagram.com/afiet.co/',
+        'https://medium.com/@afiet.co',
+        'https://afiet.substack.com',
+        'https://afiet.hashnode.dev',
+        'https://www.linkedin.com/company/afiet-app',
+      ],
       contactEmail: 'destek@afiet.co',
     },
     website: { enabled: true },
@@ -130,10 +172,9 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       name: 'afiet',
       operatingSystem: 'iOS, Android',
       category: 'HealthApplication',
-      description:
-        'afiet, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) kalori ' +
-        'saydırmadan ailece dengeli beslenme alışkanlığı kurmana yardımcı olan bir ' +
-        'mobil uygulamadır. Beş besin grubunu renklerle gösterir, yargılamaz.',
+      /* İlk cümle tanımın kendisidir (tek kaynak); ikinci cümle şemaya özgü
+         ayrıntıdır, tanımın yerine geçmez. */
+      description: `${MARKA_TANIM.tr} Beş besin grubunu renklerle gösterir, yargılamaz.`,
       appStoreUrl: '',
       playStoreUrl: '',
     },
@@ -296,6 +337,46 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
   }),
   ...SUPPORT_CATEGORY_PAGES,
+  /* Yazar sayfası. Blog ve destek yazılarının Person şeması buraya bağlanır
+     (shared/utils/author.ts), yani bu sayfa yalnız bir "hakkımızda" değil,
+     yazar kimliğinin URL'idir: kaldırılırsa şemadaki `url`/`@id` boşa düşer. */
+  '/hakkinda': makePage({
+    title: 'Hakkında | afiet’i kim yazıyor?',
+    description:
+      'afiet’i kuran ve buradaki yazıları yazan kişi, yazıların hangi kaynaklara ' +
+      'dayandığı ve neyi bilerek yapmadığımız: hedef kilo yok, süre vaadi yok, ' +
+      'tıbbi tavsiye yok.',
+    ogTitle: 'Bu yazıları kim yazıyor?',
+    ogDescription:
+      'Beslenme üzerine okuduğun her metnin arkasında bir insan var. afiet.co’da ' +
+      'kim olduğumuzu ve neye dayanarak yazdığımızı açıkça anlatıyoruz.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.5 },
+  }),
+  '/iletisim': makePage({
+    title: 'İletişim | afiet',
+    description:
+      'afiet ekibine ulaş: öneri, soru, sorun ya da iş birliği için bize bir kartpostal ' +
+      'yaz. Beta boyunca her mesajı ürün ekibi okuyor ve dönüyor.',
+    ogTitle: 'Bize bir kartpostal yaz',
+    ogDescription:
+      'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan okur ve ' +
+      'döner. Sofrana afiyet.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.4 },
+  }),
+  /* Bülten onay/çıkış: token'lı işlem sayfaları. Dizine girmez, sitemap'te
+     yer almaz; meta yalnız sekme başlığı içindir. */
+  '/bulten/onay': makePage({
+    title: 'Bülten aboneliği | afiet',
+    description: 'afiet bülten aboneliğini onayla.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
+  '/bulten/cik': makePage({
+    title: 'Bülten aboneliği | afiet',
+    description: 'afiet bülteninden çık.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
   '/yenilikler': makePage({
     title: 'Sürüm notları | afiet',
     description:
@@ -371,6 +452,21 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'süre vaat etmiyoruz.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
   }),
+  /* Basın kiti. Hedef okuru gazetecidir, arama kullanıcısı değil: meta'sı
+     "afiet nedir" sorusuna değil "bu markanın basın malzemesi nerede"
+     sorusuna cevap verir. Sayfanın kendisi indekslenir (altbilgiden bağlıdır)
+     ama sitemap önceliği düşüktür. */
+  '/basin': makePage({
+    title: 'Basın kiti | afiet',
+    description:
+      'afiet basın kiti: logo paketi, uygulama ekran görüntüleri, tek cümlelik ' +
+      'tanım, kurucu künyesi ve iletişim. Yayınlarda serbestçe kullanılabilir.',
+    ogTitle: 'afiet basın kiti',
+    ogDescription:
+      'Logo, ekran görüntüleri, marka tanımı ve iletişim tek sayfada. ' +
+      'Haber ve incelemelerde serbestçe kullanabilirsin.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
   '/hesap-sil': makePage({
     title: 'Hesabını sil | afiet',
     description:
@@ -380,6 +476,169 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'afiet hesabını ve tüm verilerini uygulamadan ya da e-posta ile silmenin ' +
       'adımları. İşlem geri alınamaz; kayıtların kalıcı olarak kaldırılır.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  /* ── İngilizce sayfalar (/en/*) ─────────────────────────────────────────
+     TR kök URL'lere dokunulmaz; İngilizce /en altında yaşar. Hangi sayfanın
+     çifti olduğu shared/utils/locales.ts > EN_BY_TR'de durur; hreflang ve
+     sitemap alternates yalnız o haritadan üretilir. Çevirisi olmayan sayfaya
+     /en yolu AÇILMAZ (TR içerik /en altında fallback servis edilmez). */
+  '/en': makePage({
+    title: 'afiet | Stop counting. Start balancing.',
+    description:
+      'Balanced eating without calorie counting: portions in slices, bowls and ' +
+      'handfuls, five food groups as colors, the whole family at the same table. ' +
+      'Born at the Turkish table; English version on the way.',
+    ogTitle: 'afiet | Stop counting. Start balancing.',
+    ogDescription:
+      'Balanced eating without counting: hand-measure portions, five food groups ' +
+      'as colors, no guilt. The app speaks Turkish today; English is on the way.',
+    sitemap: { include: true, changefreq: 'weekly', priority: 0.7 },
+  }),
+  '/en/privacy': makePage({
+    title: 'Privacy Policy | afiet',
+    description:
+      'What data afiet collects and why, where it is stored (Google Cloud, ' +
+      'European region) and how to delete it. No ads, no tracking, no selling data.',
+    ogDescription:
+      'afiet only collects the data the app needs to work. No ads, no tracking, ' +
+      'no selling data. You can delete your data at any time.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  '/en/contact': makePage({
+    title: 'Contact | afiet',
+    description:
+      'Reach the afiet team: write us a postcard with a suggestion, question, ' +
+      'problem or partnership. A real person reads every message and replies.',
+    ogTitle: 'Write us a postcard',
+    ogDescription:
+      'A suggestion, a question, a problem or a partnership: whatever you write, ' +
+      'a real person reads it and replies.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  '/en/delete-account': makePage({
+    title: 'Delete your account | afiet',
+    description:
+      'Delete your afiet account and all your data at any time: in the app via ' +
+      'My account settings, or by email. Records are removed permanently.',
+    ogDescription:
+      'The steps to delete your afiet account and all your data, from the app ' +
+      'or by email. This cannot be undone.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.2 },
+  }),
+  /* İngilizce hesaplama araçları. Başlıklar aranan kalıbı taşır
+     ("bmi calculator"), açıklamalar marka doktrinini tekrarlar: ideal kilo
+     yok, hedef kilo yok, süre vaadi yok. */
+  '/en/tools': makePage({
+    title: 'Free health calculators | afiet',
+    description:
+      'Body mass index, daily water, body fat and daily portions: run the ' +
+      'numbers, then see them as hand measures (palms, fists, cupped hands). ' +
+      'No ideal weight, no sign-up, nothing leaves your browser.',
+    ogTitle: 'We know the number too. We hand you your plate.',
+    ogDescription:
+      'Four free calculators that translate the maths into the language of the ' +
+      'table: palms, fists, cupped hands and thumbs.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/daily-portions-calculator': makePage({
+    title: 'Daily portion calculator (hand measures) | afiet',
+    description:
+      'How much should you eat a day? Get your daily plate in hand measures: ' +
+      'palms of protein, fists of vegetables, cupped hands of grains, thumbs of ' +
+      'fat. Calories optional, no goal weight, no timelines.',
+    ogTitle: 'What should your day look like?',
+    ogDescription:
+      'Your daily plate in hand measures. We do not ask for a goal weight and ' +
+      'promise no timelines.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/bmi-calculator': makePage({
+    title: 'BMI calculator (metric and imperial) | afiet',
+    description:
+      'Calculate your body mass index from height and weight in ft/lb or cm/kg. ' +
+      'afiet uses judgment-free range language and gives no ideal weight; it ' +
+      'also says what the index cannot tell you.',
+    ogTitle: 'What is your body mass index?',
+    ogDescription:
+      'A rough signal from height and weight. Not a verdict about you, and no ' +
+      'ideal weight.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/daily-water-calculator': makePage({
+    title: 'Daily water intake calculator | afiet',
+    description:
+      'How much water should you drink a day? Water needs follow the energy you ' +
+      'burn, not weight alone. Get your daily intake in glasses, liters or fl oz.',
+    ogTitle: 'How much water should you drink a day?',
+    ogDescription:
+      'Your daily water need in glasses. The same calculation the afiet app uses.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  '/en/tools/body-fat-calculator': makePage({
+    title: 'Body fat calculator (US Navy method) | afiet',
+    description:
+      'Estimate your body fat percentage and fat free mass from waist, neck and ' +
+      'hip measurements. A tape measure is enough. No judgmental bands, no ' +
+      '"ideal" label.',
+    ogTitle: 'What is your body fat percentage?',
+    ogDescription:
+      'Body fat and fat free mass from tape measurements. We show the number and ' +
+      'the direction, not a verdict.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.6 },
+  }),
+  /* İngilizce blog. `sitemap.include` bilinçli olarak FALSE: liste sayfası
+     site haritasına yalnız İngilizce bir yazı yayınlandığında girer ve bunu
+     sitemap route'u dinamik olarak ekler (kullanıcı kararı, 6 Ağu 2026 - içi
+     boş bir liste sayfası indekslenmesin). Meta yine panelden yönetilebilir. */
+  '/en/blog': makePage({
+    title: 'Blog | afiet',
+    description:
+      'Guides on balanced eating without calorie counting, hand-measure ' +
+      'portions and the family table. Written for the way people actually eat.',
+    ogDescription:
+      'Balanced eating without counting: hand-measure portions, five food groups ' +
+      'and the family table.',
+    sitemap: { include: false, changefreq: 'weekly', priority: 0.6 },
+  }),
+  /* İngilizce yazar sayfası. /en 6 Ağu 2026'da park edilmişti; bu sayfa
+     bilinçli istisnadır (kullanıcı kararı, 11 Ağu 2026): /en/blog prod'da
+     canlı olduğu için İngilizce yazının yazar bağlantısı da İngilizce bir
+     sayfaya düşmeli, okur dil değiştirmeye zorlanmamalı. */
+  '/en/about': makePage({
+    title: 'About | who writes afiet',
+    description:
+      'Who founded afiet and writes these guides, which public health sources ' +
+      'they follow, and what we deliberately never do: no target weight, no ' +
+      'timelines, no medical advice.',
+    ogTitle: 'Who writes these guides?',
+    ogDescription:
+      'There is a person behind every text you read about food. Here is who ' +
+      'writes afiet and what the guides are based on.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.4 },
+  }),
+  /* Bülten onay/çıkışın İngilizce inişleri: TR'deki gibi dizin dışı. */
+  '/en/press': makePage({
+    title: 'Press kit | afiet',
+    description:
+      'afiet press kit: logo pack, app screenshots, the one-sentence ' +
+      'description, founder details and contact. Free to use in coverage.',
+    ogTitle: 'afiet press kit',
+    ogDescription:
+      'Logos, screenshots, the brand description and contact details on one ' +
+      'page. Free to use in articles and reviews.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
+  '/en/newsletter/confirm': makePage({
+    title: 'Newsletter | afiet',
+    description: 'Confirm your afiet newsletter subscription.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
+  }),
+  '/en/newsletter/leave': makePage({
+    title: 'Newsletter | afiet',
+    description: 'Leave the afiet newsletter.',
+    robots: 'noindex, nofollow',
+    sitemap: { include: false, changefreq: '', priority: null },
   }),
 }
 

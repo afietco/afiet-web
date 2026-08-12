@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Afi maskot · su · su bolumu bos durumlari ve hatirlatmalar.
+       Bardak sky aksaniyla cizilir (bolum aksani korunur, yesile boyanmaz). -->
+  <ellipse cx="230" cy="437" rx="112" ry="14" fill="#022c22" opacity=".08"/>
+  <ellipse cx="446" cy="428" rx="36" ry="7" fill="#022c22" opacity=".06"/>
+  <g transform="translate(-26 0)">
+    <g transform="translate(256 288) scale(1.07) translate(-256 -288)">
+      <g fill="none" stroke-linecap="round">
+        <path d="M207 232c0-19 17-23 17-42s-17-21-17-40" stroke="#a7f3d0" stroke-width="21"/>
+        <path d="M300 238c0-21 19-25 19-48s-19-23-19-46" stroke="#059669" stroke-width="23"/>
+      </g>
+      <path d="M116 276h280a140 108 0 0 1-280 0z" fill="#ffffff" stroke="#ece4d4" stroke-width="4"/>
+      <g fill="none" stroke="#047857" stroke-linecap="round">
+        <path d="M180 316q23-21 46 0" stroke-width="15"/>
+        <path d="M286 316q23-21 46 0" stroke-width="15"/>
+        <path d="M238 342q18 14 36 0" stroke-width="13"/>
+      </g>
+      <rect x="210" y="394" width="92" height="20" rx="10" fill="#ffffff" stroke="#ece4d4" stroke-width="4"/>
+    </g>
+  </g>
+  <g transform="rotate(-5 446 360)">
+    <path d="M412 296h68l-8 106a13 13 0 0 1-13 12h-26a13 13 0 0 1-13-12z" fill="#0ea5e9" opacity=".14"/>
+    <path d="M417 342h58l-5 60a13 13 0 0 1-13 12h-22a13 13 0 0 1-13-12z" fill="#0ea5e9" opacity=".38"/>
+    <path d="M412 296h68l-8 106a13 13 0 0 1-13 12h-26a13 13 0 0 1-13-12z" fill="none" stroke="#0ea5e9" stroke-width="8" stroke-linejoin="round"/>
+  </g>
+  <path d="M446 234c9 13 15 19 15 28a15 15 0 1 1-30 0c0-9 6-15 15-28z" fill="#0ea5e9"/>
+</svg>

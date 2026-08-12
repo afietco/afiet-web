@@ -19,14 +19,25 @@ export default defineNuxtConfig({
   // robots.txt / sitemap.xml / llms.txt dinamik server route'larıdır.
   routeRules: {
     '/': { isr: 60 },
+    // İngilizce sayfalar (/en/*): TR'yle aynı ISR penceresi. Kapsam bilinçli
+    // olarak dardır; hangi sayfaların EN karşılığı olduğu
+    // shared/utils/locales.ts > EN_BY_TR'de durur.
+    '/en': { isr: 60 },
+    '/en/**': { isr: 60 },
     '/beta': { isr: 60 },
     '/blog': { isr: 60 },
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },
+    // Basın kiti: içerik neredeyse hiç değişmez, meta yine panelden yönetilir.
+    '/basin': { isr: 60 },
     // Durum sayfası ve API'si: 60 sn tazelik yeterli (cron 5 dk'da bir yazar).
     '/durum': { isr: 60 },
     '/api/status': { isr: 60 },
+    // Sürüm kapısı: her mobil açılışta okunuyor, kararı günler ölçeğinde bir
+    // bilgi. Yine de zorunlu bir güncelleme yayına alındığında bir dakikadan
+    // fazla beklemesin diye pencere diğerleriyle aynı.
+    '/api/app-version': { isr: 60 },
     // Destek merkezi: içerik repoda (deploy ile değişir), yine de meta panelden
     // yönetilebilsin diye diğer sayfalarla aynı ISR penceresi.
     '/destek': { isr: 60 },
@@ -100,6 +111,11 @@ export default defineNuxtConfig({
     // Cloud Scheduler'ın /api/cron/* uçlarına verdiği X-Cron-Secret başlığı.
     // BOŞ = cron uçları 503 (yanlışlıkla açık kalmasın). Env: NUXT_CRON_SECRET.
     cronSecret: '',
+    // Go backend'in /api/internal/* uçlarına verdiği X-Internal-Secret
+    // başlığı (içerik hattı: blog yayını + takvim önerileri). BOŞ = iç uçlar
+    // 503, cronSecret ile aynı ilke. Ortam başına AYRI değer (backend'de
+    // app-<ortam>-web-internal-secret). Env: NUXT_INTERNAL_API_SECRET.
+    internalApiSecret: '',
     // İçerik takvimi ekleri (gs://afiet-icerik): imzalı yükleme/indirme.
     // Anahtar Secret Manager'daki `app-content-gcs-key`in base64'ü (ham JSON
     // da kabul edilir). BOŞ = ek yükleme kapalı, panel bunu rozetle söyler ve

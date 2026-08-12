@@ -2,7 +2,7 @@
 
 afiet.co tanıtım sitesi (landing). Uygulama yalnızca native mobilde yaşar -
 bu sitede uygulamaya/PWA'ya link verilmez; CTA'lar store rozetleri ("yakında")
-ve /beta başvurusudur. UI dili tamamen Türkçe.
+ve /beta başvurusudur. UI dili Türkçe + sınırlı İngilizce (/en, aşağı bkz.).
 
 Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
 (cümle başında bile; `uppercase` sınıfı isme asla değmez), tagline
@@ -36,6 +36,67 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
   Kilo/kalori/sayı SORULMAZ (marka gereği). Okuma: `GET /api/admin/beta`.
   Landing'de başka e-posta toplama noktası yok; eski bekleme listesi
   (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırıldı.
+
+## Çok dillilik (/en)
+
+- TR kökte yaşar ve URL'leri DEĞİŞMEZ; İngilizce `/en` altındadır
+  (`app/pages/en/`). i18n modülü BİLİNÇLİ olarak yok: kopya zaten
+  `content.ts` deseninde, meta/hreflang panel yönetimli `usePageSeo`tan
+  akıyor; modülün mesaj kataloğu ve head yönetimi bu iki sistemle çatışırdı.
+- TR↔EN sayfa eşlemesinin TEK kaynağı `shared/utils/locales.ts > EN_BY_TR`.
+  Üç tüketicisi var: hreflang alternates (`seoStore.resolvePageMeta`),
+  sitemap `xhtml:link` (`buildSitemapXml`), dil düğmesi (`SiteHeader`,
+  `useSiteLocale`). Yeni sayfa çevrildiğinde haritaya satır + `DEFAULT_PAGES`e
+  EN meta kaydı eklenir; başka yere dokunulmaz.
+- KURAL: çevirisi olmayan sayfaya `/en` yolu AÇILMAZ ve TR içerik `/en`
+  altında fallback servis edilmez (duplicate/soft-404). hreflang yalnız
+  gerçekten iki dilde yaşayan çiftlere basılır; `x-default` TR'dir.
+- Accept-Language/IP yönlendirmesi YAPILMAZ (Googlebot ABD'den tarar);
+  dil geçişi yalnız header'daki düğmedir ve karşılığı olmayan sayfada görünmez.
+- EN kopya `app/data/content.en.ts`te; ton kuralları ve em dash yasağı
+  İngilizce için de geçerli. EN'de beta formu YOK (kullanıcı kararı, 5 Ağu
+  2026): uygulama Türkçe, EN dönüşümü bülten (`lang='en'` aboneliği; onay
+  maili İngilizce gider, iniş `/en/newsletter/confirm`). `bulten-gonder.mjs`
+  varsayılan tr gönderir, İngilizce duyuru `--lang en` ister.
+- İki dilde yaşayan gövdeler tek bileşendedir (`KartpostalIletisim`,
+  `PrivacyArticle`, `DeleteAccountArticle`); TR politika metni değişirse
+  `privacyEn` de birlikte değişir.
+- **İngilizce hesaplayıcılar** (`/en/tools/*`, dört araç): motor AYNI
+  (`#shared/hesap`, @afiet/core aynası) ve ona İngilizce SIZMAZ. Motor Türkçe
+  etiket döndürdüğü için sayfalar sabit ANAHTARDAN çevirir
+  (`content.en.ts > toolsEn`: `bmiRangeLabels`, `activityLabels`, `handTerms`,
+  `minorNote`); el ölçüsü metni `HandMeasure.text`ten değil `count`tan kurulur.
+  Smoke aynı girdide TR ve EN'in aynı sayıyı verdiğini doğrular.
+- Birim seçici (metrik/imperial) YALNIZ girdi katmanındadır
+  (`shared/hesap/birim.ts` + `ToolField.vue`): kullanıcı ft/in/lb yazar, sayfa
+  cm/kg'ye çevirir, `makulMu` denetimi metrik tabanda kalır. Varsayılan
+  imperial (`useUnitSystem`, localStorage; tercih onMounted'da okunur, yoksa
+  hidrasyon uyumsuzluğu olur).
+- Porsiyon çevirici İngilizce'de BİLEREK yok: katalog 2007 Türkçe besin adı
+  taşıyor. Smoke `/en/tools/portion-converter`ın 404 kaldığını kontrol eder.
+- İngilizce uzun içerik `content/hesapla/en/<slug>.md`; SSS başlığı
+  `Frequently asked questions` (store iki başlığı da tanır). 600 kelime eşiği
+  İngilizce sayfalar için de smoke'ta korunur.
+- **İngilizce blog** (`/en/blog`): yazılar `blog_posts.lang` ile ayrılır
+  (varsayılan `tr`, ALTER ile geldi). Bir yazı YALNIZ kendi dilinin yolundan
+  açılır; yanlış dilde istenen slug 404'tür (`getPublishedPost(event, slug,
+  lang)`). Liste, RSS ve sitemap hep dile göre süzülür.
+- Yazı eşlemesi `blog_posts.translation_of` (karşı yazının slug'ı, çoğu yazıda
+  NULL). Eşleme TEK SATIRA yazılır ama hreflang ÇİFT YÖNLÜ olmak zorunda, o
+  yüzden arama iki yönlüdür (`findTranslationPair`): yalnız ileri yönde
+  arayan bir sürüm Türkçe uçta hreflang basmıyordu ve Google tek yönlüyü yok
+  sayar. Karşı yazı yayında değilse ya da aynı dildeyse hiç basılmaz.
+- `/en/blog` İngilizce yazı YOKKEN sitemap'e, menüye ve llms.txt'ye girmez
+  (kullanıcı kararı, 6 Ağu 2026): sayfa çalışır, boş durumu gösterir, hiçbir
+  yerden bağlanmaz. Üç koşul sırasıyla `sitemap.xml.get.ts`, `useEnBlog`
+  (`SiteHeader`/`SiteFooter`) ve `llms.txt.get.ts` içinde; smoke üçünü de
+  kontrol eder. `EN_BY_TR`ye `/blog` → `/en/blog` satırı bilinçli EKLENMEDİ:
+  ilk İngilizce yazı yayınlandığında eklenecek (o zamana kadar hub'lar
+  birbirine hreflang vermemeli).
+- İlk İngilizce yazı yayınlanınca yapılacaklar: `EN_BY_TR`ye hub satırı,
+  `content/posts/en/<slug>.md` yedeği, frontmatter'da `lang: en` (+ çeviriyse
+  `translation_of`). Panel (afiet-admin) dil rozetini AYRI bir turda alacak;
+  o güne dek `BlogPostSummary`ye `lang` EKLENMEZ, iki repo aynası bozulmasın.
 
 ## Veritabanı: her ortam kendi Neon branch'i
 
@@ -72,6 +133,24 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Sayfalar `usePageSeo()` composable'ı ile `/api/seo/meta?path=`ten meta çeker
   (title/description/og/twitter/canonical/robots/doğrulama kodları/JSON-LD).
   Elle `useHead` meta bloğu YAZMA - panel yönetimini kırar.
+- **Global robots meta:** indekslenen her sayfa `seoDefaults.ts >
+  ROBOTS_DIRECTIVES` satırını basar (`index, follow, max-snippet:-1,
+  max-image-preview:large, max-video-preview:-1`). Üçü de bir SINIRI kaldırır;
+  açıkça verilmezse motor kendi sınırını uygular ve alıntılanabilir metin
+  kısalır. Panelden yönetilmez (kullanıcı kararı, 11 Ağu 2026); sayfa bazlı
+  istisna `seo_pages[<yol>].robots` ile verilir ve o değer bu satırın TAMAMININ
+  yerine geçer (birleştirilmez, örn. noindex sayfasına max-snippet eklenmez).
+- **Yazar kimliği (E-E-A-T):** blog ve destek yazılarının `author`ı
+  Organization değil **Person**'dır ve tek kaynağı `shared/utils/author.ts`tir.
+  Aynı kayıt hem Person JSON-LD'sini (seoStore) hem sayfadaki görünür künyeyi
+  (`YazarSatiri.vue`, blog sonunda `YazarKarti.vue`) besler - ikisi ayrışırsa
+  şema sayfanın söylemediğini iddia eder. Kimlik `@id` ile tektir
+  (`/hakkinda#yazar`) ve İngilizce sayfada da AYNI kalır; yalnız unvan/biyografi
+  çevrilir. Yayıncı kurum olarak kalır (yazan kişi, yayınlayan afiet).
+- Yazar sayfası `/hakkinda` (+ `/en/about`) yalnız bir "hakkımızda" değil,
+  Person şemasının URL'idir: yolu değişirse `author.ts`, `EN_BY_TR` ve
+  `seoDefaults`taki sayfa kaydı BİRLİKTE değişir. Gövde `HakkindaSayfasi.vue`,
+  kopya `content.ts > hakkinda` / `content.en.ts > aboutEn`.
 - JSON-LD: ana sayfada Organization+WebSite+SoftwareApplication grafiği +
   (doluysa) FAQPage. SSS maddeleri hem görünür bölüm (`FaqSection.vue`, boşsa
   render edilmez) hem şemadır - ikisi hep aynı kaynaktan gelir.
@@ -136,6 +215,13 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Yazı meta'sı/JSON-LD'si (BlogPosting + BreadcrumbList) `seoStore.resolvePageMeta`
   içinde üretilir; panelin `seo_pages['/blog/<slug>']` override'ı üstüne biner.
   Sitemap yayındaki yazıları otomatik ekler; RSS: `/blog/rss.xml`.
+- **Künye gövdeye YAZILMAZ** (11 Ağu 2026): yazının başındaki `*Yazan: … · Son
+  güncelleme: …*` satırı 10 md dosyasından çıkarıldı, yerini bileşendeki yazar
+  künyesi aldı (`YazarSatiri.vue`, tek kaynak `shared/utils/author.ts`).
+  Yeni yazıda o satırı geri ekleme; afiet-admin'deki üretim promptu da bunu
+  artık istemiyor. Tarih künyeden değil DB'den gelir (`publishedAt`/`updatedAt`).
+  Prod'da yayındaki yazıların gövdesinde satır HÂLÂ var, yeniden yayınlanana
+  kadar duracak (bu yüzden BlogYazi'deki gömme başlık kuralı iki hâli de tanır).
 - Yayınlama (deploy YOK): panel prompt'u → Claude Code yazıyı
   `content/posts/<slug>.md`e yazar → onay → `node scripts/publish-post.mjs
   content/posts/<slug>.md` (Neon host'u gösterip onay ister; upsert + bağlı
@@ -281,6 +367,27 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Token/sır loglanmaz: Graph hataları URL'siz, yalnız type+code+message olarak
   yazılır (URL'de access_token olabilir).
 
+## Basın kiti (/basin + /en/press)
+
+- **Tek cümlelik marka tanımı** `shared/utils/marka.ts > MARKA_TANIM`tadır ve
+  TEK KAYNAKTIR (kullanıcı kararı, 11 Ağu 2026). Ana sayfanın meta
+  description'ı, `SoftwareApplication` şeması ve basın sayfası aynı cümleyi
+  İÇERİ AKTARIR; hiçbir yere elle kopyalanmaz. Karakter sınırı yüzünden
+  kısaltılan üç yer (App Store Subtitle 30, Play kısa açıklama 80, Wikidata)
+  dosyanın başında istisna olarak sayılıdır. Künye alanları (slogan, lansman
+  penceresi, platformlar) `MARKA_KUNYE`den gelir.
+- Gövde `BasinKiti.vue`, kopya `content.ts > basin` / `content.en.ts > pressEn`
+  (anahtarlar birebir aynı). Sayfa gazeteciyi ikna etmez, işini kolaylaştırır:
+  hiçbir malzeme form arkasında durmaz ve kanıtlanamayan rakam yazılmaz.
+- **Dosyalar `public/basin-kiti/` altında, sayfanın yolu `/basin`.** İkisi
+  BİLEREK ayrı adtadır: public/ altında rotayla aynı adı taşıyan bir klasör o
+  rotayı gölgeler ve `/basin` isteği `/basin/` dizinine 301'lenir. Smoke bunu
+  `redirect: 'manual'` ile kontrol eder.
+- Malzeme `npm run basin-kiti` ile afiet-brand'den üretilir (logolar + App
+  Store ekranları + ZIP). Script yalnız bu Mac'te koşar (afiet-brand uzakta
+  yok), çıktısı repoda yaşar; CI onu üretmez, var kabul eder. Koyu zemin için
+  beyaz kilit brand'de YOK, script iki dokümante rengi değiştirerek türetir.
+
 ## Komutlar
 
 - `npm run dev` / `build` / `preview`
@@ -289,6 +396,8 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   bu Mac'te sistem Chrome'u, CI'da `CHROME_PATH`
 - `npm run assets` - `public/og.png` ve `public/favicon.ico`'yu yeniden üretir
   (`scripts/generate-assets.mjs`)
+- `npm run basin-kiti` - basın malzemesini afiet-brand'den yeniden üretir
+  (`scripts/basin-kiti.mjs`, çıktı `public/basin-kiti/`)
 
 ## Bilinen tuhaflıklar
 

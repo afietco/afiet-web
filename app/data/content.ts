@@ -110,6 +110,36 @@ export const cta = {
 }
 
 /**
+ * Ana sayfa vitrin bölümleri: hesap araçları, taze blog yazıları ve son sürüm
+ * şeridi. Araç kartlarının kaynağı `hesapla.tools`tur (tek liste, iki görünüm);
+ * blog ve sürüm verisi kendi API'lerinden akar, boşsa bölüm hiç görünmez.
+ */
+export const homeHesapla = {
+  eyebrow: 'hesaplama araçları',
+  title: 'Sayı mı lazım? Tabağına çevirelim.',
+  sub:
+    'Beş küçük araç: hesabı yapar, sonucu sofranın diline çevirir. ' +
+    'Üyelik yok; girdiğin hiçbir şey tarayıcından çıkmaz.',
+  cta: 'Tüm araçları gör',
+}
+
+export const homeBlog = {
+  eyebrow: 'blog',
+  title: 'Sofradan taze yazılar',
+  sub: 'Dengeli beslenmeyi sofranın diliyle anlatıyoruz: yargısız, kalorisiz, uygulanabilir.',
+  cta: 'Tüm yazıları gör',
+  readingSuffix: 'dk okuma',
+}
+
+/** İki dilde de aynı şerit basılır; İngilizce karşılığı content.en.ts > homeBlogEn. */
+export type HomeBlogCopy = typeof homeBlog
+
+export const homeYenilikler = {
+  label: 'Taze çıktı',
+  linkLabel: 'Neler değişti?',
+}
+
+/**
  * "Afi'ye sor" paneli - ana sayfada kendi bölümü, beta sayfasında SSS'in
  * kardeşi. Cevaplar backend'den akar; buradaki metinler yalnızca çerçevedir.
  *
@@ -393,9 +423,370 @@ export const footer = {
     { label: 'Destek', to: '/destek' },
     { label: 'Hesapla', to: '/hesapla' },
     { label: 'Yenilikler', to: '/yenilikler' },
+    { label: 'Hakkında', to: '/hakkinda' },
+    { label: 'Basın', to: '/basin' },
+    { label: 'İletişim', to: '/iletisim' },
     { label: 'Gizlilik', to: '/gizlilik' },
   ],
+  /**
+   * Dış profiller (SocialIcons.vue `rel="me"` ile basar; footer + /iletisim).
+   *
+   * TEK KAYNAK DEĞİL: buraya eklenen her adres `server/utils/seoDefaults.ts`
+   * içindeki `schema.organization.sameAs` listesine de girmelidir. Görünür link
+   * kullanıcıya, sameAs arama motoruna aynı kimliği söyler; biri eksikse sinyal
+   * yarım kalır. Adres eklerken ikisini birlikte değiştir. ⚠️ Prod'da
+   * `seo_settings.schema` override'ı varsayılanı EZER: listeyi panelden
+   * (admin.afiet.co > Analitik > SEO & GEO) de güncellemek gerekir.
+   *
+   * Hesaplar 3 Ağu 2026'da açıldı (afiet-brand/GERILLA-30-GUN.md § 7);
+   * LinkedIn şirket sayfası 5 Ağu'da eklendi, dev.to aynı gün listeden
+   * ÇIKARILDI (kullanıcı kararları). Var olmayan profile link VERİLMEZ.
+   * `icon` anahtarı SocialIcons.vue'daki çizimi seçer. Hashnode adresi
+   * blog alan adıdır (afiet.hashnode.dev), profil sayfası değil.
+   */
+  social: [
+    { label: 'Instagram', href: 'https://www.instagram.com/afiet.co/', icon: 'instagram' },
+    { label: 'Medium', href: 'https://medium.com/@afiet.co', icon: 'medium' },
+    { label: 'Substack', href: 'https://afiet.substack.com', icon: 'substack' },
+    { label: 'Hashnode', href: 'https://afiet.hashnode.dev', icon: 'hashnode' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/afiet-app', icon: 'linkedin' },
+  ] as { label: string; href: string; icon: SocialIcon }[],
 }
+
+export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'linkedin'
+
+/**
+ * Bülten (kendi altyapımız: aboneler Neon'da, gönderim Resend API ile, dış
+ * servis paneli yok). Çift onay: form → onay maili → /bulten/onay. Landing'in
+ * e-posta toplama İSTİSNASIDIR ve bilinçlidir; /beta başvurusundan ayrı yaşar.
+ * Kayıt noktaları: footer bandı, blog yazı sonu, /iletisim.
+ */
+export const bulten = {
+  eyebrow: 'bülten',
+  title: 'Sofradan mektubun olsun',
+  sub:
+    'Yeni yazılar, yeni sürümler ve sofradan kısa notlar; en fazla haftada bir, ' +
+    'her zaman tek tıkla çıkışlı.',
+  placeholder: 'e-posta adresin',
+  submit: 'Abone ol',
+  sending: 'Gönderiliyor…',
+  success: 'Posta kutunu kontrol et: onay bağlantın yolda 💌',
+  invalid: 'Geçerli bir e-posta girer misin? 🌿',
+  error: 'Bir şey ters gitti. Birazdan yeniden dener misin?',
+  kvkk: 'E-postanı yalnız bülten göndermek için kullanırız. Ayrıntı: gizlilik sayfası.',
+
+  // Blog yazı sonu varyantı.
+  blogTitle: 'Devamı posta kutuna gelsin',
+  blogSub: 'Yeni yazı çıktığında ve sürüm notu düştüğünde kısaca haber verelim.',
+
+  // Onay sayfası (/bulten/onay).
+  confirmTitle: 'Sofraya hoş geldin 💚',
+  confirmBody: 'Aboneliğin onaylandı. İlk mektup yolda; o zamana dek sofrana afiyet.',
+  confirmFailTitle: 'Bu bağlantı çalışmadı',
+  confirmFailBody:
+    'Onay bağlantısı eskimiş ya da daha önce kullanılmış olabilir. ' +
+    'İstersen aşağıdan yeniden abone olabilirsin.',
+
+  // Çıkış sayfası (/bulten/cik).
+  leaveTitle: 'Yolun açık olsun 🌿',
+  leaveBody:
+    'Aboneliğin sonlandı, bir daha mektup almazsın. Fikrini değiştirirsen ' +
+    'sofrada her zaman yerin var.',
+}
+
+/**
+ * İletişim sayfası (/iletisim): kartpostal metaforu. Mesaj Resend ile ekip
+ * posta kutusuna düşer (beta bildirimleriyle aynı yol). KVKK bilinçli olarak
+ * onay kutusu DEĞİL bilgilendirme satırıdır (kullanıcı kararı, 5 Ağu 2026).
+ */
+export const iletisim = {
+  eyebrow: 'iletişim',
+  title: 'Bize bir kartpostal yaz',
+  sub:
+    'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan ' +
+    'okur ve döner. Beta boyunca her mesajı ürün ekibi görüyor.',
+
+  cardTo: 'Sevgili afiet,',
+  stampLegend: 'Pulunu seç',
+  topics: [
+    { key: 'oneri', label: 'Öneri', accent: 'sebze' },
+    { key: 'soru', label: 'Soru', accent: 'sut' },
+    { key: 'sorun', label: 'Sorun', accent: 'tahil' },
+    { key: 'isbirligi', label: 'İş birliği', accent: 'meyve' },
+  ] as { key: string; label: string; accent: Accent }[],
+
+  messageLabel: 'Mesajın',
+  messagePlaceholder: 'Aklından ne geçiyorsa…',
+  nameLabel: 'Kimden',
+  namePlaceholder: 'adın (istersen)',
+  emailLabel: 'E-posta',
+  emailPlaceholder: 'sana dönebileceğimiz adres',
+  submit: 'Postala',
+  sending: 'Postalanıyor…',
+
+  successTitle: 'Kartpostalın yolda 💌',
+  successBody: 'Eline sağlık! En geç iki gün içinde döneriz. Sofrana afiyet.',
+  successAgain: 'Bir kartpostal daha yaz',
+
+  missingMessage: 'Kartpostal boş gitmesin: birkaç kelime yazar mısın? 🌿',
+  invalidEmail: 'Geçerli bir e-posta girer misin? 🌿',
+  error: 'Postane şu an cevap vermedi. Birazdan yeniden dener misin?',
+
+  kvkk:
+    'Postaladığında adını, e-postanı ve mesajını yalnızca sana dönmek için ' +
+    'kullanırız; üçüncü kişiyle paylaşmayız. Ayrıntı: gizlilik sayfası.',
+
+  socialTitle: 'Bizi şuralarda da bulursun',
+  socialSub: 'Sofranın günlüğü ve perde arkası, ayrı ayrı tellerden.',
+  mailTitle: 'Doğrudan yazmak istersen',
+  mailBody: 'Kartpostal işi değilse aynı kapıya e-postayla da gelebilirsin:',
+  mailAddress: 'destek@afiet.co',
+}
+
+/**
+ * Yazar sayfası (/hakkinda). İngilizce karşılığı content.en.ts > aboutEn,
+ * gövde ikisinde de HakkindaSayfasi.vue.
+ *
+ * NEDEN VAR: beslenme YMYL bir alan; blog ve destek yazılarının Person şeması
+ * bu sayfanın adresine bağlanır (shared/utils/author.ts). Yani burası bir
+ * "hakkımızda" sayfası değil, yazar kimliğinin URL'idir.
+ *
+ * Yazarın adı ve unvanı BURADA DEĞİL author.ts'te: sayfa da künye de şema da
+ * aynı kaydı okur. Buradaki metin o kaydın uzun anlatımıdır.
+ *
+ * Ton: birinci tekil (sayfanın sahibi bir kişi), marka doktrini yine bağlayıcı
+ * (hedef kilo yok, süre vaadi yok, hüküm kuran sıfat yok).
+ */
+export const hakkinda = {
+  eyebrow: 'hakkında',
+  title: 'Bu yazıları kim yazıyor?',
+  sub:
+    'Beslenme üzerine okuduğun her metnin arkasında bir insan var. Burada kim ' +
+    'olduğumu, neye dayanarak yazdığımı ve neyi bilerek yapmadığımızı ' +
+    'anlatıyorum.',
+
+  bioTitle: 'Merhaba',
+  bio: [
+    'Adım Berk Karataş. afiet’i ben kurdum; uygulamayı, bu siteyi ve buradaki ' +
+      'yazıları da ben yazıyorum.',
+    'Diyetisyen değilim, yazılımcıyım. afiet kendi soframda başlayan bir ' +
+      'sorudan çıktı: her lokmayı sayarak geçen bir günün sonunda neden daha ' +
+      'iyi değil de daha yorgun hissediyorum? Sayı bir şey anlatıyordu ama ' +
+      'sofrayı anlatmıyordu. afiet bu yüzden kalori değil ölçü diliyle ' +
+      'konuşuyor: dilim, kase, avuç.',
+    'Aynı ayrımı yazılarda da koruyorum. Burada okuduğun hiçbir metin sana ' +
+      'kişiye özel bir plan vermez; genel bilgi verir ve o bilginin nereden ' +
+      'geldiğini söyler.',
+  ],
+
+  principlesTitle: 'Yazıları nasıl hazırlıyoruz',
+  principles: [
+    {
+      title: 'Kaynağı görünür',
+      body:
+        'Beslenme bilgisi halka açık resmî kaynaklara dayanır. Bir sayı ya da ' +
+        'öneri veriyorsak nereden geldiğini yazının içinde bağlarız; ' +
+        'kaynaksız rakam yayınlamayız.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Tıbbi tavsiye değil',
+      body:
+        'Yazılar genel bir rehberdir. Bir rahatsızlığın, alerjin, gebeliğin ya ' +
+        'da özel bir beslenme planın varsa hekimine ve diyetisyenine danış; ' +
+        'buradaki hiçbir cümle o konuşmanın yerine geçmez.',
+      accent: 'sut',
+    },
+    {
+      title: 'Hedef kilo yok, süre vaadi yok',
+      body:
+        '“Şu kadar haftada şu kadar kilo” cümlesi afiet’te kurulmaz. İdeal ' +
+        'kilo vermeyiz, tarih vermeyiz, suçluluk dili kullanmayız. Ölçümüz ' +
+        'süreklilik, kusursuzluk değil.',
+      accent: 'tahil',
+    },
+    {
+      title: 'Afi yardım eder, sorumluluk insanda',
+      body:
+        'Taslak aşamasında Afi’nin yardımını alıyoruz; sofranın dilini iyi ' +
+        'biliyor. Ama yayına çıkan her yazıyı baştan sona ben okuyup ' +
+        'onaylıyorum, kaynakları da tek tek ben kontrol ediyorum. Yayınlanan ' +
+        'her cümlenin sorumlusu bir insandır.',
+      accent: 'meyve',
+    },
+    {
+      title: 'Eskiyen düzeltilir',
+      body:
+        'Her yazı son güncelleme tarihini taşır. Yanlış ya da eskimiş bir ' +
+        'cümleyi düzeltmek, yeni yazı yazmaktan önce gelir.',
+      accent: 'protein',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  sourcesTitle: 'Sık başvurduğumuz kaynaklar',
+  sourcesSub:
+    'Yazılarda bağlanan kaynaklar bunlarla sınırlı değil, ama çoğu buradan ' +
+    'çıkıyor.',
+  sources: [
+    {
+      label: 'T.C. Sağlık Bakanlığı, Türkiye Beslenme Rehberi (TÜBER)',
+      href: 'https://hsgm.saglik.gov.tr/tr/web-uygulamalarimiz/357.html',
+    },
+    {
+      label: 'Dünya Sağlık Örgütü, Healthy diet',
+      href: 'https://www.who.int/news-room/fact-sheets/detail/healthy-diet',
+    },
+    {
+      label: 'Harvard T.H. Chan, The Healthy Eating Plate',
+      href: 'https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/',
+    },
+    {
+      label: 'NHS, The Eatwell Guide',
+      href: 'https://www.nhs.uk/live-well/eat-well/food-guidelines-and-food-labels/the-eatwell-guide/',
+    },
+    {
+      label: 'British Dietetic Association, Portion sizes',
+      href: 'https://www.bda.uk.com/resource/food-facts-portion-sizes.html',
+    },
+  ],
+
+  contactTitle: 'Bir şey sormak ya da düzeltmek istersen',
+  contactBody:
+    'Yazıda bir hata gördüysen, eksik bulduysan ya da sadece merhaba demek ' +
+    'istiyorsan yaz: her mesajı gerçekten okuyorum.',
+  contactCta: 'Bize bir kartpostal yaz',
+  contactTo: '/iletisim',
+  mailAddress: 'destek@afiet.co',
+}
+
+/**
+ * Basın kiti (/basin). Okuru gazetecidir: burada ikna edilmez, İŞİ
+ * KOLAYLAŞTIRILIR. Kural, sayfadaki her cümlenin ya doğrulanabilir bir olgu ya
+ * da doğrudan kopyalanabilir bir metin olmasıdır. Kullanıcı/indirme sayısı gibi
+ * kanıtlanamayan rakam BURAYA GİRMEZ (basına verilen her sayı geri sorulur).
+ *
+ * Tek cümlelik tanım ve künye alanları buradan DEĞİL `#shared/utils/marka`dan
+ * gelir; bu dosya yalnız etiketleri ve çerçeve metnini taşır.
+ */
+export const basin = {
+  eyebrow: 'basın',
+  title: 'afiet basın kiti',
+  sub:
+    'Haber, inceleme ya da liste yazısı hazırlıyorsan ihtiyacın olan her şey bu ' +
+    'sayfada. Malzemenin tamamı yayınlarda serbestçe kullanılabilir, ayrıca izin ' +
+    'istemene gerek yok.',
+
+  tanimTitle: 'Tek cümlelik tanım',
+  tanimNote: 'afiet’i tarif eden resmî cümle budur; yazında olduğu gibi kullanabilirsin.',
+  kopyala: 'Kopyala',
+  kopyalandi: 'Kopyalandı',
+
+  kunyeTitle: 'Künye',
+  kunyeLabels: {
+    ad: 'Ad',
+    tagline: 'Slogan',
+    kategori: 'Kategori',
+    platformlar: 'Platformlar',
+    lansman: 'Lansman',
+    ulke: 'Merkez',
+    dil: 'Uygulama dili',
+    site: 'Web',
+    eposta: 'İletişim',
+  },
+  kategori: 'Beslenme ve sağlık uygulaması',
+  adNot: 'Adı her yerde küçük harfle yazılır: afiet. Cümle başında bile büyütülmez.',
+
+  uzunTitle: 'Uzun tanım',
+  uzunNote: 'Haberin sonundaki “afiet hakkında” paragrafı için.',
+  uzun: [
+    'Uygulama porsiyonu gram yerine sofranın kendi ölçüsüyle sorar: kaç dilim, ' +
+      'kaç kase, bir avuç. Menemenden mercimek çorbasına iki binden fazla Türk ' +
+      'yemeği ve besin hazır gelir. Gün, beş besin grubunun dengesi üzerinden ' +
+      'renklerle görünür; hedef kilo sorulmaz, süre vaat edilmez. Sevdiklerinle ' +
+      'grup kurup dengeyi birlikte takip edebilirsin.',
+    'afiet Türkiye’de geliştiriliyor ve iOS ile Android’de Ağustos 2026’da ' +
+      'yayına giriyor. Bir tıbbi cihaz değildir, tıbbi tavsiye vermez.',
+  ],
+
+  yanlisTitle: 'Sık düşülen üç hata',
+  yanlis: [
+    {
+      title: 'Kalori sayma uygulaması değil',
+      body:
+        'afiet günü kalori hedefi üzerinden anlatmaz. Enerji ve makro bilgisi ' +
+        'uygulamada bilgi olarak durur, günün ölçüsü beş grubun dengesidir.',
+      accent: 'sebze',
+    },
+    {
+      title: 'Diyet uygulaması değil',
+      body:
+        'Yasak listesi, kısıtlama planı ya da “şu kadar haftada şu kadar kilo” ' +
+        'vaadi yok. Ölçü süreklilik, kusursuzluk değil.',
+      accent: 'meyve',
+    },
+    {
+      title: 'Adı büyük harfle yazılmaz',
+      body:
+        '“Afiet” ya da “AFIET” değil, her yerde “afiet”. Cümle başında da ' +
+        'küçük kalır; logoda da öyle.',
+      accent: 'tahil',
+    },
+  ] as { title: string; body: string; accent: Accent }[],
+
+  varlikTitle: 'İndirilebilir malzeme',
+  varlikSub:
+    'Hepsi tek dosyada ya da tek tek. Görselleri kırpabilir, yeniden ' +
+    'boyutlandırabilirsin; içeriğine dokunma yeter.',
+  zipLabel: 'Basın kitini indir',
+  zipNote: 'Logo paketi (SVG + PNG) ve altı ekran görüntüsü, tek arşivde.',
+
+  logoTitle: 'Logo',
+  logoSub: 'Açık zeminde ana kilit, koyu zeminde beyaz sürüm kullanılır.',
+  logoIndir: 'SVG',
+
+  ekranTitle: 'Ekran görüntüleri',
+  ekranSub: 'Görsele tıklayınca tam çözünürlüklü hâli (1284 × 2778) açılır.',
+
+  /* Anahtarlar `#shared/utils/marka > BASIN_VARLIKLARI` ile birebir eşleşir;
+     dosya yolu orada, adı burada yaşar. */
+  varlikAdlari: {
+    kilit: 'Yatay kilit',
+    kelime: 'Kelime markası',
+    afi: 'Afi (simge)',
+    beyaz: 'Koyu zemin için beyaz kilit',
+    bugun: 'Bugün ekranı',
+    kayit: 'Hızlı öğün kaydı',
+    denge: 'Günün dengesi',
+    grubum: 'Grubum',
+    vucudum: 'Vücudum',
+    rehber: 'Besin rehberi',
+  } as Record<string, string>,
+
+  kurallarTitle: 'Marka kullanımı',
+  kurallarYapTitle: 'Yapılır',
+  kurallarYap: [
+    'Logo paketten geldiği gibi kullanılır.',
+    'Etrafında en az Afi’nin yüksekliği kadar boşluk bırakılır.',
+    'Koyu zeminde beyaz sürüme geçilir.',
+  ],
+  kurallarYapmaTitle: 'Yapılmaz',
+  kurallarYapma: [
+    'Rengi değiştirilmez, gölge ya da kontur eklenmez.',
+    'Gerilmez, eğilmez, döndürülmez.',
+    'Ekran görüntüsünün üstüne metin eklenip resmî görsel gibi gösterilmez.',
+  ],
+
+  kurucuTitle: 'Kurucu',
+  kurucuNot: 'Röportaj, demo ya da ek görsel talebi için doğrudan yaz.',
+
+  iletisimTitle: 'Bir şey lazım olursa',
+  iletisimBody:
+    'Listede olmayan bir görsel, ekran kaydı ya da rakam gerekiyorsa sor. ' +
+    'Basın mesajlarına aynı gün dönüyoruz.',
+  mailAddress: 'destek@afiet.co',
+}
+
+export type BasinCopy = typeof basin
 
 /**
  * Destek merkezi metinleri. Yazıların kendisi `content/destek/**.md` içinde;
@@ -451,6 +842,8 @@ export const support = {
   menuTitle: 'Konular',
   menuToggle: 'Konular arasında gezin',
   updatedPrefix: 'Son güncelleme',
+  // Yazar künyesi; ad ve unvan shared/utils/author.ts'ten gelir.
+  authorPrefix: 'Yazan',
   relatedTitle: 'İlgili yazılar',
   prevLabel: 'Önceki',
   nextLabel: 'Sonraki',
@@ -716,6 +1109,12 @@ export const blog = {
   pagesLabel: 'Blog sayfaları',
   pagePrev: 'Önceki sayfa',
   pageNext: 'Sonraki sayfa',
+  /* Yazar künyesi. Ad ve unvan burada DEĞİL shared/utils/author.ts'te; burası
+     yalnız künyenin çevrilebilir sözcükleridir (kimlik iki dilde de tektir). */
+  authorPrefix: 'Yazan',
+  updatedPrefix: 'Son güncelleme',
+  authorCardTitle: 'Bu yazıyı kim yazdı?',
+  authorCardCta: 'Yazar ve yayın ilkeleri',
 }
 
 /**
@@ -982,6 +1381,17 @@ export const epostaDogrula = {
     'Bağlantının süresi dolmuş ya da daha önce kullanılmış. Uygulamadan ' +
     'yeni bir doğrulama e-postası isteyebilirsin.',
 }
+
+/**
+ * İki dilde de yaşayan sayfaların kopya şekilleri: bileşen (KartpostalIletisim,
+ * PrivacyArticle, DeleteAccountArticle) bu tiple okur, EN karşılıkları
+ * content.en.ts'te aynı şekli doldurur. Alan eklerken iki dosya birlikte değişir.
+ */
+export type IletisimCopy = typeof iletisim
+export type PrivacyCopy = typeof privacy
+export type HesapSilCopy = typeof hesapSil
+export type BlogCopy = typeof blog
+export type HakkindaCopy = typeof hakkinda
 
 /**
  * Grup davet inişi (/katil/{code}): uygulamadaki GroupHome’un paylaştığı

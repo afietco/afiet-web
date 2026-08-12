@@ -17,9 +17,14 @@ import { parseFrontmatter } from './frontmatter'
  * basılır; katlanmış durması indekslenmesine engel değildir.
  *
  * SÖZLEŞME: gövde yalnız `## Başlık` bölümlerinden oluşur. Başlığı tam olarak
- * `Sık sorulanlar` olan bölüm SSS'dir ve `**Soru?**` + cevap çiftlerine ayrılır;
- * geri kalanı katlanır panel olur. Başlık tutmuyorsa SSS boş döner ve FAQPage
- * şeması basılmaz - uydurma şema basmaktansa hiç basmamak yeğdir.
+ * `Sık sorulanlar` (İngilizce içerikte `Frequently asked questions`) olan bölüm
+ * SSS'dir ve `**Soru?**` + cevap çiftlerine ayrılır; geri kalanı katlanır panel
+ * olur. Başlık tutmuyorsa SSS boş döner ve FAQPage şeması basılmaz - uydurma
+ * şema basmaktansa hiç basmamak yeğdir.
+ *
+ * İngilizce araçların içeriği `content/hesapla/en/<slug>.md` altındadır ve aynı
+ * depoya düşer: slug frontmatter'dan geldiği için dizin ayrımı gerekmez
+ * (`bmi-calculator` ile `vucut-kitle-indeksi` zaten çakışmaz).
  */
 
 // html:false KRİTİK: markdown içindeki ham HTML escape edilir, çıktı v-html ile
@@ -27,8 +32,8 @@ import { parseFrontmatter } from './frontmatter'
 // notlarındaki kuralın aynısı).
 const md = new MarkdownIt({ html: false, linkify: true, typographer: false })
 
-/** SSS bölümünün başlığı; tam eşleşme aranır. */
-const FAQ_HEADING = 'Sık sorulanlar'
+/** SSS bölümünün başlığı; tam eşleşme aranır (dil başına bir karşılık). */
+const FAQ_HEADINGS = ['Sık sorulanlar', 'Frequently asked questions']
 
 type RawSection = { title: string; body: string }
 
@@ -107,7 +112,7 @@ async function buildStore(): Promise<Store> {
     const used = new Set<string>()
 
     for (const section of splitSections(body)) {
-      if (section.title === FAQ_HEADING) {
+      if (FAQ_HEADINGS.includes(section.title)) {
         faq = parseFaq(section.body)
         continue
       }

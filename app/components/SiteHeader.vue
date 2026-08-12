@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { siteEn } from '~/data/content.en'
+
 /**
  * Site başlığı. Mobilde bağlantılar gizliydi ve yalnız CTA görünüyordu, yani
  * telefondan gelen biri "Neden afiet?" ve "Blog" sayfalarına hiç ulaşamıyordu.
@@ -8,6 +10,11 @@
  * JS çalışmasa da menü açılıp kapanır.
  *
  * Yol değişince menü kapanmalı; <details> bunu kendiliğinden yapmaz.
+ *
+ * Çok dillilik: /en altında başlık İngilizce konuşur ve nav daralır (yalnız
+ * çevirisi OLAN sayfalara link verilir; TR-only sayfaya İngilizce vitrinden
+ * kapı açılmaz). Dil düğmesi yalnız karşılığı olan sayfada görünür ve aynı
+ * sayfanın çevirisine götürür (useSiteLocale > counterpart).
  */
 const menu = useTemplateRef<HTMLDetailsElement>('menu')
 const route = useRoute()
@@ -17,30 +24,72 @@ watch(
     if (menu.value) menu.value.open = false
   },
 )
+
+const { locale, counterpart } = useSiteLocale()
+const en = computed(() => locale.value === 'en')
+/* Blog linki yalnız İngilizce yazı varken; boş liste menüde durmaz.
+   Composable KOŞULSUZ çağrılır: başlık app.vue'da yaşıyor ve sayfalar arası
+   yeniden kurulmuyor, koşullu çağrı TR'den EN'e geçen ziyaretçide linki
+   sonsuza dek gizli bırakırdı. Maliyeti bir boş dizi (uç 60 sn cache'li ve
+   SSR'da ağ turu yok). */
+const { hasPosts: enBlogVar } = useEnBlog()
+const home = computed(() => (en.value ? '/en' : '/'))
+/* Dil düğmesinin etiketi HEDEF dildir (o dili arayan kendi dilinde görsün). */
+const langLabel = computed(() => (en.value ? 'Türkçe' : 'English'))
+const langShort = computed(() => (en.value ? 'TR' : 'EN'))
 </script>
 
 <template>
   <header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/75 backdrop-blur-xl">
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-      <NuxtLink to="/" class="flex items-center gap-2.5" aria-label="afiet ana sayfa">
+      <NuxtLink :to="home" class="flex items-center gap-2.5" :aria-label="en ? siteEn.headerAria : 'afiet ana sayfa'">
         <AfiMascot class="h-9 w-9" />
         <span class="text-2xl font-extrabold tracking-tight text-brand">afiet</span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-2 sm:gap-6" aria-label="Sayfa içi">
+      <!-- Dört link + CTA (kullanıcı kararı). sm-md arası dar olduğundan
+           boşluk ve punto kademelidir; linkler sm'de görünür ki hamburger
+           yalnız gerçek mobilde kalsın. -->
+      <nav
+        v-if="!en"
+        class="flex items-center gap-2 sm:gap-4 md:gap-6"
+        aria-label="Sayfa içi"
+      >
         <NuxtLink
           to="/#neden"
-          class="hidden font-bold text-soft transition hover:text-brand-deep sm:block"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >
           Neden afiet?
         </NuxtLink>
         <NuxtLink
           to="/blog"
-          class="hidden font-bold text-soft transition hover:text-brand-deep sm:block"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
         >
           Blog
         </NuxtLink>
+        <NuxtLink
+          to="/hesapla"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          Hesapla
+        </NuxtLink>
+        <NuxtLink
+          to="/yenilikler"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          Yenilikler
+        </NuxtLink>
         <NuxtLink to="/beta" class="btn-primary !px-5 !py-2.5 text-sm">Beta’ya katıl</NuxtLink>
+
+        <NuxtLink
+          v-if="counterpart"
+          :to="counterpart"
+          class="rounded-full border border-line bg-surface px-3 py-2 text-xs font-extrabold text-soft transition hover:border-brand/40 hover:text-brand-deep"
+          :aria-label="langLabel"
+          :title="langLabel"
+        >
+          {{ langShort }}
+        </NuxtLink>
 
         <!-- Mobil menü, yalnız küçük ekranda. -->
         <details ref="menu" class="site-menu relative sm:hidden">
@@ -87,6 +136,18 @@ watch(
             >
               Blog
             </NuxtLink>
+            <NuxtLink
+              to="/hesapla"
+              class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
+            >
+              Hesapla
+            </NuxtLink>
+            <NuxtLink
+              to="/yenilikler"
+              class="rounded-2xl px-4 py-3 font-bold text-ink transition hover:bg-canvas hover:text-brand-deep"
+            >
+              Yenilikler
+            </NuxtLink>
             <!-- Destek merkezi masaüstü menüde YOKTUR (kullanıcı kararı):
                  oradaki giriş kapıları alt bilgi, ana sayfadaki SSS bağlantıları
                  ve arama motorlarıdır. Mobilde alt bilgiye inmek zahmetli
@@ -101,6 +162,46 @@ watch(
                  aynı çağrıyı iki kez göstermek menüyü kalabalıklaştırır. -->
           </div>
         </details>
+      </nav>
+
+      <!-- İngilizce nav: iki link + CTA. Az sayfa var, hamburger gerekmez. -->
+      <nav v-else class="flex items-center gap-2 sm:gap-4 md:gap-6" :aria-label="siteEn.navAria">
+        <NuxtLink
+          to="/en#why"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navWhy }}
+        </NuxtLink>
+        <NuxtLink
+          to="/en/tools"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navTools }}
+        </NuxtLink>
+        <NuxtLink
+          v-if="enBlogVar"
+          to="/en/blog"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navBlog }}
+        </NuxtLink>
+        <NuxtLink
+          to="/en/contact"
+          class="hidden text-[15px] font-bold text-soft transition hover:text-brand-deep sm:block md:text-base"
+        >
+          {{ siteEn.navContact }}
+        </NuxtLink>
+        <NuxtLink to="/en#updates" class="btn-primary !px-5 !py-2.5 text-sm">{{ siteEn.cta }}</NuxtLink>
+
+        <NuxtLink
+          v-if="counterpart"
+          :to="counterpart"
+          class="rounded-full border border-line bg-surface px-3 py-2 text-xs font-extrabold text-soft transition hover:border-brand/40 hover:text-brand-deep"
+          :aria-label="langLabel"
+          :title="langLabel"
+        >
+          {{ langShort }}
+        </NuxtLink>
       </nav>
     </div>
   </header>

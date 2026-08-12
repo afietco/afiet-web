@@ -1,9 +1,16 @@
 import { getPublishedPosts } from '~~/server/utils/contentStore'
 import { getSeoBundle, xmlEscape } from '~~/server/utils/seoStore'
 
-/** RSS 2.0 - yayındaki blog yazıları; kanal metası panel ayarlarından. */
+/**
+ * RSS 2.0 - yayındaki TÜRKÇE blog yazıları; kanal metası panel ayarlarından.
+ * İngilizce beslemesi ayrıdır (`/en/blog/rss.xml`): tek beslemede iki dil
+ * karışsa aboneler okuyamadıkları yazıları alırdı.
+ */
 export default defineEventHandler(async (event) => {
-  const [{ settings }, posts] = await Promise.all([getSeoBundle(event), getPublishedPosts(event)])
+  const [{ settings }, posts] = await Promise.all([
+    getSeoBundle(event),
+    getPublishedPosts(event, 'tr'),
+  ])
   const g = settings.general
   const base = g.baseUrl.replace(/\/$/, '')
 

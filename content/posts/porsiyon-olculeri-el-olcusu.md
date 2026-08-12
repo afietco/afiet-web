@@ -8,8 +8,6 @@ cover_url: /covers/el-porsiyon-rehberi.png
 published_at:
 ---
 
-*Yazan: afiet ekibi · Son güncelleme: 22 Temmuz 2026*
-
 1 porsiyon ne kadar? Kısa cevap: bunu anlamak için tartıya gerek yok, elin fazlasıyla yeterli. Bir porsiyon protein kabaca **avuç içi** kadar, bir porsiyon sebze **yumruğun** kadar, bir porsiyon tahıl (pilav, makarna, bulgur) **kapalı avucuna** sığan kadar, bir porsiyon yağ ise **başparmağın** kadardır. Hepsi bu. Mutfakta terazi aramana, etiket çevirmene ya da uygulama açmana gerek kalmadan tabağına bakıp "ne kadar yemeliyim?" sorusuna makul bir cevap verebilirsin.
 
 Bu yazıda el ölçüsü porsiyon yöntemini menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerle somutlaştırıyoruz. Baştan söyleyelim: buradaki ölçüler katı kurallar değil, nazik birer pusula. Anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
@@ -20,7 +18,7 @@ Gram, mutfakta duran sabit bir sayıdır; senin bedenine göre değişmez. Elin 
 
 Beslenme rehberleri de porsiyonu çoğu zaman gramla değil, gündelik nesnelerle anlatır. Örneğin İngiltere Ulusal Sağlık Servisi'ne göre bir yetişkin için [bir porsiyon meyve ya da sebze 80 gramdır ve günde en az 5 porsiyon](https://www.nhs.uk/live-well/eat-well/5-a-day/portion-sizes/) önerilir. Bu 80 gramı tartmak yerine "bir avuç dolusu çilek" ya da "bir orta boy elma" diye düşünmek, aynı yere çok daha az yorularak varmanı sağlar.
 
-Tartının bir başka sorunu da şu: sayılar zamanla dikkatini yemekten alıp ekrana taşır. Oysa amaç, tabağını görebilmek. Kalori saymadan denge kurmanın daha geniş anlatımı için [kalori saymadan dengeli beslenme rehberimize](/blog/kalori-saymadan-dengeli-beslenme-dilim-kase-avuc-rehberi) göz atabilirsin.
+Tartının bir başka sorunu da şu: sayılar zamanla dikkatini yemekten alıp ekrana taşır. Oysa amaç, tabağını görebilmek. Kalori saymadan denge kurmanın daha geniş anlatımı için [kalori saymadan dengeli beslenme rehberimize](/blog/kalori-saymadan-dengeli-beslenme-dilim-kase-avuc-rehberi), dengenin tanımı ve beş besin grubunun bütünü için de [dengeli beslenme nedir](/blog/dengeli-beslenme-nedir) yazımıza göz atabilirsin.
 
 ## Elindeki ölçü aleti: avuç içi, yumruk, kapalı avuç ve başparmak
 
