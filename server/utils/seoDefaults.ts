@@ -315,6 +315,18 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
       'izleme yok, veri satışı yok. Verini istediğin zaman silebilirsin.',
     sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
   }),
+  /* Mağazaların aradığı ikinci hukuki sayfa. Uygulamadaki paywall buraya
+     bağlanır, yani bu yol 404 dönerse App Store 3.1.2'den red gelir. */
+  '/kosullar': makePage({
+    title: 'Kullanım Koşulları | afiet',
+    description:
+      'afiet’i kullanırken geçerli koşullar: hesap, afiet+ aboneliği ve iptali, ' +
+      'yapay zekâ asistanlarının sınırları, sorumluluk ve uygulanacak hukuk.',
+    ogDescription:
+      'afiet bir sağlık hizmeti değildir ve kayıtların sana aittir. Abonelik, ' +
+      'iptal ve sorumluluk kuralları bu sayfada.',
+    sitemap: { include: true, changefreq: 'monthly', priority: 0.3 },
+  }),
   '/durum': makePage({
     title: 'Sistem durumu | afiet',
     description:
