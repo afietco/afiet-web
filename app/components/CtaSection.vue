@@ -37,13 +37,28 @@ import { cta } from '~/data/content'
             {{ cta.sub }}
           </p>
 
-          <!-- Landing'in tek dönüşüm noktası: /beta başvurusu. Burada e-posta
-               toplanmaz, form beta sayfasında yaşar. -->
+          <!-- Birincil dönüşüm: /beta başvurusu. Form beta sayfasında yaşar. -->
           <div class="mt-9 flex flex-col items-center gap-3">
             <NuxtLink :to="cta.betaTo" class="btn-primary !px-8 !py-4 text-base">
               {{ cta.betaCta }}
             </NuxtLink>
             <p class="max-w-sm text-sm font-semibold text-muted">{{ cta.betaNote }}</p>
+          </div>
+
+          <!-- İkincil dönüşüm: lansman bildirimi. Beta'ya hazır olmayan
+               ziyaretçi için ve ücretli trafiğin güvenilir sayacı olarak
+               burada (content.ts > cta). Ayraç, ikisinin eşit değil sıralı
+               olduğunu göstersin diye ince tutuldu. -->
+          <div class="mx-auto mt-10 max-w-sm">
+            <div class="flex items-center gap-3" aria-hidden="true">
+              <span class="h-px flex-1 bg-line" />
+              <span class="text-xs font-bold tracking-wide text-muted">{{ cta.haberAyrac }}</span>
+              <span class="h-px flex-1 bg-line" />
+            </div>
+
+            <p class="mt-6 font-display text-xl font-semibold text-ink">{{ cta.haberTitle }}</p>
+            <p class="mt-1.5 text-sm font-semibold text-balance text-soft">{{ cta.haberSub }}</p>
+            <BultenForm source="anasayfa" class="mt-4 text-left" />
           </div>
 
           <div class="mt-9 flex justify-center">
