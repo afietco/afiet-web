@@ -350,6 +350,16 @@ try {
     hesapHubHtml.includes('Sana tabağını veriyoruz'),
     '/hesapla başlığı prerender HTML içinde',
   )
+  // Hub şeması: sayfayı CollectionPage, içindekileri ItemList anlatır. Liste
+  // SEO katmanının bildiği alt sayfalardan türer, o yüzden beş araç da orada
+  // olmalı; sayı düşerse ya bir sayfa kayboldu ya da türetme bozuldu.
+  ok(hesapHubHtml.includes('"@type":"CollectionPage"'), '/hesapla CollectionPage şeması içeriyor')
+  ok(hesapHubHtml.includes('"@type":"ItemList"'), '/hesapla ItemList şeması içeriyor')
+  ok(hesapHubHtml.includes('"numberOfItems":5'), '/hesapla listesinde beş araç var')
+  ok(
+    hesapHubHtml.includes('https://afiet.co/hesapla/gunluk-su'),
+    '/hesapla listesi alt sayfalara mutlak adresle bağlanıyor',
+  )
 
   const plateRes = await fetch(`http://localhost:${PORT}/hesapla/sofra-payin`)
   const plateHtml = await plateRes.text()
@@ -446,6 +456,12 @@ try {
     )
     ok(sitemap.includes(`<loc>https://afiet.co${enPath}</loc>`), `sitemap ${enSlug} içeriyor`)
   }
+  // İngilizce hub aynı şemayı üretir ama listesi DÖRT araçtır: porsiyon
+  // çevirici İngilizce'de yok, liste onu uydurmamalı.
+  const enHubHtml = await (await fetch(`http://localhost:${PORT}/en/tools`)).text()
+  ok(enHubHtml.includes('"@type":"CollectionPage"'), '/en/tools CollectionPage şeması içeriyor')
+  ok(enHubHtml.includes('"numberOfItems":4'), '/en/tools listesinde dört araç var')
+
   // Porsiyon çevirici İngilizce'de BİLEREK yok (katalog Türkçe). Sessizce
   // açılırsa yarım çevrilmiş bir sayfa yayınlanmış olur.
   const enPorsiyon = await fetch(`http://localhost:${PORT}/en/tools/portion-converter`)
@@ -489,6 +505,18 @@ try {
   ok(jsonldCount >= 2, `JSON-LD blokları HTML'de (${jsonldCount})`)
   ok(html.includes('FAQPage'), 'FAQPage şeması HTML içinde')
   ok(html.includes('twitter:title'), 'twitter:title meta mevcut')
+
+  // Mağaza kapısı (#shared/utils/marka > MAGAZA): uygulama yayına girene kadar
+  // şema ne indirme adresi ne fiyat bildirir, lansman günü tek bayrak ikisini
+  // birden açar. Test bayrağın DEĞERİNİ değil, ikisinin BİRLİKTE davrandığını
+  // korur: adressiz fiyat da fiyatsız adres de sayfanın söylemediğini iddia
+  // eder ve iki hâl de sessizce yayına çıkabilir.
+  const magazaAdresi = html.includes('"installUrl"')
+  const magazaFiyati = html.includes('"@type":"Offer"') && html.includes('afiet+')
+  ok(
+    magazaAdresi === magazaFiyati,
+    `mağaza adresi ve fiyatı birlikte davranıyor (adres: ${magazaAdresi}, fiyat: ${magazaFiyati})`,
+  )
 
   // --- Afi'ye sor: SSS sözleşmesini bozmadan eklendi mi ---
   ok(html.includes('id="afiye-sor"'), 'Afi’ye sor bölümü prerender HTML içinde')

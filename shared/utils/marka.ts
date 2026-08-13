@@ -63,6 +63,42 @@ export function markaTanim(lang: SiteLocale = 'tr'): string {
 }
 
 /**
+ * Mağaza adresleri ve afiet+ fiyatları - lansman günü tek satırla açılır.
+ *
+ * NEDEN BAYRAK VAR: iki adres de bugün 404 (uygulama henüz yayında değil) ve
+ * abonelik ürünleri iki mağazada da oluşturulmadı. Motorlara 404 bir indirme
+ * adresi ya da hiçbir yerden satın alınamayan bir fiyat bildirmek, hiç
+ * bildirmemekten KÖTÜDÜR: şema sayfanın (ve mağazanın) söylemediğini iddia
+ * etmiş olur. Bu yüzden şema hazır durur ama `yayinda` false iken
+ * `installUrl` da `offers` da HİÇ basılmaz.
+ *
+ * LANSMAN GÜNÜ: yalnız `yayinda: true` yapılır, ikisi birden düşer. Adreslerin
+ * doğruluğu önden bilinebilir çünkü ikisi de kimlikten türer (App Store
+ * numarası `apps/mobile/eas.json > ascAppId`, Play adresi paket adı).
+ *
+ * FİYAT: `afiet-mobile/docs/fiyatlandirma.md`teki liste fiyatları. Lansmandaki
+ * ilk yıl intro fiyatı (599,99) BİLİNÇLİ olarak burada yok - geçici kampanya
+ * şemada yanlış yerdedir, süresi dolunca sessizce yalan söylemeye başlar.
+ * Şema fiyatı ürünün liste fiyatıdır, kampanya mağazanın işidir.
+ */
+export const MAGAZA = {
+  yayinda: false,
+  appStore: 'https://apps.apple.com/tr/app/id6789522761',
+  play: 'https://play.google.com/store/apps/details?id=co.afiet.app',
+  paraBirimi: 'TRY',
+  /**
+   * Üç teklif de basılır (kullanıcı kararı, 13 Ağu 2026): indirme ücretsizdir
+   * ve afiet+ ücretlidir. Yalnız "0" bildirmek "afiet ücretli mi" sorusuna
+   * eksik cevap verir, yalnız aboneliği bildirmek uygulamayı paralı gösterir.
+   */
+  teklifler: [
+    { fiyat: '0', ad: { tr: 'afiet', en: 'afiet' } },
+    { fiyat: '129.99', ad: { tr: 'afiet+ aylık', en: 'afiet+ monthly' } },
+    { fiyat: '799.99', ad: { tr: 'afiet+ yıllık', en: 'afiet+ annual' } },
+  ],
+} as const
+
+/**
  * Basın sayfasındaki dosyaların TEK kaynağı. Yollar burada, etiketler
  * kopya dosyalarında (`content.ts > basin.varlikAdlari`, `content.en.ts >
  * pressEn.varlikAdlari`) ve ikisi aynı ANAHTARLA eşleşir: TR ve EN sayfaları

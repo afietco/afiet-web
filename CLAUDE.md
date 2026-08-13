@@ -154,6 +154,17 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - JSON-LD: ana sayfada Organization+WebSite+SoftwareApplication grafiği +
   (doluysa) FAQPage. SSS maddeleri hem görünür bölüm (`FaqSection.vue`, boşsa
   render edilmez) hem şemadır - ikisi hep aynı kaynaktan gelir.
+- **Mağaza kapısı:** indirme adresleri ve afiet+ fiyatları
+  `#shared/utils/marka > MAGAZA`da tek kaynaktır ve `yayinda: false` iken
+  şemaya HİÇ basılmaz (`installUrl` da `offers` da). Sebep: bugün iki adres de
+  404 ve abonelik ürünleri mağazalarda yok; satın alınamayan bir fiyatı ya da
+  404 bir adresi bildirmek hiç bildirmemekten kötüdür. Lansman günü tek satır
+  (`yayinda: true`) ikisini birden açar; smoke ikisinin AYRI DÜŞMEDİĞİNİ
+  korur. Geçici kampanya fiyatı (intro) şemaya girmez.
+- Hesaplayıcı hub'ları (`/hesapla`, `/en/tools`) CollectionPage + ItemList
+  basar ve liste `pages`ten türer, kopya dosyasındaki kart listesinden değil:
+  şema yalnız gerçekten var olan alt sayfaları vaat etmeli. Sıra iddia
+  edilmez (`ItemListUnordered`).
 - Dinamik route'lar: `/robots.txt` (AI bot izinleri panelden; varsayılan liste
   `seoDefaults.ts > AI_BOTS`, Bytespider engelli), `/sitemap.xml`, `/llms.txt`.
   `public/robots.txt` bilinçli olarak YOK. Yönlendirmeler:
