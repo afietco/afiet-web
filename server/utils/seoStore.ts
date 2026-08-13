@@ -11,6 +11,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personSchema } from '#shared/utils/author'
+import { MAGAZA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -175,6 +176,27 @@ function normalizePath(path: string): string {
   return p
 }
 
+/**
+ * SoftwareApplication'ın fiyat düğümü. Uygulama yayına girene kadar HİÇ
+ * basılmaz (`MAGAZA.yayinda`): bugün hiçbir mağazada satın alınamayan bir
+ * fiyatı bildirmek şemayı sayfadan da mağazadan da kopartır.
+ *
+ * Üç teklif birlikte anlatır: indirme ücretsiz, afiet+ aylık ve yıllık
+ * ücretli. Para birimi İngilizce sayfada da TRY'dir - fiyat Türkiye
+ * mağazasının fiyatıdır, sayfanın dili onu değiştirmez.
+ */
+function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> | null {
+  if (!MAGAZA.yayinda) return null
+  return {
+    offers: MAGAZA.teklifler.map((t) => ({
+      '@type': 'Offer',
+      name: t.ad[lang],
+      price: t.fiyat,
+      priceCurrency: MAGAZA.paraBirimi,
+    })),
+  }
+}
+
 /** Bir sayfanın render edilecek nihai meta seti. Bilinmeyen path'ler de tutarlı üretir (404 sayfası dahil). */
 export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<ResolvedPageMeta> {
   const path = normalizePath(rawPath)
@@ -302,6 +324,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
             }
           : {}),
+        ...(mobilAppOffers('tr') ?? {}),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
@@ -556,6 +579,71 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     }
   }
 
+  // ── Hesaplayıcı hub'ı (/hesapla, /en/tools) ─────────────────────────────
+  // Hub, alt sayfalarının hepsi şemalıyken kendisi şemasız kalmıştı: bir
+  // arama motoru için "hesaplayıcılar" sayfası ile beş aracın ilişkisi
+  // görünmüyor, üretken bir motor için de "afiet'te hangi hesaplayıcılar var"
+  // sorusunun makine okunur cevabı hiç yoktu. CollectionPage sayfayı,
+  // ItemList içindekileri tarif eder.
+  //
+  // Liste `pages`ten (SEO katmanının bildiği sayfalar) türetilir, kopya
+  // dosyasındaki kart listesinden DEĞİL: burada tek doğru "gerçekten var olan
+  // ve indekslenen alt sayfa" kümesidir. Kart eklenip sayfa açılmazsa şema
+  // olmayan bir aracı vaat ederdi.
+  //
+  // `itemListOrder` bilinçli olarak Unordered: ekrandaki kart sırası ile
+  // buradaki sıra aynı kaynaktan gelmiyor ve hub bir sıralama (ilk/en iyi)
+  // iddia etmiyor. Sıra iddia etmeyen liste, yanlış sıra iddia eden listeden
+  // iyidir.
+  const isToolHub = path === '/hesapla' || path === '/en/tools'
+  if (isToolHub) {
+    const araclar = Object.keys(pages)
+      .filter((p) => p.startsWith(`${path}/`))
+      .map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: (pages[p]?.title || '').replace(/\s*\|\s*afiet\s*$/, ''),
+        item: `${base}${p}`,
+      }))
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: title.replace(/\s*\|\s*afiet\s*$/, ''),
+      url: canonical,
+      description,
+      inLanguage,
+      isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+      ...(araclar.length
+        ? {
+            mainEntity: {
+              '@type': 'ItemList',
+              itemListOrder: 'https://schema.org/ItemListUnordered',
+              numberOfItems: araclar.length,
+              itemListElement: araclar,
+            },
+          }
+        : {}),
+    })
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: isEn ? 'Home' : 'Ana sayfa',
+          item: `${base}${isEn ? '/en' : '/'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: isEn ? 'Tools' : 'Hesapla',
+          item: canonical,
+        },
+      ],
+    })
+  }
+
   // ── Yazar sayfası (/hakkinda, /en/about) ────────────────────────────────
   // ProfilePage + mainEntity Person: sayfanın KONUSU bir kişidir. Blog ve
   // destek yazılarındaki `author` düğümü bu sayfanın `@id`siyle aynı kimliği
@@ -621,6 +709,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
+        ...(mobilAppOffers('en') ?? {}),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
