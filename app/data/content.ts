@@ -94,10 +94,17 @@ export const voice = {
 }
 
 /**
- * Sayfa sonu çağrısı: doğrudan BETA başvurusuna yönlendirir. Uygulama artık
- * beta'da ve ilk sofrada sınırlı yer var, dolayısıyla e-posta toplayıp
- * "çıkınca haber veririz" demek yerine katılmaya çağırıyoruz. Landing'de
- * başka e-posta toplama noktası YOK; tek dizin /beta formudur.
+ * Sayfa sonu çağrısı. BİRİNCİL yol beta başvurusudur: uygulama beta'da ve ilk
+ * sofrada sınırlı yer var, dolayısıyla e-posta toplayıp "çıkınca haber veririz"
+ * demek yerine katılmaya çağırıyoruz.
+ *
+ * İKİNCİL yol bülten kaydıdır (13 Ağu 2026 kararı, Meta reklam trafiği için):
+ * beta'ya girmeye hazır olmayan ziyaretçi elini boş çıkmasın diye lansman
+ * bildirimi bırakabiliyor. Bu ikinci yol aynı zamanda ücretli trafiğin TEK
+ * güvenilir dönüşüm sayacıdır - kayıt sunucu tarafında düştüğü için çerez
+ * onayına bağlı değildir, oysa sayfa görüntülemesi onay kapısının arkasındadır.
+ * Beta'ya PARALI trafik sürülmez: beta kullanıcısına 1 yıl ücretsiz premium
+ * sözü var, reklamla beta kaydı toplamak bedava yılı satın almak olurdu.
  */
 export const cta = {
   title: 'afiet şimdi beta’da',
@@ -107,6 +114,10 @@ export const cta = {
   betaCta: 'Sofrada yerini ayır',
   betaTo: '/beta',
   betaNote: 'Davetin e-posta ile gelir.',
+
+  haberAyrac: 'ya da',
+  haberTitle: 'Lansmandan haberin olsun',
+  haberSub: 'Uygulama mağazalarda yayına girdiğinde ilk duyanlardan ol.',
 }
 
 /**
