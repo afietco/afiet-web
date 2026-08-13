@@ -4,7 +4,7 @@ import type {
   SeoBundle,
   SeoSettings,
 } from './seoTypes'
-import { MARKA_TANIM } from '#shared/utils/marka'
+import { MAGAZA, MARKA_TANIM } from '#shared/utils/marka'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -175,8 +175,11 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       /* İlk cümle tanımın kendisidir (tek kaynak); ikinci cümle şemaya özgü
          ayrıntıdır, tanımın yerine geçmez. */
       description: `${MARKA_TANIM.tr} Beş besin grubunu renklerle gösterir, yargılamaz.`,
-      appStoreUrl: '',
-      playStoreUrl: '',
+      /* Adresler `MAGAZA`dan gelir ve uygulama yayına girene kadar BOŞ kalır
+         (bkz. #shared/utils/marka > MAGAZA). Panelden elle doldurmak hâlâ
+         mümkündür ama gerekmez: lansman günü tek bayrak ikisini de açar. */
+      appStoreUrl: MAGAZA.yayinda ? MAGAZA.appStore : '',
+      playStoreUrl: MAGAZA.yayinda ? MAGAZA.play : '',
     },
   },
   faq: {
