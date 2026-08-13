@@ -4,9 +4,16 @@ import { requireInternalSecret } from '~~/server/utils/internalAuth'
 
 /**
  * İçerik hattının takvim aynası (Go backend çağırır, X-Internal-Secret ile).
- * Strateji önerileri panele "fikir" olarak düşer, onayda "uretimde"ye,
- * yayında "yayinda"ya ilerler; revizyonda eski öneriler silinip yenileri
- * yazılır. Tek uç, üç eylem: create | status | delete.
+ * Strateji önerileri panele "fikir" olarak düşer, onayda "uretimde"ye, yayın
+ * onayında "planlandi"ya (kuyrukta, tarihi belli), yayında "yayinda"ya
+ * ilerler; revizyonda eski öneriler silinip yenileri yazılır.
+ * Tek uç, dört eylem: create | get | status | delete.
+ *
+ * `get` AYNA DEĞİL, KAYNAK okumasıdır: yayın kuyruğu çıkmadan önce buradan
+ * planned_at'i sorar, yani panelde sürüklenen bir kart yayın saatini gerçekten
+ * taşır. Backend'in kendi landing havuzu bu iş için KULLANILAMAZ: o havuz her
+ * ortamda production'ı gösterir, dev'deki 12 numaralı kartı sorduğunda
+ * production'ın 12 numaralı kartıyla cevaplanırdı.
  *
  * Panelin kendi uçlarına (admin/content) DOKUNMAZ; buradan yalnız hattın
  * sahibi olduğu satırlar yönetilir (backend id listesini kendinde tutar).
@@ -23,6 +30,7 @@ export default defineEventHandler(async (event) => {
     items?: CreateItem[]
     id?: number
     status?: string
+    plannedAt?: string
     ids?: number[]
   }>(event)
 
@@ -59,6 +67,32 @@ export default defineEventHandler(async (event) => {
       return { ok: true, ids }
     }
 
+    case 'get': {
+      const ids = (Array.isArray(body.ids) ? body.ids : [])
+        .map(Number)
+        .filter((n) => Number.isInteger(n) && n > 0)
+      if (!ids.length) throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:ids' })
+      const rows = await sql`
+        SELECT id, planned_at, all_day, status FROM content_items WHERE id = ANY(${ids}::bigint[])
+      `
+      // Bulunamayan id sessizce listeden düşer, 404 DEĞİL: kart panelden
+      // silinmiş olabilir ve kuyruğun tek bir eksik satır yüzünden durması,
+      // kaydettiği tarihle devam etmesinden kötüdür.
+      return {
+        ok: true,
+        items: rows.map((r) => {
+          const row = r as { id: unknown; planned_at: unknown; all_day: unknown; status: unknown }
+          const plannedAt = row.planned_at ? new Date(row.planned_at as string) : null
+          return {
+            id: Number(row.id),
+            plannedAt: plannedAt && !Number.isNaN(plannedAt.getTime()) ? plannedAt.toISOString() : '',
+            allDay: Boolean(row.all_day),
+            status: String(row.status ?? ''),
+          }
+        }),
+      }
+    }
+
     case 'status': {
       const id = Number(body.id)
       const status = String(body.status ?? '')
@@ -66,10 +100,26 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:id' })
       if (!ALLOWED_STATUS.has(status))
         throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:status' })
-      const rows = await sql`
-        UPDATE content_items SET status = ${status}, updated_at = now()
-        WHERE id = ${id} RETURNING id
-      `
+      // Kuyruğa alınan yazı tarihini de yazar: panelde "planlandi" görünüp
+      // saatin stratejinin ilk önerisinde kalması, tam da bu işin düzeltmeye
+      // çalıştığı yanlış tarih olurdu.
+      const plannedAt = String(body.plannedAt ?? '').trim() || null
+      if (plannedAt && Number.isNaN(new Date(plannedAt).getTime()))
+        throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:plannedAt' })
+      const rows = plannedAt
+        ? await sql`
+            UPDATE content_items SET
+              status = ${status},
+              planned_at = ${plannedAt}::timestamptz,
+              all_day = false,
+              planned_date = ((${plannedAt}::timestamptz) AT TIME ZONE ${CONTENT_TZ})::date,
+              updated_at = now()
+            WHERE id = ${id} RETURNING id
+          `
+        : await sql`
+            UPDATE content_items SET status = ${status}, updated_at = now()
+            WHERE id = ${id} RETURNING id
+          `
       if (!rows.length) throw createError({ statusCode: 404, statusMessage: 'icerik_bulunamadi' })
       return { ok: true }
     }
