@@ -15,7 +15,7 @@ import { upsertGscDaily, upsertGscRow, type GscDimension } from './gscStore'
  * Hata logunda gövde message'ı KISALTILIR ve token asla yazılmaz.
  */
 
-type ServiceAccount = { client_email: string; private_key: string }
+export type ServiceAccount = { client_email: string; private_key: string }
 
 const SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly'
 const TOKEN_URL = 'https://oauth2.googleapis.com/token'
@@ -73,7 +73,12 @@ async function signingKey(sa: ServiceAccount): Promise<CryptoKey> {
   return key
 }
 
-async function accessToken(sa: ServiceAccount): Promise<string> {
+/**
+ * Dışa açık, çünkü URL Inspection istemcisi (gscIndex.ts) AYNI servis hesabını
+ * ve AYNI kapsamı kullanır. İkinci bir token akışı yazmak, anahtarın ikinci bir
+ * kopyasını ve sessizce ayrışabilecek ikinci bir önbelleği doğururdu.
+ */
+export async function accessToken(sa: ServiceAccount): Promise<string> {
   const now = Math.floor(Date.now() / 1000)
   if (tokenCache && tokenCache.expiresAt - 60 > now) return tokenCache.token
 

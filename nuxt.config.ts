@@ -58,6 +58,12 @@ export default defineNuxtConfig({
 
   nitro: {
     compressPublicAssets: true,
+    /* Vercel fonksiyon tavanı. Varsayılan 10 saniyedir ve indeks taraması
+       (/api/cron/gsc-index) onu aşar: her tur onlarca URL'i Google'ın URL
+       Inspection ucundan tek tek sorar. Tavan bir REZERVASYON değil sınırdır,
+       yani hızlı istekler bundan etkilenmez. Nitro'nun Vercel preset'i tüm
+       sunucu route'larını tek fonksiyonda topladığı için ayar geneldir. */
+    vercel: { functions: { maxDuration: 60 } },
     // Destek merkezi yazıları veritabanında DEĞİL repoda yaşar; sunucu paketine
     // asset olarak gömülür ve `useStorage('assets:destek')` ile okunur
     // (server/utils/supportStore.ts). Yol nitro.srcDir'e (yani `server/`) görelidir.
