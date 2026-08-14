@@ -91,7 +91,12 @@ export type IndexSweepSummary = {
  * yenilenir. Tavan aşılırsa yarım kalan tur bir sonrakinde kaldığı yerden
  * devam eder, çünkü sıra `checked_at`ten türüyor.
  */
-const DEFAULT_BATCH = 60
+/* 20, TAHMİN DEĞİL ÖLÇÜM: ilk prod turunda 60'lık parti altmış saniyelik
+   Vercel tavanına takıldı ve 32 URL yazıldıktan sonra kesildi. Daha kötüsü,
+   günlük özet turun SONUNDA yazıldığı için hiç yazılmadı: yarım tur sessizce
+   sayımsız kalıyordu. Inspection ucu istek başına ~7 saniye sürüyor, dört
+   koşutla saniyede ~0,5 URL. 20 URL ~40 saniye, tavanın altında payı var. */
+const DEFAULT_BATCH = 20
 const DEFAULT_STALE_HOURS = 20
 const CONCURRENCY = 4
 
