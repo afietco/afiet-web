@@ -5,16 +5,16 @@ import { sweepIndexStatus } from '~~/server/utils/gscIndex'
 
 /**
  * Sitemap'teki URL'lerin indeks durumu taraması. Cloud Scheduler çağırır:
- *   app-gsc-index-prod  15 * / 4 * * *  →  POST /api/cron/gsc-index
+ *   app-gsc-index-prod  45 * / 3 * * *  →  POST /api/cron/gsc-index
  * Kimlik: `X-Cron-Secret` = NUXT_CRON_SECRET (gsc-sync ile aynı desen).
  *
- * Her tur en bayat N URL'i denetler, gün içinde dört tur listeyi tamamen
- * yeniler. Tek turda tamamını taramak Vercel fonksiyon tavanını aşardı;
- * ayrıntı gscIndex.ts'te.
+ * Her tur en bayat N URL'i denetler; günde sekiz tur listeyi tamamen yeniler
+ * (8 x 20 = 160, sitemap 157). Tek turda tamamını taramak Vercel fonksiyon
+ * tavanını AŞAR ve yarım tur günlük özeti hiç yazamaz; ayrıntı gscIndex.ts'te.
  *
- * `{"batch": 200, "staleHours": 0}` gövdesiyle elle çağrılırsa tam tur
- * zorlanır (ilk doldurma için). Kota günlük 2000, liste 157, yani tam tur
- * bedavaya yakın.
+ * `{"staleHours": 0}` gövdesiyle elle çağrılırsa taze satırlar da yeniden
+ * denetlenir (ilk doldurmayı hızlandırmak için). `batch` da geçilebilir ama
+ * tavan yüzünden 20'nin çok üstüne çıkarılmamalı.
  */
 export default defineEventHandler(async (event) => {
   const expected = String(useRuntimeConfig(event).cronSecret ?? '').trim()
