@@ -6,7 +6,7 @@
  * Ortam: CHROME_PATH (CI: /usr/bin/google-chrome), SHOT_DIR (ekran görüntüsü klasörü, ops.)
  */
 import { spawn } from 'node:child_process'
-import { existsSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { chromium } from 'playwright-core'
@@ -254,9 +254,17 @@ try {
     gizlilikHtml.includes('Senin için tutulan not'),
     '/gizlilik hakkında tutulan yapay zekâ notunu anlatıyor',
   )
+  // Yürürlük tarihi kopyadan okunur, buraya sabitlenmez: sabit bir tarih her
+  // politika güncellemesinde smoke'u düşürür ve asıl iddiayı (sayfa kaynaktaki
+  // tarihi basıyor mu) sınamaz. Kaynağı content.ts'tir, gizlilik ve koşullar
+  // aynı günde yürürlüğe girer.
+  const effective = readFileSync(join(root, 'app/data/content.ts'), 'utf8').match(
+    /effective:\s*'([^']+)'/,
+  )?.[1]
+  ok(Boolean(effective), 'kopyada yürürlük tarihi tanımlı')
   ok(
-    gizlilikHtml.includes('12 Ağustos 2026'),
-    '/gizlilik yürürlük tarihi yayın gününe çekilmiş',
+    gizlilikHtml.includes(effective),
+    `/gizlilik kopyadaki yürürlük tarihini basıyor (${effective})`,
   )
 
   // --- Destek merkezi: sunucu tarafı sözleşmeleri ---
