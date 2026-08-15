@@ -459,7 +459,7 @@ export const aboutEn = {
 export const privacyEn = {
   title: 'Privacy Policy',
   effectiveLabel: 'Effective',
-  effective: 'August 12, 2026',
+  effective: 'August 15, 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet helps you build balanced eating habits with your family. We only ' +
@@ -652,8 +652,9 @@ export const privacyEn = {
     {
       title: 'Children',
       body: [
-        'afiet is for users aged 18 and over. We do not knowingly collect data ' +
-          'from anyone under 18.',
+        'afiet is for users aged 13 and over. We do not knowingly collect data ' +
+          'from anyone under 13; if we notice such an account we close it and ' +
+          'delete its data.',
       ],
     },
     {

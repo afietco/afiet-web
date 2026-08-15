@@ -68,5 +68,5 @@ Aynı satırdaki **Değiştir** ile giriş adresini de değiştirebilirsin.
 Giriş formundaki **Şifremi unuttum** satırına dokun, e-postanı ya da kullanıcı adını yaz, **Bağlantı gönder**'e bas. Hesabındaki adrese sıfırlama bağlantısı gider.
 
 ```dikkat
-afiet 18 yaş ve üzeri kullanıcılar içindir.
+afiet 13 yaş ve üzeri kullanıcılar içindir. 18 yaşından küçüksen ebeveyninin bilgisiyle kullan.
 ```

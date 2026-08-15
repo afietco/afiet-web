@@ -37,7 +37,7 @@ afiet'i ilk açtığında bir hesap oluşturursun. İki yol var:
 Hesabın hazır olduğunda kısa bir tanışma akışı seni karşılar ve ilk öğününü kaydetmene yardım eder.
 
 ```dikkat
-afiet 18 yaş ve üzeri kullanıcılar içindir.
+afiet 13 yaş ve üzeri kullanıcılar içindir. 18 yaşından küçüksen ebeveyninin bilgisiyle kullan.
 ```
 
 ## Sonra ne olur

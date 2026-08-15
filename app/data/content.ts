@@ -1179,7 +1179,7 @@ export const releases = {
  */
 export const privacy = {
   title: 'Gizlilik Politikası',
-  effective: '12 Ağustos 2026',
+  effective: '15 Ağustos 2026',
   contact: 'destek@afiet.co',
   intro:
     'afiet, ailenin beslenme ve sağlık alışkanlıklarını takip etmene yardımcı olur. ' +
@@ -1366,8 +1366,8 @@ export const privacy = {
     {
       title: 'Çocuklar',
       body: [
-        'afiet 18 yaş ve üzeri kullanıcılar içindir. Bilerek 18 yaş altından veri ' +
-          'toplamayız.',
+        'afiet 13 yaş ve üzeri kullanıcılar içindir. Bilerek 13 yaş altından veri ' +
+          'toplamayız; böyle bir hesabı fark edersek kapatır ve verisini sileriz.',
       ],
     },
     {
@@ -1474,7 +1474,7 @@ export const epostaDogrula = {
  */
 export const terms = {
   title: 'Kullanım Koşulları',
-  effective: '12 Ağustos 2026',
+  effective: '15 Ağustos 2026',
   contact: 'destek@afiet.co',
   intro:
     'Bu sayfa afiet’i kullanırken ikimizin de neye söz verdiğini anlatır. ' +
@@ -1494,7 +1494,9 @@ export const terms = {
       body: [
         'afiet’i kurup kullanmaya başladığında bu koşulları kabul etmiş olursun. ' +
           'Kabul etmiyorsan uygulamayı kullanma; hesabını istediğin an kapatabilirsin.',
-        'afiet 18 yaş ve üzeri kullanıcılar içindir.',
+        'afiet 13 yaş ve üzeri kullanıcılar içindir. 18 yaşından küçüksen ' +
+          'uygulamayı ebeveynin ya da vasinin bilgisiyle kullan; abonelik gibi ' +
+          'ücretli bir adım da onların onayını ister.',
       ],
     },
     {
