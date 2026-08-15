@@ -112,7 +112,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - Reklam göstermez, veriyi satmaz, kullanıcıyı izlemez.
 
 ## Kimin için
-- 18 yaş ve üzeri kullanıcılar; bilerek 18 yaş altından veri toplanmaz.
+- 13 yaş ve üzeri kullanıcılar; bilerek 13 yaş altından veri toplanmaz. 18 yaşından küçükler ebeveyn bilgisiyle kullanır.
 - Kalori saymadan, ailece dengeli beslenmek isteyen herkes.
 
 ## Veri yaklaşımı
@@ -248,7 +248,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
       {
         q: 'afiet kimin için?',
         a:
-          'afiet 18 yaş ve üzeri kullanıcılar içindir; bilerek 18 yaş altından veri toplamayız. ' +
+          'afiet 13 yaş ve üzeri kullanıcılar içindir; bilerek 13 yaş altından veri toplamayız. ' +
           'Kalori saymadan, sofrada seni seven biri gibi konuşan bir arkadaş isteyen herkes için.',
         href: '/destek/baslangic/afiet-nedir',
       },
