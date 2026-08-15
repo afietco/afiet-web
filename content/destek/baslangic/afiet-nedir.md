@@ -46,7 +46,7 @@ afiet bir sağlık uygulaması değil, bir alışkanlık uygulamasıdır. Bir ra
 
 ## Kimin için
 
-afiet 18 yaş ve üzeri kullanıcılar içindir; bilerek 18 yaş altından veri toplamayız.
+afiet 13 yaş ve üzeri kullanıcılar içindir; bilerek 13 yaş altından veri toplamayız. 18 yaşından küçükler uygulamayı ebeveyninin bilgisiyle kullanır.
 
 En çok işine yarayacağı kişiler: kalori saymayı denemiş ve bırakmış olanlar, ailesiyle birlikte daha dengeli beslenmek isteyenler ve bir düzeni sürdürebilmeyi kusursuz uygulamaktan önemli bulanlar.
 
