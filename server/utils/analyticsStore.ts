@@ -27,7 +27,7 @@ export async function ensureAnalyticsTables(sql: Sql) {
       id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
       ts timestamptz NOT NULL DEFAULT now(),
       event text NOT NULL DEFAULT 'pageview'
-        CHECK (event IN ('pageview','engagement','destek_oy','destek_arama')),
+        CHECK (event IN ('pageview','engagement','destek_oy','destek_arama','magaza_tik','bulten_kayit')),
       visitor_id uuid NOT NULL,
       session_id uuid NOT NULL,
       is_new_visitor boolean NOT NULL DEFAULT false,
@@ -47,9 +47,18 @@ export async function ensureAnalyticsTables(sql: Sql) {
       os text,
       country text,
       duration_ms integer,
-      screen_w integer
+      screen_w integer,
+      click_kind text,
+      click_id text
     )
   `
+  // Reklam tıklama kimliği (Google gclid/gbraid/wbraid): yalnız oturum girişi
+  // sayfa görüntülemesinde dolar; dönüşüm olayları (magaza_tik, bulten_kayit)
+  // ziyaretçi üzerinden bu satıra bağlanıp Google Ads'e "offline conversion"
+  // olarak elle yüklenir (bkz. api/admin/analytics/ads-conversions). Üçüncü
+  // taraf script ya da çerez YOK; kimlik URL'den okunur, onay kapısından geçer.
+  await sql`ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS click_kind text`
+  await sql`ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS click_id text`
   // Tablo prod'da VERİYLE yaşıyor, CREATE TABLE IF NOT EXISTS yetmez: olay
   // kümesi büyüdüğünde adlandırılmış CHECK düşürülüp yeniden kurulur
   // (contentStore'daki şema büyütme kuralının aynısı). Düşürme+ekleme
@@ -57,17 +66,21 @@ export async function ensureAnalyticsTables(sql: Sql) {
   await sql`ALTER TABLE analytics_events DROP CONSTRAINT IF EXISTS analytics_events_event_check`
   await sql`
     ALTER TABLE analytics_events ADD CONSTRAINT analytics_events_event_check
-      CHECK (event IN ('pageview','engagement','destek_oy','destek_arama'))
+      CHECK (event IN ('pageview','engagement','destek_oy','destek_arama','magaza_tik','bulten_kayit'))
   `
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_ts_idx ON analytics_events (ts)`
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_path_idx ON analytics_events (path)`
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_visitor_idx ON analytics_events (visitor_id)`
   await sql`CREATE INDEX IF NOT EXISTS analytics_events_event_idx ON analytics_events (event)`
+  await sql`CREATE INDEX IF NOT EXISTS analytics_events_click_idx ON analytics_events (visitor_id, ts) WHERE click_id IS NOT NULL`
   ensured = true
 }
 
+export type AnalyticsEvent = 'pageview' | 'engagement' | 'destek_oy' | 'destek_arama' | 'magaza_tik' | 'bulten_kayit'
+export type ClickKind = 'gclid' | 'gbraid' | 'wbraid'
+
 export type EventRow = {
-  event: 'pageview' | 'engagement' | 'destek_oy' | 'destek_arama'
+  event: AnalyticsEvent
   visitorId: string
   sessionId: string
   isNewVisitor: boolean
@@ -88,6 +101,8 @@ export type EventRow = {
   country: string | null
   durationMs: number | null
   screenW: number | null
+  clickKind?: ClickKind | null
+  clickId?: string | null
 }
 
 export async function insertEvent(sql: Sql, e: EventRow) {
@@ -95,13 +110,33 @@ export async function insertEvent(sql: Sql, e: EventRow) {
     INSERT INTO analytics_events (
       event, visitor_id, session_id, is_new_visitor, is_entry, host, path, title,
       referrer_host, channel, utm_source, utm_medium, utm_campaign, utm_term, utm_content,
-      device, browser, os, country, duration_ms, screen_w
+      device, browser, os, country, duration_ms, screen_w, click_kind, click_id
     ) VALUES (
       ${e.event}, ${e.visitorId}, ${e.sessionId}, ${e.isNewVisitor}, ${e.isEntry}, ${e.host}, ${e.path}, ${e.title},
       ${e.referrerHost}, ${e.channel}, ${e.utmSource}, ${e.utmMedium}, ${e.utmCampaign}, ${e.utmTerm}, ${e.utmContent},
-      ${e.device}, ${e.browser}, ${e.os}, ${e.country}, ${e.durationMs}, ${e.screenW}
+      ${e.device}, ${e.browser}, ${e.os}, ${e.country}, ${e.durationMs}, ${e.screenW}, ${e.clickKind ?? null}, ${e.clickId ?? null}
     )
   `
+}
+
+// ── Reklam tıklama kimliği ─────────────────────────────────────────────────
+
+export const CLICK_KINDS: ClickKind[] = ['gclid', 'gbraid', 'wbraid']
+/** Google'ın tıklama kimlikleri URL-güvenli base64 benzeri; 20-200 karakter arası kabul. */
+const CLICK_ID_RE = /^[A-Za-z0-9_-]{10,200}$/
+
+/**
+ * Beacon gövdesindeki `g` alanını doğrular: `{ k: 'gclid'|'gbraid'|'wbraid', v: string }`.
+ * Biçimi tutmayan her şey null (analitik asla siteyi kırmaz, kirli değer de saklamaz).
+ */
+export function sanitizeClick(raw: unknown): { kind: ClickKind; id: string } | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  const kind = typeof o.k === 'string' ? (o.k as ClickKind) : null
+  const id = typeof o.v === 'string' ? o.v.trim() : ''
+  if (!kind || !CLICK_KINDS.includes(kind)) return null
+  if (!CLICK_ID_RE.test(id)) return null
+  return { kind, id }
 }
 
 // ── Saf yardımcılar (DB'siz, birim test edilebilir) ──────────────────────────

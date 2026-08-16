@@ -15,11 +15,20 @@
  * onayı verilmişse yapılır (`afiet_analytics_consent === 'accepted'`, bildirimi
  * `CookieNotice.vue` yazar); "Kabul et" anında geçerli sayfayı sayar.
  *
- * Sayfa görüntülemenin dışında iki ürün olayı daha var (destek merkezi):
- * `$afietEvent('destek_oy' | 'destek_arama', …)`. Aynı kapılardan geçerler,
- * ayrı bir uç ya da ikinci bir onay mekanizması YOKTUR.
+ * Sayfa görüntülemenin dışında dört ürün olayı daha var: destek merkezinin
+ * `destek_oy` ve `destek_arama`sı, bir de web dönüşümleri `magaza_tik`
+ * (StoreBadges) ve `bulten_kayit` (BultenForm). Hepsi `$afietEvent(...)` ile
+ * aynı kapılardan geçer, ayrı bir uç ya da ikinci bir onay mekanizması YOKTUR.
+ *
+ * Reklam tıklama kimliği (Google `gclid` / `gbraid` / `wbraid`): sayfa ilk
+ * açıldığında URL'den okunur, girişteki sayfa görüntülemesiyle sunucuya gider
+ * ve orada dönüşüm olaylarına bağlanır (Google Ads'e "offline conversion"
+ * olarak elle yüklenir). Google'ın script'i ya da çerezi YOK; kimlik yalnız
+ * onay verilmişse gönderilir. `$afietClickId()` mağaza bağlantısının Play
+ * referrer'ına aynı kimliği eklemek için vardır ve o da onaya bakar.
  */
-type SupportEvent = 'destek_oy' | 'destek_arama'
+type SupportEvent = 'destek_oy' | 'destek_arama' | 'magaza_tik' | 'bulten_kayit'
+type ClickId = { k: 'gclid' | 'gbraid' | 'wbraid'; v: string }
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Sunucuda ve toplamanın kapalı olduğu host'larda bile sağlayıcı DÖNER:
@@ -32,6 +41,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         void kind
         void data
       },
+      afietClickId: (): ClickId | null => null,
     },
   }
   if (import.meta.server) return sessiz
@@ -65,6 +75,17 @@ export default defineNuxtPlugin((nuxtApp) => {
   let currentPath = ''
   let enterTime = 0
   let engSent = true
+
+  // Reklam tıklama kimliği: yalnız ilk yüklemedeki URL'den, bir kez.
+  const CLICK_RE = /^[A-Za-z0-9_-]{10,200}$/
+  const clickId: ClickId | null = (() => {
+    const q = new URLSearchParams(location.search)
+    for (const k of ['gclid', 'gbraid', 'wbraid'] as const) {
+      const v = q.get(k)
+      if (v && CLICK_RE.test(v)) return { k, v }
+    }
+    return null
+  })()
 
   const utm = (): Record<string, string> => {
     const q = new URLSearchParams(location.search)
@@ -110,7 +131,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     currentPath = path
     enterTime = Date.now()
     engSent = false
-    send({ e: 'pv', p: path, t: document.title, r: initialReferrer, u: utm(), w: window.screen?.width })
+    send({ e: 'pv', p: path, t: document.title, r: initialReferrer, u: utm(), g: clickId ?? undefined, w: window.screen?.width })
   }
 
   // İlk yükleme (title kesinleşsin diye mount sonrası) + SPA gezinmeleri.
@@ -144,5 +165,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     send({ e: kind, p: data.p, v: data.v.slice(0, 120) })
   }
 
-  return { provide: { afietEvent } }
+  /** Mağaza bağlantıları için tıklama kimliği; onay yoksa null (kimlik hiçbir yere taşınmaz). */
+  const afietClickId = (): ClickId | null => (consentOk() ? clickId : null)
+
+  return { provide: { afietEvent, afietClickId } }
 })

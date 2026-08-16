@@ -16,6 +16,9 @@ const props = withDefaults(defineProps<{ source: string; lang?: 'tr' | 'en' }>()
   lang: 'tr',
 })
 
+const route = useRoute()
+const { $afietEvent } = useNuxtApp()
+
 const copy = computed(() => (props.lang === 'en' ? bultenEn : bulten))
 const privacyTo = computed(() => (props.lang === 'en' ? '/en/privacy' : '/gizlilik'))
 const privacyLabel = computed(() => (props.lang === 'en' ? bultenEn.privacyLabel : 'Gizlilik'))
@@ -42,6 +45,9 @@ async function submit() {
       body: { email: value, source: props.source, lang: props.lang, company: company.value },
     })
     state.value = 'done'
+    // Web dönüşümü: yalnız "hangi sayfadan, hangi formdan" bilgisi; e-posta
+    // analitik tablosuna girmez. Onay yoksa plugin sessizce yutar.
+    $afietEvent('bulten_kayit', { p: route.path, v: props.source })
   } catch {
     state.value = 'error'
     note.value = copy.value.error
