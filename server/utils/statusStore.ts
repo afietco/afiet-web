@@ -18,11 +18,33 @@ type Sql = NeonQueryFunction<false, false>
 
 export type ServiceState = 'up' | 'degraded' | 'down' | 'none'
 
+/**
+ * Bozuk bir kontrolden toplanan ham kanıt. Teşhis bundan türer
+ * (`statusDiagnose.ts`) ve uyarı mailine girer; veritabanına YAZILMAZ.
+ *
+ * Saklanmamasının sebebi şu: kanıtın değeri tazeliğinde. Uyarı da hatırlatma
+ * da o anki turun kanıtıyla konuşur, yani her zaman güncel olanı gösterir.
+ * status_checks 90 günlük şeridi besler ve orada durum kodundan fazlası
+ * gerekmez.
+ */
+export interface ProbeEvidence {
+  status?: number
+  /** Yanıt gövdesinin tek satıra indirgenmiş ilk parçası. */
+  bodySnippet?: string
+  /** Kim cevapladı: 'Google Frontend', 'Vercel'… Kesintinin katmanını söyler. */
+  server?: string
+  /** Sağlayıcının kendi olay metni (durum sayfasından, birebir). */
+  incident?: string
+  /** Ağ katmanı hatası: zaman aşımı, DNS, TLS. */
+  networkError?: string
+}
+
 export interface CheckResult {
   component: string
   state: Exclude<ServiceState, 'none'>
   latencyMs: number | null
   detail: string
+  evidence?: ProbeEvidence
 }
 
 /** Sayfada görünen bileşenler; sıra UI sırasıdır. */

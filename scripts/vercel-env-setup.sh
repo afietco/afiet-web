@@ -14,7 +14,11 @@ secret() { gcloud secrets versions access latest --secret="$1" --project afiet-c
 add() { # add <isim> <değer> <ortam> [dal]
   # --sensitive: projedeki mevcut kayıtların tipi bu; --force ile üstüne yazarken
   # tip değişirse `vercel env pull` bazı değerleri boş string olarak indirir.
-  printf '%s' "$2" | vercel env add "$1" "$3" ${4:-} --sensitive --force
+  #
+  # Değer stdin'den DEĞİL --value ile geçer: CLI 54 boruyu artık okumuyor ve
+  # "missing_value" diye action_required döndürüp sessizce hiçbir şey yazmıyor
+  # (16 Ağu 2026'da yaşandı). --yes etkileşimli onayı atlar.
+  vercel env add "$1" "$3" ${4:-} --value "$2" --yes --sensitive --force
 }
 
 setup_env() { # setup_env <secret-prefix> <vercel-ortam> [dal]
@@ -61,5 +65,22 @@ setup_env prod production
 # base64 saklanır (app-gsc-sa-key), yeniden encode etme.
 echo "→ production: GSC servis hesabı anahtarı"
 add NUXT_GSC_SA_KEY "$(secret app-gsc-sa-key)" production
+
+# Durum uyarılarının teşhis katmanı, YALNIZ production: kesinti maili yalnız
+# oradan çıkar. Anahtar Cloud Run loglarını okur (status-watch@afiet-co,
+# tek yetkisi roles/logging.viewer) ve base64 saklanır.
+# Boşsa mailde "sunucu logları" bölümü hiç görünmez, uyarı yine gider.
+echo "→ production: durum teşhisi için log okuma anahtarı"
+add NUXT_STATUS_LOG_KEY "$(secret app-status-log-key)" production
+
+# Kesinti anındaki canlı web araması (isteğe bağlı). Sağlayıcı anahtarın
+# önekinden tanınır: `tvly-` Tavily, değilse Brave. Secret yoksa bu adım
+# atlanır ve arama bölümü hiç görünmez.
+if gcloud secrets describe app-status-search-key --project afiet-co >/dev/null 2>&1; then
+  echo "→ production: canlı arama anahtarı"
+  add NUXT_SEARCH_API_KEY "$(secret app-status-search-key)" production
+else
+  echo "→ arama anahtarı yok (app-status-search-key); arama bölümü kapalı kalacak"
+fi
 
 echo "✓ Bitti. Kontrol: vercel env ls"
