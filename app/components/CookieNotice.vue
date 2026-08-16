@@ -54,7 +54,7 @@ function decide(choice: 'accepted' | 'declined') {
       </p>
       <p v-else class="text-[13px] leading-relaxed text-soft">
         afiet.co'yu geliştirmek için ziyaretleri <strong class="font-bold text-ink">anonim ve toplu</strong> ölçüyoruz
-        (kendi sunucumuzda, birinci-taraf çerez; IP saklanmaz, üçüncü tarafla paylaşılmaz).
+        (kendi sunucumuzda, birinci-taraf çerez; IP saklanmaz, profil çıkarılmaz; reklamdan geldiysen yalnız o tıklamanın işe yaradığı bildirilir).
         <NuxtLink to="/gizlilik" class="font-bold text-brand underline-offset-2 hover:underline">Ayrıntılar</NuxtLink>
       </p>
       <div class="flex shrink-0 gap-2">

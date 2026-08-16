@@ -261,8 +261,8 @@ export const cookieEn = {
   textA: 'To improve afiet.co we measure visits ',
   strong: 'anonymously and in aggregate',
   textB:
-    ' (on our own server, first-party cookie; no IP stored, nothing shared ' +
-    'with third parties).',
+    ' (on our own server, first-party cookie; no IP stored, no profiling; if you ' +
+    'came from an ad, only the fact that the click worked is reported back).',
   details: 'Details',
   decline: 'Decline',
   accept: 'Accept',
@@ -591,7 +591,18 @@ export const privacyEn = {
         'For this, a random cookie that contains no identity (afiet_vid / afiet_sid) ' +
           'is written to your browser; it exists only to estimate unique visitors. ' +
           'We do not store your IP address, share it with third parties, use it for ' +
-          'advertising or track you across sites.',
+          'ad targeting or profiling, or track you across sites.',
+        'Ad measurement: if you arrived at afiet.co from an ad, the link carries the ' +
+          'ad network\'s click identifier (gclid for Google). To see which ad worked ' +
+          'we store that identifier, whether you clicked a store link or signed up ' +
+          'for the newsletter, and when; we then upload only "this click converted ' +
+          'to a store link at this time" to the ad network, by hand. Your email ' +
+          'address, IP address or the pages you visited are not sent, and no ad ' +
+          'network code or cookie runs on the site. The link to the Play store ' +
+          'carries the same identifier and the page you came from so the app knows ' +
+          'which channel it was installed from. This goes through the same consent ' +
+          'gate: if you choose "Decline", the identifier is neither stored nor added ' +
+          'to the link.',
         'In the help center (afiet.co/destek) we count two more things: your answer ' +
           'to "Was this article helpful?" (only yes or no) and search queries that ' +
           'returned no results. The second exists to show us which topics we have ' +

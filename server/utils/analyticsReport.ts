@@ -19,6 +19,10 @@ type ChannelRow = { key: string; label: string; visits: number }
 type SourceRow = { source: string; visits: number }
 type UtmRow = { value: string; visits: number }
 type BreakdownRow = { key: string; label: string; visits: number }
+/** utm_content (kreatif) satırı: ziyaret + o kreatiften gelen ziyaretçilerin web dönüşümleri. */
+type ContentRow = { value: string; visits: number; magaza: number; bulten: number }
+/** Web dönüşümleri: mağaza tıklaması (mağazaya göre) ve bülten kaydı; reklam tıklama kimliğiyle eşlenen pay. */
+type WebConversions = { magazaPlay: number; magazaAppstore: number; bulten: number; withClickId: number }
 
 export type AnalyticsData = {
   generatedAt: string
@@ -39,7 +43,8 @@ export type AnalyticsData = {
   blog: BlogRow[]
   channels: ChannelRow[]
   referrers: SourceRow[]
-  utm: { source: UtmRow[]; medium: UtmRow[]; campaign: UtmRow[] }
+  utm: { source: UtmRow[]; medium: UtmRow[]; campaign: UtmRow[]; term: UtmRow[]; content: ContentRow[] }
+  webConversions: WebConversions
   devices: BreakdownRow[]
   browsers: BreakdownRow[]
   countries: BreakdownRow[]
@@ -81,6 +86,7 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
     totalsRows, prevRows, seriesRows, pagesRows, durRows,
     channelRows, referrerRows, utmSrcRows, utmMedRows, utmCampRows,
     deviceRows, browserRows, countryRows, blogTitleRows, convRows,
+    utmTermRows, utmContentRows, webConvRows,
   ] = await Promise.all([
     sql`SELECT
           count(*) FILTER (WHERE event='pageview')::int AS views,
@@ -148,6 +154,58 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
         GROUP BY country ORDER BY visits DESC LIMIT 12`,
     sql`SELECT slug, title, to_char(published_at, 'YYYY-MM-DD') AS published_at FROM blog_posts`.catch(() => [] as Record<string, unknown>[]),
     sql`SELECT count(*)::int AS n FROM beta_applications WHERE created_at >= now() - make_interval(days => ${days})`.catch(() => [{ n: 0 }] as Record<string, unknown>[]),
+    sql`SELECT utm_term AS value, count(*)::int AS visits
+        FROM analytics_events
+        WHERE event='pageview' AND is_entry AND utm_term IS NOT NULL
+          AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
+        GROUP BY utm_term ORDER BY visits DESC LIMIT 8`,
+    // Kreatif kırılımı (utm_content): girişteki kreatif + aynı ziyaretçinin
+    // aralık içindeki web dönüşümleri. Dönüşüm, ziyaretçinin o aralıktaki
+    // SON kreatif girişine yazılır (basit "son tıklama"); reklam kanalları da
+    // varsayılan olarak öyle sayar, karşılaştırma bu yüzden anlamlı.
+    sql`WITH giris AS (
+          SELECT DISTINCT ON (visitor_id) visitor_id, utm_content
+          FROM analytics_events
+          WHERE event='pageview' AND is_entry AND utm_content IS NOT NULL
+            AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
+          ORDER BY visitor_id, ts DESC
+        ),
+        donusum AS (
+          SELECT visitor_id,
+                 count(*) FILTER (WHERE event='magaza_tik')::int AS magaza,
+                 count(*) FILTER (WHERE event='bulten_kayit')::int AS bulten
+          FROM analytics_events
+          WHERE event IN ('magaza_tik','bulten_kayit')
+            AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
+          GROUP BY visitor_id
+        ),
+        ziyaret AS (
+          SELECT utm_content AS value, count(*)::int AS visits
+          FROM analytics_events
+          WHERE event='pageview' AND is_entry AND utm_content IS NOT NULL
+            AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
+          GROUP BY utm_content
+        )
+        SELECT z.value, z.visits,
+               coalesce(sum(d.magaza), 0)::int AS magaza,
+               coalesce(sum(d.bulten), 0)::int AS bulten
+        FROM ziyaret z
+        LEFT JOIN giris g ON g.utm_content = z.value
+        LEFT JOIN donusum d ON d.visitor_id = g.visitor_id
+        GROUP BY z.value, z.visits
+        ORDER BY z.visits DESC LIMIT 12`,
+    sql`SELECT
+          count(*) FILTER (WHERE e.event='magaza_tik' AND e.title='play')::int AS magaza_play,
+          count(*) FILTER (WHERE e.event='magaza_tik' AND e.title='appstore')::int AS magaza_appstore,
+          count(*) FILTER (WHERE e.event='bulten_kayit')::int AS bulten,
+          count(*) FILTER (WHERE EXISTS (
+            SELECT 1 FROM analytics_events c
+            WHERE c.visitor_id = e.visitor_id AND c.click_id IS NOT NULL
+              AND c.ts <= e.ts AND c.ts >= e.ts - interval '90 days'
+          ))::int AS with_click_id
+        FROM analytics_events e
+        WHERE e.event IN ('magaza_tik','bulten_kayit')
+          AND e.host = ANY(${domains}) AND e.ts >= now() - make_interval(days => ${days})`,
   ])
 
   const t = (totalsRows[0] ?? {}) as { views?: number; visitors?: number; sessions?: number; avg_ms?: number }
@@ -201,6 +259,15 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
   const referrers: SourceRow[] = (referrerRows as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits }))
 
   const utmMap = (rows: unknown[]): UtmRow[] => (rows as { value: string; visits: number }[]).map((r) => ({ value: r.value, visits: r.visits }))
+  const contentRows: ContentRow[] = (utmContentRows as { value: string; visits: number; magaza: number; bulten: number }[])
+    .map((r) => ({ value: r.value, visits: r.visits, magaza: r.magaza, bulten: r.bulten }))
+  const wc = (webConvRows[0] ?? {}) as { magaza_play?: number; magaza_appstore?: number; bulten?: number; with_click_id?: number }
+  const webConversions: WebConversions = {
+    magazaPlay: wc.magaza_play ?? 0,
+    magazaAppstore: wc.magaza_appstore ?? 0,
+    bulten: wc.bulten ?? 0,
+    withClickId: wc.with_click_id ?? 0,
+  }
 
   const devices: BreakdownRow[] = (deviceRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: DEVICE_LABEL[r.key] ?? r.key, visits: r.visits }))
   const browsers: BreakdownRow[] = (browserRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: r.key, visits: r.visits }))
@@ -225,7 +292,8 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
     blog,
     channels,
     referrers,
-    utm: { source: utmMap(utmSrcRows), medium: utmMap(utmMedRows), campaign: utmMap(utmCampRows) },
+    utm: { source: utmMap(utmSrcRows), medium: utmMap(utmMedRows), campaign: utmMap(utmCampRows), term: utmMap(utmTermRows), content: contentRows },
+    webConversions,
     devices,
     browsers,
     countries,
