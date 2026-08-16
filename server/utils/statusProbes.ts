@@ -150,15 +150,19 @@ async function vercelIncidentText(): Promise<string | undefined> {
  * ve uyarı yine AYNI turda çıkar (saniyeler fark eder), gelip geçen takılma
  * ise sessizce geçer ve 90 günlük şeridi kirletmez.
  *
+ * Yavaşlama da tekrarlanır, aynı gerekçeyle: tek bir yavaş örnek bir durum
+ * değildir. Gerçek yavaşlama ikinci örnekte de yavaştır; soğuk başlangıcın
+ * dördüncü saniyesi ise ikinci yoklamada geçer.
+ *
  * Sağlayıcı durum sayfalarına uygulanmaz: onlar yoklama değil, okuma.
  */
 async function httpProbeRetried(url: string, okBelow500 = false): Promise<ProbeOutcome> {
   const first = await httpProbe(url, okBelow500)
-  if (first.state !== 'down') return first
+  if (first.state === 'up') return first
 
   await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS))
   const second = await httpProbe(url, okBelow500)
-  if (second.state !== 'down') {
+  if (second.state === 'up') {
     console.warn(`[durum] ${url}: ilk yoklama düştü (${first.detail}), tekrar geçti`)
   }
   return second
