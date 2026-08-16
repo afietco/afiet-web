@@ -14,7 +14,11 @@ import type { H3Event } from 'h3'
  * ve jwt-bearer takası. @google-cloud/logging tek bir sorgu için koca bir
  * bağımlılık ağacı getirirdi.
  *
- * Servis hesabı: `status-watch@afiet-co`, YALNIZ roles/logging.viewer.
+ * Servis hesabı: `status-watch@afiet-co`. İKİ rol gerekiyor ve bu bir tuzak:
+ * `roles/logging.viewer` tek başına yetmiyor, API "Permission denied for all
+ * log views" ile 403 veriyor; okuma ayrıca `roles/logging.viewAccessor`
+ * istiyor. Hesabın başka hiçbir yetkisi yok.
+ *
  * Anahtar Secret Manager'da `app-status-log-key`, env'de NUXT_STATUS_LOG_KEY
  * (base64 ya da ham JSON). Anahtar yoksa bölüm sessizce boş kalır.
  */
@@ -123,10 +127,22 @@ interface LogEntry {
   textPayload?: string
   jsonPayload?: Record<string, unknown>
   protoPayload?: { status?: { message?: string } }
-  httpRequest?: { status?: number; requestUrl?: string }
+  httpRequest?: {
+    status?: number
+    latency?: string
+    requestMethod?: string
+    requestUrl?: string
+  }
 }
 
-/** Bir log satırını maile yazılacak tek satıra indirger. */
+/**
+ * Bir log satırını maile yazılacak tek satıra indirger.
+ *
+ * Cloud Run'ın ERROR satırlarının çoğunda METİN YOKTUR: 503 dönen bir istek
+ * yapılandırılmış `httpRequest` olarak düşer (16 Ağu'daki gerçek kayıt buydu).
+ * O yüzden istek özeti gövde kadar birinci sınıf bir kaynaktır; yoksa mail
+ * "{}" gösterirdi.
+ */
 function satir(entry: LogEntry): string {
   const zaman = entry.timestamp
     ? new Intl.DateTimeFormat('tr-TR', {
@@ -136,15 +152,30 @@ function satir(entry: LogEntry): string {
         timeZone: 'Europe/Istanbul',
       }).format(new Date(entry.timestamp))
     : ''
+
   const json = entry.jsonPayload ?? {}
-  const govde =
+  const metin =
     entry.textPayload ??
     (typeof json.message === 'string' ? json.message : undefined) ??
+    (typeof json.msg === 'string' ? json.msg : undefined) ??
     (typeof json.hata === 'string' ? json.hata : undefined) ??
-    entry.protoPayload?.status?.message ??
-    JSON.stringify(json).slice(0, 300)
-  const durum = entry.httpRequest?.status ? ` [${entry.httpRequest.status}]` : ''
-  return `${zaman}${durum} ${String(govde).replace(/\s+/g, ' ').trim()}`.trim().slice(0, 300)
+    entry.protoPayload?.status?.message
+
+  const req = entry.httpRequest
+  const istek = req?.requestUrl
+    ? [
+        req.requestMethod ?? 'GET',
+        new URL(req.requestUrl).pathname,
+        req.latency ? `(${req.latency})` : '',
+      ]
+        .filter(Boolean)
+        .join(' ')
+    : ''
+
+  const durum = req?.status ? `[${req.status}] ` : ''
+  const govde = [metin, istek].filter(Boolean).join(' · ')
+  if (!govde) return ''
+  return `${zaman} ${durum}${govde}`.replace(/\s+/g, ' ').trim().slice(0, 300)
 }
 
 /**
