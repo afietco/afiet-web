@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
 /**
@@ -13,5 +14,11 @@ export default defineConfig({
   test: {
     include: ['shared/**/*.test.ts', 'server/**/*.test.ts'],
     environment: 'node',
+  },
+  // Nuxt'un `~~` kök takma adı burada elle kurulur: sunucu yardımcıları
+  // birbirine bu adla bağlanıyor (durum uyarıları zinciri), vitest ise Nuxt
+  // yapılandırmasını okumaz ve alias olmadan import anında düşer.
+  resolve: {
+    alias: [{ find: /^~~\//, replacement: `${fileURLToPath(new URL('.', import.meta.url))}` }],
   },
 })

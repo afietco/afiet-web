@@ -140,6 +140,16 @@ export default defineNuxtConfig({
     // Search Console mülkü. Domain mülkü biçimi: sc-domain:afiet.co.
     // Env: NUXT_GSC_PROPERTY.
     gscProperty: 'sc-domain:afiet.co',
+    // Durum uyarılarının teşhis katmanı (server/utils/statusLogs.ts).
+    // Cloud Run hata loglarını okuyan servis hesabı (Secret Manager:
+    // app-status-log-key, base64 JSON; ham JSON da kabul), YALNIZ
+    // roles/logging.viewer taşır. BOŞ = mailde "sunucu logları" bölümü hiç
+    // görünmez, uyarı yine gider. Env: NUXT_STATUS_LOG_KEY.
+    statusLogKey: '',
+    // Kesinti anındaki canlı web araması (server/utils/statusSearch.ts).
+    // Sağlayıcı anahtarın ÖNEKİNDEN tanınır: `tvly-` ise Tavily, değilse
+    // Brave. BOŞ = arama bölümü hiç görünmez. Env: NUXT_SEARCH_API_KEY.
+    searchApiKey: '',
 
     public: {
       // Analitik beacon'ının çalışacağı production host'ları (virgüllü).
