@@ -1,4 +1,5 @@
 import { runAllProbes } from '~~/server/utils/statusProbes'
+import { runStatusAlerts } from '~~/server/utils/statusAlerts'
 import {
   ensureStatusTables,
   insertChecks,
@@ -30,10 +31,14 @@ export default defineEventHandler(async (event) => {
   await insertChecks(sql, results)
   await reconcileIncidents(sql, results)
   await pruneOldChecks(sql)
+  // Uyarı adımı EN SONDA ve kendi hatasını yutar: sayfa verisi mailden
+  // önce gelir, mail katmanı düşse bile şerit doğru kalır.
+  const { notified } = await runStatusAlerts(event, sql, results)
 
   return {
     ok: true,
     checked: results.length,
     down: results.filter((r) => r.state === 'down').map((r) => r.component),
+    notified,
   }
 })
