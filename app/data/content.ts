@@ -1307,7 +1307,18 @@ export const privacy = {
           'yaklaşık ülke, cihaz ve tarayıcı türü.',
         'Bunun için tarayıcına kimliğini içermeyen rastgele bir çerez (afiet_vid / afiet_sid) ' +
           'yazılır; yalnız tekil ziyaretçiyi tahmini saymak içindir. IP adresini saklamaz, ' +
-          'üçüncü taraflarla paylaşmaz, reklam için kullanmaz ve seni sitelerarası izlemeyiz.',
+          'üçüncü taraflarla paylaşmaz, reklam hedeflemesi ya da profilleme için kullanmaz ' +
+          've seni sitelerarası izlemeyiz.',
+        'Reklam ölçümü: afiet.co\'ya bir reklamdan geldiysen bağlantıda reklam ağının ' +
+          'tıklama kimliği bulunur (Google için gclid). Hangi reklamın işe yaradığını ' +
+          'görmek için bu kimliği, mağaza bağlantısına tıkladığını ya da bültene ' +
+          'yazıldığını ve bunların zamanını saklarız; sonra reklam ağına yalnız "bu ' +
+          'tıklama şu tarihte mağaza bağlantısına dönüştü" bilgisini elle yükleriz. ' +
+          'E-posta adresin, IP adresin ya da gezdiğin sayfalar gitmez, sitede reklam ' +
+          'ağının kodu ya da çerezi çalışmaz. Play mağazasına giden bağlantı aynı ' +
+          'kimliği ve geldiğin sayfayı taşır ki uygulama hangi kanaldan kurulduğunu ' +
+          'bilsin. Bu da aynı onay kapısından geçer: "Reddet" dersen kimlik hiç ' +
+          'kaydedilmez ve bağlantıya eklenmez.',
         'Destek merkezinde (afiet.co/destek) iki şey daha sayarız: bir yazının altındaki ' +
           '"Bu yazı yardımcı oldu mu?" cevabın (yalnız evet ya da hayır) ve destek aramanda ' +
           'hiç sonuç çıkmayan sorgu metni. İkincisi hangi konuyu henüz yazmadığımızı ' +

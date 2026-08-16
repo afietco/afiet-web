@@ -6,6 +6,8 @@ import {
   insertEvent,
   isBot,
   parseUa,
+  sanitizeClick,
+  type AnalyticsEvent,
   type EventRow,
 } from '../utils/analyticsStore'
 
@@ -108,6 +110,31 @@ export default defineEventHandler(async (event) => {
       return done()
     }
 
+    // ── Web dönüşümleri: mağaza tıklaması ve bülten kaydı ──
+    // `magaza_tik`: StoreBadges'taki mağaza bağlantısına tıklama (play/appstore).
+    // `bulten_kayit`: bülten formu başarıyla gönderildi (değer = formun `source`u).
+    // İkisi de Google Ads "offline conversion" yüklemesinin ham maddesi:
+    // ziyaretçinin girişteki tıklama kimliğiyle (click_id) sonradan eşlenir.
+    // Ek alan toplanmaz; e-posta bu tabloya HİÇ girmez.
+    if (body.e === 'magaza_tik' || body.e === 'bulten_kayit') {
+      const deger = cap(body.v, 120)
+      if (!deger) return done()
+      if (body.e === 'magaza_tik' && deger !== 'play' && deger !== 'appstore') return done()
+      await insertEvent(
+        sql,
+        blankRow({
+          event: body.e,
+          visitorId: vid,
+          sessionId: sid,
+          host,
+          path,
+          durationMs: null,
+          title: deger,
+        }),
+      )
+      return done()
+    }
+
     // ── Süre (engagement) olayı: yalnız yol + süre ──
     if (body.e === 'eng') {
       await insertEvent(sql, blankRow({ event: 'engagement', visitorId: vid, sessionId: sid, host, path, durationMs: clampInt(body.d, 0, SESSION_MAX_AGE * 1000) }))
@@ -118,6 +145,8 @@ export default defineEventHandler(async (event) => {
     const refHost = hostFromReferrer(String(body.r ?? ''))
     const utm = sanitizeUtm(body.u)
     const hasUtm = Boolean(utm.source || utm.medium || utm.campaign)
+    // Reklam tıklama kimliği yalnız oturum girişinde saklanır (UTM ile aynı kural).
+    const click = entry ? sanitizeClick(body.g) : null
     // Edinim yalnız oturum girişinde anlamlı; oturum içi gezinme "internal".
     const channel = entry ? channelFor({ hasUtm, refHost, ourHost }) : 'internal'
     const { device, browser, os } = parseUa(ua)
@@ -144,6 +173,8 @@ export default defineEventHandler(async (event) => {
       country,
       durationMs: null,
       screenW: clampInt(body.w, 0, 20000),
+      clickKind: click?.kind ?? null,
+      clickId: click?.id ?? null,
     })
     return done()
   } catch {
@@ -168,7 +199,7 @@ function sanitizeUtm(raw: unknown): Utm {
  * ya da arama sorgusu); ayrı bir kolon açmaya değmeyecek kadar dar bir alan.
  */
 function blankRow(p: {
-  event: 'engagement' | 'destek_oy' | 'destek_arama'
+  event: Exclude<AnalyticsEvent, 'pageview'>
   visitorId: string
   sessionId: string
   host: string
