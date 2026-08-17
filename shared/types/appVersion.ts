@@ -17,12 +17,26 @@ export interface PlatformVersionGate {
   message: string | null
 }
 
+/**
+ * Uygulamanın sürüm kapısıyla birlikte okuduğu anahtarlar.
+ *
+ * Kapıyla aynı uçtan gelirler, aynı gerekçeyle: bunlardan birine ihtiyaç
+ * duyulan gün büyük ihtimalle uygulamada bir şeyin ters gittiği gündür ve
+ * cevap API'ye bağlı olmamalı. Her anahtarın varsayılanı "yayınlandığı gibi"
+ * demektir; blok yoksa ya da okunamıyorsa hiçbir şey değişmez.
+ */
+export interface AppFlags {
+  /** Yeni hesapta Bugün panosu bölüm bölüm mü açılsın, hepsi birden mi. */
+  ftueDoors: 'progressive' | 'open' | null
+}
+
 export interface AppVersionGate {
   ios: PlatformVersionGate
   android: PlatformVersionGate
+  flags: AppFlags
 }
 
-export type AppVersionPlatform = keyof AppVersionGate
+export type AppVersionPlatform = 'ios' | 'android'
 
 export const APP_VERSION_PLATFORMS: AppVersionPlatform[] = ['ios', 'android']
 
@@ -31,8 +45,16 @@ export function emptyPlatformGate(): PlatformVersionGate {
   return { latestVersion: null, minimumVersion: null, storeUrl: null, message: null }
 }
 
+export function emptyAppFlags(): AppFlags {
+  return { ftueDoors: null }
+}
+
 export function emptyAppVersionGate(): AppVersionGate {
-  return { ios: emptyPlatformGate(), android: emptyPlatformGate() }
+  return { ios: emptyPlatformGate(), android: emptyPlatformGate(), flags: emptyAppFlags() }
+}
+
+export function normalizeFtueDoors(input: unknown): AppFlags['ftueDoors'] {
+  return input === 'open' || input === 'progressive' ? input : null
 }
 
 /**
