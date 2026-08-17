@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { compareAppVersions, emptyAppVersionGate, normalizeVersion } from './appVersion'
+import {
+  compareAppVersions,
+  emptyAppVersionGate,
+  normalizeFtueDoors,
+  normalizeVersion,
+} from './appVersion'
 
 describe('sürüm okuma', () => {
   it('noktalı sayıyı ve baştaki v harfini kabul eder', () => {
@@ -30,11 +35,20 @@ describe('sürüm sıralama', () => {
 })
 
 describe('boş kapı', () => {
-  it('hiçbir eşiği olmayan iki platform döner', () => {
-    // DB yokken/boşken dönen cevap budur ve hiç kimseyi kilitlememeli.
+  it('hiçbir eşiği olmayan iki platform ve varsayılan anahtarlar döner', () => {
+    // DB yokken/boşken dönen cevap budur: hiç kimseyi kilitlememeli ve
+    // hiçbir anahtar "yayınlandığı gibi"nden farklı bir şey söylememeli.
     expect(emptyAppVersionGate()).toEqual({
       ios: { latestVersion: null, minimumVersion: null, storeUrl: null, message: null },
       android: { latestVersion: null, minimumVersion: null, storeUrl: null, message: null },
+      flags: { ftueDoors: null },
     })
+  })
+
+  it('anahtarlarda tanınmayan değeri varsayılana düşürür', () => {
+    expect(normalizeFtueDoors('open')).toBe('open')
+    expect(normalizeFtueDoors('progressive')).toBe('progressive')
+    expect(normalizeFtueDoors('kapali')).toBe(null)
+    expect(normalizeFtueDoors(undefined)).toBe(null)
   })
 })
