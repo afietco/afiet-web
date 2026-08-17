@@ -1,7 +1,9 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
 import {
-  APP_VERSION_PLATFORMS,
+  emptyAppFlags,
+  normalizeFtueDoors,
+  type AppFlags,
   compareAppVersions,
   emptyAppVersionGate,
   normalizeVersion,
@@ -117,14 +119,43 @@ export async function readAppVersionGate(event: H3Event): Promise<AppVersionGate
     }[]
     const gate = emptyAppVersionGate()
     for (const row of rows) {
-      if ((APP_VERSION_PLATFORMS as string[]).includes(row.platform)) {
-        gate[row.platform as AppVersionPlatform] = parseStored(row.value)
+      if (row.platform === 'ios' || row.platform === 'android') {
+        gate[row.platform] = parseStored(row.value)
+      } else if (row.platform === FLAGS_KEY) {
+        gate.flags = parseStoredFlags(row.value)
       }
     }
     return gate
   } catch {
     return emptyAppVersionGate()
   }
+}
+
+/* Anahtarlar aynı tabloda, platform sütununda kendi adlarıyla dururlar:
+   yeni bir tablo ya da sütun gerekmedi ve okuma tek sorgu kaldı. */
+const FLAGS_KEY = 'flags'
+
+function parseStoredFlags(value: unknown): AppFlags {
+  const raw = (value ?? {}) as Record<string, unknown>
+  return { ftueDoors: normalizeFtueDoors(raw.ftueDoors) }
+}
+
+/** Panelden gelen anahtarları temizler; bilinmeyen değer varsayılana düşer. */
+export function sanitizeAppFlags(input: unknown): AppFlags {
+  const raw = (input ?? {}) as Record<string, unknown>
+  return { ...emptyAppFlags(), ftueDoors: normalizeFtueDoors(raw.ftueDoors) }
+}
+
+/** Anahtarları yazar (upsert). */
+export async function writeAppFlags(event: H3Event, value: AppFlags): Promise<void> {
+  const sql = sqlClient(event)
+  if (!sql) throw createError({ statusCode: 503, statusMessage: 'db_bagli_degil' })
+  await ensureTable(sql)
+  await sql`
+    INSERT INTO app_version_gate (platform, value, updated_at)
+    VALUES (${FLAGS_KEY}, ${JSON.stringify(value)}::jsonb, now())
+    ON CONFLICT (platform) DO UPDATE SET value = EXCLUDED.value, updated_at = now()
+  `
 }
 
 /** Tek platformun ayarını yazar (upsert). */
