@@ -1,5 +1,28 @@
 import tailwindcss from '@tailwindcss/vite'
 
+import { anahtarOku } from './scripts/indexnow.mjs'
+
+/**
+ * IndexNow anahtarını BUILD ANINDA `public/<anahtar>.txt`ten okur.
+ *
+ * Anahtarın tek kaynağı o dosyadır ve burada ikinci bir kopyası olmamalı, ama
+ * çalışma anında okunamaz: Vercel'de public/ CDN'e gider, fonksiyonun dosya
+ * sistemine değil. Build makinede dosya duruyor, o yüzden değer burada bir
+ * kez okunup runtimeConfig'e konur.
+ *
+ * Okunamazsa sessizce boş kalır ve uç 503 ile "anahtar yok" der: eksik bir
+ * anahtar yüzünden bütün sitenin build'ini düşürmek orantısız, ama sessizce
+ * yanlış bir anahtar uydurmak daha kötü olurdu.
+ */
+function indexnowAnahtari(): string {
+  try {
+    return anahtarOku()
+  } catch (err) {
+    console.warn('[indexnow] anahtar okunamadı, bildirim ucu kapalı olacak:', err)
+    return ''
+  }
+}
+
 const TITLE = 'afiet | Sayma, dengele.'
 const DESCRIPTION =
   'Kalori saydırmadan, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) ' +
@@ -122,6 +145,10 @@ export default defineNuxtConfig({
     // 503, cronSecret ile aynı ilke. Ortam başına AYRI değer (backend'de
     // app-<ortam>-web-internal-secret). Env: NUXT_INTERNAL_API_SECRET.
     internalApiSecret: '',
+    // IndexNow anahtarı; build'de public/<anahtar>.txt'ten okunur (yukarı bkz.).
+    // BOŞ = /api/internal/blog/indexnow 503 döner ve içerik hattı yayını
+    // bildirmeden geçer (yazı yine yayınlanır).
+    indexnowKey: indexnowAnahtari(),
     // İçerik takvimi ekleri (gs://afiet-icerik): imzalı yükleme/indirme.
     // Anahtar Secret Manager'daki `app-content-gcs-key`in base64'ü (ham JSON
     // da kabul edilir). BOŞ = ek yükleme kapalı, panel bunu rozetle söyler ve

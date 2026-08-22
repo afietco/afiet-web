@@ -239,6 +239,20 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   panel içeriğini "yayında" yapar). Görünürlük: sayfa ≤ ~2 dk, sitemap/RSS ≤ 5 dk.
   Yayından kaldırma: `--unpublish <slug>`. md dosyaları sürümlü YEDEKTİR;
   script'teki DDL `contentStore.ts` ile senkron tutulur.
+- **IndexNow bildirimi iki yoldan da yapılır.** Elle yayında `publish-post.mjs`
+  bildirir; içerik hattı (Go backend) `/api/internal/blog/publish` ucundan
+  yayınladığı için AYRI bir uçtan bildirir: `/api/internal/blog/indexnow`.
+  O uç yoksa hat yayınlar ama kimseye söylemez, ki 22 Ağu 2026'ya kadar tam
+  olarak böyleydi (hattan çıkan altı yazının beşi GSC'de `discovered`,
+  taranmamış). Uç her adresin **canlı olduğunu doğrular** ve yalnız kabul
+  ettiklerini döner: yeni yazı ISR yüzünden birkaç dakika 404'tür ve bir
+  tarayıcıyı 404'e yollamak hiç yollamamaktan kötüdür. Gerisini backend bir
+  sonraki tick'te yeniden dener.
+- Protokol tek yerde: `shared/utils/indexnow.mjs` (.ts değil, CLI onu düz
+  `node` ile içe aktarıyor). Anahtar orada DEĞİL; tek kaynağı
+  `public/<anahtar>.txt`, CLI diskten okur, sunucu tarafı build'de okunan
+  `runtimeConfig.indexnowKey`ten alır (Vercel'de public/ CDN'e gider,
+  fonksiyonun dosya sistemine değil).
 
 ## Destek merkezi (/destek)
 
