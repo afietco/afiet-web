@@ -20,8 +20,14 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 
+import { bildir, aciklama } from '../shared/utils/indexnow.mjs'
+
 const KOK = fileURLToPath(new URL('..', import.meta.url))
-const UC = 'https://api.indexnow.org/indexnow'
+
+// Protokolün kendisi shared/utils/indexnow.mjs'de: içerik hattının sunucu ucu
+// da aynı gövdeyi kuruyor ve dosya sistemine erişemiyor. Burada kalan tek şey
+// anahtarı DİSKTEN okumak, ki o yalnız elle koşan CLI'nın yapabileceği iş.
+export { aciklama }
 
 /** public/ içindeki tek anahtar dosyasını bulur; belirsizlikte yüksek sesle düşer. */
 export function anahtarOku() {
@@ -41,46 +47,12 @@ export function anahtarOku() {
 }
 
 /**
- * URL'leri bildirir. Hepsi aynı host'a ait olmalı, yoksa uç 422 döner.
- * Tek istekte en fazla 10.000 URL kabul ediliyor.
+ * URL'leri bildirir. Anahtarı diskten okur, gerisini protokol modülü yapar.
+ * Boş liste bir hata değil, yapacak iş olmamasıdır (CLI hep öyle çağırıyor).
  */
 export async function gonder(urls, { host = 'afiet.co', kuru = false } = {}) {
   if (!urls.length) return { durum: 0, mesaj: 'gönderilecek URL yok' }
-  if (urls.length > 10000) throw new Error('tek istekte en fazla 10.000 URL')
-
-  const yabanci = urls.filter((u) => new URL(u).host !== host)
-  if (yabanci.length) throw new Error(`host dışı URL var (${yabanci[0]}); uç bunu 422 ile reddeder`)
-
-  const anahtar = anahtarOku()
-  const govde = {
-    host,
-    key: anahtar,
-    keyLocation: `https://${host}/${anahtar}.txt`,
-    urlList: urls,
-  }
-  if (kuru) return { durum: 0, mesaj: `kuru koşu: ${urls.length} URL gönderilecekti`, govde }
-
-  const res = await fetch(UC, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify(govde),
-  })
-  return { durum: res.status, mesaj: aciklama(res.status), govde: undefined }
-}
-
-/** Uç sessiz kodlar döndürüyor; hangisinin ne demek olduğu tek yerde dursun. */
-export function aciklama(kod) {
-  switch (kod) {
-    case 200: return 'kabul edildi'
-    // 202 ilk gönderimlerde NORMALDİR ve tek başına bir arıza göstermez:
-    // uç anahtarı henüz doğrulamamıştır, birazdan dosyayı çekip doğrular.
-    case 202: return 'kabul edildi, anahtar doğrulaması beklemede (ilk gönderimlerde normal)'
-    case 400: return 'geçersiz istek (biçim hatası)'
-    case 403: return 'anahtar geçersiz: public/<anahtar>.txt yayında değil ya da içeriği tutmuyor'
-    case 422: return 'URL host ile uyuşmuyor ya da anahtar eşleşmiyor'
-    case 429: return 'çok fazla istek (kısıtlandık)'
-    default: return `beklenmeyen kod ${kod}`
-  }
+  return bildir({ host, anahtar: anahtarOku(), urls, kuru })
 }
 
 /** Canlı sitemap'teki tüm URL'leri okur. */
