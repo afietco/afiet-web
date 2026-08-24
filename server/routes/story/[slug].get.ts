@@ -9,17 +9,22 @@ import type { StoryPayload } from '~~/server/utils/storyPayload'
  * (1080×1920). Payload'ı içerik hattı üretir ve yayından sonra
  * /api/internal/blog/story ile iliştirir; payload'sız yazı 404 döner.
  *
- * Tasarım afiet-brand/social/templates/story-blog.html'in Satori portudur;
+ * İskelet afiet-brand/social/templates/story-blog.html'in Satori portudur;
  * ölçüler ve güvenli alanlar oradan birebir taşındı: marka şeridi 150px'te
  * (Instagram üst UI'sinin altında), CTA bölgesi 260px tabanda (gerçek link
- * sticker'ı ONUN üstüne bırakılır), adres satırı 128px'te. Görsel dil el
- * işidir ve sabittir; ajan yalnız metin ve seçim doldurur (storyPayload).
+ * sticker'ı ONUN üstüne bırakılır), adres satırı 128px'te. Orta sahne
+ * yazının türüne göre değişir (chips | soru | mit | adimlar, storyPayload);
+ * görsel dil el işidir ve sabittir, ajan yalnız metin ve seçim doldurur.
  *
  * Elle şablondan iki bilinçli sapma:
  *   - Rozet arkasındaki backdrop blur yok (Satori çizemez); yakın okunuşlu
  *     yarı saydam dolgu + kenarlık kullanılır.
  *   - CTA "yeni yazı -> oku" değil "yeni yazıyı oku": ok işareti Nunito'da
  *     yok ve Satori bilinmeyen glifi sessizce düşürür.
+ *
+ * Mit kartlarında kırmızı YOK: marka kırmızıyı uyarı dili olarak
+ * kullanmıyor (destek merkezi kuralıyla aynı); "sanılan" sönük durur,
+ * "gerçek" zümrütle konuşur.
  */
 
 /** Chip disk renkleri (cream ruhu): el şablonundaki sıra ve değerler. */
@@ -39,6 +44,13 @@ const MOOD = {
     hintBg: '#ffffff',
     hintInk: '#059669',
     co: 'rgba(255,255,255,0.74)',
+    // sahne kartları: koyu zeminde yarı saydam beyaz
+    cardBg: 'rgba(255,255,255,0.14)',
+    cardBorder: 'rgba(255,255,255,0.26)',
+    cardInk: '#ffffff',
+    cardMuted: 'rgba(255,255,255,0.66)',
+    stepNumBg: '#ffffff',
+    stepNumInk: '#059669',
     glows: [
       { size: 800, color: 'rgba(167,243,208,0.26)', top: -220, left: -200 },
       { size: 560, color: 'rgba(249,115,22,0.14)', bottom: -160, right: -170 },
@@ -57,12 +69,20 @@ const MOOD = {
     hintBg: '#059669',
     hintInk: '#ffffff',
     co: '#97907f',
+    cardBg: '#ffffff',
+    cardBorder: '#ece4d4',
+    cardInk: '#022c22',
+    cardMuted: '#97907f',
+    stepNumBg: '#059669',
+    stepNumInk: '#ffffff',
     glows: [
       { size: 760, color: 'rgba(167,243,208,0.5)', top: -220, right: -180 },
       { size: 560, color: 'rgba(244,63,94,0.12)', bottom: -180, left: -160 },
     ],
   },
 } as const
+
+type Mood = (typeof MOOD)[keyof typeof MOOD]
 
 type Glow = { size: number; color: string; top?: number; bottom?: number; left?: number; right?: number }
 
@@ -102,6 +122,183 @@ function hookLine(line: string, accent: string, inkColor: string, accentColor: s
       .filter((p) => p.text !== '')
       .map((p) => h('span', { style: { display: 'flex', color: p.color, whiteSpace: 'pre' } }, p.text)),
   )
+}
+
+// ── Orta sahneler ───────────────────────────────────────────────────────────
+
+/** chips: 3-5 emoji diski (ilk şablonun sahnesi). */
+function chipsScene(story: StoryPayload, m: Mood) {
+  const isCream = story.mood === 'cream'
+  return h(
+    'div',
+    { style: { display: 'flex', gap: '18px', marginTop: '64px', justifyContent: 'center' } },
+    ...(story.chips ?? []).map((c, i) => {
+      const color = CHIP_COLORS[i % CHIP_COLORS.length]
+      return h(
+        'div',
+        { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '150px' } },
+        h(
+          'div',
+          {
+            style: {
+              width: '150px', height: '150px', borderRadius: '50%', background: '#ffffff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '82px',
+              ...(isCream
+                ? { border: `5px solid ${color}`, boxShadow: '0 18px 34px rgba(50,47,42,0.08)' }
+                : { boxShadow: '0 22px 44px rgba(2,44,34,0.45)' }),
+            },
+          },
+          c.emoji,
+        ),
+        h(
+          'div',
+          { style: { display: 'flex', fontSize: '31px', fontWeight: 800, letterSpacing: '-.02em', color: isCream ? color : m.chipLabel } },
+          c.label,
+        ),
+      )
+    }),
+  )
+}
+
+/** soru: büyük merkez disk + şık pill'leri (anket havası, sticker değil). */
+function soruScene(story: StoryPayload, m: Mood) {
+  const isCream = story.mood === 'cream'
+  return h(
+    'div',
+    { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '44px', marginTop: '58px' } },
+    h(
+      'div',
+      {
+        style: {
+          width: '290px', height: '290px', borderRadius: '50%', background: '#ffffff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '158px',
+          ...(isCream
+            ? { border: '6px solid #a7f3d0', boxShadow: '0 22px 44px rgba(50,47,42,0.10)' }
+            : { boxShadow: '0 26px 52px rgba(2,44,34,0.45)' }),
+        },
+      },
+      story.buyukEmoji ?? '',
+    ),
+    h(
+      'div',
+      { style: { display: 'flex', gap: '18px', justifyContent: 'center' } },
+      ...(story.secenekler ?? []).map((s) =>
+        h(
+          'div',
+          {
+            style: {
+              fontSize: '34px', fontWeight: 800, letterSpacing: '-.01em',
+              borderRadius: '999px', padding: '16px 34px', display: 'flex',
+              background: m.cardBg, border: `3px solid ${m.cardBorder}`, color: m.cardInk,
+            },
+          },
+          s,
+        ),
+      ),
+    ),
+  )
+}
+
+/**
+ * mit: "sanılan" sönük kart, "gerçek" zümrütle konuşan kart. Etiketlerde
+ * işaret YOK: ✕/✓ Nunito'da bulunmuyor ve emoji karşılıkları (❌/✅) hem
+ * bağırıyor hem "sanılan"a markanın kullanmadığı kırmızıyı sokuyor; ayrımı
+ * renk ve ağırlık taşır.
+ */
+function mitScene(story: StoryPayload, m: Mood) {
+  const isCream = story.mood === 'cream'
+  const card = (label: string, text: string, strong: boolean) =>
+    h(
+      'div',
+      {
+        style: {
+          display: 'flex', flexDirection: 'column', gap: '10px', width: '840px',
+          borderRadius: '26px', padding: '30px 38px',
+          background: strong ? (isCream ? '#ffffff' : '#ffffff') : m.cardBg,
+          border: strong
+            ? `4px solid ${isCream ? '#a7f3d0' : '#ffffff'}`
+            : `3px solid ${m.cardBorder}`,
+          ...(strong ? { boxShadow: isCream ? '0 18px 34px rgba(50,47,42,0.08)' : '0 22px 44px rgba(2,44,34,0.40)' } : {}),
+        },
+      },
+      h(
+        'div',
+        {
+          style: {
+            display: 'flex', gap: '12px', fontSize: '27px', fontWeight: 800,
+            letterSpacing: '.06em', color: strong ? '#059669' : m.cardMuted,
+          },
+        },
+        label,
+      ),
+      h(
+        'div',
+        {
+          style: {
+            display: 'flex', fontSize: '38px', fontWeight: 800, lineHeight: 1.25,
+            letterSpacing: '-.015em', color: strong ? '#022c22' : m.cardMuted,
+          },
+        },
+        text,
+      ),
+    )
+  return h(
+    'div',
+    { style: { display: 'flex', flexDirection: 'column', gap: '22px', marginTop: '56px', alignItems: 'center' } },
+    card('sanılan', story.sanilan ?? '', false),
+    card('gerçek', story.gercek ?? '', true),
+  )
+}
+
+/** adimlar: 3-4 numaralı adım satırı; numara rozeti destek merkezi kuralı. */
+function adimlarScene(story: StoryPayload, m: Mood) {
+  return h(
+    'div',
+    { style: { display: 'flex', flexDirection: 'column', gap: '18px', marginTop: '56px', alignItems: 'center' } },
+    ...(story.adimlar ?? []).map((a, i) =>
+      h(
+        'div',
+        {
+          style: {
+            display: 'flex', alignItems: 'center', gap: '22px', width: '840px',
+            borderRadius: '22px', padding: '20px 28px',
+            background: m.cardBg, border: `3px solid ${m.cardBorder}`,
+          },
+        },
+        h(
+          'div',
+          {
+            style: {
+              width: '58px', height: '58px', borderRadius: '50%', flexShrink: 0,
+              background: m.stepNumBg, color: m.stepNumInk,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '30px', fontWeight: 900,
+            },
+          },
+          String(i + 1),
+        ),
+        h('div', { style: { display: 'flex', fontSize: '44px' } }, a.emoji),
+        h(
+          'div',
+          { style: { display: 'flex', fontSize: '34px', fontWeight: 800, letterSpacing: '-.015em', color: m.cardInk } },
+          a.text,
+        ),
+      ),
+    ),
+  )
+}
+
+function scene(story: StoryPayload, m: Mood) {
+  switch (story.kind) {
+    case 'soru':
+      return soruScene(story, m)
+    case 'mit':
+      return mitScene(story, m)
+    case 'adimlar':
+      return adimlarScene(story, m)
+    default:
+      return chipsScene(story, m)
+  }
 }
 
 export default defineEventHandler(async (event) => {
@@ -203,37 +400,8 @@ export default defineEventHandler(async (event) => {
         },
         story.sub,
       ),
-      // Chip sırası
-      h(
-        'div',
-        { style: { display: 'flex', gap: '18px', marginTop: '64px', justifyContent: 'center' } },
-        ...story.chips.map((c, i) => {
-          const color = CHIP_COLORS[i % CHIP_COLORS.length]
-          const isCream = story.mood === 'cream'
-          return h(
-            'div',
-            { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '150px' } },
-            h(
-              'div',
-              {
-                style: {
-                  width: '150px', height: '150px', borderRadius: '50%', background: '#ffffff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '82px',
-                  ...(isCream
-                    ? { border: `5px solid ${color}`, boxShadow: '0 18px 34px rgba(50,47,42,0.08)' }
-                    : { boxShadow: '0 22px 44px rgba(2,44,34,0.45)' }),
-                },
-              },
-              c.emoji,
-            ),
-            h(
-              'div',
-              { style: { display: 'flex', fontSize: '31px', fontWeight: 800, letterSpacing: '-.02em', color: isCream ? color : m.chipLabel } },
-              c.label,
-            ),
-          )
-        }),
-      ),
+      // Orta sahne: yazının türüne göre
+      scene(story, m),
       // CTA bölgesi: gerçek link sticker'ı bu pill'in üstüne bırakılır
       h(
         'div',
