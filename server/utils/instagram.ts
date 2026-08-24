@@ -38,7 +38,10 @@ const REFRESH_WINDOW_MS = 20 * 24 * 60 * 60 * 1000
 /** Her turda bakılacak gönderi sayısı - eski gönderiler zaten ölçülmüş olur. */
 const MEDIA_LIMIT = 25
 
-export const IG_SCOPES = 'instagram_business_basic,instagram_business_manage_insights'
+// content_publish 24 Ağu 2026'da eklendi (story otomasyonu). Scope değişince
+// mevcut token YENİ İZNİ KAZANMAZ: panelden bir kez yeniden bağlanmak gerekir.
+export const IG_SCOPES =
+  'instagram_business_basic,instagram_business_manage_insights,instagram_business_content_publish'
 
 export type IgConfig = { appId: string; appSecret: string; redirectUri: string }
 
@@ -87,6 +90,22 @@ async function readError(res: Response, where: string): Promise<string> {
 
 async function getJson<T>(url: string, token: string, where: string, deps: Deps): Promise<T> {
   const res = await deps.fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+  if (!res.ok) throw new Error(await readError(res, where))
+  return (await res.json()) as T
+}
+
+async function postJson<T>(
+  url: string,
+  params: Record<string, string>,
+  token: string,
+  where: string,
+  deps: Deps,
+): Promise<T> {
+  const res = await deps.fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(params).toString(),
+  })
   if (!res.ok) throw new Error(await readError(res, where))
   return (await res.json()) as T
 }
@@ -344,4 +363,57 @@ export async function syncAccount(
 export function describe(summary: SyncSummary): string {
   const base = `${summary.fetched} gönderi · ${summary.matched} eşleşti · ${summary.measured} ölçüm${summary.refreshed ? ' · token yenilendi' : ''}`
   return summary.errors.length ? `${base} · hata: ${summary.errors[0]}` : base
+}
+
+// ── Story yayınlama ─────────────────────────────────────────────────────────
+
+/**
+ * Story'yi Content Publishing API ile paylaşır: container aç (STORIES,
+ * image_url) → FINISHED olana dek yokla → publish. Meta image_url'i kendi
+ * tarayıcısıyla çeker, yani adres HERKESE AÇIK olmalı ve JPEG olmalı
+ * (/story/<slug>.jpg tam bunun için var).
+ *
+ * API ile paylaşılan story'ye link sticker EKLENEMEZ (Meta interaktif
+ * sticker'ları API'ye açmıyor); görseldeki CTA bu yüzden "profildeki
+ * linkten oku" der. Hata mesajları token içermez.
+ */
+export async function publishStory(
+  token: string,
+  igUserId: string,
+  imageUrl: string,
+  deps: Deps = realDeps,
+): Promise<string> {
+  const container = await postJson<{ id?: string }>(
+    `${API}/${VERSION}/${igUserId}/media`,
+    { media_type: 'STORIES', image_url: imageUrl },
+    token,
+    'story container',
+    deps,
+  )
+  if (!container.id) throw new Error('story container: id dönmedi')
+
+  // Görsel container'ları çoğunlukla anında hazırdır; Meta yine de async
+  // olabilir uyarısı verir. Kısa bir yoklama penceresi yeter: 8 tur × 1.5 sn,
+  // webclient'ın 20 sn bütçesinin içinde kalır.
+  for (let i = 0; i < 8; i++) {
+    const st = await getJson<{ status_code?: string }>(
+      `${API}/${VERSION}/${container.id}?fields=status_code`,
+      token,
+      'container durumu',
+      deps,
+    )
+    if (st.status_code === 'FINISHED') break
+    if (st.status_code === 'ERROR') throw new Error('story container: Meta ERROR durumu döndü')
+    await new Promise((r) => setTimeout(r, 1500))
+  }
+
+  const published = await postJson<{ id?: string }>(
+    `${API}/${VERSION}/${igUserId}/media_publish`,
+    { creation_id: container.id },
+    token,
+    'story publish',
+    deps,
+  )
+  if (!published.id) throw new Error('story publish: id dönmedi')
+  return published.id
 }

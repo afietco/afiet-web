@@ -20,8 +20,10 @@
     "@neondatabase/serverless": "^1.1.0",
     "@vercel/og": "^1.0.1",
     "jose": "^6.2.3",
+    "jpeg-js": "^0.4.4",
     "markdown-it": "^14.3.0",
     "nuxt": "^4.4.8",
+    "upng-js": "^2.1.0",
     "vue": "^3.5.39",
     "vue-router": "^5.1.0"
   },
