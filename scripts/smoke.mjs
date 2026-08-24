@@ -86,6 +86,15 @@ try {
 
   const llms = await (await fetch(`http://localhost:${PORT}/llms.txt`)).text()
   ok(llms.startsWith('# afiet'), 'llms.txt yayında')
+  /* llms.txt'in `>` özeti = tek cümlelik marka tanımının kendisi. Bu dosya
+     üretken motorların okuduğu asıl yüzey; buraya cümlenin elle yazılmış bir
+     kopyası konursa tanım değiştiğinde sessizce eskir (11 Ağu 2026'ya kadar
+     eskimişti de). Kopya değil, `#shared/utils/marka`dan gelen cümle aranır. */
+  ok(
+    llms.includes('> afiet, kalori saydırmadan Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç)'),
+    'llms.txt özeti sabitlenmiş marka tanımını basıyor',
+  )
+  ok(llms.includes('](https://afiet.co/basin)'), 'llms.txt basın kitine bağlantı veriyor')
 
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
@@ -143,6 +152,14 @@ try {
   const kitRes = await fetch(`http://localhost:${PORT}/basin-kiti/afiet-basin-kiti.zip`)
   ok(kitRes.status === 200, `basın kiti arşivi indirilebiliyor (${kitRes.status})`)
 
+  ok(basinHtml.includes('"@type":"AboutPage"'), '/basin AboutPage şeması içeriyor')
+  /* Basın sayfasındaki kurum, ana sayfadakiyle AYNI varlık olmak zorunda:
+     paylaşılan `@id` düşerse motorlar iki ayrı afiet görür. Kurucu bağı da
+     aynı sebeple aranır - şema kurum ↔ kişi bağını taşımazsa basın kiti
+     "bunu kim yapıyor" sorusunu makine tarafında yine cevapsız bırakır. */
+  ok(basinHtml.includes('/#organization'), '/basin kurumun paylaşılan @id\'sini taşıyor')
+  ok(basinHtml.includes('"founder"') && basinHtml.includes('#yazar'), '/basin kurucuyu Person kimliğine bağlıyor')
+
   /* --- Kullanım Koşulları (/kosullar) ---
      Bu sayfanın 200 dönmesi bir SEO tercihi değil, gönderim şartı: mobildeki
      paywall doğrudan buraya bağlanır ve App Store 3.1.2 bağlantıyı hem
@@ -186,6 +203,11 @@ try {
   ok(
     pressEnHtml.includes('hreflang="tr"') && pressEnHtml.includes('/basin'),
     '/en/press Türkçe eşine hreflang veriyor',
+  )
+  ok(pressEnHtml.includes('"@type":"AboutPage"'), '/en/press AboutPage şeması içeriyor')
+  ok(
+    pressEnHtml.includes('afiet is a mobile app that helps families'),
+    '/en/press kurum açıklamasını İngilizce marka tanımından basıyor',
   )
 
   // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---

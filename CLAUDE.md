@@ -173,6 +173,12 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   basar ve liste `pages`ten türer, kopya dosyasındaki kart listesinden değil:
   şema yalnız gerçekten var olan alt sayfaları vaat etmeli. Sıra iddia
   edilmez (`ItemListUnordered`).
+- **İki sabit `@id`, iki varlık:** kurum `<base>/#organization`
+  (`seoStore > organizationNode`, ana sayfa + `/en` + basın kiti aynısını
+  taşır), kişi `<base>/hakkinda#yazar` (`shared/utils/author.ts > personId`).
+  Aynı varlığı tarif eden düğümler aynı `@id`yi taşımazsa motorlar birbirinden
+  habersiz adaylar görür. Yeni bir sayfaya kurum ya da kişi düğümü eklerken
+  düğümü ELLE yazma, bu iki fonksiyondan geç.
 - Dinamik route'lar: `/robots.txt` (AI bot izinleri panelden; varsayılan liste
   `seoDefaults.ts > AI_BOTS`, Bytespider engelli), `/sitemap.xml`, `/llms.txt`.
   `public/robots.txt` bilinçli olarak YOK.
@@ -419,6 +425,11 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Gövde `BasinKiti.vue`, kopya `content.ts > basin` / `content.en.ts > pressEn`
   (anahtarlar birebir aynı). Sayfa gazeteciyi ikna etmez, işini kolaylaştırır:
   hiçbir malzeme form arkasında durmaz ve kanıtlanamayan rakam yazılmaz.
+- Şema: `AboutPage` + `mainEntity` Organization + BreadcrumbList
+  (`seoStore.resolvePageMeta`). `/hakkinda`nın ProfilePage+Person kalıbının
+  kurumsal ikizidir: orada sayfanın konusu kişi, burada kurum. Organization
+  ana sayfayla aynı `@id`yi taşır ve `founder` yazar kimliğine bağlanır, yani
+  kurum ↔ kurucu ↔ yazar tek grafikte birleşir.
 - **Dosyalar `public/basin-kiti/` altında, sayfanın yolu `/basin`.** İkisi
   BİLEREK ayrı adtadır: public/ altında rotayla aynı adı taşıyan bir klasör o
   rotayı gölgeler ve `/basin` isteği `/basin/` dizinine 301'lenir. Smoke bunu

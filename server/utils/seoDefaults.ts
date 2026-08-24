@@ -5,7 +5,7 @@ import type {
   SeoRedirect,
   SeoSettings,
 } from './seoTypes'
-import { MAGAZA, MARKA_TANIM } from '#shared/utils/marka'
+import { MAGAZA, MARKA_KUNYE, MARKA_TANIM } from '#shared/utils/marka'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -89,11 +89,19 @@ export const DEFAULT_SETTINGS: SeoSettings = {
     aiBots: defaultAiBotPolicy,
     extraRules: '',
   },
+  /**
+   * llms.txt gövdesi. Başlıktaki `>` özeti llmstxt.org'un "bu site nedir"
+   * satırıdır ve tek cümlelik marka tanımının KENDİSİDİR (`#shared/utils/marka`):
+   * buraya cümlenin elle yazılmış bir kopyası konmaz. 11 Ağu 2026'ya kadar
+   * konmuştu ve tanım sabitlendiğinde bu dosya geride kaldı - üretken motorların
+   * okuduğu asıl dosyada markanın kendini tarif eden cümlesi siteninkinden
+   * farklıydı.
+   */
   llms: {
     enabled: true,
     content: `# afiet
 
-> afiet, kalori saydırmadan Türk sofrasının kendi ölçüleriyle (kaç dilim, kaç kase, bir avuç) konuşarak ailenin dengeli beslenme alışkanlığını kuran bir mobil uygulamadır. Tagline: "Sayma, dengele."
+> ${MARKA_TANIM.tr} Tagline: "${MARKA_KUNYE.tagline.tr}"
 
 afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalori hedefi, limit ya da suçluluk dili kullanmaz. Ses tonu "sofrada seni seven biri" gibidir: yargılamaz, davet eder, kutlar. Uygulama iOS'ta App Store'da yayındadır ve ücretsiz indirilir; Android sürümü Google Play'de henüz yayında değildir. İsim her yerde küçük harfle yazılır: "afiet".
 
