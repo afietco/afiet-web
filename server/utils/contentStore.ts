@@ -1,4 +1,5 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { parseStoryPayload } from './storyPayload'
 import type { H3Event } from 'h3'
 import type {
   AdminContentPayload,
@@ -198,6 +199,10 @@ async function runContentDdl(sql: Sql) {
       ADD COLUMN IF NOT EXISTS translation_of text
   `
   await sql`CREATE INDEX IF NOT EXISTS blog_posts_lang_idx ON blog_posts (lang)`
+  // Story payload'ı yayından SONRA gelir (hat yazıyı yayınlar, story kendi
+  // kapısından geçince iliştirilir); bu yüzden publish upsert'inin alanı
+  // değil, ayrı bir kolondur ve null olması normaldir.
+  await sql`ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS story jsonb`
   await sql`
     CREATE TABLE IF NOT EXISTS content_metrics (
       id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -383,6 +388,9 @@ function mapPost(r: Row): BlogPost {
     // bir yazı hiçbir listede görünmez hâle gelmesin.
     lang: r.lang === 'en' ? 'en' : 'tr',
     translationOf: (r.translation_of as string | null) ?? null,
+    // Ham jsonb şemadan geçirilir: elle bozulmuş bir payload'ın cezası
+    // kırık bir görsel değil, story'nin hiç var olmamasıdır.
+    story: parseStoryPayload(r.story),
   }
 }
 
