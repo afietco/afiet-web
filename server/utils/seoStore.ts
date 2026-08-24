@@ -18,7 +18,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personSchema } from '#shared/utils/author'
-import { MAGAZA } from '#shared/utils/marka'
+import { MAGAZA, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -326,6 +326,11 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
         description: s.mobileApp.description,
+        /* Wikidata kimliği: gerekçesi ve neden KURUM düğümünde değil burada
+           durduğu `#shared/utils/marka > WIKIDATA` başında. Panelden gelmez,
+           bu yüzden `organization.sameAs`ı ezen prod override'ı buna
+           dokunamıyor. */
+        sameAs: [WIKIDATA.url],
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? {
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
@@ -713,6 +718,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         // (İngilizce) açıklaması kullanılır.
         description,
         inLanguage,
+        /* Kimlik iki dilde de AYNI olmak zorunda: üretken motorlar afiet'i tek
+           varlık olarak tanısın (aynı gerekçe Organization'ın burada tekrar
+           edilmesinin de sebebi). Wikidata kaydı zaten dilden bağımsız. */
+        sameAs: [WIKIDATA.url],
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
