@@ -253,7 +253,7 @@ const aralik = (min: number, max: number) => `${tam(min)}-${tam(max)}`
             {{ c.ctaTitle }}
           </h3>
           <p class="mt-2 leading-relaxed text-soft">{{ c.ctaBody }}</p>
-          <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.ctaButton }}</NuxtLink>
+          <NuxtLink to="/indir" class="btn-primary mt-5">{{ c.ctaButton }}</NuxtLink>
         </div>
       </template>
 

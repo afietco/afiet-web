@@ -1,29 +1,28 @@
 ---
 slug: arkadas-eklemek-ve-istekler
 title: "Arkadaş eklemek ve arkadaşlık istekleri"
-description: "Kullanıcı adını belirleme, arkadaş arayıp istek gönderme, gelen istekleri kabul etme ya da reddetme ve arkadaşlıktan çıkarma."
+description: "Arkadaş kodunu paylaşma, kod ya da adla arkadaş arayıp istek gönderme, gelen istekleri kabul etme ya da reddetme ve arkadaşlıktan çıkarma."
 updated: 2026-08-01
 order: 10
-keywords: [arkadaş ekle, arkadaşlık isteği, kullanıcı adı, kabul et, reddet, geri al, arkadaşlıktan çıkar]
+keywords: [arkadaş ekle, arkadaşlık isteği, arkadaş kodu, kabul et, reddet, geri al, arkadaşlıktan çıkar]
 related: [soframiz/grupta-ne-gorunur-ne-gorunmez, soframiz/ayni-anda-kac-grupta-olabilirim, soframiz/afiyet-olsun-demek]
 ---
 
 Grup tek, arkadaşlık çok. Aynı grupta olmayan yakınlarını arkadaş olarak ekleyip günlerini birlikte görebilirsin. Arkadaşlık çift onaylıdır: karşı taraf kabul etmeden kimse kimsenin listesine düşmez.
 
-## Önce kullanıcı adın
+## Önce arkadaş kodun
 
-Seni arkadaşların bu adla bulur. Belirlemediysen aramada çıkmazsın.
+Seni arkadaşların bu kodla bulur. Kodu sen seçmezsin: hesabın açılırken sunucu üretir, kimseyle çakışmaz ve hiç değişmez.
 
 ```yol
-Menü > Profilim > Kullanıcı adı belirle
+Menü → Hesap ayarlarım → Arkadaş kodum
 ```
 
-1. Sağ üstteki menü simgesinden **Profilim**'e git.
-2. İsminin altındaki **Kullanıcı adı belirle**'ye dokun. Daha önce belirlediysen orada duran @adına dokunarak değiştirebilirsin.
-3. Bir ad yaz: 3-20 karakter, küçük harf, rakam, alt çizgi ve nokta.
-4. **Kaydet**'e dokun.
+Satıra dokunduğunda paylaşım penceresi açılır ve kod hazır bir cümleyle gider. Aynı kod Profilim ekranında da adının altında durur.
 
-Kullanıcı adları benzersizdir. Seçtiğin ad başkasındaysa "Bu ad alınmış, başka bir ad dene." satırını görürsün. İstediğin zaman değiştirebilirsin.
+```ipucu
+Kodun sabit olduğu için bir kez paylaştığın yerde geçerli kalır; eskiyen bir adı güncelleme derdi yok.
+```
 
 ## Arkadaş ekle
 
@@ -33,7 +32,7 @@ Menü > Arkadaşlarım > Arkadaş ekle
 
 1. Menüden **Arkadaşlarım**'ı aç.
 2. **Arkadaş ekle**'ye dokun.
-3. Kişinin kullanıcı adını yaz. En az iki karakterden sonra sonuçlar belirir.
+3. Kutuya kişinin **kodunu ya da adını** yaz. Kutu ikisini de kabul eder: kod biçimindeki bir giriş önce tam eşleşmeyle aranır, kimseye ait değilse ada düşülür.
 4. Satırın sağındaki **Ekle**'ye dokun.
 
 Düğme **Gönderildi**'ye döner ve orada bekler. Karşı taraf kabul edince ikiniz de birbirinizin listesinde belirirsiniz.

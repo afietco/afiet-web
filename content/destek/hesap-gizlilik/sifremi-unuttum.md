@@ -5,7 +5,7 @@ description: "Şifre sıfırlama bağlantısını isteme adımları, e-posta gel
 updated: 2026-07-31
 order: 1
 keywords: [şifre, şifremi unuttum, sıfırlama, giriş, apple ile giriş, e-posta gelmedi]
-related: [hesap-gizlilik/hesabimi-silmek-istiyorum, beta-sorun-giderme/bir-sey-takildiginda]
+related: [hesap-gizlilik/hesabimi-silmek-istiyorum, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Şifreni hatırlamıyorsan hesabına giden yol kapanmaz. Sıfırlama bağlantısını uygulama içinden isteyebilirsin.
@@ -13,7 +13,7 @@ related: [hesap-gizlilik/hesabimi-silmek-istiyorum, beta-sorun-giderme/bir-sey-t
 ## Sıfırlama bağlantısı iste
 
 1. afiet'i aç. Giriş ekranında **Şifremi unuttum**'a dokun.
-2. E-posta adresini ya da kullanıcı adını yaz.
+2. E-posta adresini yaz.
 3. Gönder'e dokun. Hesabındaki e-posta adresine bir sıfırlama bağlantısı gideriz.
 4. E-postadaki bağlantıya dokun; yeni şifreni belirleyeceğin sayfa açılır.
 5. Yeni şifreni yaz ve kaydet. Sonra uygulamaya dönüp yeni şifrenle giriş yap.
@@ -28,7 +28,7 @@ Birkaç dakika bekle, sonra sırayla şunlara bak:
 
 - **Spam ve Tanıtımlar klasörleri.** Gönderen adresimiz posta.afiet.co uzantılıdır.
 - **Yazdığın adres.** Hesabını başka bir e-posta ile açmış olabilir misin?
-- **Kullanıcı adıyla dene.** E-postanı hatırlamıyorsan kullanıcı adını yazman da yeterlidir; bağlantı yine hesabındaki adrese gider.
+- **Apple ya da Google ile mi girmiştin?** O yolla açılan hesapta şifre hiç belirlenmemiş olabilir. Giriş ekranındaki Apple ya da Google düğmesiyle girip Hesap ayarlarım'daki **Şifre** satırından bir şifre belirleyebilirsin.
 
 ```dikkat
 Güvenlik gereği ekran, girdiğin adresin kayıtlı olup olmadığını söylemez. "Gönderdik" mesajı görmen adresin kayıtlı olduğu anlamına gelmez.

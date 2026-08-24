@@ -265,7 +265,7 @@ const temelMi = (key: string) => BESIN_GRUBU.find((g) => g.key === key)?.temel ?
       <div class="mt-8 rounded-3xl border border-brand/30 bg-brand-mint/20 p-7">
         <h2 class="font-display text-xl font-semibold tracking-tight text-ink">{{ c.nextTitle }}</h2>
         <p class="mt-2 leading-relaxed text-soft">{{ c.nextBody }}</p>
-        <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
+        <NuxtLink to="/indir" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
 

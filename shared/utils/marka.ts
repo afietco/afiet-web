@@ -45,14 +45,20 @@ export const MARKA_KUNYE = {
   } as Record<SiteLocale, string>,
   site: 'https://afiet.co',
   eposta: 'destek@afiet.co',
-  platformlar: 'iOS, Android',
+  /**
+   * Künyede yalnız DOĞRULANABİLİR bilgi durur. 24 Ağu 2026'da afiet App
+   * Store'da yayına girdi, Play'de girmedi; "iOS, Android" yazmak gazeteciyi
+   * Play'de aratıp boş çıkarır ve sayfa kendini yalanlar. Android açıldığı
+   * gün bu satır ve `MAGAZA.android` BİRLİKTE değişir.
+   */
+  platformlar: { tr: 'iOS (Android yolda)', en: 'iOS (Android on the way)' } as Record<SiteLocale, string>,
   /** Ülke adı iki dilde de Türkçe yazılır (resmî ad, BRAND.md). */
   ulke: 'Türkiye',
   dil: { tr: 'Türkçe', en: 'Turkish' } as Record<SiteLocale, string>,
   /**
    * Lansman penceresi. Gün DEĞİL ay verilir (kullanıcı kararı, 11 Ağu 2026):
-   * Play'in 12 testçi x 14 gün kapısı henüz kapanmadı, birkaç günlük kayma
-   * sayfayı yalanlamasın.
+   * ay ölçeği hem iOS çıkışını hem Play'in kendi takvimini tek satırda
+   * doğru tutar.
    */
   lansman: { tr: 'Ağustos 2026', en: 'August 2026' } as Record<SiteLocale, string>,
 } as const
@@ -63,40 +69,36 @@ export function markaTanim(lang: SiteLocale = 'tr'): string {
 }
 
 /**
- * Mağaza adresleri ve afiet+ fiyatları - lansman günü tek satırla açılır.
+ * Mağaza adresleri - bayrak MAĞAZA BAŞINADIR.
  *
- * NEDEN BAYRAK VAR: iki adres de bugün 404 (uygulama henüz yayında değil) ve
- * abonelik ürünleri iki mağazada da oluşturulmadı. Motorlara 404 bir indirme
- * adresi ya da hiçbir yerden satın alınamayan bir fiyat bildirmek, hiç
- * bildirmemekten KÖTÜDÜR: şema sayfanın (ve mağazanın) söylemediğini iddia
- * etmiş olur. Bu yüzden şema hazır durur ama `yayinda` false iken
- * `installUrl` da `offers` da HİÇ basılmaz.
+ * NEDEN TEK BAYRAK DEĞİL (kullanıcı kararı, 24 Ağu 2026): 24 Ağustos'ta afiet
+ * App Store'da yayına girdi, Play'de girmedi (üretim başvurusu Google'ın
+ * incelemesinde). Tek boolean'la açmak, doğrulanmış canlı bir iOS adresiyle
+ * BİRLİKTE bugün 404 dönen bir Play adresi yayınlamak demekti; ikisi curl ile
+ * doğrulandı. 404 bir indirme adresi bildirmek hiç bildirmemekten kötüdür,
+ * bu yüzden her mağaza kendi bayrağının arkasında durur.
  *
- * LANSMAN GÜNÜ: yalnız `yayinda: true` yapılır, ikisi birden düşer. Adreslerin
- * doğruluğu önden bilinebilir çünkü ikisi de kimlikten türer (App Store
- * numarası `apps/mobile/eas.json > ascAppId`, Play adresi paket adı).
+ * ANDROID AÇILDIĞI GÜN: `android: true` + `MARKA_KUNYE.platformlar` +
+ * şemadaki `operatingSystem` BİRLİKTE değişir (üçü aynı iddiayı taşır).
+ * Adresin doğruluğu önden bilinir çünkü paket adından türer.
  *
- * FİYAT: `afiet-mobile/docs/fiyatlandirma.md`teki liste fiyatları. Lansmandaki
- * ilk yıl intro fiyatı (599,99) BİLİNÇLİ olarak burada yok - geçici kampanya
- * şemada yanlış yerdedir, süresi dolunca sessizce yalan söylemeye başlar.
- * Şema fiyatı ürünün liste fiyatıdır, kampanya mağazanın işidir.
+ * FİYAT BURADA YOK (kullanıcı kararı, 24 Ağu 2026): afiet+ iOS'ta gerçekten
+ * satılıyor ama site bugün hiçbir yerde fiyat söylemiyor. Şemaya fiyat basmak,
+ * sayfanın söylemediğini iddia etmek olurdu; ayrıca lansmanın ilk yıl intro
+ * fiyatı (599,99) sürerken liste fiyatını tek başına bildirmek de eksik
+ * anlatır. Site bir afiet+ bölümü kazandığında fiyat da onunla gelir.
  */
 export const MAGAZA = {
-  yayinda: false,
+  /** 24 Ağu 2026, App Store'da canlı (id `eas.json > ascAppId`ten türer). */
+  ios: true,
   appStore: 'https://apps.apple.com/tr/app/id6789522761',
+  /** Play üretim başvurusu incelemede; adres bugün 404. */
+  android: false,
   play: 'https://play.google.com/store/apps/details?id=co.afiet.app',
-  paraBirimi: 'TRY',
-  /**
-   * Üç teklif de basılır (kullanıcı kararı, 13 Ağu 2026): indirme ücretsizdir
-   * ve afiet+ ücretlidir. Yalnız "0" bildirmek "afiet ücretli mi" sorusuna
-   * eksik cevap verir, yalnız aboneliği bildirmek uygulamayı paralı gösterir.
-   */
-  teklifler: [
-    { fiyat: '0', ad: { tr: 'afiet', en: 'afiet' } },
-    { fiyat: '129.99', ad: { tr: 'afiet+ aylık', en: 'afiet+ monthly' } },
-    { fiyat: '799.99', ad: { tr: 'afiet+ yıllık', en: 'afiet+ annual' } },
-  ],
 } as const
+
+/** En az bir mağaza açık mı (rozet bandı ve indirme sayfası buna bakar). */
+export const MAGAZA_ACIK = MAGAZA.ios || MAGAZA.android
 
 /**
  * Basın sayfasındaki dosyaların TEK kaynağı. Yollar burada, etiketler

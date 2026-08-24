@@ -26,7 +26,7 @@ function indexnowAnahtari(): string {
 const TITLE = 'afiet | Sayma, dengele.'
 const DESCRIPTION =
   'Kalori saydırmadan, Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç) ' +
-  'ailece dengeli beslenme alışkanlığı. Beta şimdi açık; App Store ve Google Play yakında.'
+  'ailece dengeli beslenme alışkanlığı. App Store’da yayında, Android yolda.'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-07-12',
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
     // shared/utils/locales.ts > EN_BY_TR'de durur.
     '/en': { isr: 60 },
     '/en/**': { isr: 60 },
-    '/beta': { isr: 60 },
+    '/indir': { isr: 60 },
     '/blog': { isr: 60 },
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
@@ -101,7 +101,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Neon connection string (server-side, gizli). Env: NUXT_DATABASE_URL.
-    // Boşken /api/beta/apply "soon" döner, SEO uçları kod varsayılanlarını sunar
+    // Boşken bülten ucu "soon" döner, SEO uçları kod varsayılanlarını sunar
     // ve admin yazma uçları 503 döner - çalışmayan form/panel yayınlanmaz.
     databaseUrl: '',
     // Panel (afiet-admin) istekleri için JWT doğrulama - backend'in
@@ -155,8 +155,8 @@ export default defineNuxtConfig({
     // takvimin geri kalanı çalışmaya devam eder. Env: NUXT_GCS_SA_KEY.
     gcsSaKey: '',
     gcsBucket: 'afiet-icerik',
-    // Resend API anahtarı (posta.afiet.co): yeni beta başvurusunda ekibe
-    // bildirim maili atılır. Boşken mail hiç denenmez, başvuru etkilenmez.
+    // Resend API anahtarı (posta.afiet.co): iletişim formu ve bülten onay
+    // maili buradan gider. Boşken mail hiç denenmez, form etkilenmez.
     // Env: NUXT_RESEND_API_KEY.
     resendApiKey: '',
     // Google Search Console okuma servis hesabı (Secret Manager:
