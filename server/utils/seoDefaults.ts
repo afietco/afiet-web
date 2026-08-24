@@ -295,12 +295,22 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
        * BİRLİKTE değişir: görünür link kullanıcıya, sameAs arama motoruna aynı
        * kimliği söyler.
        *
-       * ⚠️ PROD'DA OVERRIDE VAR: `seo_settings` tablosunda `schema` satırı
-       * duruyor ve override varsayılanı EZER. Yani buraya adres eklemek prod'u
-       * DEĞİŞTİRMEZ; panelden (admin.afiet.co > Analitik > SEO & GEO) aynı
-       * listeyi girmek gerekir. Burası dev/staging ve boş DB'nin kaynağıdır.
+       * ⚠️ PANEL KAYDI BU LİSTEYİ DONDURUR. `seo_settings.schema` satırı
+       * varsa override varsayılanı EZER (`deepMerge` diziyi birleştirmez,
+       * komple değiştirir) ve buraya adres eklemek prod'u DEĞİŞTİRMEZ.
+       * 11 Ağu 2026'da tam bu yüzden canlıda beş profilin hiçbiri yoktu:
+       * satırda 26 Tem'de kaydedilmiş BOŞ bir dizi duruyordu ve boş dizi
+       * override'ı canlı sayfada "override yok"tan ayırt edilemiyor.
+       *
+       * 25 Ağu 2026'da prod'dan salt okunur teyit: `schema` satırı ARTIK YOK
+       * (panelden varsayılana dönüldü), yani bugün liste buradan geliyor.
+       * Ama bu kalıcı bir güvence değil: panelden yapılacak ilk kayıt satırı
+       * geri yazar ve O ANDAKİ efektif değeri dondurur. Kontrol canlı HTML'den
+       * DEĞİL, `/api/admin/seo`dan ya da DB'den yapılır.
        *
        * Var olmayan profile adres YAZILMAZ; hesap açıldıkça tek satır eklenir.
+       * Uygulamanın Wikidata kimliği buraya GİRMEZ, o SoftwareApplication
+       * düğümündedir (gerekçe: `#shared/utils/marka > WIKIDATA`).
        */
       sameAs: [
         'https://www.instagram.com/afiet.co/',

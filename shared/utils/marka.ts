@@ -47,14 +47,16 @@ export const MARKA_TANIM: Record<SiteLocale, string> = {
  * "mobile app" + "health app" olarak tiplendi, yani UYGULAMAYI tanımlıyor,
  * şirketi değil. `sameAs` "aynı varlık" demektir; kurum düğümüne koymak
  * şirketi uygulamayla aynı şey ilan etmek olurdu. Şirket için ayrı bir kayıt
- * açılırsa o `schema.organization.sameAs` listesine girer (orası panelden
- * yönetilir ve prod'da override'ı VAR, bkz. seoDefaults > organization).
+ * açılırsa o `schema.organization.sameAs` listesine girer (orası PANELDEN
+ * yönetiliyor, bkz. seoDefaults > organization).
  *
  * NEDEN PANELDEN YÖNETİLMİYOR: bu bir kampanya metni değil, kimlik; ömründe
  * bir kez değişir. Gerekçe `ROBOTS_DIRECTIVES` ile aynı - pratikte hiç
- * değişmeyen bir sabit için iki repoya alan açmanın karşılığı yok. Yan
- * faydası büyük: panel override'ı bu alana ULAŞAMADIĞI için
- * `organization.sameAs`ı ezen boş dizi tuzağı buraya işlemiyor.
+ * değişmeyen bir sabit için iki repoya alan açmanın karşılığı yok. Yan faydası
+ * daha büyük: panel bir `seo_settings.schema` satırı yazdığı anda o satır
+ * kendi alanlarını DONDURUYOR (11 Ağu'da `organization.sameAs`ı boş bir dizi
+ * ezmişti). `sameAs` settings'in parçası olmadığı için override oraya
+ * ulaşamıyor, yani bu bağ panel kaydından etkilenmez.
  */
 export const WIKIDATA = {
   qid: 'Q141169446',
