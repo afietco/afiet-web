@@ -5,7 +5,7 @@ description: "Hesap üç yoldan açılır: e-posta ile, Apple ile ya da Google i
 updated: 2026-08-01
 order: 3
 keywords: [hesap oluşturma, kayıt ol, apple ile giriş, google ile giriş, kullanıcı adı, şifre, e-posta doğrulama]
-related: [baslangic/beta-davetiyle-kurulum, baslangic/ilk-acilista-ne-oluyor, hesap-gizlilik/sifremi-unuttum]
+related: [baslangic/afieti-indirmek, baslangic/ilk-acilista-ne-oluyor, hesap-gizlilik/sifremi-unuttum]
 ---
 
 afiet'e kaydolmanın üç yolu var: e-posta ile, Apple ile ya da Google ile. Hangisini seçersen seç aynı yere varırsın; sonrasında sana nasıl seslenmemizi istediğini sorup Bugün ekranına geçeriz.

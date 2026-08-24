@@ -1,6 +1,6 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
-import { AI_BOTS, DEFAULT_PAGES, DEFAULT_SETTINGS, ROBOTS_DIRECTIVES, makePage } from './seoDefaults'
+import { AI_BOTS, DEFAULT_PAGES, DEFAULT_REDIRECTS, DEFAULT_SETTINGS, ROBOTS_DIRECTIVES, makePage } from './seoDefaults'
 import { getPublishedPost, getTranslationPair } from './contentStore'
 import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
@@ -161,7 +161,18 @@ export async function getSeoBundle(event: H3Event): Promise<SeoBundle> {
     const base = DEFAULT_PAGES[path] ?? makePage({})
     pages[path] = deepMerge<PageSeo>(base, overrides.pages[path])
   }
-  return { settings, pages, redirects: overrides.redirects }
+  return { settings, pages, redirects: mergeRedirects(overrides.redirects) }
+}
+
+/**
+ * Kod varsayılanı yönlendirmeler + panelden gelenler. Aynı `from` için PANEL
+ * KAZANIR: yapısal taşımalar kodda yaşar ama acil bir durumda hedefi panelden
+ * değiştirebilmek gerekir (deploy beklemeden). Sıra da panelinkiyle başlar,
+ * çünkü middleware ilk eşleşmeyi alır.
+ */
+function mergeRedirects(fromPanel: SeoRedirect[]): SeoRedirect[] {
+  const ezilen = new Set(fromPanel.map((r) => normalizePath(r.from)))
+  return [...fromPanel, ...DEFAULT_REDIRECTS.filter((r) => !ezilen.has(normalizePath(r.from)))]
 }
 
 function absolutize(url: string, baseUrl: string): string {
@@ -177,24 +188,21 @@ function normalizePath(path: string): string {
 }
 
 /**
- * SoftwareApplication'ın fiyat düğümü. Uygulama yayına girene kadar HİÇ
- * basılmaz (`MAGAZA.yayinda`): bugün hiçbir mağazada satın alınamayan bir
- * fiyatı bildirmek şemayı sayfadan da mağazadan da kopartır.
+ * SoftwareApplication'ın fiyat düğümü.
  *
- * Üç teklif birlikte anlatır: indirme ücretsiz, afiet+ aylık ve yıllık
- * ücretli. Para birimi İngilizce sayfada da TRY'dir - fiyat Türkiye
- * mağazasının fiyatıdır, sayfanın dili onu değiştirmez.
+ * BUGÜN HİÇ BASILMAZ (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta gerçekten
+ * satın alınabiliyor, yani fiyat artık "uydurma" değil; basmama sebebi başka:
+ * site hiçbir sayfasında fiyat söylemiyor. Şema, sayfanın söylemediğini iddia
+ * etmemelidir. İkinci sebep, lansmanın ilk yıl intro fiyatı sürerken yalnız
+ * liste fiyatını bildirmenin eksik anlatması.
+ *
+ * AÇILDIĞI GÜN: siteye bir afiet+ bölümü girer, fiyatlar `#shared/utils/marka`
+ * içinde tek kaynak olur ve bu fonksiyon onları okur. Fonksiyon bilerek
+ * duruyor: kaldırıp yeniden yazmak, şemanın nereye bağlanacağını bir daha
+ * keşfetmeyi gerektirirdi.
  */
-function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> | null {
-  if (!MAGAZA.yayinda) return null
-  return {
-    offers: MAGAZA.teklifler.map((t) => ({
-      '@type': 'Offer',
-      name: t.ad[lang],
-      price: t.fiyat,
-      priceCurrency: MAGAZA.paraBirimi,
-    })),
-  }
+function mobilAppOffers(_lang: 'tr' | 'en'): Record<string, unknown> | null {
+  return null
 }
 
 /** Bir sayfanın render edilecek nihai meta seti. Bilinmeyen path'ler de tutarlı üretir (404 sayfası dahil). */
@@ -875,10 +883,16 @@ export function buildSitemapXml(
   )
 }
 
-/** Yönlendirme tablosu (middleware'de kullanılır). */
+/**
+ * Yönlendirme tablosu (middleware'de kullanılır).
+ *
+ * `getSeoBundle` gibi kod varsayılanlarını da katar: DİKKAT, burası ham
+ * override'ları okur ve birleştirmeyi atlarsa `DEFAULT_REDIRECTS` hiç
+ * çalışmaz - middleware paketi değil bu fonksiyonu çağırıyor.
+ */
 export async function getRedirects(event: H3Event): Promise<SeoRedirect[]> {
   const { redirects } = await loadOverrides(event)
-  return redirects
+  return mergeRedirects(redirects)
 }
 
 export { normalizePath }

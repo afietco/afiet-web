@@ -5,7 +5,7 @@ description: "Boş ekranda kalma, donma ve karşına çıkan üç farklı hata e
 updated: 2026-08-01
 order: 11
 keywords: [açılmıyor, donuyor, boş ekran, beyaz ekran, hata ekranı, çöküyor, kapanıyor]
-related: [beta-sorun-giderme/bir-sey-takildiginda, beta-sorun-giderme/kesinti-mi-var-durum-sayfasi]
+related: [sorun-giderme/bir-sey-takildiginda, sorun-giderme/kesinti-mi-var-durum-sayfasi]
 ---
 
 Uygulama bir yerde takılırsa kayıtların gitmez; kayıtlar hesabına bağlı olarak sunucuda durur. Aşağıdaki adımlar çoğu takılmayı birkaç dakikada çözer.
@@ -13,7 +13,7 @@ Uygulama bir yerde takılırsa kayıtların gitmez; kayıtlar hesabına bağlı 
 ## Önce şu ikisi
 
 1. **Uygulamayı tamamen kapat ve yeniden aç.** Arka planda bırakmak yetmez; uygulama listesinden kapatman gerekir.
-2. **Güncel sürümde olduğundan emin ol.** TestFlight'ta afiet'in yanında "Güncelle" yazıyorsa güncelle. Adımlar [TestFlight'ta güncelleme](/destek/beta-sorun-giderme/testflight-guncelleme) yazısında.
+2. **Güncel sürümde olduğundan emin ol.** App Store'da afiet'in yanında "Güncelle" yazıyorsa güncelle. Adımlar [afiet'i güncellemek](/destek/sorun-giderme/uygulamayi-guncellemek) yazısında.
 
 ## Karşına çıkan ekranı tanı
 
@@ -31,7 +31,7 @@ Sayfa ve adım ekranları "kayıtların yerinde duruyor" der; bu bir teselli cü
 
 Uygulama açılırken veriyi bekler. Bekleme uzarsa ekran kendini bırakır ve **Tekrar dene** düğmesiyle birlikte ne olduğunu söyleyen bir mesaj gösterir:
 
-- **"Sorun sende değil"** yazıyorsa aksaklık bizdedir. Beklemek dışında yapman gereken bir şey yok; ayrıntı için [bir kesinti mi var](/destek/beta-sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısına bak.
+- **"Sorun sende değil"** yazıyorsa aksaklık bizdedir. Beklemek dışında yapman gereken bir şey yok; ayrıntı için [bir kesinti mi var](/destek/sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısına bak.
 - **"Bağlantı kurulamadı"** yazıyorsa bağlantı tarafına bakalım: Wi-Fi'dan mobil veriye geçmeyi dene.
 
 Uygulamayı arka plana atıp geri döndüğünde ekran kendi kendine yeniden dener, yani biz toparlandığımızda ekran da toparlanır.
@@ -42,4 +42,4 @@ Uygulamayı silip yeniden kurmak son çare bile değildir; giriş bilgilerin cih
 
 ## Hâlâ sürüyorsa
 
-Uygulama beklenmedik biçimde kapandıysa teknik kayıt bize otomatik ulaşır. Yine de [destek@afiet.co](mailto:destek@afiet.co) adresine hangi ekranda olduğunu ve hemen öncesinde ne yaptığını yazman bizim için değerli. Eklemen gerekenlerin tamamı [bir şey takıldığında](/destek/beta-sorun-giderme/bir-sey-takildiginda) yazısının sonunda.
+Uygulama beklenmedik biçimde kapandıysa teknik kayıt bize otomatik ulaşır. Yine de [destek@afiet.co](mailto:destek@afiet.co) adresine hangi ekranda olduğunu ve hemen öncesinde ne yaptığını yazman bizim için değerli. Eklemen gerekenlerin tamamı [bir şey takıldığında](/destek/sorun-giderme/bir-sey-takildiginda) yazısının sonunda.

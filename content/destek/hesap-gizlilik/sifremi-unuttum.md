@@ -5,7 +5,7 @@ description: "Şifre sıfırlama bağlantısını isteme adımları, e-posta gel
 updated: 2026-07-31
 order: 1
 keywords: [şifre, şifremi unuttum, sıfırlama, giriş, apple ile giriş, e-posta gelmedi]
-related: [hesap-gizlilik/hesabimi-silmek-istiyorum, beta-sorun-giderme/bir-sey-takildiginda]
+related: [hesap-gizlilik/hesabimi-silmek-istiyorum, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Şifreni hatırlamıyorsan hesabına giden yol kapanmaz. Sıfırlama bağlantısını uygulama içinden isteyebilirsin.

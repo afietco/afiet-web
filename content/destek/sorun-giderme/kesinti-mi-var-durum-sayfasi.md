@@ -5,7 +5,7 @@ description: "afiet.co/durum sayfasında hangi servislerin göründüğü, renkl
 updated: 2026-08-01
 order: 12
 keywords: [kesinti, durum, çalışmıyor, sunucu, arıza, durum sayfası, yavaşlama]
-related: [beta-sorun-giderme/bir-sey-takildiginda, beta-sorun-giderme/uygulama-acilmiyor-ya-da-takiliyor]
+related: [sorun-giderme/bir-sey-takildiginda, sorun-giderme/uygulama-acilmiyor-ya-da-takiliyor]
 ---
 
 Sorunun sende mi bizde mi olduğunu [afiet.co/durum](/durum) sayfası söyler. Sayfa afiet'in çalıştığı yerden başka bir yerde durur, yani biz kesintideyken bile açılır.
@@ -47,4 +47,4 @@ Kayıtların yerinde durur. Uygulamayı arka plana atıp geri döndüğünde ekr
 
 ## Durum sayfası her şey yolunda diyorsa
 
-O zaman sorun büyük ihtimalle senin bağlantında ya da tek bir ekranda. Sırayla denenecekler [bir şey takıldığında](/destek/beta-sorun-giderme/bir-sey-takildiginda) yazısında; sürerse [destek@afiet.co](mailto:destek@afiet.co) adresine yazabilirsin.
+O zaman sorun büyük ihtimalle senin bağlantında ya da tek bir ekranda. Sırayla denenecekler [bir şey takıldığında](/destek/sorun-giderme/bir-sey-takildiginda) yazısında; sürerse [destek@afiet.co](mailto:destek@afiet.co) adresine yazabilirsin.

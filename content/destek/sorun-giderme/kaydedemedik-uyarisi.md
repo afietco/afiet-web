@@ -5,7 +5,7 @@ description: "Öğün, ölçüm, su ya da bildirim tercihi kaydedilemediğinde n
 updated: 2026-08-01
 order: 10
 keywords: [kaydedemedik, kaydedilemedi, kayıt gitmiyor, bağlantı, öğün kaydı, hata]
-related: [beta-sorun-giderme/kesinti-mi-var-durum-sayfasi, ogun-kaydi/ogunu-duzenleme-ve-silme, beta-sorun-giderme/bir-sey-takildiginda]
+related: [sorun-giderme/kesinti-mi-var-durum-sayfasi, ogun-kaydi/ogunu-duzenleme-ve-silme, sorun-giderme/bir-sey-takildiginda]
 ---
 
 afiet kayıtlarını cihazında değil, hesabına bağlı olarak sunucuda tutar. Bu yüzden kaydetme anında bağlantı ya da bizim tarafımızda bir aksaklık varsa uygulama sana bunu söyler ve kaydı sessizce yutmaz.
@@ -27,9 +27,9 @@ Hepsi aynı şeyi söyler: bu kayıt sunucuya ulaşamadı.
 
 1. **Birkaç saniye bekle ve tekrar dokun.** Anlık bir takılmaysa ikinci deneme çoğunlukla geçer.
 2. **Bağlantını değiştir.** Wi-Fi'dan mobil veriye (ya da tersine) geçmek zayıf bir bağlantıyı hemen belli eder.
-3. **[afiet.co/durum](/durum) sayfasına bak.** Kesinti varsa yapman gereken bir şey yoktur; toparlandığımızda kaydın normal şekilde düşer. Sayfanın nasıl okunacağı [bir kesinti mi var](/destek/beta-sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısında.
+3. **[afiet.co/durum](/durum) sayfasına bak.** Kesinti varsa yapman gereken bir şey yoktur; toparlandığımızda kaydın normal şekilde düşer. Sayfanın nasıl okunacağı [bir kesinti mi var](/destek/sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısında.
 4. **Uygulamayı tamamen kapat ve yeniden aç.** Arka planda bırakmak yetmez, uygulama listesinden kapatman gerekir.
-5. **Giriş ekranına düştüysen yeniden gir.** Oturumla ilgiliyse [oturumun sona erdi](/destek/beta-sorun-giderme/oturumun-sona-erdi) yazısındaki adımlar geçerli.
+5. **Giriş ekranına düştüysen yeniden gir.** Oturumla ilgiliyse [oturumun sona erdi](/destek/sorun-giderme/oturumun-sona-erdi) yazısındaki adımlar geçerli.
 
 ```ipucu
 Su sayacında sayı önce artar, kaydedilemeyince eski hâline döner. Yani ekranda gördüğün sayı her zaman gerçekten kayıtlı olan sayıdır.

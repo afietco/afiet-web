@@ -11,6 +11,13 @@ import type { SupportCategory } from '#shared/types/support'
  *
  * Kategori slug'ı bir kez yayınlandıktan sonra DEĞİŞTİRİLMEZ: adres
  * `/destek/<kategori>/<slug>` ve panelin yönlendirme tablosu buna dayanır.
+ *
+ * TEK İSTİSNA (kullanıcı kararı, 24 Ağu 2026): `beta-sorun-giderme` →
+ * `sorun-giderme`. Beta kapandı ve adres çubuğunda "beta" kelimesi kalıcı
+ * olurdu. Taşınma bedava değildi ama ucuzdu: GSC'de kategorinin 30 günlük
+ * toplamı 25 gösterim / 0 tıktı ve mobil uygulama bu yollara derin bağlantı
+ * VERMİYOR (kontrol edildi). Eski adresler `seoDefaults > DEFAULT_REDIRECTS`
+ * içinde 301 ile yaşamaya devam ediyor. Bu istisnayı emsal sayma.
  */
 export const SUPPORT_CATEGORIES: SupportCategory[] = [
   {
@@ -74,12 +81,12 @@ export const SUPPORT_CATEGORIES: SupportCategory[] = [
     icon: 'kalkan',
   },
   {
-    slug: 'beta-sorun-giderme',
-    title: 'Beta, sürüm ve sorun giderme',
-    summary: 'Davet, güncelleme, takılmalar',
+    slug: 'sorun-giderme',
+    title: 'Sürüm ve sorun giderme',
+    summary: 'Güncelleme, takılmalar, kesinti',
     description:
-      'Beta nasıl işliyor, sürüm nasıl güncelleniyor, bir şey takıldığında ne ' +
-      'yapmalı ve hatayı bize nasıl iletirsin.',
+      'Sürüm nasıl güncelleniyor, bir şey takıldığında ne yapmalı, kesinti ' +
+      'olup olmadığını nereden görürsün ve hatayı bize nasıl iletirsin.',
     accent: 'neutral',
     icon: 'pusula',
   },

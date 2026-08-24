@@ -37,15 +37,17 @@ import { cta } from '~/data/content'
             {{ cta.sub }}
           </p>
 
-          <!-- Birincil dönüşüm: /beta başvurusu. Form beta sayfasında yaşar. -->
+          <!-- Birincil dönüşüm: indirme. Mağaza rozetleri sayfanın altında
+               ayrıca duruyor; buradaki düğme /indir sayfasına götürür ki
+               Android ziyaretçisi 404 bir Play adresine düşmesin. -->
           <div class="mt-9 flex flex-col items-center gap-3">
-            <NuxtLink :to="cta.betaTo" class="btn-primary !px-8 !py-4 text-base">
-              {{ cta.betaCta }}
+            <NuxtLink :to="cta.indirTo" class="btn-primary !px-8 !py-4 text-base">
+              {{ cta.indirCta }}
             </NuxtLink>
-            <p class="max-w-sm text-sm font-semibold text-muted">{{ cta.betaNote }}</p>
+            <p class="max-w-sm text-sm font-semibold text-muted">{{ cta.indirNote }}</p>
           </div>
 
-          <!-- İkincil dönüşüm: lansman bildirimi. Beta'ya hazır olmayan
+          <!-- İkincil dönüşüm: Android duyurusu. İndirmeye hazır olmayan
                ziyaretçi için ve ücretli trafiğin güvenilir sayacı olarak
                burada (content.ts > cta). Ayraç, ikisinin eşit değil sıralı
                olduğunu göstersin diye ince tutuldu. -->

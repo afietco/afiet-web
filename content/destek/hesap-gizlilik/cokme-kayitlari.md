@@ -5,7 +5,7 @@ description: "Beklenmedik bir hatada toplanan teknik kaydın içinde ne olduğu,
 updated: 2026-08-01
 order: 14
 keywords: [çökme, hata, kayıt, sentry, gizlilik, teknik kayıt]
-related: [hesap-gizlilik/verilerim-nerede-saklaniyor, beta-sorun-giderme/bir-sey-takildiginda]
+related: [hesap-gizlilik/verilerim-nerede-saklaniyor, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Uygulama beklenmedik biçimde kapanırsa ya da bir ekran açılamazsa, sorunu bulup düzeltebilmemiz için teknik bir kayıt toplanır. Bu kayıt Sentry hizmetiyle tutulur ve içinde kişisel verin yer almaz.
@@ -28,7 +28,7 @@ Kayıtlar kimliğinle eşleştirilmez, reklam ya da profilleme için kullanılma
 
 ## Neden topluyoruz
 
-Beta boyunca en çok işimize yarayan şey bu. Bir hata kaç kişide, hangi telefonlarda ve hangi ekranda oluyor sorusunun cevabı, ancak bu kayıtlardan çıkar. Kimsenin ne yediğini görmemiz gerekmez.
+En çok işimize yarayan şey bu. Bir hata kaç kişide, hangi telefonlarda ve hangi ekranda oluyor sorusunun cevabı, ancak bu kayıtlardan çıkar. Kimsenin ne yediğini görmemiz gerekmez.
 
 ## Ekranda ne görürüm
 
@@ -42,6 +42,6 @@ Bu seçenek verilerini silmez, yalnız bu cihazdaki oturumu kapatır. Geri girme
 
 ## Bize nasıl yardım edersin
 
-Teknik kayıt hatanın nasıl olduğunu anlatır, ama ne yapmaya çalıştığını anlatmaz. Bir şey takıldığında birkaç satırla ne yaptığını yazarsan iş çok kolaylaşır: [bir şey takıldığında](/destek/beta-sorun-giderme/bir-sey-takildiginda).
+Teknik kayıt hatanın nasıl olduğunu anlatır, ama ne yapmaya çalıştığını anlatmaz. Bir şey takıldığında birkaç satırla ne yaptığını yazarsan iş çok kolaylaşır: [bir şey takıldığında](/destek/sorun-giderme/bir-sey-takildiginda).
 
 Bu bölümün bağlayıcı karşılığı [Gizlilik Politikası](/gizlilik) sayfasındaki "Hata ve çökme kayıtları" başlığındadır.

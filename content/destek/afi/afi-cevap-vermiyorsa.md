@@ -5,7 +5,7 @@ description: "Afi'nin sessiz kaldığı dört durum: bağlanamama, uzun süren c
 updated: 2026-08-01
 order: 8
 keywords: [afi cevap vermiyor, yavaş, bağlanamadı, çok büyük fotoğraf, günlük hak, kota, sınır, hata]
-related: [afi/afi-neyi-bilir-neyi-bilmez, afi/afiye-fotografla-yemek-tanitma, beta-sorun-giderme/bir-sey-takildiginda]
+related: [afi/afi-neyi-bilir-neyi-bilmez, afi/afiye-fotografla-yemek-tanitma, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Afi'nin sessiz kaldığı her durum aynı şey değildir ve afiet bunları bilerek ayırır. Ekrandaki cümleyi okumak, ne yapman gerektiğini söyler. Dördü de geçicidir ve hiçbirinde kaydın kaybolmaz.

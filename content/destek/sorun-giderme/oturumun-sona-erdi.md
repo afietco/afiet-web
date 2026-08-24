@@ -5,7 +5,7 @@ description: "Giriş ekranındaki bu uyarının neden çıktığı, kayıtların
 updated: 2026-08-01
 order: 9
 keywords: [oturum, oturumun sona erdi, giriş, çıkış, yeniden giriş, şifre değiştirme]
-related: [hesap-gizlilik/sifremi-unuttum, beta-sorun-giderme/bir-sey-takildiginda]
+related: [hesap-gizlilik/sifremi-unuttum, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Bu uyarıyı gördüysen tek yapman gereken yeniden giriş yapmak. Kayıtlarının hiçbirine bir şey olmaz; giriş yaptıktan sonra kaldığın yere geri dönersin.
@@ -32,6 +32,6 @@ Uygulamayı silip yeniden kurmana ya da yeni bir hesap açmana gerek yok. Yeni h
 
 ## Sürekli tekrarlıyorsa
 
-Girip birkaç dakika sonra yine aynı uyarıyı görüyorsan önce [afiet.co/durum](/durum) sayfasına bak; kimlik doğrulama tarafında bir aksaklık olabilir. Nasıl okunacağı [bir kesinti mi var](/destek/beta-sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısında.
+Girip birkaç dakika sonra yine aynı uyarıyı görüyorsan önce [afiet.co/durum](/durum) sayfasına bak; kimlik doğrulama tarafında bir aksaklık olabilir. Nasıl okunacağı [bir kesinti mi var](/destek/sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısında.
 
 Durum sayfası her şeyin yolunda olduğunu söylüyorsa [destek@afiet.co](mailto:destek@afiet.co) adresine yaz; hangi yolla giriş yaptığını (Apple, Google ya da e-posta) eklersen daha hızlı buluruz.

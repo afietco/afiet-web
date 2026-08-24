@@ -5,7 +5,7 @@ description: "Afi fotoğrafa bakamadığında söylediği cümleler, her birinin
 updated: 2026-08-01
 order: 14
 keywords: [afi, fotoğraf, tanımıyor, cevap vermiyor, kamera izni, günlük hak, çok büyük]
-related: [afi/afiye-fotografla-yemek-tanitma, afi/afi-neyi-bilir-neyi-bilmez, beta-sorun-giderme/kesinti-mi-var-durum-sayfasi]
+related: [afi/afiye-fotografla-yemek-tanitma, afi/afi-neyi-bilir-neyi-bilmez, sorun-giderme/kesinti-mi-var-durum-sayfasi]
 ---
 
 Afi bir fotoğrafa bakamadığında hep aynı şeyi söylemez; ne olduğunu söyler. Ekrandaki cümle, o an ne yapman gerektiğini de anlatır.
@@ -16,7 +16,7 @@ Afi bir fotoğrafa bakamadığında hep aynı şeyi söylemez; ne olduğunu söy
 - **"Fotoğrafa bakarken çok uzun sürdü; bağlantın yavaş olabilir. Bir daha dener misin?"** İstek zaman aşımına uğradı. Daha iyi bir bağlantıda tekrar denemek çoğunlukla yeter.
 - **"Bugünlük fotoğraf hakkın doldu; yarın yine deneyebiliriz."** Fotoğraf tanımanın günlük bir sınırı var. Bu sınır dolduğunda uygulamanın geri kalanı normal çalışır: besin arayıp elle eklemeye devam edebilirsin.
 - **"Bu fotoğraf çok büyük geldi; biraz daha yakından tek kare çeker misin?"** Kare fazla ağır gelmiş. Tabağa biraz daha yaklaşıp tek kare çekmen sorunu çözer.
-- **"... kaydedilemedi, bağlantı takılmış olabilir. Bir daha dener misin?"** Afi yemeği tanıdı ama kayıt sunucuya ulaşamadı. Tekrar denemen yeterli; ayrıntı [kaydedemedik uyarısı](/destek/beta-sorun-giderme/kaydedemedik-uyarisi) yazısında.
+- **"... kaydedilemedi, bağlantı takılmış olabilir. Bir daha dener misin?"** Afi yemeği tanıdı ama kayıt sunucuya ulaşamadı. Tekrar denemen yeterli; ayrıntı [kaydedemedik uyarısı](/destek/sorun-giderme/kaydedemedik-uyarisi) yazısında.
 
 ## Kamera ya da galeri izni
 
