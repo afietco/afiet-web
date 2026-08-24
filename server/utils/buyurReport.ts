@@ -32,8 +32,8 @@ export type BuyurData = {
     goruntuleme: number
     tik: number
     tikOrani: number
-    deltaGoruntuleme: number
-    deltaTik: number
+    deltaGoruntuleme: number | null
+    deltaTik: number | null
   }
   seri: { gun: string; goruntuleme: number; tik: number }[]
   baglantilar: BuyurBaglanti[]
@@ -75,8 +75,16 @@ const ULKE_LABEL: Record<string, string> = {
 }
 
 const yuzde = (n: number, taban: number) => (taban > 0 ? Math.round((n / taban) * 1000) / 10 : 0)
-/** Önceki pencereye göre değişim yüzdesi; taban sıfırsa değişim de sıfırdır (bölme yok). */
-const delta = (simdi: number, once: number) => (once > 0 ? Math.round(((simdi - once) / once) * 100) : 0)
+/**
+ * Önceki pencereye göre değişim yüzdesi.
+ *
+ * Önceki pencerede hiç veri yoksa `null` döner, 0 DEĞİL: panelde "%0" rozeti
+ * "değişmedi" diye okunuyor, oysa kastedilen "kıyaslanacak bir şey yok".
+ * Sayfa yeni yayına girdiği için ilk haftalarda taban hep boş olacak ve o
+ * rozet her seferinde yalan söyleyecekti.
+ */
+const delta = (simdi: number, once: number): number | null =>
+  once > 0 ? Math.round(((simdi - once) / once) * 100) : null
 
 /** YYYY-MM-DD listesi: bugünden geriye `days` gün (UTC - panelin geri kalanıyla aynı). */
 function gunAnahtarlari(days: number): string[] {
@@ -96,7 +104,7 @@ function bosVeri(range: BuyurRange, live: boolean): BuyurData {
     generatedAt: new Date().toISOString(),
     live,
     range,
-    totals: { goruntuleme: 0, tik: 0, tikOrani: 0, deltaGoruntuleme: 0, deltaTik: 0 },
+    totals: { goruntuleme: 0, tik: 0, tikOrani: 0, deltaGoruntuleme: null, deltaTik: null },
     seri: gunAnahtarlari(GUN[range]).map((gun) => ({ gun, goruntuleme: 0, tik: 0 })),
     baglantilar: [],
     gruplar: [],
