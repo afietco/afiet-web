@@ -1,4 +1,6 @@
 import { ImageResponse } from '@vercel/og'
+import UPNG from 'upng-js'
+import { encode as encodeJpeg } from 'jpeg-js'
 import { getPublishedPost } from '~~/server/utils/contentStore'
 import { LOGO_SVG, dataUri } from '~~/server/utils/kapakSvg'
 import { h } from '~~/server/utils/satoriEl'
@@ -15,6 +17,12 @@ import type { StoryPayload } from '~~/server/utils/storyPayload'
  * sticker'ı ONUN üstüne bırakılır), adres satırı 128px'te. Orta sahne
  * yazının türüne göre değişir (chips | soru | mit | adimlar, storyPayload);
  * görsel dil el işidir ve sabittir, ajan yalnız metin ve seçim doldurur.
+ *
+ * İKİ ÇIKTI BİÇİMİ, iki niyet: .png mail arşividir ve elle paylaşım için
+ * "yeni yazıyı oku" CTA'sını taşır (link sticker'ı üstüne bırakılır);
+ * .jpg Instagram Content Publishing API'sinin kaynağıdır (API görselde
+ * JPEG ister) ve CTA'sı "profildeki linkten oku" yazar, çünkü API ile
+ * paylaşılan story'ye link sticker EKLENEMEZ. Biçim, niyeti kodlar.
  *
  * Elle şablondan iki bilinçli sapma:
  *   - Rozet arkasındaki backdrop blur yok (Satori çizemez); yakın okunuşlu
@@ -302,7 +310,9 @@ function scene(story: StoryPayload, m: Mood) {
 }
 
 export default defineEventHandler(async (event) => {
-  const slug = String(getRouterParam(event, 'slug') ?? '').replace(/\.png$/, '')
+  const raw = String(getRouterParam(event, 'slug') ?? '')
+  const wantsJpeg = raw.endsWith('.jpg')
+  const slug = raw.replace(/\.(png|jpg)$/, '')
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug))
     throw createError({ statusCode: 400, statusMessage: 'gecersiz_slug' })
 
@@ -326,7 +336,7 @@ export default defineEventHandler(async (event) => {
   ])
   if (!extra || !black) throw createError({ statusCode: 500, statusMessage: 'font_yok' })
 
-  return new ImageResponse(
+  const image = new ImageResponse(
     h(
       'div',
       {
@@ -416,7 +426,7 @@ export default defineEventHandler(async (event) => {
               boxShadow: story.mood === 'emerald' ? '0 18px 36px rgba(2,44,34,0.42)' : '0 18px 36px rgba(5,150,105,0.42)',
             },
           },
-          '👆 yeni yazıyı oku',
+          wantsJpeg ? '🔗 profildeki linkten oku' : '👆 yeni yazıyı oku',
         ),
       ),
       // Adres satırı
@@ -439,4 +449,20 @@ export default defineEventHandler(async (event) => {
       },
     },
   )
+  if (!wantsJpeg) return image
+
+  // Satori/resvg yalnız PNG üretir; JPEG'i saf JS ile kendimiz kodlarız
+  // (repoda native bağımlılık yok, @vercel/og'nin sınırı). 1080×1920 RGBA
+  // ~8MB ham veri: serverless bellek için sorun değil.
+  const png = await image.arrayBuffer()
+  const decoded = UPNG.decode(png)
+  const rgba = UPNG.toRGBA8(decoded)[0]
+  if (!rgba) throw createError({ statusCode: 500, statusMessage: 'png_cozulemedi' })
+  const jpeg = encodeJpeg(
+    { data: new Uint8Array(rgba), width: decoded.width, height: decoded.height },
+    90,
+  )
+  setHeader(event, 'content-type', 'image/jpeg')
+  setHeader(event, 'cache-control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400')
+  return new Uint8Array(jpeg.data)
 })
