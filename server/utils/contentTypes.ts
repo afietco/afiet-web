@@ -187,6 +187,13 @@ export type BlogPost = {
    * ise iki yazı birbirine hreflang verir.
    */
   translationOf: string | null
+  /**
+   * Instagram story payload'ı (server/utils/storyPayload.ts). İçerik hattı
+   * yayından sonra /api/internal/blog/story ile iliştirir; /story/<slug>.png
+   * bundan çizer. Elle yayınlanan yazılarda null kalır ve story rotası 404
+   * döner: story'siz yazı bir eksik değil, varsayılandır.
+   */
+  story: import('./storyPayload').StoryPayload | null
 }
 
 /** Blog yazısının dili; site dilleriyle aynı küme (shared/utils/locales.ts). */

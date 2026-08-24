@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
       platform: e.platform,
       downloads,
       pageViews,
+      impressions: null,
       note: typeof e.note === 'string' ? e.note.trim().slice(0, 300) : '',
       source: 'csv',
     }
