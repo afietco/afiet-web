@@ -2,10 +2,15 @@
 import { MAGAZA } from '#shared/utils/marka'
 
 /**
- * Mağaza rozetleri. `MAGAZA.yayinda` kapalıyken (bugün) yalnız "yakında"
- * bilgisi taşıyan pasif rozetler; lansman günü bayrak açılınca aynı bileşen
- * iki mağazaya giden bağlantı olur, başka bir yere dokunmak gerekmez
- * (adresler `#shared/utils/marka > MAGAZA`, şemayla aynı kaynak).
+ * Mağaza rozetleri. Her rozet KENDİ bayrağına bakar
+ * (`#shared/utils/marka > MAGAZA`, şemayla aynı kaynak): bugün App Store
+ * rozeti bağlantı, Google Play rozeti "yolda" bilgisi taşıyan pasif bir
+ * etikettir. Bayrak açıldığı gün ikinci rozet de bağlantıya döner, başka bir
+ * yere dokunmak gerekmez.
+ *
+ * Rozet karışık durumda da AYNI bileşendir: iki mağazayı yan yana göstermek,
+ * Android ziyaretçisine "bu uygulama sende de var" demeden "yolda" demenin
+ * tek dürüst yolu. Play rozeti tıklanamaz, çünkü adres bugün 404.
  *
  * Bağlantı hâlinde iki şey daha yapar:
  *  - `magaza_tik` olayı gönderir (birinci-taraf analitik, onay kapısından
@@ -19,19 +24,22 @@ import { MAGAZA } from '#shared/utils/marka'
  *  - App Store adresine kampanya parametresi EKLENMEZ: Apple'ın kampanya
  *    bağlantısı sağlayıcı jetonu (pt) ister, o olmadan ct yok sayılır.
  *
- * `soonLabel` /en sayfalarında "Coming soon" olarak geçilir; bağlantı
- * hâlinde kullanılmaz.
+ * `soonLabel` /en sayfalarında "On the way" olarak geçilir; yalnız kapalı
+ * mağazanın rozetinde görünür.
+ *
+ * Rozetin kendi metin rengi VARDIR (`text-ink`) ve miras alınmaz: kart açık
+ * zeminlidir ama bileşen koyu bölümlerin içinde de duruyor (indirme sayfasının
+ * hero'su, /en). Renk miras alındığında mağaza adı beyaz kartta beyaz kalıyor
+ * ve rozet sessizce okunmaz oluyordu.
  */
 const props = withDefaults(defineProps<{ size?: 'sm' | 'lg'; soonLabel?: string }>(), {
-  soonLabel: 'Yakında',
+  soonLabel: 'Yolda',
 })
 
-type Store = { key: 'appstore' | 'play'; label: string; href: string }
+type Store = { key: 'appstore' | 'play'; label: string; href: string; live: boolean; platform: string }
 
 const route = useRoute()
 const { $afietEvent, $afietClickId } = useNuxtApp()
-
-const live = MAGAZA.yayinda
 
 // Tıklama kimliği yalnız istemcide ve mount'tan sonra okunur: sunucu bağlantıyı
 // kimliksiz basar, istemci hydration bitince ekler; böylece href için
@@ -51,8 +59,14 @@ const playHref = computed(() => {
 })
 
 const stores = computed<Store[]>(() => [
-  { key: 'appstore', label: 'App Store', href: MAGAZA.appStore },
-  { key: 'play', label: 'Google Play', href: live ? playHref.value : MAGAZA.play },
+  { key: 'appstore', label: 'App Store', href: MAGAZA.appStore, live: MAGAZA.ios, platform: 'iPhone' },
+  {
+    key: 'play',
+    label: 'Google Play',
+    href: MAGAZA.android ? playHref.value : MAGAZA.play,
+    live: MAGAZA.android,
+    platform: 'Android',
+  },
 ])
 
 function onClick(store: Store) {
@@ -63,13 +77,16 @@ function onClick(store: Store) {
 <template>
   <div class="flex flex-wrap items-center gap-3" :class="size === 'lg' ? 'justify-center' : ''">
     <component
-      :is="live ? 'a' : 'span'"
+      :is="store.live ? 'a' : 'span'"
       v-for="store in stores"
       :key="store.key"
-      v-bind="live ? { href: store.href, target: '_blank', rel: 'noopener' } : {}"
-      class="flex items-center gap-2.5 rounded-2xl border border-line bg-surface text-left"
-      :class="[size === 'lg' ? 'px-5 py-3' : 'px-4 py-2', live ? 'transition hover:border-brand/40 hover:text-brand-deep active:scale-[0.98]' : '']"
-      @click="live && onClick(store)"
+      v-bind="store.live ? { href: store.href, target: '_blank', rel: 'noopener' } : {}"
+      class="flex items-center gap-2.5 rounded-2xl border border-line bg-surface text-left text-ink"
+      :class="[
+        size === 'lg' ? 'px-5 py-3' : 'px-4 py-2',
+        store.live ? 'transition hover:border-brand/40 hover:text-brand-deep active:scale-[0.98]' : 'opacity-60',
+      ]"
+      @click="store.live && onClick(store)"
     >
       <svg
         v-if="store.key === 'appstore'"
@@ -101,7 +118,7 @@ function onClick(store: Store) {
       </svg>
       <span class="leading-tight">
         <span class="block text-[10px] font-bold tracking-wide text-muted uppercase">
-          {{ live ? (store.key === 'appstore' ? 'iPhone' : 'Android') : props.soonLabel }}
+          {{ store.live ? store.platform : props.soonLabel }}
         </span>
         <span class="block font-extrabold" :class="size === 'lg' ? 'text-base' : 'text-sm'">
           {{ store.label }}

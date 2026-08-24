@@ -18,11 +18,11 @@ Aynı isim, aynı yüz, iki ayrı iş. afiet.co'daki "Afi'ye sor" paneli sorular
 | Hesap gerekir mi | Hayır | Evet, kendi hesabınla |
 | Kayıtlarını görür mü | Hayır | Evet, senin sofran üzerinde çalışır |
 | Fotoğraf gönderilir mi | Hayır | Evet |
-| Nerede durur | Ana sayfa, /beta ve destek merkezi | Bugün, Beslenme, Besin Ekle, Menüm |
+| Nerede durur | Ana sayfa, /indir ve destek merkezi | Bugün, Beslenme, Besin Ekle, Menüm |
 
 ## afiet.co'daki "Afi'ye sor"
 
-Bu sitede, sayfaların altındaki karttır. Hesap istemez, giriş istemez. afiet'in ne olduğuna, nasıl çalıştığına ve beta'ya nasıl katılacağına dair soruları kısaca yanıtlar.
+Bu sitede, sayfaların altındaki karttır. Hesap istemez, giriş istemez. afiet'in ne olduğuna, nasıl çalıştığına ve nereden indirileceğine dair soruları kısaca yanıtlar.
 
 Nasıl davranır:
 

@@ -79,7 +79,7 @@ const langShort = computed(() => (en.value ? 'TR' : 'EN'))
         >
           Yenilikler
         </NuxtLink>
-        <NuxtLink to="/beta" class="btn-primary !px-5 !py-2.5 text-sm">Beta’ya katıl</NuxtLink>
+        <NuxtLink to="/indir" class="btn-primary !px-5 !py-2.5 text-sm">afiet’i indir</NuxtLink>
 
         <NuxtLink
           v-if="counterpart"
@@ -158,7 +158,7 @@ const langShort = computed(() => (en.value ? 'TR' : 'EN'))
             >
               Destek
             </NuxtLink>
-            <!-- "Beta'ya katıl" menüye KONMAZ: düğmesi hemen yanında duruyor,
+            <!-- "afiet'i indir" menüye KONMAZ: düğmesi hemen yanında duruyor,
                  aynı çağrıyı iki kez göstermek menüyü kalabalıklaştırır. -->
           </div>
         </details>

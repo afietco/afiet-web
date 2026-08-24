@@ -5,7 +5,7 @@ description: "Uygulamanın seni giriş ekranına düşürmesinin nedenleri, veri
 updated: 2026-08-01
 order: 11
 keywords: [oturum, oturumun sona erdi, çıkış attı, yeniden giriş, güvenlik]
-related: [hesap-gizlilik/cikis-yapmak, beta-sorun-giderme/bir-sey-takildiginda]
+related: [hesap-gizlilik/cikis-yapmak, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Uygulamayı açtığında giriş ekranında **Oturumun sona erdi** başlıklı bir kutu görüyorsan, oturumun sunucu tarafında geçerliliğini yitirmiş demektir. Kutu şunu söyler: güvenliğin için yeniden giriş yapman gerekiyor, girişten sonra kaldığın yere döneceksin.
@@ -35,7 +35,7 @@ Arka arkaya birkaç kez çıkıyorsan, bu beklenen bir davranış değil. Şunla
 - Uygulamanın güncel sürümünde misin?
 - Şifreni yakın zamanda değiştirdin mi? İlk çıkıştan sonra tekrarlamaması gerekir.
 
-Devam ediyorsa bize yaz: [destek@afiet.co](mailto:destek@afiet.co). Ne zaman olduğunu ve telefon modelini eklersen daha hızlı buluruz. [Bir şey takıldığında](/destek/beta-sorun-giderme/bir-sey-takildiginda) yazısında ne göndermenin işe yaradığı anlatılıyor.
+Devam ediyorsa bize yaz: [destek@afiet.co](mailto:destek@afiet.co). Ne zaman olduğunu ve telefon modelini eklersen daha hızlı buluruz. [Bir şey takıldığında](/destek/sorun-giderme/bir-sey-takildiginda) yazısında ne göndermenin işe yaradığı anlatılıyor.
 
 ## Güvenlik tarafı
 

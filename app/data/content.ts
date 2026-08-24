@@ -13,7 +13,7 @@ export const hero = {
   sub:
     'afiet kalori saydırmaz. Sofranın kendi diliyle konuşur (kaç dilim, ' +
     'kaç kase, bir avuç) ve ailece dengeli beslenmeyi tatlı bir alışkanlığa çevirir.',
-  ctaPrimary: 'Beta’ya katıl',
+  ctaPrimary: 'afiet’i indir',
   ctaSecondary: 'Neden afiet?',
 }
 
@@ -94,30 +94,29 @@ export const voice = {
 }
 
 /**
- * Sayfa sonu çağrısı. BİRİNCİL yol beta başvurusudur: uygulama beta'da ve ilk
- * sofrada sınırlı yer var, dolayısıyla e-posta toplayıp "çıkınca haber veririz"
- * demek yerine katılmaya çağırıyoruz.
+ * Sayfa sonu çağrısı. BİRİNCİL yol indirmedir (24 Ağu 2026: afiet App
+ * Store'da yayında). Ziyaretçiyi doğrudan mağazaya değil `/indir` sayfasına
+ * götürürüz: Android ziyaretçisi bugün 404 bir Play adresine düşmemeli ve
+ * masaüstünden bakan biri mağaza yerine "telefonunda ne olacağını" görmeli.
  *
- * İKİNCİL yol bülten kaydıdır (13 Ağu 2026 kararı, Meta reklam trafiği için):
- * beta'ya girmeye hazır olmayan ziyaretçi elini boş çıkmasın diye lansman
- * bildirimi bırakabiliyor. Bu ikinci yol aynı zamanda ücretli trafiğin TEK
- * güvenilir dönüşüm sayacıdır - kayıt sunucu tarafında düştüğü için çerez
- * onayına bağlı değildir, oysa sayfa görüntülemesi onay kapısının arkasındadır.
- * Beta'ya PARALI trafik sürülmez: beta kullanıcısına 1 yıl ücretsiz premium
- * sözü var, reklamla beta kaydı toplamak bedava yılı satın almak olurdu.
+ * İKİNCİL yol bülten kaydıdır (13 Ağu 2026 kararı, Meta reklam trafiği için).
+ * Artık iki işi birden yapıyor: indirmeye hazır olmayan ziyaretçiyi elini boş
+ * çıkarmıyor VE Android'i bekleyene bir yer veriyor. Aynı zamanda ücretli
+ * trafiğin çerez onayına bağlı OLMAYAN dönüşüm sayacıdır (kayıt sunucu
+ * tarafında düşer), oysa sayfa görüntülemesi onay kapısının arkasındadır.
  */
 export const cta = {
-  title: 'afiet şimdi beta’da',
+  title: 'afiet App Store’da',
   sub:
-    'İlk sofrada 100 kişilik yer var. Sen de kendi sofranda dene, ' +
-    'ne işe yarayıp yaramadığını birlikte görelim.',
-  betaCta: 'Sofrada yerini ayır',
-  betaTo: '/beta',
-  betaNote: 'Davetin e-posta ile gelir.',
+    'İndir, ilk öğününü sofranın kendi diliyle kaydet. Ücretsiz; ' +
+    'kalori hedefi yok, kayıt sürtünmesi yok.',
+  indirCta: 'afiet’i indir',
+  indirTo: '/indir',
+  indirNote: 'Android sürümü yolda.',
 
   haberAyrac: 'ya da',
-  haberTitle: 'Lansmandan haberin olsun',
-  haberSub: 'Uygulama mağazalarda yayına girdiğinde ilk duyanlardan ol.',
+  haberTitle: 'Android’i mi bekliyorsun?',
+  haberSub: 'Google Play’de yayına girdiğimizde ilk duyanlardan ol.',
 }
 
 /**
@@ -151,7 +150,7 @@ export const homeYenilikler = {
 }
 
 /**
- * "Afi'ye sor" paneli - ana sayfada kendi bölümü, beta sayfasında SSS'in
+ * "Afi'ye sor" paneli - ana sayfada kendi bölümü, indirme sayfasında SSS'in
  * kardeşi. Cevaplar backend'den akar; buradaki metinler yalnızca çerçevedir.
  *
  * Marka: Afi'nin üzgün ya da endişeli hâli YOKTUR (BRAND.md > Logo). Hata,
@@ -168,7 +167,7 @@ export const askAfi = {
   chips: [
     'afiet kalori saymadan nasıl çalışıyor?',
     'Ailece nasıl kullanırız?',
-    'Beta’ya nasıl katılırım?',
+    'afiet’i nasıl indiririm?',
   ],
   moreChips: 'Başka bir şey sor',
   inputLabel: 'Afi’ye sorun',
@@ -185,251 +184,114 @@ export const askAfi = {
   error: 'Afi şu an cevap veremedi. Birazdan yeniden sorar mısın?',
   slow: 'Afi biraz düşünceye daldı. İstersen yeniden sor.',
   limit: 'Bugünlük soru hakkın doldu. Yarın Afi yine burada olacak. 🌿',
-  cap: 'Bu sohbet burada tamamlandı. Merakın sürüyorsa beta’ya katıl, Afi uygulamada seninle devam etsin.',
-  capCta: 'Sofrada yerini ayır',
-  capCtaTo: '/beta',
-  unknownBetaCta: 'Beta’ya katıl',
+  cap: 'Bu sohbet burada tamamlandı. Merakın sürüyorsa afiet’i indir, Afi uygulamada seninle devam etsin.',
+  capCta: 'afiet’i indir',
+  capCtaTo: '/indir',
+  unknownIndirCta: 'afiet’i indir',
   unknownBlogCta: 'Blogda anlattıklarımız',
   captchaCheck: 'Bir saniye, gerçek bir sofra arkadaşı olduğunu doğruluyoruz.',
   captchaFailed: 'Doğrulama tamamlanamadı. Biraz sonra yeniden sorar mısın?',
   soon: 'Afi’ye soru sorma çok yakında burada 🌱',
 }
 
-export const beta = {
-  eyebrow: 'beta daveti',
-  title: "afiet şimdi beta'da.",
+export const indir = {
+  eyebrow: 'App Store’da yayında',
+  title: 'afiet’i indir.',
   sub:
-    'Sofranın diliyle konuşan afiet’i gerçek hayatında deneyip bize ilk ses verenlerden ol.',
-  cohortLabel: 'ilk sofra',
-  cohortCount: '100',
-  cohortSuffix: 'kişi',
-  platforms: 'iOS başladı, Android yakında',
-  cta: 'Sofrada yerini ayır',
-  note: 'Davetin e-posta ile gelir.',
-  motifLabel: 'ilk sofradaki yerler',
-  featuresEyebrow: 'beta’da ne var?',
-  featuresTitle: 'Gerçek sofrada çalışan üç temel akış',
-  featuresSub:
-    'Gününü hesap tablosuna çevirmeden kaydet, ritmini gör ve sevdiklerinle aynı sofrada buluş.',
-  features: [
+    'Sofranın kendi diliyle konuşan afiet artık telefonunda. Ücretsiz indir, ' +
+    'ilk öğününü bugün kaydet.',
+  /* Rozet bandının üstündeki tek satır. Android'i BURADA söyleriz: rozet
+     zaten "yolda" diyor ama sayfanın kendisi de aynı şeyi söylemeli, yoksa
+     Android'li ziyaretçi rozeti görene kadar boşuna okumuş olur. */
+  storeLead: 'iPhone ve iPad’de yayında. Android sürümü yolda.',
+  freeNote: 'Ücretsiz. Reklam yok, kalori hedefi yok.',
+
+  /* "İlk gün ne oluyor" - indirme sayfası bir mağaza kapısı değil, bir
+     karşılama. Ziyaretçi indirmeden önce ne yaşayacağını bilsin. */
+  adimlarEyebrow: 'ilk gün',
+  adimlarTitle: 'İndirdikten sonra ne oluyor?',
+  adimlar: [
+    {
+      key: 'hesap',
+      number: '01',
+      title: 'Kısa bir tanışma',
+      body:
+        'E-postan ya da Apple hesabınla girersin, sana nasıl sesleneceğimizi sorarız. ' +
+        'Kilo, hedef kilo ve günlük kalori sorulmaz.',
+    },
     {
       key: 'kayit',
-      number: '01',
-      title: 'Sofranın diliyle kayıt',
-      body:
-        'Mercimek çorbasını gramla değil, kaseyle yaz. Afi bilmediğin yemeğe fotoğraftan bakmana yardım etsin.',
-    },
-    {
-      key: 'ritim',
       number: '02',
-      title: 'Afiyet ritmi',
+      title: 'İlk öğünün',
       body:
-        'Haftanı kusursuzlukla değil, kendi ritminle gör. Her yeni sofra yeni bir başlangıç olsun.',
+        'Mercimek çorbasını gramla değil kaseyle yazarsın. Bilmediğin yemeğin ' +
+        'fotoğrafını çek, Afi tanısın.',
     },
     {
-      key: 'sofra',
+      key: 'denge',
       number: '03',
-      title: 'Soframız',
+      title: 'Günün dengesi',
       body:
-        'Ailenle veya arkadaşlarınla aynı sofrada yan yana dur. Kıyas yok, sıralama yok.',
+        'Beş besin grubu renklerle görünür. Gün dengelendikçe sofran tamamlanır; ' +
+        'uyarı da ceza da yok.',
     },
   ],
-  tester: {
-    eyebrow: 'birlikte deneyelim',
-    title: 'Sen kullan, biz dikkatle dinleyelim.',
-    intro:
-      'Beta, bitmiş ürün gösterisi değil. Gerçek sofrada nelerin iyi çalıştığını ve nerede pürüz çıktığını birlikte görmek için.',
-    asksTitle: 'Senden beklediğimiz',
-    asks: [
-      'afiet’i bir hafta kendi sofranda kullanman',
-      'Kısa geri bildirim formunu doldurman',
-      'Karşılaştığın pürüzleri açıkça paylaşman',
-    ],
-    promisesTitle: 'Bizden bekleyebileceğin',
-    promises: [
-      'Beta boyunca düzenli yeni sürümler',
-      'Davet ve kurulum adımlarının e-posta ile gelmesi',
-      'Her geri bildirimin ürün ekibi tarafından okunması',
-    ],
-  },
-  invite: {
-    eyebrow: 'ilk grup',
-    title: 'İlk sofrada 100 kişilik yer var.',
-    sub:
-      'iOS davetleri TestFlight ile gidiyor; Android daveti Google Play üzerinden ' +
-      'çok yakında. E-postanı bırak, sıran geldiğinde kurulum adımlarını gönderelim.',
-    platformIos: 'iOS',
-    platformIosSub: 'TestFlight daveti',
-    platformAndroid: 'Android',
-    platformAndroidSub: 'Google Play beta daveti (yakında)',
-  },
+
+  /* Uygulamayı zaten indirmiş ziyaretçiye yol: destek merkezi ve sürüm notları.
+     İndirme sayfası arama motorunda "afiet" markasının inişi olacak, yani
+     gelen herkes yeni kullanıcı değil. */
+  yardimTitle: 'Zaten indirdin mi?',
+  yardimBody:
+    'Kurulumdan ilk öğüne, gruplardan bildirimlere kadar her adım destek ' +
+    'merkezinde adım adım anlatılıyor.',
+  yardimCta: 'Destek merkezi',
+  yardimTo: '/destek',
+  surumCta: 'Son sürümde ne değişti?',
+  surumTo: '/yenilikler',
+
   faqEyebrow: 'merak ettiklerin',
-  faqTitle: 'Beta hakkında kısa cevaplar',
+  faqTitle: 'İndirmeden önce kısa cevaplar',
   faq: [
     {
-      q: 'Beta nedir?',
+      q: 'afiet ücretli mi?',
       a:
-        'afiet’in yayın öncesi sürümünü gerçek hayatında deneyip geri bildirim vereceğin ilk kullanım dönemi.',
+        'afiet ücretsizdir ve ücretsiz kalır. Uygulamanın içinde afiet+ adında isteğe ' +
+        'bağlı bir abonelik var; almadan da öğün kaydı, denge, gruplar ve Afi çalışır.',
     },
     {
-      q: 'Beta ücretli mi?',
-      a: 'Hayır. Beta kullanımı ücretsizdir.',
+      q: 'Android ne zaman gelecek?',
+      a:
+        'Android sürümü hazır ve Google Play’in üretim incelemesinde. Yayına girdiği gün ' +
+        'aynı sayfada Google Play rozeti de bağlantıya döner. Beklemek istersen aşağıdaki ' +
+        'bültene kaydolabilirsin.',
     },
     {
-      q: 'Hangi telefonlarda çalışıyor?',
+      q: 'Hangi iPhone’larda çalışıyor?',
       a:
-        'iOS davetleri TestFlight üzerinden gidiyor. Android daveti Google Play ' +
-        'üzerinden çok yakında başlayacak.',
+        'App Store sayfası cihazının uyumlu olup olmadığını sana söyler. Ana ekran ve ' +
+        'kilit ekranı widget’ları da var.',
     },
     {
-      q: 'Davet ne zaman gelir?',
+      q: 'Hesap açmadan kullanabilir miyim?',
       a:
-        'İlk grup 100 kişiyle sınırlı. Sıran geldiğinde daveti ve kurulum adımlarını ' +
-        'e-posta ile göndeririz.',
+        'Kayıtların cihazda değil hesabında durduğu için bir hesap gerekiyor. Böylece ' +
+        'telefonunu değiştirdiğinde sofran seninle geliyor.',
     },
     {
-      q: 'Listeden nasıl çıkarım?',
+      q: 'Verilerimi silebilir miyim?',
       a:
-        'Beta e-postalarından çıkmak istersen destek@afiet.co adresine yazman yeterli.',
+        'İstediğin zaman. Uygulamada menü, Hesap ayarlarım, Hesabı ve tüm verileri sil ' +
+        'yolunu izlemen yeterli; işlem geri alınamaz.',
     },
   ],
 }
 
-/**
- * Beta başvuru formu (çok adımlı). Zorunlu: e-posta, platform, hedef, onay.
- * Gerisi isteğe bağlı. Sayı/kilo/kalori sormayız - marka gereği. Alan seçenekleri
- * Türkiye kullanım verisine göre sıralı; `BetaForm.vue` bu yapıyı okur.
- */
-export const betaForm = {
-  stepNames: ['E-posta', 'Seni tanıyalım', 'Alışkanlıkların'],
-  step1: {
-    title: 'Beta davetin için e-postanı bırak',
-    lead: 'İlk sofrada 100 kişilik yer var. Önce e-postan, sonra birkaç kısa soru.',
-    emailLabel: 'E-posta adresin',
-    emailPlaceholder: 'e-posta adresin',
-    next: 'Devam',
-  },
-  step2: {
-    title: 'Seni biraz tanıyalım',
-    platformLabel: 'Hangi telefonu kullanıyorsun?',
-    platforms: [
-      { value: 'ios', label: 'iPhone' },
-      { value: 'android', label: 'Android' },
-    ],
-    goalLabel: 'Ne daha çok olsun istersin?',
-    goalHint: 'Birden fazla seçebilirsin',
-    goals: [
-      { value: 'enerji', label: 'Gün boyu daha enerjik hissetmek' },
-      { value: 'huzur', label: 'Yemek konusunda suçluluk hissetmemek' },
-      { value: 'cesitlilik', label: 'Daha çeşitli ve dengeli beslenmek' },
-      { value: 'ritim', label: 'Sürdürebileceğim bir beslenme düzeni' },
-      { value: 'sofra', label: 'Ailemle birlikte sağlıklı beslenmek' },
-      { value: 'kilo', label: 'Kilomu sağlıklı şekilde yönetmek' },
-    ],
-    countingLabel: 'Daha önce kullandığın kalori sayan uygulamalar nasıl hissettirdi?',
-    countingHint: 'İstersen yanıtla',
-    counting: [
-      { value: 'yoruyor', label: 'Hâlâ kullanıyorum ama beni yoruyor' },
-      { value: 'biraktim', label: 'Bıraktım, bunaltıcıydı' },
-      { value: 'iyi-geldi', label: 'İşe yaradı, memnun kaldım' },
-      { value: 'hic', label: 'Hiç kullanmadım' },
-    ],
-    back: 'Geri',
-    next: 'Devam',
-  },
-  step3: {
-    title: 'Alışkanlıkların',
-    lead: 'Hepsi isteğe bağlı, dilersen bu adımı atla.',
-    appsLabel: 'Şu an neleri kullanıyorsun?',
-    appsHint: 'Uygulama veya cihaz, birden fazla seçebilirsin',
-    appGroups: [
-      {
-        key: 'nutrition',
-        label: 'Kalori / beslenme',
-        options: [
-          { value: 'fatsecret', label: 'FatSecret' },
-          { value: 'yazio', label: 'Yazio' },
-          { value: 'myfitnesspal', label: 'MyFitnessPal' },
-          { value: 'diyetkolik', label: 'Diyetkolik' },
-          { value: 'lifesum', label: 'Lifesum' },
-          { value: 'fitatu', label: 'Fitatu' },
-          { value: 'loseit', label: 'Lose It!' },
-          { value: 'noom', label: 'Noom' },
-          { value: 'diyetisyen', label: 'Diyetisyen uygulaması' },
-          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
-        ],
-      },
-      {
-        key: 'activity',
-        label: 'Spor / adım',
-        options: [
-          { value: 'samsung-health', label: 'Samsung Health' },
-          { value: 'google-fit', label: 'Google Fit' },
-          { value: 'apple-fitness', label: 'Apple Fitness / Sağlık' },
-          { value: 'strava', label: 'Strava' },
-          { value: 'huawei-health', label: 'Huawei Health' },
-          { value: 'mi-fitness', label: 'Mi Fitness (Zepp)' },
-          { value: 'nike-run', label: 'Nike Run Club' },
-          { value: 'adidas-running', label: 'adidas Running' },
-          { value: 'adimsayar', label: 'Adımsayar' },
-          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
-        ],
-      },
-      {
-        key: 'body',
-        label: 'Vücut / kilo / cihaz',
-        options: [
-          { value: 'apple-health', label: 'Apple Health' },
-          { value: 'xiaomi-scale', label: 'Xiaomi akıllı tartı' },
-          { value: 'apple-watch', label: 'Apple Watch' },
-          { value: 'xiaomi-band', label: 'Xiaomi / Amazfit bileklik' },
-          { value: 'huawei-wear', label: 'Huawei saat / bileklik' },
-          { value: 'galaxy-watch', label: 'Samsung Galaxy Watch' },
-          { value: 'garmin', label: 'Garmin' },
-          { value: 'fitbit', label: 'Fitbit' },
-          { value: 'withings', label: 'Withings' },
-          { value: 'akilli-tarti', label: 'Akıllı tartı (diğer)' },
-          { value: 'hicbiri', label: 'Hiçbirini kullanmıyorum' },
-        ],
-      },
-    ],
-    // Her grubun sonunda "Başka..." çipi: seçilince o gruba özel metin kutusu açılır.
-    appsOtherChip: 'Başka…',
-    appsOtherPlaceholder: 'Kullandığını yaz',
-    heardLabel: 'Bizi nereden duydun?',
-    heard: [
-      { value: 'instagram', label: 'Instagram' },
-      { value: 'arkadas', label: 'Bir arkadaşım' },
-      { value: 'x', label: 'X (Twitter)' },
-      { value: 'google', label: 'Google araması' },
-      { value: 'tiktok', label: 'TikTok' },
-      { value: 'baska', label: 'Başka' },
-    ],
-    consentText: 'Kaydolarak beta daveti ve ürün haberleri için bana ulaşmanıza izin veriyorum.',
-    consentLinkLabel: 'Gizlilik',
-    consentLinkHref: '/gizlilik',
-    back: 'Geri',
-    submit: 'Sofrada yerini ayır',
-  },
-  status: {
-    sending: 'Gönderiliyor…',
-    done: 'Sofrada yerin hazır!',
-    doneSub: 'Davet sırası geldiğinde sana e-posta göndereceğiz. 🌿',
-    exists: 'Başvurunu güncelledik 💚',
-    existsSub: 'Davet sıranı koruyoruz, yerin duruyor.',
-    soon: 'Beta başvuruları çok yakında burada 🌱',
-    error: 'Bir şey ters gitti. Birazdan yeniden dener misin?',
-    invalidEmail: 'Geçerli bir e-posta girer misin? 🌿',
-    missingStep2: 'Telefonunu seç ve en az bir şey işaretle 🌿',
-    consentRequired: 'Devam etmek için onay kutusunu işaretler misin? 🌿',
-  },
-}
 
 export const footer = {
   tagline: 'Sayma, dengele.',
   signoff: 'Sofranıza afiyet.',
   links: [
-    { label: 'Beta', to: '/beta' },
+    { label: 'İndir', to: '/indir' },
     { label: 'Blog', to: '/blog' },
     { label: 'Destek', to: '/destek' },
     { label: 'Hesapla', to: '/hesapla' },
@@ -470,7 +332,7 @@ export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'lin
 /**
  * Bülten (kendi altyapımız: aboneler Neon'da, gönderim Resend API ile, dış
  * servis paneli yok). Çift onay: form → onay maili → /bulten/onay. Landing'in
- * e-posta toplama İSTİSNASIDIR ve bilinçlidir; /beta başvurusundan ayrı yaşar.
+ * e-posta toplama İSTİSNASIDIR ve bilinçlidir; indirme çağrısından ayrı yaşar.
  * Kayıt noktaları: footer bandı, blog yazı sonu, /iletisim.
  */
 export const bulten = {
@@ -508,7 +370,7 @@ export const bulten = {
 
 /**
  * İletişim sayfası (/iletisim): kartpostal metaforu. Mesaj Resend ile ekip
- * posta kutusuna düşer (beta bildirimleriyle aynı yol). KVKK bilinçli olarak
+ * posta kutusuna düşer (bülten bildirimleriyle aynı yol). KVKK bilinçli olarak
  * onay kutusu DEĞİL bilgilendirme satırıdır (kullanıcı kararı, 5 Ağu 2026).
  */
 export const iletisim = {
@@ -516,7 +378,7 @@ export const iletisim = {
   title: 'Bize bir kartpostal yaz',
   sub:
     'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan ' +
-    'okur ve döner. Beta boyunca her mesajı ürün ekibi görüyor.',
+    'okur ve döner. Her mesajı ürün ekibi görüyor.',
 
   cardTo: 'Sevgili afiet,',
   stampLegend: 'Pulunu seç',
@@ -716,8 +578,8 @@ export const basin = {
       'yemeği ve besin hazır gelir. Gün, beş besin grubunun dengesi üzerinden ' +
       'renklerle görünür; hedef kilo sorulmaz, süre vaat edilmez. Sevdiklerinle ' +
       'grup kurup dengeyi birlikte takip edebilirsin.',
-    'afiet Türkiye’de geliştiriliyor ve iOS ile Android’de Ağustos 2026’da ' +
-      'yayına giriyor. Bir tıbbi cihaz değildir, tıbbi tavsiye vermez.',
+    'afiet Türkiye’de geliştiriliyor ve Ağustos 2026’da App Store’da yayına ' +
+      'girdi; Android sürümü yolda. Bir tıbbi cihaz değildir, tıbbi tavsiye vermez.',
   ],
 
   yanlisTitle: 'Sık düşülen üç hata',
@@ -818,7 +680,7 @@ export const support = {
   popular: [
     { label: 'Dilim, kase, avuç ne demek?', to: '/destek/ogun-kaydi/sofra-olculeri-dilim-kase-avuc' },
     { label: 'Öğünü nasıl silerim?', to: '/destek/ogun-kaydi/ogunu-duzenleme-ve-silme' },
-    { label: 'Davetim geldi, nasıl kurarım?', to: '/destek/baslangic/beta-davetiyle-kurulum' },
+    { label: 'afiet’i nasıl kurarım?', to: '/destek/baslangic/afieti-indirmek' },
     { label: 'Gruba nasıl katılırım?', to: '/destek/soframiz/gruba-katilma' },
     { label: 'Şifremi unuttum', to: '/destek/hesap-gizlilik/sifremi-unuttum' },
   ],
@@ -839,7 +701,7 @@ export const support = {
   askSub: 'Afi burada. Sorunu yaz, sofranın diliyle kısaca anlatsın.',
   contactTitle: 'İnsana ulaş',
   contactBody:
-    'Afi’nin çözemediği bir şey varsa bize yaz. Beta boyunca her mesajı ürün ekibi okuyor.',
+    'Afi’nin çözemediği bir şey varsa bize yaz. Her mesajı ürün ekibi okuyor.',
   contactMail: 'destek@afiet.co',
   statusLabel: 'Bir kesinti mi var?',
   statusBody:
@@ -1155,9 +1017,9 @@ export const releases = {
   updateTitle: 'Bu sürüm bende var mı?',
   updateBody:
     'Uygulamadaki menünün en altında hangi sürümde olduğun yazar. Güncelleme ' +
-    'beta boyunca TestFlight üzerinden gelir.',
+    'App Store üzerinden gelir.',
   updateLinkLabel: 'Güncelleme adımları',
-  updateTo: '/destek/beta-sorun-giderme/testflight-guncelleme',
+  updateTo: '/destek/sorun-giderme/uygulamayi-guncellemek',
   helpTitle: 'Bir şey takıldı mı?',
   helpBody:
     'Yeni sürümde bir şey beklediğin gibi çalışmıyorsa destek merkezinde adım adım ' +
@@ -1684,7 +1546,7 @@ export const katil = {
   openHint: 'afiet yüklüyse bu buton uygulamada açar ve seni gruba katılma adımına götürür.',
   noAppTitle: 'afiet’in yok mu?',
   noAppBody:
-    'App Store ve Google Play’de çok yakında. İndirdikten sonra Grubum ' +
+    'App Store’dan ücretsiz indirebilirsin. İndirdikten sonra Grubum ' +
     'sekmesinde “ID ile katıl”a dokun ve bu kodu gir. Sofrada yerin hazır.',
   invalidTitle: 'Bu bağlantı geçerli değil',
   invalidBody:

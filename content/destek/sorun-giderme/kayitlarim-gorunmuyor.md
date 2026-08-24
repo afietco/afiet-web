@@ -5,7 +5,7 @@ description: "Dünkü öğünler nerede görünür, gün ne zaman döner, farkl�
 updated: 2026-08-01
 order: 13
 keywords: [kayıtlarım yok, öğün görünmüyor, kayboldu, geçmiş, dünkü kayıt, hesap]
-related: [beta-sorun-giderme/kaydedemedik-uyarisi, ogun-kaydi/ogunu-duzenleme-ve-silme, beta-sorun-giderme/kesinti-mi-var-durum-sayfasi]
+related: [sorun-giderme/kaydedemedik-uyarisi, ogun-kaydi/ogunu-duzenleme-ve-silme, sorun-giderme/kesinti-mi-var-durum-sayfasi]
 ---
 
 Kayıtların cihazında değil, hesabına bağlı olarak sunucuda durur. Bu yüzden bir kayıt "kaybolduğunda" genellikle silinmiş değildir; başka bir günde ya da başka bir hesapta duruyordur. Sırayla bakalım.
@@ -42,11 +42,11 @@ Bu ekranın üstünde giriş yaptığın e-posta adresi yazar. Beklediğin adres
 
 ## Liste hiç yüklenmiyorsa
 
-Ekranda kayıt yerine bir hata ya da bekleme görüyorsan mesele kayıtlarında değil, bağlantıda olabilir. **"Sorun sende değil"** yazıyorsa bizde bir aksaklık var demektir; [bir kesinti mi var](/destek/beta-sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısına bakabilirsin.
+Ekranda kayıt yerine bir hata ya da bekleme görüyorsan mesele kayıtlarında değil, bağlantıda olabilir. **"Sorun sende değil"** yazıyorsa bizde bir aksaklık var demektir; [bir kesinti mi var](/destek/sorun-giderme/kesinti-mi-var-durum-sayfasi) yazısına bakabilirsin.
 
 ## Eklediğim şey hiç düşmemiş olabilir mi
 
-Olabilir. Kaydederken **"Kaydedemedik"** benzeri bir uyarı gördüysen o kayıt sunucuya ulaşmamıştır; ne yapman gerektiği [kaydedemedik uyarısı](/destek/beta-sorun-giderme/kaydedemedik-uyarisi) yazısında.
+Olabilir. Kaydederken **"Kaydedemedik"** benzeri bir uyarı gördüysen o kayıt sunucuya ulaşmamıştır; ne yapman gerektiği [kaydedemedik uyarısı](/destek/sorun-giderme/kaydedemedik-uyarisi) yazısında.
 
 Sildiğin bir öğün ise geri gelmez. Silme ve düzenleme akışı [öğünü düzenleme ve silme](/destek/ogun-kaydi/ogunu-duzenleme-ve-silme) yazısında.
 

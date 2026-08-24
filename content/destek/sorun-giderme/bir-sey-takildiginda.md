@@ -5,16 +5,16 @@ description: "Uygulama açılmıyor, kayıt gitmiyor ya da ekran boş kalıyorsa
 updated: 2026-07-31
 order: 2
 keywords: [sorun, hata, açılmıyor, kaydedilemedi, donuyor, boş ekran, bağlantı, destek]
-related: [beta-sorun-giderme/beta-nasil-isliyor, hesap-gizlilik/sifremi-unuttum]
+related: [baslangic/afieti-indirmek, hesap-gizlilik/sifremi-unuttum]
 ---
 
-Beta sürümünde bir şeylerin takılması normaldir. Aşağıdaki sıra çoğu durumu birkaç dakikada çözer.
+Bir şeyin takıldığı olur. Aşağıdaki sıra çoğu durumu birkaç dakikada çözer.
 
 ## Önce şu dördü
 
 1. **Uygulamayı tamamen kapat ve yeniden aç.** Arka planda bırakmak yetmez; uygulama listesinden kapatman gerekir.
 2. **Bağlantını kontrol et.** afiet kayıtlarını sunucuya yazar; internet yoksa "kaydedilemedi" benzeri bir uyarı görürsün.
-3. **Güncel sürümde misin bak.** iPhone'da TestFlight'ı açıp afiet'in yanında "Güncelle" yazıyorsa güncelle.
+3. **Güncel sürümde misin bak.** iPhone'da App Store'u açıp profil resmine dokun; afiet'in yanında "Güncelle" yazıyorsa güncelle.
 4. **Çıkıp yeniden giriş yap.** Hesap ayarlarım ekranından çıkış yapıp tekrar giriş yapmak oturumla ilgili takılmaları çözer.
 
 ## Sorun bizde mi

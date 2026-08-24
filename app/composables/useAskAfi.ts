@@ -363,8 +363,8 @@ function mockAnswer(question: string): string {
   if (q.includes('aile') || q.includes('ailece')) {
     return 'Herkesin kendi profili olur ama sofranız ortaktır. Kendi kaydını tutarsın, birlikte kurduğunuz alışkanlığı birlikte kutlarsınız. Kimse kimsenin tabağını denetlemez.'
   }
-  if (q.includes('beta')) {
-    return 'Beta için afiet.co/beta sayfasındaki kısa formu doldurman yeterli. İlk halkaya 100 kişi alıyoruz, sıra sana gelince e-posta ile yazıyoruz.'
+  if (q.includes('indir') || q.includes('app store') || q.includes('android')) {
+    return 'afiet App Store’da yayında ve ücretsiz. afiet.co/indir adresinden doğrudan gidebilirsin. Android sürümü henüz Google Play’de değil, yolda.'
   }
   return 'Bunu şu an bilmiyorum, uydurmak da istemem. afiet.co’da yazanlarla sınırlıyım. İstersen afiet’le ilgili başka bir şey sorabilirsin.'
 }

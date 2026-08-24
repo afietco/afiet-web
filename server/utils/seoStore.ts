@@ -3,6 +3,7 @@ import type { H3Event } from 'h3'
 import {
   AI_BOTS,
   DEFAULT_PAGES,
+  DEFAULT_REDIRECTS,
   DEFAULT_SETTINGS,
   ROBOTS_DIRECTIVES,
   SAYFA_ICERIK_TARIHI,
@@ -17,8 +18,8 @@ import { hesapFaqItems } from './hesaplaStore'
 import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
-import { AUTHOR, personSchema } from '#shared/utils/author'
-import { MAGAZA, WIKIDATA } from '#shared/utils/marka'
+import { AUTHOR, personId, personSchema } from '#shared/utils/author'
+import { MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -168,7 +169,18 @@ export async function getSeoBundle(event: H3Event): Promise<SeoBundle> {
     const base = DEFAULT_PAGES[path] ?? makePage({})
     pages[path] = deepMerge<PageSeo>(base, overrides.pages[path])
   }
-  return { settings, pages, redirects: overrides.redirects }
+  return { settings, pages, redirects: mergeRedirects(overrides.redirects) }
+}
+
+/**
+ * Kod varsayılanı yönlendirmeler + panelden gelenler. Aynı `from` için PANEL
+ * KAZANIR: yapısal taşımalar kodda yaşar ama acil bir durumda hedefi panelden
+ * değiştirebilmek gerekir (deploy beklemeden). Sıra da panelinkiyle başlar,
+ * çünkü middleware ilk eşleşmeyi alır.
+ */
+function mergeRedirects(fromPanel: SeoRedirect[]): SeoRedirect[] {
+  const ezilen = new Set(fromPanel.map((r) => normalizePath(r.from)))
+  return [...fromPanel, ...DEFAULT_REDIRECTS.filter((r) => !ezilen.has(normalizePath(r.from)))]
 }
 
 function absolutize(url: string, baseUrl: string): string {
@@ -184,23 +196,47 @@ function normalizePath(path: string): string {
 }
 
 /**
- * SoftwareApplication'ın fiyat düğümü. Uygulama yayına girene kadar HİÇ
- * basılmaz (`MAGAZA.yayinda`): bugün hiçbir mağazada satın alınamayan bir
- * fiyatı bildirmek şemayı sayfadan da mağazadan da kopartır.
+ * SoftwareApplication'ın fiyat düğümü.
  *
- * Üç teklif birlikte anlatır: indirme ücretsiz, afiet+ aylık ve yıllık
- * ücretli. Para birimi İngilizce sayfada da TRY'dir - fiyat Türkiye
- * mağazasının fiyatıdır, sayfanın dili onu değiştirmez.
+ * BUGÜN HİÇ BASILMAZ (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta gerçekten
+ * satın alınabiliyor, yani fiyat artık "uydurma" değil; basmama sebebi başka:
+ * site hiçbir sayfasında fiyat söylemiyor. Şema, sayfanın söylemediğini iddia
+ * etmemelidir. İkinci sebep, lansmanın ilk yıl intro fiyatı sürerken yalnız
+ * liste fiyatını bildirmenin eksik anlatması.
+ *
+ * AÇILDIĞI GÜN: siteye bir afiet+ bölümü girer, fiyatlar `#shared/utils/marka`
+ * içinde tek kaynak olur ve bu fonksiyon onları okur. Fonksiyon bilerek
+ * duruyor: kaldırıp yeniden yazmak, şemanın nereye bağlanacağını bir daha
+ * keşfetmeyi gerektirirdi.
  */
-function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> | null {
-  if (!MAGAZA.yayinda) return null
+function mobilAppOffers(_lang: 'tr' | 'en'): Record<string, unknown> | null {
+  return null
+}
+
+/**
+ * Kurumun makine okunur kimliği. Organization düğümü üç sayfada birden basılır
+ * (ana sayfa, /en, basın kiti) ve üçünde de AYNI `@id`yi taşır: aynı `@id`
+ * motorlar için "bu üç tarif tek varlığın" demektir, `@id`siz üç düğüm ise
+ * birbirinden habersiz üç adaydır. Yolu `AUTHOR`ın deseninin ikizidir
+ * (kişi `/hakkinda#yazar`, kurum `/#organization`).
+ */
+function organizationId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}/#organization`
+}
+
+/** Organization düğümü - panelin şema ayarından üretilir, üç sayfa da bunu kullanır. */
+function organizationNode(
+  org: SeoSettings['schema']['organization'],
+  baseUrl: string,
+): Record<string, unknown> {
   return {
-    offers: MAGAZA.teklifler.map((t) => ({
-      '@type': 'Offer',
-      name: t.ad[lang],
-      price: t.fiyat,
-      priceCurrency: MAGAZA.paraBirimi,
-    })),
+    '@type': 'Organization',
+    '@id': organizationId(baseUrl),
+    name: org.name,
+    url: org.url,
+    logo: absolutize(org.logo, baseUrl),
+    ...(org.sameAs.length ? { sameAs: org.sameAs } : {}),
+    ...(org.contactEmail ? { email: org.contactEmail } : {}),
   }
 }
 
@@ -302,14 +338,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     const graph: Record<string, unknown>[] = []
     const s = settings.schema
     if (s.organization.enabled) {
-      graph.push({
-        '@type': 'Organization',
-        name: s.organization.name,
-        url: s.organization.url,
-        logo: absolutize(s.organization.logo, g.baseUrl),
-        ...(s.organization.sameAs.length ? { sameAs: s.organization.sameAs } : {}),
-        ...(s.organization.contactEmail ? { email: s.organization.contactEmail } : {}),
-      })
+      graph.push(organizationNode(s.organization, g.baseUrl))
     }
     if (s.website.enabled) {
       graph.push({
@@ -692,6 +721,69 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     })
   }
 
+  // ── Basın kiti (/basin, /en/press) ──────────────────────────────────────
+  // /hakkinda'nın kurumsal ikizi: orada sayfanın konusu bir KİŞİ (ProfilePage
+  // + Person), burada bir KURUM (AboutPage + Organization). Gazeteciye ve
+  // üretken motora aynı cevabı iki biçimde verir - biri gözle okunur, biri
+  // makineyle. Basın kiti, "afiet nedir, kim yapıyor, nasıl ulaşılır"
+  // sorusunun toplandığı tek sayfa olduğu için şemasız kalması en pahalı
+  // yerdeki boşluktu.
+  //
+  // Organization ana sayfayla AYNI `@id`yi taşır (organizationNode), yani bu
+  // sayfa yeni bir kurum tarif etmez, var olanı zenginleştirir: description
+  // tek cümlelik marka tanımıdır ve `founder` doğrudan yazar kimliğine
+  // (`/hakkinda#yazar`) bağlanır. Böylece kurum ↔ kurucu ↔ yazar üçü tek
+  // grafikte birleşir.
+  if (path === '/basin' || path === '/en/press') {
+    const s = settings.schema
+    if (s.organization.enabled) {
+      jsonld.push({
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        name: title,
+        url: canonical,
+        description,
+        inLanguage,
+        isPartOf: { '@type': 'WebSite', name: g.siteName, url: g.baseUrl },
+        mainEntity: {
+          ...organizationNode(s.organization, g.baseUrl),
+          /* Kurumun açıklaması panelden değil marka tanımından gelir: basın
+             sayfasının tamamı zaten o cümlenin etrafında kurulu. */
+          description: MARKA_TANIM[isEn ? 'en' : 'tr'],
+          /* `@id` düğümü /hakkinda'daki Person'a bağlar; `@type` ve `name` bu
+             sayfada da durur çünkü çıplak bir referans doğrulayıcıya kurucunun
+             KİM olduğunu söylemez - basın kitinde cevabı sayfanın kendisinde
+             olmalı. Tam anlatım (unvan, biyografi, profiller) yine tek yerde,
+             `personSchema` düğümünde yaşar. */
+          founder: {
+            '@type': 'Person',
+            '@id': personId(g.baseUrl),
+            name: AUTHOR.name,
+            url: `${base}${AUTHOR.path[isEn ? 'en' : 'tr']}`,
+          },
+        },
+      })
+    }
+    jsonld.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: isEn ? 'Home' : 'Ana sayfa',
+          item: `${base}${isEn ? '/en' : '/'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: isEn ? 'Press kit' : 'Basın kiti',
+          item: canonical,
+        },
+      ],
+    })
+  }
+
   // İngilizce ana sayfa: marka VARLIĞI iki dilde de aynı olmalı (aynı
   // Organization, aynı sameAs) ki üretken motorlar afiet'i tek kimlik olarak
   // tanısın. WebSite bilerek tekrar edilmez; site tektir, dili sayfaya aittir.
@@ -699,14 +791,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     const s = settings.schema
     const graph: Record<string, unknown>[] = []
     if (s.organization.enabled) {
-      graph.push({
-        '@type': 'Organization',
-        name: s.organization.name,
-        url: s.organization.url,
-        logo: absolutize(s.organization.logo, g.baseUrl),
-        ...(s.organization.sameAs.length ? { sameAs: s.organization.sameAs } : {}),
-        ...(s.organization.contactEmail ? { email: s.organization.contactEmail } : {}),
-      })
+      graph.push(organizationNode(s.organization, g.baseUrl))
     }
     if (s.mobileApp.enabled) {
       graph.push({
@@ -914,10 +999,16 @@ export function buildSitemapXml(
   )
 }
 
-/** Yönlendirme tablosu (middleware'de kullanılır). */
+/**
+ * Yönlendirme tablosu (middleware'de kullanılır).
+ *
+ * `getSeoBundle` gibi kod varsayılanlarını da katar: DİKKAT, burası ham
+ * override'ları okur ve birleştirmeyi atlarsa `DEFAULT_REDIRECTS` hiç
+ * çalışmaz - middleware paketi değil bu fonksiyonu çağırıyor.
+ */
 export async function getRedirects(event: H3Event): Promise<SeoRedirect[]> {
   const { redirects } = await loadOverrides(event)
-  return redirects
+  return mergeRedirects(redirects)
 }
 
 export { normalizePath }
