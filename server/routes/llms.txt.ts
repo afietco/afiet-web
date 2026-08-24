@@ -9,6 +9,9 @@ import type { BlogPost } from '~~/server/utils/contentTypes'
 /**
  * llms.txt (llmstxt.org) - içerik panelden düzenlenir, kapatılırsa 404.
  *
+ * Dosya adı `.get.ts` DEĞİL: HEAD isteği 404 dönüyordu, gerekçe
+ * `server/routes/robots.txt.ts` başında.
+ *
  * Destek merkezi, sürüm notları ve İngilizce sayfa bölümleri panelden GELMEZ,
  * sonuna otomatik eklenir: listeler deploy'la değişir ve elle güncellenen bir
  * liste kaçınılmaz olarak eskir (prod'da llms içeriğinin panel override'ı da

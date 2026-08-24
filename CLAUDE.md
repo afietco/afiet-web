@@ -88,8 +88,8 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
   sayar. Karşı yazı yayında değilse ya da aynı dildeyse hiç basılmaz.
 - `/en/blog` İngilizce yazı YOKKEN sitemap'e, menüye ve llms.txt'ye girmez
   (kullanıcı kararı, 6 Ağu 2026): sayfa çalışır, boş durumu gösterir, hiçbir
-  yerden bağlanmaz. Üç koşul sırasıyla `sitemap.xml.get.ts`, `useEnBlog`
-  (`SiteHeader`/`SiteFooter`) ve `llms.txt.get.ts` içinde; smoke üçünü de
+  yerden bağlanmaz. Üç koşul sırasıyla `sitemap.xml.ts`, `useEnBlog`
+  (`SiteHeader`/`SiteFooter`) ve `llms.txt.ts` içinde; smoke üçünü de
   kontrol eder. `EN_BY_TR`ye `/blog` → `/en/blog` satırı bilinçli EKLENMEDİ:
   ilk İngilizce yazı yayınlandığında eklenecek (o zamana kadar hub'lar
   birbirine hreflang vermemeli).

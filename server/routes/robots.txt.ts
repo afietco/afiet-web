@@ -3,6 +3,14 @@ import { buildRobotsTxt, getSeoBundle } from '~~/server/utils/seoStore'
 /**
  * Dinamik robots.txt - AI bot izinleri ve ek kurallar panelden yönetilir.
  * (Statik public/robots.txt kaldırıldı; bu route onun yerini alır.)
+ *
+ * DOSYA ADI `.get.ts` DEĞİL (24 Ağu 2026 denetimi): Nitro `.get.ts` sonekini
+ * "yalnız GET" diye okuyor ve HEAD isteği 404 dönüyordu. Bu dört tarayıcı
+ * dosyasında (robots.txt, sitemap.xml, llms.txt, llms-full.txt) sonuç şuydu:
+ * `curl -I` 404, `curl` 200. HEAD ile varlık yoklayan bir tarayıcı ya da
+ * izleme aracı "dosya yok" sonucuna varıyordu. ISR sayfaları etkilenmiyordu,
+ * yalnız elle yazılmış route'lar. Soneki GERİ EKLEME: bu dosyaların hepsi
+ * salt okunurdur, metoda göre ayrışacak bir davranışı yok.
  */
 export default defineEventHandler(async (event) => {
   const bundle = await getSeoBundle(event)
