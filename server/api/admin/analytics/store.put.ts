@@ -33,6 +33,8 @@ export default defineEventHandler(async (event) => {
     platform: body.platform,
     downloads,
     pageViews,
+    // Gösterim yalnız API'den gelir; panelde alanı yok.
+    impressions: null,
     note: typeof body.note === 'string' ? body.note.trim().slice(0, 300) : '',
     source: body.source === 'csv' ? 'csv' : 'elle',
   })

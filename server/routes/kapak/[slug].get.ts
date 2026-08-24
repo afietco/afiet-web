@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og'
 import { getPublishedPost } from '~~/server/utils/contentStore'
 import { dataUri, LOGO_SVG, POSES, sahneSvg, type PoseKey } from '~~/server/utils/kapakSvg'
+import { h } from '~~/server/utils/satoriEl'
 
 /**
  * Blog kapağı, istekte çizilir: /kapak/<slug>.png
@@ -25,25 +26,6 @@ const MUTED = '#605a4f'
 const FAINT = '#97907f'
 const EMERALD = '#059669'
 const LINE = '#ece4d4'
-
-/**
- * Satori React beklediği için elementleri elle kuruyoruz (repoda React yok).
- *
- * Satori, birden fazla çocuğu olan her kabın `display`ini AÇIKÇA ister ve
- * eksikse tüm render'ı hataya düşürür. Tek tek yazmak yerine varsayılanı
- * burada veriyoruz: bu düzende zaten her kap flex.
- */
-const h = (type: string, props: Record<string, unknown>, ...children: unknown[]) => {
-  const style = (props.style ?? {}) as Record<string, unknown>
-  return {
-    type,
-    props: {
-      ...props,
-      ...(type === 'img' ? {} : { style: { display: 'flex', ...style } }),
-      children: children.length === 1 ? children[0] : children,
-    },
-  }
-}
 
 /**
  * Başlığın son parçasını vurgular: marka kapaklarında başlığın bir bölümü
