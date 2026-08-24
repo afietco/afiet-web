@@ -40,7 +40,7 @@ Menü > Profilim
 
 Menüyü açtığında beş kapı görürsün:
 
-- **Profilim** İsmin, avatarın, kullanıcı adın, seviye yolculuğun ve afiyet ritminin özeti.
+- **Profilim** İsmin, avatarın, arkadaş kodun, seviye yolculuğun ve afiyet ritminin özeti.
 - **Arkadaşlarım** Sofra arkadaşların ve gelen istekler.
 - **Bilgilerim** Bakış, Alışkanlıklar ve Geçmiş sekmeleriyle kendi verinin dökümü.
 - **Görünüm** Tema ve renkler.

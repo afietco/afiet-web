@@ -50,6 +50,6 @@ afiet 13 yaş ve üzeri kullanıcılar içindir; bilerek 13 yaş altından veri 
 
 En çok işine yarayacağı kişiler: kalori saymayı denemiş ve bırakmış olanlar, ailesiyle birlikte daha dengeli beslenmek isteyenler ve bir düzeni sürdürebilmeyi kusursuz uygulamaktan önemli bulanlar.
 
-## Şimdi nasıl denerim
+## Nereden indiririm
 
-afiet şu an kapalı betada. Başvuru afiet.co/beta üzerinden yapılır; sıran geldiğinde davetin e-posta ile gelir. iOS davetleri TestFlight ile gidiyor, Android daveti Google Play üzerinden çok yakında başlayacak.
+afiet App Store'da yayında ve ücretsiz. iPhone'unda App Store'u açıp "afiet" diye arayabilir ya da [afiet.co/indir](/indir) sayfasından doğrudan gidebilirsin. Android sürümü henüz Google Play'de değil, yolda. Adımların tamamı [afiet'i nasıl indiririm](/destek/baslangic/afieti-indirmek) yazısında.

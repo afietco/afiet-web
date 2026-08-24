@@ -4,6 +4,7 @@ import {
   homeBlogEn,
   measureChipsEn,
   originEn,
+  storeBadgesEn,
   toolsEn,
   updatesEn,
   voiceEn,
@@ -16,7 +17,7 @@ import {
  * İngilizce vitrin (/en). Kurgu TR ana sayfanın çevirisi DEĞİLDİR; hibrit
  * konumlama kararına göre kurulur (5 Ağu 2026): evrensel açılış (hero + why),
  * Türk sofrası kökeni ikinci planda (origin), ses tonu (voice) ve dönüşüm
- * olarak beta DEĞİL bülten (#updates, kullanıcı kararı: uygulama bugün
+ * olarak indirme DEĞİL bülten (#updates, kullanıcı kararı: uygulama bugün
  * Türkçe, EN ziyaretçiye dürüstçe "on the way" denir).
  *
  * Bölüm markup'ları TR bileşenlerin (HeroSection, ZagSection, VoiceSection,
@@ -135,7 +136,7 @@ const SERIT: Record<string, string> = {
         </div>
 
         <div class="rise mt-9" style="--d: 320ms">
-          <StoreBadges soon-label="Coming soon" />
+          <StoreBadges :soon-label="storeBadgesEn.soon" />
         </div>
       </div>
 
@@ -355,7 +356,7 @@ const SERIT: Record<string, string> = {
        İngilizce yazı yoksa bölüm kendini gizler. -->
   <BlogSection :copy="homeBlogEn" lang="en" />
 
-  <!-- ── Updates: beta değil bülten (kullanıcı kararı) ────────────────── -->
+  <!-- ── Updates: indirme değil bülten (kullanıcı kararı) ─────────────── -->
   <section id="updates" class="scroll-mt-20" aria-labelledby="updates-title">
     <div class="mx-auto max-w-6xl px-5 py-24">
       <div
@@ -397,7 +398,7 @@ const SERIT: Record<string, string> = {
           <p class="mx-auto mt-4 max-w-sm text-sm font-semibold text-muted">{{ updatesEn.note }}</p>
 
           <div class="mt-9 flex justify-center">
-            <StoreBadges size="lg" soon-label="Coming soon" />
+            <StoreBadges size="lg" :soon-label="storeBadgesEn.soon" />
           </div>
         </div>
       </div>

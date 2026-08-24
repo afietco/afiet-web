@@ -5,7 +5,7 @@ description: "Menünün en altındaki sürüm satırı, Yenilikler sayfasının 
 updated: 2026-08-01
 order: 8
 keywords: [sürüm, versiyon, yenilikler, sürüm notları, güncelleme, menü, değişiklikler]
-related: [beta-sorun-giderme/testflight-guncelleme, beta-sorun-giderme/bir-sey-takildiginda]
+related: [sorun-giderme/uygulamayi-guncellemek, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Sürüm numarası uygulamadaki menünün en altında yazar. Bize yazarken en çok işimize yarayan bilgilerden biri budur.
@@ -46,4 +46,4 @@ afiet'i ilk kez kuran birine bu sayfa gösterilmez, çünkü ortada "yeni" sayı
 
 ## Bize yazarken
 
-Bir sorunu bildirirken sürüm numarasını da eklersen, sorunun hangi sürümde çıktığını ve bir sonrakinde kapanıp kapanmadığını çok daha hızlı görürüz. Geri kalan bilgiler [bir şey takıldığında](/destek/beta-sorun-giderme/bir-sey-takildiginda) yazısının sonunda.
+Bir sorunu bildirirken sürüm numarasını da eklersen, sorunun hangi sürümde çıktığını ve bir sonrakinde kapanıp kapanmadığını çok daha hızlı görürüz. Geri kalan bilgiler [bir şey takıldığında](/destek/sorun-giderme/bir-sey-takildiginda) yazısının sonunda.

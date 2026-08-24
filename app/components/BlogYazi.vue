@@ -7,8 +7,8 @@ import type { SiteLocale } from '#shared/utils/locales'
  * Yazıyı SAYFA çeker ve bulunamazsa 404'ü sayfa fırlatır (rota davranışı orada
  * kalsın diye); burası yalnız gösterim.
  *
- * Yazı sonundaki çağrı dile göre değişir: Türkçe okuru /beta'ya, İngilizce
- * okuru bültene davet eder (uygulama bugün Türkçe, EN'de beta formu yok).
+ * Yazı sonundaki çağrı dile göre değişir: Türkçe okuru /indir'e, İngilizce
+ * okuru bültene davet eder (uygulama bugün Türkçe).
  */
 const props = defineProps<{
   post: {
@@ -119,9 +119,9 @@ const updated = computed(() => {
       </div>
 
       <p class="mt-8 font-bold text-soft">
-        {{ copy.endLead ?? 'afiet şimdi beta’da:' }}
+        {{ copy.endLead ?? 'afiet App Store’da:' }}
         <NuxtLink
-          :to="copy.endTo ?? '/beta'"
+          :to="copy.endTo ?? '/indir'"
           class="font-extrabold text-brand transition hover:text-brand-deep"
           >{{ copy.endCta ?? 'sofrada yerini ayır' }}</NuxtLink
         >

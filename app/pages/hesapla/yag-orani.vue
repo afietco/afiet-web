@@ -139,7 +139,7 @@ const bir = (n: number) => new Intl.NumberFormat('tr-TR', { maximumFractionDigit
           {{ c.nextTitle }}
         </h2>
         <p class="mt-2 leading-relaxed text-soft">{{ c.nextBody }}</p>
-        <NuxtLink to="/beta" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
+        <NuxtLink to="/indir" class="btn-primary mt-5">{{ c.nextCta }}</NuxtLink>
       </div>
     </section>
 

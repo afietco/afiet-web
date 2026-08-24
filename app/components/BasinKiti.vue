@@ -31,7 +31,7 @@ const kunye = computed(() => {
     { k: l.ad, v: MARKA_KUNYE.ad, not: props.copy.adNot },
     { k: l.tagline, v: MARKA_KUNYE.tagline[props.lang] },
     { k: l.kategori, v: props.copy.kategori },
-    { k: l.platformlar, v: MARKA_KUNYE.platformlar },
+    { k: l.platformlar, v: MARKA_KUNYE.platformlar[props.lang] },
     { k: l.lansman, v: MARKA_KUNYE.lansman[props.lang] },
     { k: l.ulke, v: MARKA_KUNYE.ulke },
     { k: l.dil, v: MARKA_KUNYE.dil[props.lang] },
