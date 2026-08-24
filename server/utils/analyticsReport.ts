@@ -33,8 +33,22 @@ export type AnalyticsData = {
     visitors: number
     viewsPerVisit: number
     avgDuration: number
-    conversions: number
-    conversionRate: number
+    /**
+     * İki dönüşüm AYRI durur (kullanıcı kararı, 25 Ağu 2026). Beta başvurusu
+     * emekli olunca tek bir "conversions" alanı kalmıştı ve o alan bugünden
+     * sonra sonsuza kadar 0 okuyacaktı.
+     *
+     * Mağaza tıklaması ürünün asıl dönüşümüdür ve Google Ads'e elle yüklenen
+     * web dönüşümünün kaynağıdır, AMA çerez onayı kapısının arkasındadır:
+     * onayı reddeden ziyaretçi hiç sayılmaz, yani gerçek sayı bundan yüksektir.
+     * Bülten kaydı sunucu tarafında düştüğü için onaya BAĞLI DEĞİLDİR ve
+     * ücretli trafiğin daha güvenilir sayacıdır. İkisini tek sayıya toplamak
+     * bu farkı gizlerdi.
+     */
+    storeClicks: number
+    storeClickRate: number
+    newsletter: number
+    newsletterRate: number
     deltaViews: number
     deltaVisitors: number
   }
@@ -153,7 +167,12 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
         WHERE event='pageview' AND country IS NOT NULL AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
         GROUP BY country ORDER BY visits DESC LIMIT 12`,
     sql`SELECT slug, title, to_char(published_at, 'YYYY-MM-DD') AS published_at FROM blog_posts`.catch(() => [] as Record<string, unknown>[]),
-    sql`SELECT count(*)::int AS n FROM beta_applications WHERE created_at >= now() - make_interval(days => ${days})`.catch(() => [{ n: 0 }] as Record<string, unknown>[]),
+    sql`SELECT
+          count(*) FILTER (WHERE event='magaza_tik')::int AS magaza,
+          count(*) FILTER (WHERE event='bulten_kayit')::int AS bulten
+        FROM analytics_events
+        WHERE event IN ('magaza_tik','bulten_kayit')
+          AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})`,
     sql`SELECT utm_term AS value, count(*)::int AS visits
         FROM analytics_events
         WHERE event='pageview' AND is_entry AND utm_term IS NOT NULL
@@ -213,7 +232,10 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
   const views = t.views ?? 0
   const visitors = t.visitors ?? 0
   const sessions = t.sessions ?? 0
-  const conversions = Number((convRows[0] as { n?: number } | undefined)?.n ?? 0)
+  const conv = (convRows[0] ?? {}) as { magaza?: number; bulten?: number }
+  const storeClicks = Number(conv.magaza ?? 0)
+  const newsletter = Number(conv.bulten ?? 0)
+  const oran = (n: number) => (visitors > 0 ? Math.round((n / visitors) * 1000) / 10 : 0)
 
   const durByPath = new Map<string, number>()
   for (const r of durRows as { path: string; ms: number }[]) durByPath.set(r.path, r.ms)
@@ -282,8 +304,10 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
       visitors,
       viewsPerVisit: round2(sessions > 0 ? views / sessions : 0),
       avgDuration: Math.round(t.avg_ms ?? 0) / 1000,
-      conversions,
-      conversionRate: visitors > 0 ? Math.round((conversions / visitors) * 1000) / 10 : 0,
+      storeClicks,
+      storeClickRate: oran(storeClicks),
+      newsletter,
+      newsletterRate: oran(newsletter),
       deltaViews: pct(views - (prev.views ?? 0), prev.views ?? 0),
       deltaVisitors: pct(visitors - (prev.visitors ?? 0), prev.visitors ?? 0),
     },
