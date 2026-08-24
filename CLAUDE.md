@@ -1,8 +1,9 @@
 # afiet-web
 
 afiet.co tanıtım sitesi (landing). Uygulama yalnızca native mobilde yaşar -
-bu sitede uygulamaya/PWA'ya link verilmez; CTA'lar store rozetleri ("yakında")
-ve /beta başvurusudur. UI dili Türkçe + sınırlı İngilizce (/en, aşağı bkz.).
+bu sitede uygulamaya/PWA'ya link verilmez. Birincil CTA `/indir` sayfasıdır ve
+mağaza rozetleri oradan (ve ana sayfadan) mağazaya bağlanır. UI dili Türkçe +
+sınırlı İngilizce (/en, aşağı bkz.).
 
 Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
 (cümle başında bile; `uppercase` sınıfı isme asla değmez), tagline
@@ -17,7 +18,7 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
   sayfa bilinçli olarak tek temadır (açık/krem "sıcak sofra"); dark mode yok
 - Tüm metin içeriği: `app/data/content.ts` - kopya değişikliği bileşene dokunmaz
 - Bileşenler `app/components/` altında bölüm başına tektir (SiteHeader, HeroSection,
-  PhoneMock, ZagSection, VoiceSection, CtaSection, BetaForm, SiteFooter…)
+  PhoneMock, ZagSection, VoiceSection, CtaSection, StoreBadges, SiteFooter…)
 - `v-reveal` direktifi (`app/plugins/reveal.ts`) scroll'da `.is-in` ekler;
   hero'daki açılış animasyonu `.rise` sınıfıyla CSS'te
 - Afi maskotu `AfiMascot.vue` - buhar telleri hep İKİ tanedir, yüz ifadesi sabittir
@@ -27,15 +28,14 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
   KALMALI, taşınırsa avatar düşer. SVG Tiny P/S profili: `baseProfile="tiny-ps"`,
   `<title>` zorunlu, kare viewBox, script/animasyon/dış referans yasak. Kaynağı
   `afiet-brand/logo/afi-icon.svg`, marka logosu değişirse bu da elle yenilenir.
-- Beta başvurusu: `server/api/beta/apply.post.ts` (Nitro) → Neon
-  `beta_applications` tablosu (`@neondatabase/serverless`; DDL'in TEK kaynağı
-  `server/utils/betaStore.ts`). E-posta doğrulama + honeypot (`company` alanı) +
-  ZORUNLU açık rıza (KVKK). Aynı e-posta yeniden başvurursa yanıtlar güncellenir.
-  Connection string `NUXT_DATABASE_URL` (runtimeConfig.databaseUrl, server-side).
-  `BetaForm.vue` çok adımlı: e-posta → seni tanıyalım → alışkanlıkların.
-  Kilo/kalori/sayı SORULMAZ (marka gereği). Okuma: `GET /api/admin/beta`.
-  Landing'de başka e-posta toplama noktası yok; eski bekleme listesi
-  (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırıldı.
+- **Beta EMEKLİ (24 Ağu 2026).** afiet App Store'da yayına girdi; `/beta`
+  sayfası, `BetaForm.vue` ve `POST /api/beta/apply` kaldırıldı, yerini `/indir`
+  aldı (`app/pages/indir.vue`, kopya `content.ts > indir`). `beta_applications`
+  tablosu ARŞİV olarak duruyor: 22 satırın KVKK rıza kaydı ve panelin Büyüme
+  kırılımı ondan besleniyor. Okuma ucu `GET /api/admin/beta` çalışmaya devam
+  ediyor, yazma ucu YOK ve geri de gelmemeli (smoke ucun 404 kaldığını korur).
+  Landing'de tek e-posta toplama noktası bültendir; eski bekleme listesi
+  (`waitlist` tablosu + formu) 27 Tem 2026'da kaldırılmıştı.
 
 ## Çok dillilik (/en)
 
@@ -54,9 +54,11 @@ Marka rehberi: `../afiet-mobile/BRAND.md` - isim HER YERDE küçük harf "afiet"
 - Accept-Language/IP yönlendirmesi YAPILMAZ (Googlebot ABD'den tarar);
   dil geçişi yalnız header'daki düğmedir ve karşılığı olmayan sayfada görünmez.
 - EN kopya `app/data/content.en.ts`te; ton kuralları ve em dash yasağı
-  İngilizce için de geçerli. EN'de beta formu YOK (kullanıcı kararı, 5 Ağu
-  2026): uygulama Türkçe, EN dönüşümü bülten (`lang='en'` aboneliği; onay
-  maili İngilizce gider, iniş `/en/newsletter/confirm`). `bulten-gonder.mjs`
+  İngilizce için de geçerli. EN'in dönüşümü bültendir (kullanıcı kararı, 5 Ağu
+  2026): uygulama bugün Türkçe konuşuyor (`lang='en'` aboneliği; onay maili
+  İngilizce gider, iniş `/en/newsletter/confirm`). Mağaza rozetleri 24 Ağu'da
+  BAĞLANDI: İngilizce konuşan biri de indirebilir, uygulamanın Türkçe olduğunu
+  sayfa açıkça söyler. Ayrı bir `/en/download` sayfası bilinçli AÇILMADI. `bulten-gonder.mjs`
   varsayılan tr gönderir, İngilizce duyuru `--lang en` ister.
 - İki dilde yaşayan gövdeler tek bileşendedir (`KartpostalIletisim`,
   `PrivacyArticle`, `DeleteAccountArticle`); TR politika metni değişirse
@@ -154,21 +156,38 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - JSON-LD: ana sayfada Organization+WebSite+SoftwareApplication grafiği +
   (doluysa) FAQPage. SSS maddeleri hem görünür bölüm (`FaqSection.vue`, boşsa
   render edilmez) hem şemadır - ikisi hep aynı kaynaktan gelir.
-- **Mağaza kapısı:** indirme adresleri ve afiet+ fiyatları
-  `#shared/utils/marka > MAGAZA`da tek kaynaktır ve `yayinda: false` iken
-  şemaya HİÇ basılmaz (`installUrl` da `offers` da). Sebep: bugün iki adres de
-  404 ve abonelik ürünleri mağazalarda yok; satın alınamayan bir fiyatı ya da
-  404 bir adresi bildirmek hiç bildirmemekten kötüdür. Lansman günü tek satır
-  (`yayinda: true`) ikisini birden açar; smoke ikisinin AYRI DÜŞMEDİĞİNİ
-  korur. Geçici kampanya fiyatı (intro) şemaya girmez.
+- **Mağaza kapısı MAĞAZA BAŞINADIR** (`#shared/utils/marka > MAGAZA`):
+  `ios: true` (App Store'da canlı), `android: false` (Play adresi bugün 404).
+  Tek boolean'dı, 24 Ağu 2026'da ikiye ayrıldı: iOS çıkıp Android çıkmayınca
+  tek bayrak, canlı bir adresle 404 bir adresi birlikte yayınlamak demekti.
+  Rozet de şema da (`installUrl`, `operatingSystem`) kendi bayrağına bakar.
+  Android açıldığı gün `MAGAZA.android` + `MARKA_KUNYE.platformlar` +
+  şemadaki `operatingSystem` BİRLİKTE değişir; smoke açık mağazanın bağlantı,
+  kapalının bağlantı OLMADIĞINI korur.
+- **Fiyat sitede HİÇ basılmaz** (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta
+  gerçekten satılıyor ama site hiçbir sayfasında fiyat söylemiyor; şema
+  sayfanın söylemediğini iddia etmemeli. `seoStore > mobilAppOffers` bu yüzden
+  null döner ve fonksiyon bilerek duruyor: siteye bir afiet+ bölümü girdiği gün
+  fiyatlar `marka.ts`e tek kaynak olarak konur ve o fonksiyon onları okur.
 - Hesaplayıcı hub'ları (`/hesapla`, `/en/tools`) CollectionPage + ItemList
   basar ve liste `pages`ten türer, kopya dosyasındaki kart listesinden değil:
   şema yalnız gerçekten var olan alt sayfaları vaat etmeli. Sıra iddia
   edilmez (`ItemListUnordered`).
+- **İki sabit `@id`, iki varlık:** kurum `<base>/#organization`
+  (`seoStore > organizationNode`, ana sayfa + `/en` + basın kiti aynısını
+  taşır), kişi `<base>/hakkinda#yazar` (`shared/utils/author.ts > personId`).
+  Aynı varlığı tarif eden düğümler aynı `@id`yi taşımazsa motorlar birbirinden
+  habersiz adaylar görür. Yeni bir sayfaya kurum ya da kişi düğümü eklerken
+  düğümü ELLE yazma, bu iki fonksiyondan geç.
 - Dinamik route'lar: `/robots.txt` (AI bot izinleri panelden; varsayılan liste
   `seoDefaults.ts > AI_BOTS`, Bytespider engelli), `/sitemap.xml`, `/llms.txt`.
-  `public/robots.txt` bilinçli olarak YOK. Yönlendirmeler:
-  `server/middleware/redirects.ts` (tam yol eşleşmesi, panelden).
+  `public/robots.txt` bilinçli olarak YOK.
+- **Yönlendirmeler iki kaynaklıdır** (`server/middleware/redirects.ts`, tam yol
+  eşleşmesi): kod varsayılanları `seoDefaults.ts > DEFAULT_REDIRECTS` +
+  panelden gelenler, aynı `from` için PANEL kazanır (`seoStore > mergeRedirects`).
+  Yapısal ve kalıcı adres taşımaları KODA yazılır: dev/staging'de de çalışsın,
+  PR'da gözden geçirilsin ve panelde bir "varsayılana dön" ile sessizce
+  düşmesin. Kampanya/geçici yönlendirme panelde kalır.
 - Panel = afiet-admin reposundaki "SEO & GEO" ekranı; `/api/admin/seo*` uçlarına
   kullanıcının Stack/Neon Auth JWT'siyle gelir. Doğrulama `server/utils/
   adminAuth.ts`: JWKS+issuer+audience (backend'in AUTH_* değerlerinin aynısı,
@@ -263,7 +282,9 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   (blogun aksine). Yayına almak = commit + deploy.
 - Kategori seti kodda: `server/utils/supportCategories.ts` (7 kategori, aksan
   renkleri uygulamadaki besin grubu renkleridir; son iki kategori bilinçli
-  nötrdür). **Kategori slug'ı yayınlandıktan sonra DEĞİŞTİRİLMEZ.**
+  nötrdür). **Kategori slug'ı yayınlandıktan sonra DEĞİŞTİRİLMEZ.** Tek istisna
+  24 Ağu 2026'da yaşandı (`beta-sorun-giderme` → `sorun-giderme`, beta kapandı);
+  gerekçesi ve bedeli dosyanın başında yazılı, emsal sayma.
 - Okuma katmanı `server/utils/supportStore.ts`: frontmatter (blogdaki
   `publish-post.mjs` sözleşmesinin aynısı), markdown-it `html:false`,
   h2/h3'lere id + içindekiler, arama dizini, llms çıktıları. Bellekte cache'li;
@@ -404,6 +425,11 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Gövde `BasinKiti.vue`, kopya `content.ts > basin` / `content.en.ts > pressEn`
   (anahtarlar birebir aynı). Sayfa gazeteciyi ikna etmez, işini kolaylaştırır:
   hiçbir malzeme form arkasında durmaz ve kanıtlanamayan rakam yazılmaz.
+- Şema: `AboutPage` + `mainEntity` Organization + BreadcrumbList
+  (`seoStore.resolvePageMeta`). `/hakkinda`nın ProfilePage+Person kalıbının
+  kurumsal ikizidir: orada sayfanın konusu kişi, burada kurum. Organization
+  ana sayfayla aynı `@id`yi taşır ve `founder` yazar kimliğine bağlanır, yani
+  kurum ↔ kurucu ↔ yazar tek grafikte birleşir.
 - **Dosyalar `public/basin-kiti/` altında, sayfanın yolu `/basin`.** İkisi
   BİLEREK ayrı adtadır: public/ altında rotayla aynı adı taşıyan bir klasör o
   rotayı gölgeler ve `/basin` isteği `/basin/` dizinine 301'lenir. Smoke bunu
@@ -437,8 +463,8 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 
 ## Kurallar
 
-- Beta başvurusu Neon'a `NUXT_DATABASE_URL` ile yazar (yukarı bkz.); boşken route
-  503 'soon' döner, form "çok yakında" moduna geçer. Çalışmayan form yayınlanmaz.
+- Bülten kaydı Neon'a `NUXT_DATABASE_URL` ile yazar; boşken route 503 'soon'
+  döner ve form "çok yakında" moduna geçer. Çalışmayan form yayınlanmaz.
 - Dal modeli: `feature/*` → `development` → `staging` → `main`
   (`afiet-mobile/docs/BRANCHING.md`). `main` = Vercel production.
 - Her anlamlı değişiklikten sonra: `npm run build && npm run smoke`.

@@ -10,9 +10,16 @@ import type { Accent, SocialIcon } from './content'
  * you at the table"; davet var, yargı yok, suçluluk yok. Uzun tire (em dash)
  * İngilizce metinde de kullanılmaz. "afiet" her yerde küçük harftir.
  *
- * CTA kuralı (kullanıcı kararı, 5 Ağu 2026): İngilizce sayfada beta formu
- * YOKTUR. Uygulama bugün Türkçe; EN ziyaretçiye dürüstçe "English is on the
- * way" denir ve e-postası bültenle alınır (lang='en' olarak işaretlenir).
+ * CTA kuralı (kullanıcı kararı, 5 Ağu 2026, 24 Ağu'da güncellendi): İngilizce
+ * sayfanın birincil dönüşümü bültendir, çünkü uygulama bugün TÜRKÇE. EN
+ * ziyaretçiye dürüstçe "English is on the way" denir ve e-postası bültenle
+ * alınır (lang='en' olarak işaretlenir).
+ *
+ * Mağaza rozetleri 24 Ağu 2026'da BAĞLANDI (kullanıcı kararı): uygulama App
+ * Store'da yayında ve İngilizce konuşan biri de indirebilir; indirmesini
+ * engellemek yerine uygulamanın bugün Türkçe olduğunu SÖYLERİZ. Ayrı bir
+ * /en/download sayfası bilinçli olarak AÇILMADI - çevirisi olmayan sayfaya
+ * /en yolu açılmaz kuralı ve uygulamanın dili bunu erken kılıyor.
  */
 
 export const siteEn = {
@@ -138,15 +145,16 @@ export const voiceEn = {
 }
 
 /**
- * Sayfa sonu çağrısı: beta formu değil, bülten. E-postalar lang='en' olarak
+ * Sayfa sonu çağrısı: indirme değil bülten. E-postalar lang='en' olarak
  * kaydedilir ki İngilizce duyuru yalnız bu listeye gitsin.
  */
 export const updatesEn = {
-  eyebrow: 'coming soon',
-  title: 'afiet is in beta, in Turkish, today.',
+  eyebrow: 'in Turkish today',
+  title: 'afiet is on the App Store, in Turkish.',
   sub:
-    'The English version is on the way. Leave your email and we will write ' +
-    'to you when afiet speaks your language; nothing else, no spam.',
+    'You can download it today, but the app speaks Turkish for now. The ' +
+    'English version is on the way. Leave your email and we will write to you ' +
+    'when afiet speaks your language; nothing else, no spam.',
   note: 'One short email when English is ready, plus the occasional letter from our table.',
 }
 
@@ -232,9 +240,9 @@ export const blogEn = {
   authorPrefix: 'Written by',
   authorCardTitle: 'Who wrote this?',
   authorCardCta: 'The author and our editorial rules',
-  // Yazı sonu: TR'de beta çağrısı var, İngilizce'de beta YOK (uygulama
-  // Türkçe), o yüzden okur bültene davet edilir.
-  endLead: 'afiet is in beta, in Turkish today:',
+  // Yazı sonu: TR'de indirme çağrısı var, İngilizce'de yok (uygulama bugün
+  // Türkçe konuşuyor), o yüzden okur bültene davet edilir.
+  endLead: 'afiet is on the App Store, in Turkish today:',
   endCta: 'get updates when English is ready',
   endTo: '/en#updates',
 }
@@ -269,7 +277,9 @@ export const cookieEn = {
 }
 
 export const storeBadgesEn = {
-  soon: 'Coming soon',
+  /* Yalnız KAPALI mağazanın rozetinde görünür (bugün Google Play). App Store
+     rozeti canlı bağlantıdır ve bu etiketi hiç kullanmaz. */
+  soon: 'On the way',
 }
 
 /**
@@ -297,8 +307,8 @@ export const contactEn = {
   title: 'Write us a postcard',
   sub:
     'A suggestion, a question, a problem or a partnership: whatever you ' +
-    'write, a real person reads it and replies. During the beta the product ' +
-    'team sees every message.',
+    'write, a real person reads it and replies. The product team sees every ' +
+    'message.',
 
   cardTo: 'Dear afiet,',
   stampLegend: 'Pick your stamp',
@@ -694,8 +704,8 @@ export const privacyEn = {
  * § 9 ve § 12): ideal kilo yok, hedef kilo yok, süre vaadi yok, hüküm kuran
  * sıfat yok, ondalıklı el ölçüsü yok. Sayı ikinci plandadır, katlanmış durur.
  *
- * CTA farkı: TR araçları /beta'ya çağırır, İngilizce araçlar /en#updates'e
- * (EN'de beta formu yok, uygulama bugün Türkçe).
+ * CTA farkı: TR araçları /indir'e çağırır, İngilizce araçlar /en#updates'e
+ * (uygulama bugün Türkçe, EN dönüşümü bülten).
  *
  * Porsiyon çevirici İngilizce'de YOK: katalog 2007 Türkçe besin adı taşıyor,
  * yarım çevrilmiş bir liste yayınlamıyoruz (kullanıcı kararı, 5 Ağu 2026).
@@ -1007,8 +1017,9 @@ export const pressEn = {
       'balance of five food groups in colors; it never asks for a target weight ' +
       'and never promises a timeline. You can also start a group with the people ' +
       'you eat with and follow the balance together.',
-    'afiet is built in Türkiye and launches on iOS and Android in August 2026. ' +
-      'It is not a medical device and does not give medical advice.',
+    'afiet is built in Türkiye and launched on the App Store in August 2026; ' +
+      'the Android version is on the way. It is not a medical device and does ' +
+      'not give medical advice.',
   ],
 
   yanlisTitle: 'Three things to get right',

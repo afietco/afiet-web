@@ -2,9 +2,10 @@ import type {
   AiBotInfo,
   PageSeo,
   SeoBundle,
+  SeoRedirect,
   SeoSettings,
 } from './seoTypes'
-import { MAGAZA, MARKA_TANIM } from '#shared/utils/marka'
+import { MAGAZA, MARKA_KUNYE, MARKA_TANIM } from '#shared/utils/marka'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -88,13 +89,21 @@ export const DEFAULT_SETTINGS: SeoSettings = {
     aiBots: defaultAiBotPolicy,
     extraRules: '',
   },
+  /**
+   * llms.txt gövdesi. Başlıktaki `>` özeti llmstxt.org'un "bu site nedir"
+   * satırıdır ve tek cümlelik marka tanımının KENDİSİDİR (`#shared/utils/marka`):
+   * buraya cümlenin elle yazılmış bir kopyası konmaz. 11 Ağu 2026'ya kadar
+   * konmuştu ve tanım sabitlendiğinde bu dosya geride kaldı - üretken motorların
+   * okuduğu asıl dosyada markanın kendini tarif eden cümlesi siteninkinden
+   * farklıydı.
+   */
   llms: {
     enabled: true,
     content: `# afiet
 
-> afiet, kalori saydırmadan Türk sofrasının kendi ölçüleriyle (kaç dilim, kaç kase, bir avuç) konuşarak ailenin dengeli beslenme alışkanlığını kuran bir mobil uygulamadır. Tagline: "Sayma, dengele."
+> ${MARKA_TANIM.tr} Tagline: "${MARKA_KUNYE.tagline.tr}"
 
-afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalori hedefi, limit ya da suçluluk dili kullanmaz. Ses tonu "sofrada seni seven biri" gibidir: yargılamaz, davet eder, kutlar. Uygulama şu an kapalı betadadır; iOS davetleri TestFlight ile gönderiliyor, Android daveti Google Play üzerinden çok yakında başlıyor. App Store ve Google Play çıkışı yaklaşıyor; halka açık indirme bağlantısı henüz yoktur. İsim her yerde küçük harfle yazılır: "afiet".
+afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalori hedefi, limit ya da suçluluk dili kullanmaz. Ses tonu "sofrada seni seven biri" gibidir: yargılamaz, davet eder, kutlar. Uygulama iOS'ta App Store'da yayındadır ve ücretsiz indirilir; Android sürümü Google Play'de henüz yayında değildir. İsim her yerde küçük harfle yazılır: "afiet".
 
 ## afiet ne yapar
 - Türk sofrasının ölçüleriyle konuşur: dilim, kase, avuç, fincan (gram ya da kalori değil).
@@ -122,18 +131,20 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
 - Hesap ve tüm veriler uygulamadan (menü → Hesap ayarlarım → Hesabı ve tüm verileri sil) ya da e-posta ile silinebilir; talep en geç 30 gün içinde işlenir.
 
 ## Durum
-- Kapalı beta canlı: iOS davetleri TestFlight ile gidiyor, Android daveti çok yakında.
-- Beta başvurusu afiet.co/beta üzerinden yapılır; davetler e-posta ile gönderilir.
-- App Store ve Google Play çıkışı yaklaşıyor.
+- iOS: App Store'da yayında (Ağustos 2026). Uygulama ücretsizdir, indirmek için davet ya da kayıt gerekmez.
+- Android: Google Play'de henüz yayında değil, sürüm yolda.
+- İndirme sayfası: ${SITE_URL}/indir
+- afiet+ isteğe bağlı bir aboneliktir ve yalnız uygulama içinden alınır; afiet'in kendisi ücretsiz kalır.
 
 ## Bağlantılar
 - [Ana sayfa](${SITE_URL}/): afiet nedir, neden afiet ve Afi'ye soru sorma.
-- [Beta](${SITE_URL}/beta): beta başvurusu ve ilk sofra daveti.
+- [İndir](${SITE_URL}/indir): afiet'i indirme adresleri ve ilk gün ne olduğu.
 - [Destek merkezi](${SITE_URL}/destek): uygulamanın kullanım dokümantasyonu; kurulum, öğün kaydı, Afi, gruplar, hesap ve sorun giderme.
 - [Hesaplama araçları](${SITE_URL}/hesapla): günlük besin ihtiyacı hesabı. Sonuç el ölçüsüyle verilir (avuç içi, yumruk, kapalı avuç, başparmak); kalori ve gram isteğe bağlı bir bölümde durur. İdeal kilo, hedef kilo ve süre vaadi ÜRETİLMEZ; 18 yaş altında hedef verilmez.
 - [Destek merkezi tam metin](${SITE_URL}/llms-full.txt): tüm destek yazılarının gövdesi tek dosyada.
 - [Blog](${SITE_URL}/blog): kalori saymadan dengeli beslenme, porsiyon ölçüleri ve aile sofrası üzerine rehberler.
 - [Hakkında](${SITE_URL}/hakkinda): yazıları kimin yazdığı, hangi kaynaklara dayandığı ve yayın ilkeleri.
+- [Basın kiti](${SITE_URL}/basin): afiet basın kiti: logo paketi, ekran görüntüleri, tek cümlelik tanım, kurucu künyesi ve iletişim.
 - [Gizlilik Politikası](${SITE_URL}/gizlilik): toplanan veriler, nerede saklandığı ve silme.
 - [Hesabını sil](${SITE_URL}/hesap-sil): hesabı ve verileri silme adımları.
 - İletişim: destek@afiet.co
@@ -170,16 +181,18 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
     mobileApp: {
       enabled: true,
       name: 'afiet',
-      operatingSystem: 'iOS, Android',
+      /* Yalnız gerçekten indirilebilen platform yazılır; Android açıldığı gün
+         `MAGAZA.android` ve `MARKA_KUNYE.platformlar` ile BİRLİKTE değişir. */
+      operatingSystem: MAGAZA.android ? 'iOS, Android' : 'iOS',
       category: 'HealthApplication',
       /* İlk cümle tanımın kendisidir (tek kaynak); ikinci cümle şemaya özgü
          ayrıntıdır, tanımın yerine geçmez. */
       description: `${MARKA_TANIM.tr} Beş besin grubunu renklerle gösterir, yargılamaz.`,
-      /* Adresler `MAGAZA`dan gelir ve uygulama yayına girene kadar BOŞ kalır
-         (bkz. #shared/utils/marka > MAGAZA). Panelden elle doldurmak hâlâ
-         mümkündür ama gerekmez: lansman günü tek bayrak ikisini de açar. */
-      appStoreUrl: MAGAZA.yayinda ? MAGAZA.appStore : '',
-      playStoreUrl: MAGAZA.yayinda ? MAGAZA.play : '',
+      /* Adresler `MAGAZA`dan gelir ve her mağaza KENDİ bayrağına bakar
+         (bkz. #shared/utils/marka > MAGAZA): App Store adresi 24 Ağu 2026'da
+         canlıya girdi, Play adresi bugün hâlâ 404 olduğu için basılmaz. */
+      appStoreUrl: MAGAZA.ios ? MAGAZA.appStore : '',
+      playStoreUrl: MAGAZA.android ? MAGAZA.play : '',
     },
   },
   faq: {
@@ -221,12 +234,12 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
         href: '/destek/soframiz/grup-kurma-ve-davet',
       },
       {
-        q: 'afiet’i şimdi nasıl deneyebilirim?',
+        q: 'afiet’i nasıl indiririm?',
         a:
-          'afiet kapalı betada ve ilk sofra davetleri gidiyor. afiet.co/beta üzerinden ' +
-          'başvurabilirsin; sıran geldiğinde davetin e-posta ile gelir. App Store ve ' +
-          'Google Play çıkışı da yaklaşıyor.',
-        href: '/destek/beta-sorun-giderme/beta-nasil-isliyor',
+          'afiet App Store’da yayında ve ücretsiz. iPhone’unda App Store’u açıp “afiet” ' +
+          'diye arayabilir ya da afiet.co/indir adresinden doğrudan gidebilirsin. Android ' +
+          'sürümü henüz Google Play’de değil, yolda.',
+        href: '/indir',
       },
       {
         q: 'Verilerim nerede saklanıyor?',
@@ -285,17 +298,18 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     ogTitle: TITLE,
     ogDescription:
       'Kalori saydırmadan, Türk sofrasının diliyle ailece dengeli beslenme. ' +
-      'Sofrada seni seven biri gibi konuşur. Beta şimdi açık.',
+      'Sofrada seni seven biri gibi konuşur. App Store’da yayında.',
     sitemap: { include: true, changefreq: 'weekly', priority: 1 },
   }),
-  '/beta': makePage({
-    title: 'afiet beta | İlk sofraya katıl',
+  '/indir': makePage({
+    title: 'afiet’i indir | App Store’da yayında',
     description:
-      'afiet beta için ilk gruba 100 kişi katılıyor. iOS ve Android daveti almak için ' +
-      'e-postanı bırak, sofranın diliyle dengeyi ilk deneyenlerden ol.',
-    ogTitle: "afiet şimdi beta'da",
+      'afiet App Store’da yayında ve ücretsiz. iPhone’una indir, ilk öğününü sofranın ' +
+      'kendi diliyle kaydet. Android sürümü yolda.',
+    ogTitle: 'afiet’i indir',
     ogDescription:
-      'İlk sofrada 100 kişilik yer var. iOS ve Android beta daveti için e-postanı bırak.',
+      'afiet App Store’da yayında ve ücretsiz. Kalori saymadan, dilim kase avuçla ' +
+      'dengeli beslenme. Android yolda.',
     sitemap: { include: true, changefreq: 'weekly', priority: 0.8 },
   }),
   '/blog': makePage({
@@ -344,7 +358,7 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     title: 'Destek merkezi | afiet',
     description:
       'afiet uygulamasının kullanım rehberi: kurulum, öğün kaydı ve sofra ölçüleri, Afi, ' +
-      'denge ve ritim, gruplar, hesap ve gizlilik, beta ve sorun giderme.',
+      'denge ve ritim, gruplar, hesap ve gizlilik, sürüm ve sorun giderme.',
     ogTitle: 'afiet destek merkezi',
     ogDescription:
       'Nasıl yardımcı olabiliriz? afiet’in kullanım rehberi, sorun giderme adımları ve ' +
@@ -371,7 +385,7 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     title: 'İletişim | afiet',
     description:
       'afiet ekibine ulaş: öneri, soru, sorun ya da iş birliği için bize bir kartpostal ' +
-      'yaz. Beta boyunca her mesajı ürün ekibi okuyor ve dönüyor.',
+      'yaz. Her mesajı ürün ekibi okuyor ve dönüyor.',
     ogTitle: 'Bize bir kartpostal yaz',
     ogDescription:
       'Öneri, soru, sorun ya da iş birliği: ne yazarsan yaz, gerçek bir insan okur ve ' +
@@ -673,8 +687,61 @@ export function makePage(partial: Partial<PageSeo>): PageSeo {
   }
 }
 
+/**
+ * Kod varsayılanı yönlendirmeler (kullanıcı kararı, 24 Ağu 2026).
+ *
+ * NEDEN PANELDE DEĞİL: bunlar kampanya yönlendirmesi değil, YAPISAL ve KALICI
+ * adres taşımalarıdır. Üç şey gerektiriyorlar ve panel üçünü de veremiyor:
+ * dev/staging'de de çalışmaları (oralarda `seo_redirects` boştur), PR'da
+ * gözden geçirilebilmeleri ve panelde bir "varsayılana dön" ile sessizce
+ * düşmemeleri. Panelden gelen satır aynı `from` için bunun ÜSTÜNE yazar,
+ * yani acil bir durumda hedef panelden değiştirilebilir.
+ *
+ * 24 Ağu 2026 taşınması: afiet App Store'da yayına girdi, beta kapandı.
+ * `/beta` indirme sayfasına, `beta-sorun-giderme` kategorisi `sorun-giderme`
+ * adına taşındı; beta'ya özgü üç yazı ile kurulum yazısı da yerini değiştirdi.
+ * Yolların trafiği düşüktü (GSC 30 gün: toplam 25 gösterim, 0 tık) ama
+ * indekste duruyorlar ve dışarıdan bağlantı verilmiş olabilir.
+ */
+export const DEFAULT_REDIRECTS: SeoRedirect[] = [
+  { from: '/beta', to: '/indir', code: 301 },
+
+  // Kurulum yazısı: beta davetiyle değil mağazadan kuruluyor artık.
+  { from: '/destek/baslangic/beta-davetiyle-kurulum', to: '/destek/baslangic/afieti-indirmek', code: 301 },
+
+  // Kategori adı: "Beta, sürüm ve sorun giderme" → "Sürüm ve sorun giderme".
+  { from: '/destek/beta-sorun-giderme', to: '/destek/sorun-giderme', code: 301 },
+
+  // Kategoride kalan 11 yazı: yalnız kategori parçası değişti.
+  ...[
+    'afi-fotografi-tanimiyor',
+    'android-ne-zaman',
+    'bir-sey-takildiginda',
+    'geri-bildirimim-nereye-gidiyor',
+    'kaydedemedik-uyarisi',
+    'kayitlarim-gorunmuyor',
+    'kesinti-mi-var-durum-sayfasi',
+    'oturumun-sona-erdi',
+    'surum-ve-yenilikler',
+    'uygulamayi-guncellemek',
+    'uygulama-acilmiyor-ya-da-takiliyor',
+  ].map((slug) => ({
+    from: `/destek/beta-sorun-giderme/${slug}`,
+    to: `/destek/sorun-giderme/${slug}`,
+    code: 301 as const,
+  })),
+
+  // Güncelleme yazısı TestFlight'a özgü olmaktan çıktı, slug'ı da değişti.
+  { from: '/destek/beta-sorun-giderme/testflight-guncelleme', to: '/destek/sorun-giderme/uygulamayi-guncellemek', code: 301 },
+
+  // Beta'ya özgü üç yazı kaldırıldı; karşılığı olan sayfaya taşınır.
+  { from: '/destek/beta-sorun-giderme/beta-nasil-isliyor', to: '/indir', code: 301 },
+  { from: '/destek/beta-sorun-giderme/beta-davetim-ne-zaman-gelir', to: '/indir', code: 301 },
+  { from: '/destek/beta-sorun-giderme/beta-basvurumu-guncellemek', to: '/indir', code: 301 },
+]
+
 export const DEFAULT_BUNDLE: SeoBundle = {
   settings: DEFAULT_SETTINGS,
   pages: DEFAULT_PAGES,
-  redirects: [],
+  redirects: DEFAULT_REDIRECTS,
 }

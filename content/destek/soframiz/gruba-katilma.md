@@ -5,7 +5,7 @@ description: "Davet koduyla, davet bağlantısıyla ya da herkese açık grup li
 updated: 2026-07-31
 order: 2
 keywords: [gruba katıl, davet kodu, davet bağlantısı, katılma, herkese açık grup]
-related: [soframiz/grup-kurma-ve-davet, beta-sorun-giderme/bir-sey-takildiginda]
+related: [soframiz/grup-kurma-ve-davet, sorun-giderme/bir-sey-takildiginda]
 ---
 
 Bir gruba katılmanın üç yolu var. Hepsi Grubum sekmesinden başlar.

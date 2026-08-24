@@ -58,25 +58,17 @@ try {
   ok(html.includes('og:image'), 'og:image meta mevcut')
   ok(html.includes('Çünkü sofra sayı saymaz.'), 'zag bölümü prerender HTML içinde')
 
-  // --- Beta başvuru route'u (/api/beta/apply) ---
-  // Yalnız REDDEDİLEN durumlar denenir: geçerli başvuru DB'ye yazardı ve
-  // smoke koşusu gerçek başvuru tablosunu kirletmemeli.
-  const post = (body) =>
-    fetch(`http://localhost:${PORT}/api/beta/apply`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-
-  const invalid = await post({ email: 'not-an-email', consent: true })
-  ok(invalid.status === 422, `geçersiz e-posta → 422 (${invalid.status})`)
-
-  const noConsent = await post({ email: 'smoke@afiet.co', consent: false })
-  ok(noConsent.status === 422, `rıza yoksa → 422 (${noConsent.status})`)
-
-  const honey = await post({ email: 'bot@afiet.co', consent: true, company: 'spam-co' })
-  const honeyBody = await honey.json().catch(() => ({}))
-  ok(honey.status === 200 && honeyBody.status === 'ok', `honeypot dolu → sessiz ok (${honey.status})`)
+  // --- Beta başvuru ucu EMEKLİ (24 Ağu 2026) ---
+  // Uygulama App Store'da yayına girdi, beta kapandı. Uç kaldırıldı ama
+  // `beta_applications` tablosu arşiv olarak duruyor; test ucun geri
+  // sızmadığını korur (silinmiş bir toplama ucunun sessizce dönmesi, rıza
+  // metni olmadan e-posta toplamak demektir).
+  const eskiBasvuru = await fetch(`http://localhost:${PORT}/api/beta/apply`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ email: 'smoke@afiet.co', consent: true }),
+  })
+  ok(eskiBasvuru.status === 404, `beta başvuru ucu kaldırıldı → 404 (${eskiBasvuru.status})`)
 
   // --- SEO & GEO yüzeyi (DB'siz ortamda kod varsayılanlarıyla çalışmalı) ---
   const robots = await (await fetch(`http://localhost:${PORT}/robots.txt`)).text()
@@ -94,6 +86,15 @@ try {
 
   const llms = await (await fetch(`http://localhost:${PORT}/llms.txt`)).text()
   ok(llms.startsWith('# afiet'), 'llms.txt yayında')
+  /* llms.txt'in `>` özeti = tek cümlelik marka tanımının kendisi. Bu dosya
+     üretken motorların okuduğu asıl yüzey; buraya cümlenin elle yazılmış bir
+     kopyası konursa tanım değiştiğinde sessizce eskir (11 Ağu 2026'ya kadar
+     eskimişti de). Kopya değil, `#shared/utils/marka`dan gelen cümle aranır. */
+  ok(
+    llms.includes('> afiet, kalori saydırmadan Türk sofrasının kendi ölçüleriyle (dilim, kase, avuç)'),
+    'llms.txt özeti sabitlenmiş marka tanımını basıyor',
+  )
+  ok(llms.includes('](https://afiet.co/basin)'), 'llms.txt basın kitine bağlantı veriyor')
 
   const missing = await fetch(`http://localhost:${PORT}/olmayan-sayfa-smoke`)
   ok(missing.status === 404, `bilinmeyen yol gerçek 404 (${missing.status})`)
@@ -151,6 +152,14 @@ try {
   const kitRes = await fetch(`http://localhost:${PORT}/basin-kiti/afiet-basin-kiti.zip`)
   ok(kitRes.status === 200, `basın kiti arşivi indirilebiliyor (${kitRes.status})`)
 
+  ok(basinHtml.includes('"@type":"AboutPage"'), '/basin AboutPage şeması içeriyor')
+  /* Basın sayfasındaki kurum, ana sayfadakiyle AYNI varlık olmak zorunda:
+     paylaşılan `@id` düşerse motorlar iki ayrı afiet görür. Kurucu bağı da
+     aynı sebeple aranır - şema kurum ↔ kişi bağını taşımazsa basın kiti
+     "bunu kim yapıyor" sorusunu makine tarafında yine cevapsız bırakır. */
+  ok(basinHtml.includes('/#organization'), '/basin kurumun paylaşılan @id\'sini taşıyor')
+  ok(basinHtml.includes('"founder"') && basinHtml.includes('#yazar'), '/basin kurucuyu Person kimliğine bağlıyor')
+
   /* --- Kullanım Koşulları (/kosullar) ---
      Bu sayfanın 200 dönmesi bir SEO tercihi değil, gönderim şartı: mobildeki
      paywall doğrudan buraya bağlanır ve App Store 3.1.2 bağlantıyı hem
@@ -195,6 +204,11 @@ try {
     pressEnHtml.includes('hreflang="tr"') && pressEnHtml.includes('/basin'),
     '/en/press Türkçe eşine hreflang veriyor',
   )
+  ok(pressEnHtml.includes('"@type":"AboutPage"'), '/en/press AboutPage şeması içeriyor')
+  ok(
+    pressEnHtml.includes('afiet is a mobile app that helps families'),
+    '/en/press kurum açıklamasını İngilizce marka tanımından basıyor',
+  )
 
   // --- Blog yüzeyi (DB'siz ortamda boş liste; statüler yine tutarlı olmalı) ---
   const blogRes = await fetch(`http://localhost:${PORT}/blog`)
@@ -205,15 +219,33 @@ try {
   )
   ok(blogHtml.includes('rel="canonical"'), '/blog canonical içeriyor')
 
-  const betaRes = await fetch(`http://localhost:${PORT}/beta`)
-  const betaHtml = await betaRes.text()
+  const indirRes = await fetch(`http://localhost:${PORT}/indir`)
+  const indirHtml = await indirRes.text()
   ok(
-    betaRes.status === 200 &&
-      betaHtml.includes('afiet şimdi beta') &&
-      betaHtml.includes('100 kişilik yer var'),
-    `/beta 200 ve davet metni render oluyor (${betaRes.status})`,
+    indirRes.status === 200 &&
+      indirHtml.includes('afiet’i indir') &&
+      indirHtml.includes('App Store'),
+    `/indir 200 ve indirme metni render oluyor (${indirRes.status})`,
   )
-  ok(betaHtml.includes('rel="canonical"'), '/beta canonical içeriyor')
+  ok(indirHtml.includes('rel="canonical"'), '/indir canonical içeriyor')
+
+  /* Kod varsayılanı yönlendirmeler (seoDefaults > DEFAULT_REDIRECTS).
+     Panelde SATIR YOKKEN de çalışmalılar - dev/staging'de `seo_redirects`
+     boştur ve bu testin koştuğu ortam da öyle. Üç örnek üç ayrı taşıma
+     biçimini temsil eder: sayfa, kategori ve silinmiş yazı. */
+  for (const [from, to] of [
+    ['/beta', '/indir'],
+    ['/destek/beta-sorun-giderme', '/destek/sorun-giderme'],
+    ['/destek/beta-sorun-giderme/testflight-guncelleme', '/destek/sorun-giderme/uygulamayi-guncellemek'],
+    ['/destek/beta-sorun-giderme/beta-nasil-isliyor', '/indir'],
+    ['/destek/baslangic/beta-davetiyle-kurulum', '/destek/baslangic/afieti-indirmek'],
+  ]) {
+    const r = await fetch(`http://localhost:${PORT}${from}`, { redirect: 'manual' })
+    ok(
+      r.status === 301 && r.headers.get('location') === to,
+      `${from} → ${to} 301 (${r.status} → ${r.headers.get('location')})`,
+    )
+  }
 
   const blogApi = await fetch(`http://localhost:${PORT}/api/blog/posts`)
   const blogApiBody = await blogApi.json().catch(() => null)
@@ -232,7 +264,8 @@ try {
     'blog RSS yayında ve XML',
   )
   ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
-  ok(sitemap.includes('/beta'), 'sitemap /beta sayfasını içeriyor')
+  ok(sitemap.includes('/indir'), 'sitemap /indir sayfasını içeriyor')
+  ok(!sitemap.includes('/beta'), 'sitemap artık /beta içermiyor')
 
   /* --- Gizlilik politikası: uygulamanın gerçekten yaptığı şeyler ---
      Bu dört bölüm bir üslup tercihi değil, uygulamanın canlı veri akışlarının
@@ -514,17 +547,25 @@ try {
   ok(html.includes('FAQPage'), 'FAQPage şeması HTML içinde')
   ok(html.includes('twitter:title'), 'twitter:title meta mevcut')
 
-  // Mağaza kapısı (#shared/utils/marka > MAGAZA): uygulama yayına girene kadar
-  // şema ne indirme adresi ne fiyat bildirir, lansman günü tek bayrak ikisini
-  // birden açar. Test bayrağın DEĞERİNİ değil, ikisinin BİRLİKTE davrandığını
-  // korur: adressiz fiyat da fiyatsız adres de sayfanın söylemediğini iddia
-  // eder ve iki hâl de sessizce yayına çıkabilir.
-  const magazaAdresi = html.includes('"installUrl"')
-  const magazaFiyati = html.includes('"@type":"Offer"') && html.includes('afiet+')
-  ok(
-    magazaAdresi === magazaFiyati,
-    `mağaza adresi ve fiyatı birlikte davranıyor (adres: ${magazaAdresi}, fiyat: ${magazaFiyati})`,
-  )
+  /* Mağaza kapısı (#shared/utils/marka > MAGAZA). Şemanın sayfadan fazlasını
+     iddia etmemesini korur, üç ayrı biçimde:
+
+     1. installUrl VAR ve App Store adresidir. 24 Ağu 2026'da uygulama yayına
+        girdi; adres basılmazsa motorlar indirilebilir bir uygulamayı
+        indirilemez sanır.
+     2. Play adresi şemada YOK. Android bayrağı kapalı ve o adres bugün 404;
+        404 bir indirme adresi bildirmek hiç bildirmemekten kötüdür.
+     3. Offer düğümü YOK. afiet+ gerçekten satılıyor ama SİTE hiçbir yerde
+        fiyat söylemiyor (kullanıcı kararı), şema da söylememeli.
+
+     Üçü de sessizce ters dönebilecek hâller: biri kaydığında sayfa çalışmaya
+     devam eder, yalnız arama motoruna söylenen şey yanlış olur. */
+  ok(html.includes('"installUrl"') && html.includes('apps.apple.com'),
+    'şema App Store indirme adresini bildiriyor')
+  ok(!html.includes('play.google.com'),
+    'şema Play adresini BİLDİRMİYOR (adres henüz 404)')
+  ok(!html.includes('"@type":"Offer"'),
+    'şema fiyat bildirmiyor (sitede fiyat yazmıyor)')
 
   // --- Afi'ye sor: SSS sözleşmesini bozmadan eklendi mi ---
   ok(html.includes('id="afiye-sor"'), 'Afi’ye sor bölümü prerender HTML içinde')
@@ -555,9 +596,17 @@ try {
   ok((await page.locator('ul li p').count()) === 4, '4 ses tonu balonu')
   ok((await page.locator('#haber').count()) === 1, 'kapanış bölümü mevcut')
   ok(
-    (await page.locator('#haber a[href="/beta"]').count()) >= 1,
-    'kapanış bölümü beta sayfasına yönlendiriyor',
+    (await page.locator('#haber a[href="/indir"]').count()) >= 1,
+    'kapanış bölümü indirme sayfasına yönlendiriyor',
   )
+  /* Mağaza rozetleri MAĞAZA BAŞINA bayrağa bakar (#shared/utils/marka).
+     Test bayrağın DEĞERİNİ değil, açık mağazanın gerçekten bağlantı OLDUĞUNU
+     ve kapalı olanın bağlantı OLMADIĞINI korur: iki hâl de sessizce ters
+     dönebilir ve 404 bir mağaza adresi yayınlamak en pahalı hatadır. */
+  const appStoreLink = await page.locator('#haber a[href*="apps.apple.com"]').count()
+  const playLink = await page.locator('#haber a[href*="play.google.com"]').count()
+  ok(appStoreLink >= 1, `App Store rozeti bağlantı (${appStoreLink})`)
+  ok(playLink === 0, `Google Play rozeti bağlantı DEĞİL, adres henüz 404 (${playLink})`)
 
   // --- Scroll reveal çalışıyor ---
   await page.locator('#haber').scrollIntoViewIfNeeded()
@@ -565,11 +614,11 @@ try {
   const revealed = await page.locator('.reveal.is-in').count()
   ok(revealed > 0, `scroll reveal çalışıyor (${revealed} eleman)`)
 
-  // --- Header CTA beta sayfasına götürüyor ---
+  // --- Header CTA indirme sayfasına götürüyor ---
   await page.evaluate(() => window.scrollTo(0, 0))
-  await page.getByRole('navigation').getByRole('link', { name: 'Beta’ya katıl' }).first().click()
-  await page.waitForURL('**/beta', { timeout: 10000 })
-  ok(page.url().endsWith('/beta'), 'header CTA /beta sayfasına götürüyor')
+  await page.getByRole('navigation').getByRole('link', { name: 'afiet’i indir' }).first().click()
+  await page.waitForURL('**/indir', { timeout: 10000 })
+  ok(page.url().endsWith('/indir'), 'header CTA /indir sayfasına götürüyor')
   await page.goBack({ waitUntil: 'networkidle' })
 
   // --- Mobil menü: küçük ekranda bağlantılar ulaşılabilir olmalı ---
@@ -590,60 +639,31 @@ try {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' })
 
-  let betaBody
-  await page.route('**/api/beta/apply', async (route) => {
-    if (route.request().method() === 'POST') {
-      betaBody = route.request().postDataJSON()
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"status":"ok"}' })
-      return
-    }
-    await route.continue()
-  })
-
-  await page.goto(`http://localhost:${PORT}/beta`, { waitUntil: 'networkidle' })
-  await page.getByRole('heading', { level: 1, name: "afiet şimdi beta'da." }).waitFor()
-  ok(true, '/beta h1 görünür')
-  ok((await page.locator('#beta-katil form').count()) === 1, '/beta formu görünür')
-  ok((await page.getByText('iOS başladı, Android yakında').count()) > 0, '/beta platform durumu görünür')
-  ok((await page.getByText('100 kişi', { exact: true }).count()) > 0, '/beta kontenjanı görünür')
-
-  await page.getByRole('link', { name: 'Sofrada yerini ayır' }).click()
-  await page.waitForTimeout(700)
-  const nearBetaForm = await page.evaluate(() => {
-    const r = document.getElementById('beta-katil').getBoundingClientRect()
-    return r.top > -50 && r.top < window.innerHeight
-  })
-  ok(nearBetaForm, 'beta CTA form bölümüne götürüyor')
-
-  // Adım 1 - e-posta
-  // #bf-email: footer'daki bülten formu aynı placeholder'ı taşıdığından
-  // placeholder seçicisi ikili eşleşir; beta formunun kendi kimliği kullanılır.
-  await page.locator('#bf-email').fill('beta-smoke@afiet.co')
-  await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
-  // Adım 2 - platform + hedef zorunlu
-  await page.getByRole('button', { name: 'iPhone' }).click()
-  await page.getByRole('button', { name: 'Gün boyu daha enerjik hissetmek' }).click()
-  await page.locator('#beta-katil form').getByRole('button', { name: 'Devam' }).click()
-  // Adım 3 - uygulama seçimi + onay + gönder
-  await page.getByRole('button', { name: 'FatSecret' }).click()
-  await page.getByRole('checkbox').check()
-  await page.locator('#beta-katil form').getByRole('button', { name: 'Sofrada yerini ayır' }).click()
-  await page.getByText('Sofrada yerin hazır!').waitFor()
-  ok(betaBody?.source === 'beta', 'beta formu source alanını beta gönderiyor')
-  ok(betaBody?.platform === 'ios', 'beta formu platform (ios) gönderiyor')
-  ok(betaBody?.consent === true, 'beta formu onay (consent) gönderiyor')
+  // --- /indir sayfası: mağaza rozetleri ve içerik ---
+  await page.goto(`http://localhost:${PORT}/indir`, { waitUntil: 'networkidle' })
+  await page.getByRole('heading', { level: 1, name: 'afiet’i indir.' }).waitFor()
+  ok(true, '/indir h1 görünür')
   ok(
-    Array.isArray(betaBody?.goals) && betaBody.goals.includes('enerji'),
-    'beta formu hedef seçimini gönderiyor',
+    (await page.getByText('Android sürümü yolda', { exact: false }).count()) > 0,
+    '/indir Android durumunu açıkça söylüyor',
+  )
+  const indirAppStore = page.locator('a[href*="apps.apple.com"]').first()
+  ok((await indirAppStore.count()) === 1, '/indir App Store bağlantısı taşıyor')
+  ok(
+    (await indirAppStore.getAttribute('target')) === '_blank' &&
+      (await indirAppStore.getAttribute('rel')) === 'noopener',
+    'mağaza bağlantısı yeni sekmede ve rel=noopener',
   )
   ok(
-    Array.isArray(betaBody?.appsNutrition) && betaBody.appsNutrition.includes('fatsecret'),
-    'beta formu uygulama seçimini gönderiyor',
+    (await page.locator('a[href*="play.google.com"]').count()) === 0,
+    '/indir Play adresine bağlantı VERMİYOR (adres 404)',
   )
+  ok((await page.locator('details').count()) >= 4, '/indir SSS maddeleri render oluyor')
+
   await page.reload({ waitUntil: 'networkidle' })
 
   // --- Afi'ye sor paneli: çip → akış → cevap ---
-  // Beta testleri sayfayı /beta'ya götürdü; panel ana sayfada.
+  // Önceki testler sayfayı /indir'e götürdü; panel ana sayfada.
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' })
   const afiSection = page.locator('#afiye-sor')
   await afiSection.scrollIntoViewIfNeeded()
@@ -871,10 +891,10 @@ try {
       await page.waitForTimeout(900)
     }
     await settle()
-    await page.screenshot({ path: join(process.env.SHOT_DIR, 'beta-desktop-full.png'), fullPage: true })
+    await page.screenshot({ path: join(process.env.SHOT_DIR, 'indir-desktop-full.png'), fullPage: true })
     await page.setViewportSize({ width: 390, height: 844 })
     await settle()
-    await page.screenshot({ path: join(process.env.SHOT_DIR, 'beta-mobile-full.png'), fullPage: true })
+    await page.screenshot({ path: join(process.env.SHOT_DIR, 'indir-mobile-full.png'), fullPage: true })
     console.log(`  → ekran görüntüleri: ${process.env.SHOT_DIR}`)
   }
 
