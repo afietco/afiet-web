@@ -38,10 +38,14 @@ const REFRESH_WINDOW_MS = 20 * 24 * 60 * 60 * 1000
 /** Her turda bakılacak gönderi sayısı - eski gönderiler zaten ölçülmüş olur. */
 const MEDIA_LIMIT = 25
 
-// content_publish 24 Ağu 2026'da eklendi (story otomasyonu). Scope değişince
-// mevcut token YENİ İZNİ KAZANMAZ: panelden bir kez yeniden bağlanmak gerekir.
-export const IG_SCOPES =
-  'instagram_business_basic,instagram_business_manage_insights,instagram_business_content_publish'
+// content_publish scope'u 24 Ağu 2026'da story otomasyonu için eklendi ve
+// AYNI GECE PARK EDİLDİ: yeni izinli token alınamadı (kullanıcı kararı).
+// Scope listesi eski haline döndü ki ölçüm entegrasyonu için olası bir
+// yeniden bağlanma, verilemeyen bir izne takılmasın. Paylaşım ucu ve .jpg
+// varyantı yerinde duruyor; park açılırken sıra: scope'u geri ekle →
+// panelden yeniden bağlan → CONTENT_STORY_SHARE_ENABLED=true + backend
+// deploy (bkz. afiet-backend docs/content-pipeline.md).
+export const IG_SCOPES = 'instagram_business_basic,instagram_business_manage_insights'
 
 export type IgConfig = { appId: string; appSecret: string; redirectUri: string }
 
