@@ -1,6 +1,6 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
-import { AI_BOTS } from '~~/server/utils/seoDefaults'
+import { IZLENEN_BOTLAR } from '~~/server/utils/seoDefaults'
 
 /**
  * AI tarayıcı erişim kaydı (GEO ölçümünün "sunucu logu" katmanı).
@@ -60,10 +60,11 @@ export async function ensureBotTables(sql: Sql) {
       status integer NOT NULL
     )
   `
-  // `bot` kolonunda BİLEREK CHECK yok: bot listesi (seoDefaults > AI_BOTS)
+  // `bot` kolonunda BİLEREK CHECK yok: liste (seoDefaults > IZLENEN_BOTLAR)
   // yeni tarayıcı çıktıkça büyüyor ve DB kısıtıyla kod listesini senkron
   // tutmak sessiz 422/500'lerin bilinen kaynağı. Geçerli değerler kod
-  // tarafında `detectAiBot` ile belirlenir, DB serbest metin tutar.
+  // tarafında `detectAiBot` ile belirlenir, DB serbest metin tutar. Kısıt
+  // olsaydı 24 Ağu'da eklenen `?<jeton>` biçimi de imkânsız olurdu.
   await sql`CREATE INDEX IF NOT EXISTS ai_bot_hits_ts_idx ON ai_bot_hits (ts)`
   await sql`CREATE INDEX IF NOT EXISTS ai_bot_hits_bot_idx ON ai_bot_hits (bot)`
   await sql`CREATE INDEX IF NOT EXISTS ai_bot_hits_status_idx ON ai_bot_hits (status)`
@@ -89,26 +90,70 @@ export async function insertBotHit(sql: Sql, h: BotHit) {
 // ── Saf yardımcılar (DB'siz, birim test edilebilir) ──────────────────────────
 
 /**
- * Tanınan ajanlar robots.txt'yi üreten listeyle AYNI kaynaktan gelir
- * (seoDefaults > AI_BOTS): panelde bir bota izin verilip verilmediği ile
- * onun ölçüldüğü liste ayrışırsa "engelledim ama hâlâ geliyor" tipi sorular
- * cevapsız kalır. UZUNA GÖRE sıralı: "Applebot-Extended" gibi bir ad,
- * ileride listeye düz "Applebot" da girerse ondan ÖNCE denenmeli, yoksa
- * uzun ad hiç eşleşmez.
+ * Tanınan ajanlar `seoDefaults > IZLENEN_BOTLAR`dan gelir; bu liste
+ * robots.txt'yi üreten `AI_BOTS` ile BİLEREK aynı değildir (ayrımın gerekçesi
+ * o dosyada). Kısaca: AI_BOTS "kime izin veriyoruz", IZLENEN_BOTLAR "kim
+ * geldi". Ölçüm listesi arama motorlarını da içerir çünkü AI yanıt
+ * yüzeylerinin çoğunun ayrı bir tarayıcısı yok.
+ *
+ * UZUNA GÖRE sıralı ve bu ZORUNLU: "Meta-ExternalFetcher" düz "Applebot"tan
+ * önce denenmezse kısa ad uzun adı yer. Bugünkü somut çift
+ * `Applebot` ⊂ `Applebot-Extended`, `Bingbot` ⊂ hiçbir şey, ama liste
+ * büyüdükçe kural gerekli kalır.
  */
-const BOT_AGENTS = AI_BOTS.map((b) => b.agent)
+const BOT_AGENTS = IZLENEN_BOTLAR.map((b) => b.agent)
   .slice()
   .sort((a, b) => b.length - a.length)
   .map((agent) => ({ agent, low: agent.toLowerCase() }))
 
-/** UA metninde tanınan bir AI tarayıcı varsa kanonik adını döner. */
+/**
+ * Kendini bot ilan eden ama listemizde OLMAYAN UA'ları yakalayan ağ.
+ *
+ * NEDEN VAR (24 Ağu 2026): whitelist ölçümün en büyük kör noktasıydı. "Hangi
+ * botlar geliyor" sorusu ancak listede olanı sayabildiği için, bilmediğimiz
+ * bir tarayıcının varlığını ÖĞRENMENİN yolu yoktu. Artık bilinmeyenler
+ * `?<jeton>` adıyla birikiyor (jeton UA'daki ürün adından çıkar) ve ham UA
+ * zaten `ua` kolonunda duruyor, yani teşhis SQL'le yapılabiliyor.
+ *
+ * Anahtarlar İNSAN TARAYICISINDA GEÇMEYECEK şekilde daraltıldı: Chrome,
+ * Safari ve Firefox UA'larının hiçbiri bu kelimeleri taşımıyor. `index`,
+ * `preview` ve `feed` BİLEREK yok (yanlış pozitif riski taşıyorlar), aynı
+ * şekilde `curl`, `python-requests`, `node-fetch` gibi script istemcileri de
+ * dışarıda: onlar kendini bot ilan etmiyor ve tabloyu gürültüye çevirirdi.
+ *
+ * SINIR: jeton UA'dan geliyor, yani taklit edilebilir ve teoride sonsuz
+ * çeşitlilik üretilebilir. Jeton 40 karakterle sınırlı; kardinalite bir sorun
+ * olursa çözüm IP doğrulaması, jetonu kısaltmak değil.
+ */
+const BOT_ANAHTARI = /(?:bot|crawler|crawl|spider|fetcher|scraper|slurp|archiver)/i
+/** UA'nın en başındaki ürün adı: `Barkrowler/0.9 (…)` → `Barkrowler`. */
+const ILK_URUN = /^([A-Za-z0-9][A-Za-z0-9._-]{0,39})\//
+/** Anahtar kelimeyi TAŞIYAN ürün adı: `… compatible; SemrushBot/7~bl …` → `SemrushBot`. */
+const ANAHTARLI_URUN =
+  /([A-Za-z0-9][A-Za-z0-9._-]{0,38}(?:bot|crawler|crawl|spider|fetcher|scraper|slurp|archiver)[A-Za-z0-9._-]{0,10})/i
+
+/**
+ * UA metninde bir tarayıcı varsa adını döner: tanınıyorsa kanonik ad,
+ * tanınmıyorsa `?<jeton>`. Hiçbir bot işareti yoksa null.
+ *
+ * Jeton iki adımda aranır ve SIRA önemli. Kendi adında anahtar kelime
+ * taşımayan botlar (Barkrowler) yalnız künyesindeki URL'den ele veriyor;
+ * o durumda anahtarlı arama "crawler" gibi bir çöp jeton üretirdi, ilk ürün
+ * adı ise gerçek adı verir. Tersine `Mozilla/5.0 (compatible; SemrushBot/…)`
+ * kalıbında ilk ürün adı "Mozilla"dır ve hiçbir şey söylemez, orada anahtarlı
+ * arama doğru cevabı bulur. İkisi de tutmazsa satır `?bilinmeyen` olarak
+ * birikir: ham UA `ua` kolonunda durduğu için teşhis yine yapılabilir.
+ */
 export function detectAiBot(ua: string): string | null {
   if (!ua) return null
   const low = ua.toLowerCase()
   for (const b of BOT_AGENTS) {
     if (low.includes(b.low)) return b.agent
   }
-  return null
+  if (!BOT_ANAHTARI.test(ua)) return null
+  const ilk = ILK_URUN.exec(ua)?.[1]
+  const jeton = ilk && ilk.toLowerCase() !== 'mozilla' ? ilk : ANAHTARLI_URUN.exec(ua)?.[1]
+  return jeton ? `?${jeton.toLowerCase().slice(0, 40)}` : '?bilinmeyen'
 }
 
 /**
@@ -134,7 +179,11 @@ export function loglanirMi(path: string): boolean {
   return !ATLANAN.test(path)
 }
 
-/** Bot adından sahibi ve amacı (eğitim/arama/kullanici) okunur; bilinmiyorsa null. */
+/**
+ * Bot adından sahibi ve amacı (eğitim/arama/kullanici) okunur; bilinmiyorsa
+ * null. `?jeton` adlı satırlar bilerek null döner: sahibini bilmiyoruz ve
+ * uydurmak, panelde "biliyoruz" izlenimi verirdi.
+ */
 export function botBilgisi(agent: string) {
-  return AI_BOTS.find((b) => b.agent === agent) ?? null
+  return IZLENEN_BOTLAR.find((b) => b.agent === agent) ?? null
 }

@@ -33,6 +33,37 @@ export const MARKA_TANIM: Record<SiteLocale, string> = {
 }
 
 /**
+ * Wikidata kaydı: afiet'in üretken motorlara verdiği MAKİNE OKUNUR kimliği.
+ * 25 Ağustos 2026'da açıldı; ifadeler, referanslar ve kayıt sırasında verilen
+ * kararlar `research/2026-08-11-wikidata-kayit-hazirligi.md` dosyasında.
+ *
+ * NEDEN ŞEMAYA GİRİYOR: `sameAs`, bir varlığın "başka nerede aynı varlık
+ * olarak kayıtlı olduğunu" söyler ve Wikidata bu grafiğin merkezinde durduğu
+ * için kimlik çözümlemesindeki en güçlü tek bağdır. Bağ İKİ YÖNLÜ olmak
+ * zorunda: kayıt `P856` ile siteye işaret ediyor, site de buradan kayda.
+ * Tek yönlü bağın karşılığı yok.
+ *
+ * NEDEN Organization DEĞİL SoftwareApplication düğümünde: kayıt `P31` ile
+ * "mobile app" + "health app" olarak tiplendi, yani UYGULAMAYI tanımlıyor,
+ * şirketi değil. `sameAs` "aynı varlık" demektir; kurum düğümüne koymak
+ * şirketi uygulamayla aynı şey ilan etmek olurdu. Şirket için ayrı bir kayıt
+ * açılırsa o `schema.organization.sameAs` listesine girer (orası PANELDEN
+ * yönetiliyor, bkz. seoDefaults > organization).
+ *
+ * NEDEN PANELDEN YÖNETİLMİYOR: bu bir kampanya metni değil, kimlik; ömründe
+ * bir kez değişir. Gerekçe `ROBOTS_DIRECTIVES` ile aynı - pratikte hiç
+ * değişmeyen bir sabit için iki repoya alan açmanın karşılığı yok. Yan faydası
+ * daha büyük: panel bir `seo_settings.schema` satırı yazdığı anda o satır
+ * kendi alanlarını DONDURUYOR (11 Ağu'da `organization.sameAs`ı boş bir dizi
+ * ezmişti). `sameAs` settings'in parçası olmadığı için override oraya
+ * ulaşamıyor, yani bu bağ panel kaydından etkilenmez.
+ */
+export const WIKIDATA = {
+  qid: 'Q141169446',
+  url: 'https://www.wikidata.org/wiki/Q141169446',
+} as const
+
+/**
  * Marka künyesi: basın sayfasındaki hızlı bilgiler ve şema aynı yerden okur.
  * Yalnız DOĞRULANABİLİR alanlar durur; kullanıcı sayısı, indirme adedi gibi
  * kanıtlanamayan hiçbir rakam buraya girmez (basına verilen her sayı sorulur).

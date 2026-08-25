@@ -18,7 +18,12 @@ export default defineConfig({
   // Nuxt'un `~~` kök takma adı burada elle kurulur: sunucu yardımcıları
   // birbirine bu adla bağlanıyor (durum uyarıları zinciri), vitest ise Nuxt
   // yapılandırmasını okumaz ve alias olmadan import anında düşer.
+  // `#shared/` aynı sebeple eklendi (24 Ağu 2026): botStore → seoDefaults →
+  // `#shared/utils/marka` zinciri bot tespit testini import anında düşürüyordu.
   resolve: {
-    alias: [{ find: /^~~\//, replacement: `${fileURLToPath(new URL('.', import.meta.url))}` }],
+    alias: [
+      { find: /^~~\//, replacement: `${fileURLToPath(new URL('.', import.meta.url))}` },
+      { find: /^#shared\//, replacement: `${fileURLToPath(new URL('./shared/', import.meta.url))}` },
+    ],
   },
 })
