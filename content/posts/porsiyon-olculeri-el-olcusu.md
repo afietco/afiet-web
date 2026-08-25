@@ -24,7 +24,7 @@ Tartının bir başka sorunu da şu: sayılar zamanla dikkatini yemekten alıp e
 
 Elinin dört farklı hâli, dört farklı besin grubunun porsiyonunu anlatır: avuç içi proteini, yumruk sebzeyi, kapalı avuç (avuç dolusu) tahıl ve nişastalı besinleri, başparmak ise yoğun yağları temsil eder. Bu dörtlü, dünyada yaygın kullanılan bir el ölçüsü porsiyon sistemidir ve bir öğünü saniyeler içinde okumanı sağlar.
 
-![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
+![avuç içi protein, yumruk sebze, kapalı avuç (avuç dolusu) tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
 
 | Elin | Ne ölçer | Sofradan örnek |
 | --- | --- | --- |

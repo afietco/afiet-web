@@ -70,7 +70,7 @@ Sofra dilinde: bir adet elma, bir dilim karpuz, bir kase çilek. Rengi kırmız�
 
 Ekmek, bulgur, pirinç, makarna, yulaf... Bu aile günlük enerjinin ana kaynağı ve Türk sofrasının belkemiği. TÜBER, tahıl grubunda tam tahıllı seçeneklere yer açmayı önerir: tam buğday ekmeği, bulgur, yulaf gibi.
 
-Sofra dilinde: bir dilim ekmek, bir avuç dolusu bulgur pilavı, bir kase yulaf. Rengi sarı: buğday başağının, olgun ekmeğin sıcak sarısı.
+Sofra dilinde: bir dilim ekmek, bir kapalı avuç bulgur pilavı, bir kase yulaf. Rengi sarı: buğday başağının, olgun ekmeğin sıcak sarısı.
 
 ## Renkleri tabağa taşı: sağlıklı tabak modeli
 
@@ -85,7 +85,7 @@ Miktar tarafını dert etme: eline ve mutfağındaki doğal ölçülere güveneb
 Teoriyi sofraya koyalım. Bu bir kural değil, sadece renklerin gün içinde nasıl gezindiğine dair bir fikir:
 
 - **Kahvaltı**: birkaç dilim peynir (mavi), haşlanmış yumurta (turuncu), domates-salatalık (yeşil), bir dilim tam tahıllı ekmek (sarı). Dört renk, tek masa.
-- **Öğle**: bir kase mercimek çorbası (turuncu), bir avuç dolusu bulgur pilavı (sarı), bol salata (yeşil), bir bardak ayran (mavi).
+- **Öğle**: bir kase mercimek çorbası (turuncu), bir kapalı avuç bulgur pilavı (sarı), bol salata (yeşil), bir bardak ayran (mavi).
 - **Ara**: bir adet elma ya da bir kase çilek (kırmızı), istersen yanına bir avuç fındık (turuncu).
 - **Akşam**: fırında balık ya da zeytinyağlı nohut (turuncu), sebze yemeği (yeşil), bir dilim ekmek (sarı), bir kase yoğurt (mavi).
 

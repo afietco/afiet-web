@@ -8,7 +8,7 @@ cover_url: /covers/el-porsiyon-rehberi.png
 published_at:
 ---
 
-Kalori saymadan dengeli beslenmek mümkün: sayının yerine elini koyarsın. Bir öğünde kabaca bir avuç içi protein, bir yumruk sebze, bir avuç dolusu tahıl ve bir başparmak yağ hedeflersin; tartıya da hesap makinesine de gerek kalmaz.
+Kalori saymadan dengeli beslenmek mümkün: sayının yerine elini koyarsın. Bir öğünde kabaca bir avuç içi protein, bir yumruk sebze, bir kapalı avuç tahıl ve bir başparmak yağ hedeflersin; tartıya da hesap makinesine de gerek kalmaz.
 
 Kahvaltını yerken telefonuna kaç kalori girdiğini hesapladığın günler olduysa bu tanıdık gelecek: bir dilim ekmeğin, bir avuç cevizin, çayının yanındaki peynirin ardından o küçük rakamların toplanmasını izlemek. Bir süre sonra yemek, sevdiğin bir şey olmaktan çıkıp çözülmesi gereken bir probleme dönüşebiliyor.
 
@@ -34,13 +34,13 @@ Dengenin tanımını, beş besin grubunu ve haftaya yayılan mantığını başt
 
 ## Elin senin ölçün
 
-![avuç içi protein, yumruk sebze, avuç dolusu tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
+![avuç içi protein, yumruk sebze, kapalı avuç (avuç dolusu) tahıl ve nişasta, başparmak yağ: afiet el porsiyon rehberi](/covers/el-porsiyon-rehberi.png)
 
 Elinin güzel yanı, her zaman yanında olması ve senin bedeninle orantılı büyümesi. Daha iri bir el, genelde daha çok besine ihtiyaç duyan bir bedene ait; yani ölçü otomatik olarak sana göre ayarlanıyor. Beslenme uzmanlarının yaygın olarak önerdiği bu [el porsiyon yöntemi](https://www.precisionnutrition.com/hand-portion-faq), pratik bir başlangıç noktası sunar:
 
 - **Avuç içi: protein.** Bir öğündeki et, tavuk, balık ya da köftenin, aşağı yukarı avuç içinin büyüklüğü ve kalınlığı kadar olması iyi bir referans. Mercimek, nohut gibi bitkisel proteinlerde de benzer bir dolgunluk düşün.
 - **Yumruk: sebze.** Sebzede cömert olabilirsin; bir yumruk kadarı güzel bir başlangıç, canın isterse iki yumruk da olur. Burada üst sınır peşinde koşmuyoruz.
-- **Avuç dolusu: tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir avuç dolusu (kabaca bir kupa) pratik bir ölçü.
+- **Kapalı avuç: tahıl ve nişasta.** Pilav, makarna, bulgur ya da patates için bir kapalı avuç, yani avuç dolusu (kabaca bir kupa) pratik bir ölçü.
 - **Başparmak: yağ.** Zeytinyağı, tereyağı, fındık ezmesi gibi yoğun yağlar için başparmağın kadarı iyi bir pusula.
 
 İngiltere Diyetisyenler Birliği de benzer [el temelli porsiyon ipuçlarını](https://www.bda.uk.com/resource/food-facts-portion-sizes.html) öneriyor. Bunları bir reçete gibi değil, gözünü eğiten bir alışkanlık gibi düşün: birkaç öğün sonra tabağına bakınca dengeyi kendiliğinden sezmeye başlarsın. Menemen, mercimek çorbası ve pilav gibi tanıdık yemeklerde bunun karşılığını merak ediyorsan, [el ölçüsüyle porsiyon rehberimize](/blog/porsiyon-olculeri-el-olcusu) göz atabilirsin.
@@ -62,7 +62,7 @@ Teoriyi bir güne yayalım. Aşağıdaki örnek bir kural değil, sadece dengeni
 
 **Sabah.** Bir dilim tam tahıllı ekmek, avuç içi kadar beyaz peynir, bir yumruk domates-salatalık ve birkaç zeytin. Yanında çayın. Denge burada: tahıl, protein, sebze ve biraz yağ aynı masada.
 
-**Öğle.** Bir kase mercimek çorbası, avuç içi kadar tavuk ya da köfte, bir avuç dolusu bulgur pilavı ve bol yeşillik. Ağırlaşmadan doyuran bir tabak.
+**Öğle.** Bir kase mercimek çorbası, avuç içi kadar tavuk ya da köfte, bir kapalı avuç bulgur pilavı ve bol yeşillik. Ağırlaşmadan doyuran bir tabak.
 
 **Akşam.** Zeytinyağlı sebze yemeği (bir-iki yumruk sebze), yanında bir kase yoğurt ve bir dilim ekmek. Canın tatlı isterse, bir dilim de karpuz ya da bir avuç kuruyemiş güzel bir kapanış olur.
 
@@ -80,7 +80,7 @@ Bir öğünde ölçüyü kaçırdıysan da sorun yok. Bir tabak yemek, bir gün�
 
 Her şeyi bir anda değiştirmen gerekmiyor. En güzeli, tek bir öğünle başlamak.
 
-Yarın sadece bir öğünde tabağına bak ve sor: proteinim var mı (avuç içi), sebzem var mı (yumruk), enerjim var mı (avuç dolusu tahıl)? Eksik bir misafir varsa nazikçe davet et. Bu kadar. Birkaç gün sonra bu bakış kendiliğinden gelmeye başlar; işte alışkanlık böyle oturur; zorlamayla değil, tekrar eden küçük ve keyifli anlarla.
+Yarın sadece bir öğünde tabağına bak ve sor: proteinim var mı (avuç içi), sebzem var mı (yumruk), enerjim var mı (kapalı avuç tahıl)? Eksik bir misafir varsa nazikçe davet et. Bu kadar. Birkaç gün sonra bu bakış kendiliğinden gelmeye başlar; işte alışkanlık böyle oturur; zorlamayla değil, tekrar eden küçük ve keyifli anlarla.
 
 Bu yolculukta yalnız değilsin. [afiet](/), sofrada seni seven bir arkadaş gibi; kalori saymak yerine dilim, kase ve avuçla dengeyi görmene yardım ediyor. Daha fazla nazik rehber için [blogumuzdaki diğer yazılara](/blog) da göz atabilirsin.
 
@@ -95,7 +95,7 @@ Evet. Denge, her lokmayı rakama çevirmekten değil, tabağına farklı besin g
 Kesin bir terazi değil, pratik bir pusuladır. Elin bedeninle orantılı olduğu için ölçü otomatik olarak sana göre ayarlanır. Başlangıç için fazlasıyla yeterli; zamanla gözün tabaktaki dengeyi kendiliğinden okumaya başlar.
 
 **Avuç, yumruk ve avuç içi tam olarak neyi ölçüyor?**
-Yaygın kullanılan rehberde avuç içi bir porsiyon proteini, yumruk bir porsiyon sebzeyi, avuç dolusu bir porsiyon tahıl/nişastayı, başparmak ise bir porsiyon yağı temsil eder. Bunlar esnek başlangıç ölçüleridir, katı kurallar değil.
+Yaygın kullanılan rehberde avuç içi bir porsiyon proteini, yumruk bir porsiyon sebzeyi, kapalı avuç bir porsiyon tahıl/nişastayı, başparmak ise bir porsiyon yağı temsil eder. Bunlar esnek başlangıç ölçüleridir, katı kurallar değil.
 
 **Bir öğünde ölçüyü kaçırırsam ne olur?**
 Hiçbir şey. Tek bir öğün ne emeğini ne de dengeni bozar. Denge günler ve haftalar içinde kurulur; bir sonraki öğünde kaldığın yerden, suçluluk duymadan devam edebilirsin.
