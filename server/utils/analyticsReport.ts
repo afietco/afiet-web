@@ -1,4 +1,5 @@
 import type { NeonQueryFunction } from '@neondatabase/serverless'
+import { AI_GUESS_EXCLUDED_PREFIXES } from './analyticsStore'
 
 /**
  * Web analitiği okuma/aggregate tarafı. `analytics_events`ten TOPLU (kohort)
@@ -23,6 +24,25 @@ type BreakdownRow = { key: string; label: string; visits: number }
 type ContentRow = { value: string; visits: number; magaza: number; bulten: number }
 /** Web dönüşümleri: mağaza tıklaması (mağazaya göre) ve bülten kaydı; reklam tıklama kimliğiyle eşlenen pay. */
 type WebConversions = { magazaPlay: number; magazaAppstore: number; bulten: number; withClickId: number }
+
+/**
+ * Yapay zeka trafiği. İKİ SAYI AYRI DURUR ve toplanmaz:
+ *
+ * `referred` ÖLÇÜLEN gerçektir: referrer'ı bir AI yüzeyi olan girişler
+ * (`channel='ai'`). Kanal tablosundaki "Yapay zeka" satırıyla aynı sayıdır.
+ *
+ * `likely` bir SEZGİSELDİR: referrer taşımayan yeni ziyaretçinin ana sayfa
+ * dışına inişi. Yer imi, elle yazılan adres ve QR trafiği de buraya düşer.
+ * Mutlak bir ölçüm değil TREND göstergesidir ve panelde öyle etiketlenir.
+ * Kanal tablosuna KARIŞMAZ (kullanıcı kararı, 26 Ağu 2026).
+ */
+type AiTraffic = {
+  referred: number
+  sources: SourceRow[]
+  likely: number
+  directEntries: number
+  likelyOfDirect: number
+}
 
 export type AnalyticsData = {
   generatedAt: string
@@ -59,15 +79,16 @@ export type AnalyticsData = {
   referrers: SourceRow[]
   utm: { source: UtmRow[]; medium: UtmRow[]; campaign: UtmRow[]; term: UtmRow[]; content: ContentRow[] }
   webConversions: WebConversions
+  aiTraffic: AiTraffic
   devices: BreakdownRow[]
   browsers: BreakdownRow[]
   countries: BreakdownRow[]
 }
 
 const CHANNEL_LABEL: Record<string, string> = {
-  search: 'Arama', direct: 'Doğrudan', social: 'Sosyal', referral: 'Diğer siteler', campaign: 'Kampanya (UTM)',
+  search: 'Arama', ai: 'Yapay zeka', direct: 'Doğrudan', social: 'Sosyal', referral: 'Diğer siteler', campaign: 'Kampanya (UTM)',
 }
-const CHANNEL_ORDER = ['search', 'direct', 'social', 'referral', 'campaign']
+const CHANNEL_ORDER = ['search', 'ai', 'direct', 'social', 'referral', 'campaign']
 const DEVICE_LABEL: Record<string, string> = { mobile: 'Mobil', desktop: 'Masaüstü', tablet: 'Tablet' }
 const STATIC_TITLE: Record<string, string> = { '/': 'Ana sayfa', '/blog': 'Blog', '/gizlilik': 'Gizlilik', '/hesap-sil': 'Hesap sil' }
 const COUNTRY_LABEL: Record<string, string> = {
@@ -95,12 +116,16 @@ function dayKeys(days: number): string[] {
 export async function aggregateAnalytics(sql: Sql, domains: string[], range: Range): Promise<AnalyticsData> {
   const days = DAYS[range]
   const ourHosts = domains.map((h) => h.replace(/^www\./, ''))
+  // Yol öneki listesini LIKE kalıplarına çevir: tam eşleşme ya da alt yol.
+  // Öneklerde LIKE joker karakteri (% _) YOK, o yüzden kaçış gerekmiyor;
+  // listeye joker taşıyan bir yol eklenirse burası da düşünülmeli.
+  const aiGuessExcludedLike = AI_GUESS_EXCLUDED_PREFIXES.flatMap((x) => [x, `${x}/%`])
 
   const [
     totalsRows, prevRows, seriesRows, pagesRows, durRows,
     channelRows, referrerRows, utmSrcRows, utmMedRows, utmCampRows,
     deviceRows, browserRows, countryRows, blogTitleRows, convRows,
-    utmTermRows, utmContentRows, webConvRows,
+    utmTermRows, utmContentRows, webConvRows, aiSourceRows, aiRows,
   ] = await Promise.all([
     sql`SELECT
           count(*) FILTER (WHERE event='pageview')::int AS views,
@@ -225,6 +250,26 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
         FROM analytics_events e
         WHERE e.event IN ('magaza_tik','bulten_kayit')
           AND e.host = ANY(${domains}) AND e.ts >= now() - make_interval(days => ${days})`,
+    // Hangi AI yüzeyinden geldi (ÖLÇÜLEN, referrer'lı).
+    sql`SELECT referrer_host AS source, count(*)::int AS visits
+        FROM analytics_events
+        WHERE event='pageview' AND is_entry AND channel='ai' AND referrer_host IS NOT NULL
+          AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})
+        GROUP BY referrer_host ORDER BY visits DESC LIMIT 8`,
+    // AI toplamı + "muhtemel AI" sezgiseli + karşılaştırma tabanı, tek turda.
+    // ⚠️ AYNA: sezgiselin kuralı `analyticsStore.ts > isLikelyAiEntry` içinde
+    // TS olarak da yazılıdır (birim testi orada koşar) ve ikisi BİRLİKTE
+    // değişir. Dışlanan yol listesi tek kaynaktır, buraya parametre gelir.
+    sql`SELECT
+          count(*) FILTER (WHERE channel='ai')::int AS referred,
+          count(*) FILTER (WHERE channel='direct')::int AS direct_entries,
+          count(*) FILTER (
+            WHERE channel='direct' AND is_new_visitor AND path <> '/'
+              AND NOT (path LIKE ANY(${aiGuessExcludedLike}))
+          )::int AS likely
+        FROM analytics_events
+        WHERE event='pageview' AND is_entry
+          AND host = ANY(${domains}) AND ts >= now() - make_interval(days => ${days})`,
   ])
 
   const t = (totalsRows[0] ?? {}) as { views?: number; visitors?: number; sessions?: number; avg_ms?: number }
@@ -274,8 +319,16 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
       }
     })
 
-  const channels: ChannelRow[] = (channelRows as { channel: string; visits: number }[])
-    .map((r) => ({ key: r.channel, label: CHANNEL_LABEL[r.channel] ?? r.channel, visits: r.visits }))
+  // `ai` satırı SIFIRKEN DE gösterilir. Burada sıfır bir ölçüm SONUCUDUR
+  // ("henüz hiçbir yapay zeka yüzeyinden yönlendirme almadık"); satırın hiç
+  // olmaması ise "bu ölçülmüyor" diye okunur ve tam da kapatmaya çalıştığımız
+  // kör noktayı geri getirir. Diğer kanallar bu muameleyi görmez: onların
+  // sıfırı bir haber değil.
+  const channelVisits = new Map<string, number>()
+  for (const r of channelRows as { channel: string; visits: number }[]) channelVisits.set(r.channel, r.visits)
+  if (!channelVisits.has('ai')) channelVisits.set('ai', 0)
+  const channels: ChannelRow[] = [...channelVisits.entries()]
+    .map(([key, visits]) => ({ key, label: CHANNEL_LABEL[key] ?? key, visits }))
     .sort((a, b) => CHANNEL_ORDER.indexOf(a.key) - CHANNEL_ORDER.indexOf(b.key))
 
   const referrers: SourceRow[] = (referrerRows as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits }))
@@ -289,6 +342,17 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
     magazaAppstore: wc.magaza_appstore ?? 0,
     bulten: wc.bulten ?? 0,
     withClickId: wc.with_click_id ?? 0,
+  }
+
+  const ai = (aiRows[0] ?? {}) as { referred?: number; direct_entries?: number; likely?: number }
+  const aiDirectEntries = ai.direct_entries ?? 0
+  const aiLikely = ai.likely ?? 0
+  const aiTraffic: AiTraffic = {
+    referred: ai.referred ?? 0,
+    sources: (aiSourceRows as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits })),
+    likely: aiLikely,
+    directEntries: aiDirectEntries,
+    likelyOfDirect: pct(aiLikely, aiDirectEntries),
   }
 
   const devices: BreakdownRow[] = (deviceRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: DEVICE_LABEL[r.key] ?? r.key, visits: r.visits }))
@@ -318,6 +382,7 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
     referrers,
     utm: { source: utmMap(utmSrcRows), medium: utmMap(utmMedRows), campaign: utmMap(utmCampRows), term: utmMap(utmTermRows), content: contentRows },
     webConversions,
+    aiTraffic,
     devices,
     browsers,
     countries,
