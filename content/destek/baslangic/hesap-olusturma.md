@@ -3,7 +3,7 @@ slug: hesap-olusturma
 title: "afiet hesabımı nasıl oluştururum?"
 description: "Hesap üç yoldan açılır: e-posta ile, Apple ile ya da Google ile. Adımlar, arkadaş kodun ve e-postanı doğrulama burada."
 updated: 2026-08-25
-order: 3
+order: 4
 keywords: [hesap oluşturma, kayıt ol, apple ile giriş, google ile giriş, arkadaş kodu, şifre, e-posta doğrulama]
 related: [baslangic/afieti-indirmek, baslangic/ilk-acilista-ne-oluyor, hesap-gizlilik/sifremi-unuttum]
 ---

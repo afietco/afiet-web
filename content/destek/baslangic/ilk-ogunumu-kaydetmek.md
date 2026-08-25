@@ -3,7 +3,7 @@ slug: ilk-ogunumu-kaydetmek
 title: "İlk öğünümü nasıl kaydederim?"
 description: "Besin ekleme üç adımda ilerler: öğünü seç, besini bul, ölçüsünü söyle. Listede olmayan yemekler için de iki ayrı yol var, ikisi de burada."
 updated: 2026-08-01
-order: 5
+order: 6
 keywords: [besin ekle, öğün kaydetme, ilk kayıt, ölçü, porsiyon, besin grubu, kaydet]
 related: [ogun-kaydi/sofra-olculeri-dilim-kase-avuc, ogun-kaydi/ogunu-duzenleme-ve-silme, afi/afiye-fotografla-yemek-tanitma]
 ---

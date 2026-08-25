@@ -3,7 +3,7 @@ slug: uygulamanin-haritasi
 title: "afiet'te ne nerede? Dört sekme ve menü"
 description: "Bugün, Beslenme, Vücudum ve Grubum sekmeleriyle menüdeki sayfaların her birinin neye yaradığını anlatan kısa bir yön bulma haritası."
 updated: 2026-08-01
-order: 7
+order: 8
 keywords: [sekmeler, menü, harita, bugün, beslenme, vücudum, grubum, nerede]
 related: [baslangic/bugun-ekrani, baslangic/beslenme-ekrani, baslangic/vucudum-ekrani]
 ---

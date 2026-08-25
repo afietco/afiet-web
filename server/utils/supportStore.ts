@@ -8,6 +8,7 @@ import type {
   SupportSearchRow,
 } from '#shared/types/support'
 import { parseFrontmatter, toList } from './frontmatter'
+import { answerOpening, mdPlain } from './answerDigest'
 import { SUPPORT_CATEGORIES } from './supportCategories'
 
 /**
@@ -103,15 +104,7 @@ function renderBody(source: string): { html: string; toc: SupportHeading[] } {
 }
 
 /** Arama dizini ve llms-full.txt için: markdown işaretlerinden arınmış gövde. */
-function plainText(source: string): string {
-  return source
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/[#>*_`|-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
+const plainText = mdPlain
 
 // ── Depo ─────────────────────────────────────────────────────────────────────
 
@@ -303,8 +296,8 @@ export async function supportLlmsSection(base: string): Promise<string> {
   const lines: string[] = ['## Destek merkezi', '']
   lines.push(
     `Kullanım soruları ve sorun giderme: [${base}/destek](${base}/destek). ` +
-      'Yazıların tam metni ' +
-      `[${base}/llms-full.txt](${base}/llms-full.txt) adresindedir.`,
+      'Sitedeki her sorunun doğrudan cevabı ve adresi ' +
+      `[${base}/llms-full.txt](${base}/llms-full.txt) dosyasındadır.`,
     '',
   )
   for (const category of categories) {
@@ -321,30 +314,30 @@ export async function supportLlmsSection(base: string): Promise<string> {
   return lines.join('\n')
 }
 
-/** llms-full.txt: tüm destek gövdesi tek dosyada, düz metin. */
-export async function supportLlmsFull(base: string): Promise<string> {
+/**
+ * llms-full.txt'nin destek bölümü: her yazının SORUSU, doğrudan cevabı ve
+ * kanonik adresi. Tam gövde artık buraya girmiyor (26 Ağu 2026); dosya 200
+ * KB'tı, 14 günde sıfır istek aldı ve blog ile hesaplama araçlarını hiç
+ * taşımıyordu. Adres verildiği için tam metin isteyen onu çekebilir.
+ */
+export async function supportLlmsAnswers(base: string): Promise<{
+  section: string
+  updated: string
+}> {
   const { categories, articles, updated } = await getStore()
-  const parts: string[] = [
-    '# afiet destek merkezi (tam metin)',
-    '',
-    `> afiet uygulamasının kullanım dokümantasyonunun tamamı. Kaynak: ${base}/destek`,
-    `> Son güncelleme: ${updated}`,
-    '',
-  ]
+  const parts: string[] = ['## Uygulama kullanımı (destek merkezi)', '']
   for (const category of categories) {
     if (!category.articles.length) continue
-    parts.push(`## ${category.title}`, '', category.description, '')
+    parts.push(`### ${category.title}`, '')
     for (const article of category.articles) {
       const stored = articles.get(articleKey(article.category, article.slug))!
       parts.push(
-        `### ${article.title}`,
-        `URL: ${base}/destek/${category.slug}/${article.slug}`,
-        article.summary ? `Özet: ${article.summary}` : '',
-        '',
-        stored.plain,
+        `- ${article.title}`,
+        `  ${base}/destek/${category.slug}/${article.slug}`,
+        `  ${answerOpening(stored.plain)}`,
         '',
       )
     }
   }
-  return parts.join('\n')
+  return { section: parts.join('\n'), updated }
 }

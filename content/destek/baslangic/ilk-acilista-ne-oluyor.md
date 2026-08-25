@@ -3,7 +3,7 @@ slug: ilk-acilista-ne-oluyor
 title: "Uygulamayı ilk açtığımda ne oluyor?"
 description: "Kısa bir tanıtım, hesapsız bir ilk kayıt, sonra hesabın ve ismin. afiet'i ilk açtığında seni bekleyen bütün adımlar sırasıyla burada."
 updated: 2026-08-01
-order: 4
+order: 5
 keywords: [ilk açılış, tanışma, tanıtım, onboarding, ilk kayıt, Afi rehberi, atla]
 related: [baslangic/hesap-olusturma, baslangic/ilk-ogunumu-kaydetmek, baslangic/uygulamanin-haritasi]
 ---

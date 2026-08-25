@@ -113,11 +113,8 @@ export function markaTanim(lang: SiteLocale = 'tr'): string {
  * şemadaki `operatingSystem` BİRLİKTE değişir (üçü aynı iddiayı taşır).
  * Adresin doğruluğu önden bilinir çünkü paket adından türer.
  *
- * FİYAT BURADA YOK (kullanıcı kararı, 24 Ağu 2026): afiet+ iOS'ta gerçekten
- * satılıyor ama site bugün hiçbir yerde fiyat söylemiyor. Şemaya fiyat basmak,
- * sayfanın söylemediğini iddia etmek olurdu; ayrıca lansmanın ilk yıl intro
- * fiyatı (599,99) sürerken liste fiyatını tek başına bildirmek de eksik
- * anlatır. Site bir afiet+ bölümü kazandığında fiyat da onunla gelir.
+ * FİYAT ARTIK VAR, bkz. `AFIET_PLUS` (kullanıcı kararı, 26 Ağu 2026; 24
+ * Ağustos'taki "site fiyat söylemez" kararının yerine geçer).
  */
 export const MAGAZA = {
   /** 24 Ağu 2026, App Store'da canlı (id `eas.json > ascAppId`ten türer). */
@@ -130,6 +127,45 @@ export const MAGAZA = {
 
 /** En az bir mağaza açık mı (rozet bandı ve indirme sayfası buna bakar). */
 export const MAGAZA_ACIK = MAGAZA.ios || MAGAZA.android
+
+/**
+ * afiet+ - TEK FİYAT KAYNAĞI (kullanıcı kararı, 26 Ağu 2026).
+ *
+ * 24 Ağustos'ta site hiçbir yerde fiyat SÖYLEMİYORDU ve şema da bu yüzden
+ * fiyat basmıyordu. Karar 26 Ağustos'ta tersine çevrildi: ChatGPT `site:`
+ * kapsamlı sorgularla kendi domainimize soruyor ve "afiet+ ne kadar"
+ * sorusunun cevabı sitede yoksa cevapsız kalıyor
+ * (`research/2026-08-26-chatgpt-iki-kapi-brief.md`).
+ *
+ * Değerler App Store Connect'ten OKUNDU (26 Ağu 2026), tahmin değil:
+ * `GET /v1/subscriptions/{id}/prices?filter[territory]=TUR`.
+ *
+ * ÜÇÜ BİRLİKTE YAZILIR: yıllığın liste fiyatını tek başına bildirmek eksik
+ * anlatır, çünkü 5 Ağustos'ta başlayan ve bitiş tarihi OLMAYAN bir ilk yıl
+ * teklifi yürürlükte. Bugün kimse 799,99 ödemiyor.
+ *
+ * 129,99 BASAMAĞI APPLE'IN TR MERDİVENİNDE YOKTUR; aylık fiyat 129,90'dır.
+ * Bir belge 129,99 yazıyorsa yanlıştır.
+ *
+ * Fiyat değişirse tek satır burada değişir: destek yazısı, `/indir` SSS'i ve
+ * `SoftwareApplication` şemasının `offers` düğümü üçü de buradan okur.
+ */
+export const AFIET_PLUS = {
+  paraBirimi: 'TRY',
+  /** Aylık liste fiyatı. */
+  aylik: 129.9,
+  /** Yıllık liste fiyatı (ilk yıl aşağıdaki teklif geçerli). */
+  yillik: 799.99,
+  /** İlk yıl teklifi; peşin, 5 Ağu 2026'da başladı, bitiş tarihi yok. */
+  yillikIlkYil: 599.99,
+  /** Deneme süresi YOKTUR (fiyat politikası, 31 Tem 2026). */
+  denemeVar: false,
+} as const
+
+/** Fiyatı Türkçe biçimde yazar: 129,90 gibi (şemada nokta, metinde virgül). */
+export function fiyatYaz(tutar: number): string {
+  return tutar.toFixed(2).replace('.', ',')
+}
 
 /**
  * Basın sayfasındaki dosyaların TEK kaynağı. Yollar burada, etiketler
