@@ -8,7 +8,9 @@ cover_url: /covers/el-porsiyon-rehberi.png
 published_at:
 ---
 
-Kahvaltını yerken telefonuna kaç kalori girdiğini hesapladığın günler oldu mu? Bir dilim ekmeğin, bir avuç cevizin, çayının yanındaki peynirin ardından o küçük rakamların toplanmasını izlemek... Bir süre sonra yemek, sevdiğin bir şey olmaktan çıkıp çözülmesi gereken bir probleme dönüşebiliyor. İyi haber şu: dengeli beslenmek için bu kadar hesaba gerek yok. Çoğu zaman en pratik ölçü aletin, zaten elinde.
+Kalori saymadan dengeli beslenmek mümkün: sayının yerine elini koyarsın. Bir öğünde kabaca bir avuç içi protein, bir yumruk sebze, bir avuç dolusu tahıl ve bir başparmak yağ hedeflersin; tartıya da hesap makinesine de gerek kalmaz.
+
+Kahvaltını yerken telefonuna kaç kalori girdiğini hesapladığın günler olduysa bu tanıdık gelecek: bir dilim ekmeğin, bir avuç cevizin, çayının yanındaki peynirin ardından o küçük rakamların toplanmasını izlemek. Bir süre sonra yemek, sevdiğin bir şey olmaktan çıkıp çözülmesi gereken bir probleme dönüşebiliyor.
 
 Bu yazıda kalori saymadan dengeli beslenmenin nazik bir yolunu paylaşıyoruz: besin gruplarına ve doğal ölçülere (dilim, kase, avuç) bakarak tabağını sezgiyle kurmak. Burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
 
@@ -52,7 +54,7 @@ Elinin yanında, mutfağın da kendi ölçüleri var. Bir **dilim** ekmek, bir *
 - Bir **avuç** ceviz ya da badem, gün içinde iyi gelen sağlıklı yağ ve protein.
 - Bir **tabak** salata, sebzeyi cömertçe masaya getirmenin en kolay yolu.
 
-Bu doğal ölçüler afiet'in de kalbinde: uygulamayı, "150 gram" yerine "bir kase" diyebildiğin için tasarladık. Çünkü gerçek sofralar gramla değil, dilim ve kaseyle konuşur.
+Bu doğal ölçüler afiet'in de kalbinde: uygulamayı, "150 gram" yerine "bir kase" diyebildiğin için tasarladık. Çünkü gerçek sofralar gramla değil, dilim ve kaseyle konuşur. Hangi ölçünün ne zaman kullanıldığını [destek merkezindeki ölçü rehberinde](/destek/ogun-kaydi/sofra-olculeri-dilim-kase-avuc) tek tek bulabilirsin.
 
 ## Türk sofrasından bir gün
 
