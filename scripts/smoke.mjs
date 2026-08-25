@@ -580,6 +580,49 @@ try {
     'kurum düğümü uygulamanın Wikidata kaydını sahiplenmiyor',
   )
 
+  /* Uygulama düğümünün sabit kimliği (seoStore > mobilAppId). Kurumunkiyle
+     aynı sebeple korunuyor: `@id` kaybolduğunda sayfa çalışır, şema geçerli
+     kalır ve hata YALNIZ motor tarafında görünür - ana sayfadaki uygulama ile
+     /en'deki uygulama iki ayrı adaya döner, Wikidata bağı da adreslenemeyen
+     bir düğümde kalır. Kurumun `@id`si de burada kontrol ediliyor; ikisi tek
+     ailedir ve biri düşerse diğerinin sağlam kalması bir şey ifade etmez. */
+  ok(
+    uygulama?.['@id']?.endsWith('/#app'),
+    `uygulama düğümünün sabit kimliği var (${uygulama?.['@id'] ?? 'YOK'})`,
+  )
+  ok(
+    kurum?.['@id']?.endsWith('/#organization'),
+    `kurum düğümünün sabit kimliği var (${kurum?.['@id'] ?? 'YOK'})`,
+  )
+
+  /* Kimliğin ASIL sınavı burada: `/en` uygulama düğümünü kendisi basıyor ve
+     kimliğin iki dilde AYNI olması gerekiyor - yoksa `@id` vermek hiçbir şeyi
+     çözmez, yalnız iki adayı adlandırmış oluruz. Türkçe sayfa yukarıda okundu,
+     İngilizcesi için ayrı bir istek gerekiyor. */
+  const enGraf = [
+    ...(await (await fetch(`http://localhost:${PORT}/en`)).text()).matchAll(
+      /<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/gs,
+    ),
+  ]
+    .map((m) => {
+      try {
+        return JSON.parse(m[1])
+      } catch {
+        return null
+      }
+    })
+    .filter(Boolean)
+    .flatMap((d) => d['@graph'] ?? [d])
+  const enUygulama = enGraf.find((n) => n['@type'] === 'SoftwareApplication')
+  ok(
+    enUygulama?.['@id'] === uygulama?.['@id'],
+    `/en uygulama düğümü Türkçesiyle aynı kimliği taşıyor (${enUygulama?.['@id'] ?? 'YOK'})`,
+  )
+  ok(
+    enGraf.find((n) => n['@type'] === 'Organization')?.['@id'] === kurum?.['@id'],
+    '/en kurum düğümü Türkçesiyle aynı kimliği taşıyor',
+  )
+
   /* Mağaza kapısı (#shared/utils/marka > MAGAZA). Şemanın sayfadan fazlasını
      iddia etmemesini korur, üç ayrı biçimde:
 
