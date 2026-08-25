@@ -357,6 +357,22 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   const isEn = localeOf(path) === 'en'
   const inLanguage = isEn ? 'en-US' : g.locale.replace('_', '-')
 
+  /* og:image:alt yazının KENDİ kapağını anlatır. Genel ayardaki ogImageAlt
+     jenerik tanıtım görselini (/og.png) tarif ediyor; kapağı olan bir yazıda
+     o metin basıldığında alt, gösterilen görselle uyuşmuyordu (kapakta yazının
+     başlığı yazılı, alt metinde "tanıtım görseli" diyordu). Türetme yalnız
+     yazının cover_url'i EFEKTİF görselken yapılır: panelden bu yola ayrı bir
+     ogImage yazılmışsa ne olduğu bilinmez, genel metne düşülür.
+     Sayfa içindeki görünür kapak <img> bundan ayrıdır ve bilinçli alt=""
+     taşır (başlık hemen yanında, görsel onu tekrar eder). */
+  const postCover = post?.coverUrl ? absolutize(post.coverUrl, g.baseUrl) : ''
+  const ogImageAlt =
+    post && postCover && ogImage === postCover
+      ? isEn
+        ? `${post.title}, afiet blog cover image`
+        : `${post.title}, afiet blog kapak görseli`
+      : g.ogImageAlt
+
   const jsonld: Record<string, unknown>[] = []
   if (path === '/') {
     const graph: Record<string, unknown>[] = []
@@ -888,7 +904,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ogTitle: page.ogTitle || title,
     ogDescription: page.ogDescription || description,
     ogImage,
-    ogImageAlt: g.ogImageAlt,
+    ogImageAlt,
     ogUrl: canonical,
     ogSiteName: g.siteName,
     ogLocale: isEn ? 'en_US' : g.locale,
