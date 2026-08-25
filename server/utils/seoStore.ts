@@ -1,6 +1,14 @@
 import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
 import type { H3Event } from 'h3'
-import { AI_BOTS, DEFAULT_PAGES, DEFAULT_REDIRECTS, DEFAULT_SETTINGS, ROBOTS_DIRECTIVES, makePage } from './seoDefaults'
+import {
+  AI_BOTS,
+  DEFAULT_PAGES,
+  DEFAULT_REDIRECTS,
+  DEFAULT_SETTINGS,
+  ROBOTS_DIRECTIVES,
+  SAYFA_ICERIK_TARIHI,
+  makePage,
+} from './seoDefaults'
 import { getPublishedPost, getTranslationPair } from './contentStore'
 import type { BlogPost } from './contentTypes'
 import { getSupportArticle } from './supportStore'
@@ -11,7 +19,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personId, personSchema } from '#shared/utils/author'
-import { MAGAZA, MARKA_TANIM } from '#shared/utils/marka'
+import { MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -347,6 +355,11 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
         description: s.mobileApp.description,
+        /* Wikidata kimliği: gerekçesi ve neden KURUM düğümünde değil burada
+           durduğu `#shared/utils/marka > WIKIDATA` başında. Panelden gelmez,
+           bu yüzden `organization.sameAs`ı ezen prod override'ı buna
+           dokunamıyor. */
+        sameAs: [WIKIDATA.url],
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? {
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
@@ -790,6 +803,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         // (İngilizce) açıklaması kullanılır.
         description,
         inLanguage,
+        /* Kimlik iki dilde de AYNI olmak zorunda: üretken motorlar afiet'i tek
+           varlık olarak tanısın (aynı gerekçe Organization'ın burada tekrar
+           edilmesinin de sebebi). Wikidata kaydı zaten dilden bağımsız. */
+        sameAs: [WIKIDATA.url],
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
@@ -898,6 +915,24 @@ export function xmlEscape(s: string): string {
     .replaceAll('"', '&quot;')
 }
 
+/**
+ * Verilen tarihlerin en yenisi; hiçbiri geçerli değilse undefined.
+ * Geçersiz metin sessizce atlanır: `lastmod` en iyi çabadır ve tek bozuk
+ * kayıt yüzünden sitemap'in tamamı düşmemeli.
+ */
+function enYeniTarih(...adaylar: (string | undefined)[]): string | undefined {
+  let kazanan: string | undefined
+  let enBuyuk = Number.NEGATIVE_INFINITY
+  for (const aday of adaylar) {
+    if (!aday) continue
+    const t = new Date(aday).getTime()
+    if (!Number.isFinite(t) || t <= enBuyuk) continue
+    enBuyuk = t
+    kazanan = aday
+  }
+  return kazanan
+}
+
 /** sitemap.xml içeriği - kodda var olan sayfalar + dinamik ekler (blog yazıları). */
 export function buildSitemapXml(
   bundle: SeoBundle,
@@ -928,7 +963,12 @@ export function buildSitemapXml(
     .map((p) => {
       const page = bundle.pages[p]!
       const loc = xmlEscape(href(p))
-      const lastmod = updatedAt[`page:${p}`]
+      /* İki aday: panelden meta düzenleme zamanı (`seo_pages.updated_at`) ve
+         koddaki içerik tarihi. Yenisi kazanır, çünkü ikisi AYRI olayı anlatıyor
+         (başlık değişti / sayfanın gövdesi değişti) ve tarayıcıya sorulan soru
+         "bu adres en son ne zaman değişti". Gerekçe: seoDefaults >
+         SAYFA_ICERIK_TARIHI. */
+      const lastmod = enYeniTarih(updatedAt[`page:${p}`], SAYFA_ICERIK_TARIHI[p])
       const parts = [`  <url>`, `    <loc>${loc}</loc>`, ...alternateLines(p)]
       if (lastmod) parts.push(`    <lastmod>${new Date(lastmod).toISOString()}</lastmod>`)
       if (page.sitemap.changefreq) parts.push(`    <changefreq>${page.sitemap.changefreq}</changefreq>`)

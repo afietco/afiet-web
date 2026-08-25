@@ -3,7 +3,7 @@
  *
  * Boş bir liste sayfasını menüde göstermeyiz (kullanıcı kararı, 6 Ağu 2026);
  * link ancak ilk İngilizce yazı yayınlandığında belirir. Aynı kural
- * sitemap'te (`sitemap.xml.get.ts`) ve llms.txt'de de uygulanır.
+ * sitemap'te (`sitemap.xml.ts`) ve llms.txt'de de uygulanır.
  *
  * Maliyeti yok denecek kadar az: uç zaten 60 sn bellek cache'li, `/en` sayfaları
  * ISR ile render ediliyor ve paylaşılan anahtar sayesinde başlık ile alt bilgi

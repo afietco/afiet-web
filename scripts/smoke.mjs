@@ -547,6 +547,32 @@ try {
   ok(html.includes('FAQPage'), 'FAQPage şeması HTML içinde')
   ok(html.includes('twitter:title'), 'twitter:title meta mevcut')
 
+  /* Wikidata kimliği (#shared/utils/marka > WIKIDATA). Bu bağ SESSİZCE düşer:
+     kaybolduğunda sayfa çalışmaya devam eder, hiçbir test kırılmaz ve kimlik
+     çözümlemesinin en güçlü tek bağı gitmiş olur. Düğüm de kontrol ediliyor,
+     çünkü adresin HTML'de bulunması onun DOĞRU düğümde durduğunu göstermiyor:
+     kayıt uygulamayı tanımlıyor, kurum düğümüne kaymamalı. */
+  const anaGraf = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/gs)]
+    .map((m) => {
+      try {
+        return JSON.parse(m[1])
+      } catch {
+        return null
+      }
+    })
+    .filter(Boolean)
+    .flatMap((d) => d['@graph'] ?? [d])
+  const uygulama = anaGraf.find((n) => n['@type'] === 'SoftwareApplication')
+  const kurum = anaGraf.find((n) => n['@type'] === 'Organization')
+  ok(
+    uygulama?.sameAs?.some((u) => u.includes('wikidata.org/wiki/Q')),
+    'Wikidata kimliği SoftwareApplication düğümünde',
+  )
+  ok(
+    !kurum?.sameAs?.some((u) => u.includes('wikidata.org')),
+    'kurum düğümü uygulamanın Wikidata kaydını sahiplenmiyor',
+  )
+
   /* Mağaza kapısı (#shared/utils/marka > MAGAZA). Şemanın sayfadan fazlasını
      iddia etmemesini korur, üç ayrı biçimde:
 

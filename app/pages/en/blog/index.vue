@@ -7,7 +7,7 @@ import { blogEn } from '~/data/content.en'
  * İngilizce yazı yokken sayfa "ilk yazı fırında" durumunu gösterir ama
  * sitemap'e, menüye ve llms.txt'ye GİRMEZ (kullanıcı kararı, 6 Ağu 2026):
  * içi boş bir liste sayfası indekslenmemeli. Koşullar sırasıyla
- * `sitemap.xml.get.ts`, `SiteHeader/SiteFooter` ve `llms.txt.get.ts` içinde.
+ * `sitemap.xml.ts`, `SiteHeader/SiteFooter` ve `llms.txt.ts` içinde.
  */
 usePageSeo()
 </script>

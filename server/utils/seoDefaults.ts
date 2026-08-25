@@ -53,6 +53,79 @@ const defaultAiBotPolicy: Record<string, boolean> = Object.fromEntries(
 )
 
 /**
+ * `AI_BOTS`ta olup GERÇEKTE İSTEK ATMAYANLAR.
+ *
+ * Google-Extended ve Applebot-Extended birer TARAYICI DEĞİL, yalnızca
+ * robots.txt izin anahtarıdır: sahipleri onlarla hiç HTTP isteği yapmaz, o
+ * anahtarı Googlebot'un/Applebot'un topladığı içeriğin EĞİTİMDE kullanılıp
+ * kullanılmayacağını söylemek için okur. robots.txt'te durmaları doğrudur
+ * (izni orada veriyoruz), tespit listesinde durmaları ise panelde sonsuza
+ * kadar "hiç gelmedi" satırı üretir ve gerçek bir yokluk sanılır.
+ * Ölçüldü: 11-24 Ağu 2026 arası 366 istekte ikisinden tek satır yok.
+ */
+const SADECE_ROBOTS_ANAHTARI = new Set(['Google-Extended', 'Applebot-Extended'])
+
+/**
+ * İZLENEN BOTLAR = kayda (ai_bot_hits) girecek tarayıcıların TAM listesi.
+ * `AI_BOTS`tan AYRI durur ve karıştırılmamalıdır:
+ *
+ *   AI_BOTS        → robots.txt POLİTİKASI. Panelden izin verilip alınabilen
+ *                    liste. Buraya Googlebot eklemek, panelde Googlebot'u
+ *                    engelleme düğmesi açmak demektir; asla eklenmez.
+ *   IZLENEN_BOTLAR → yalnız ÖLÇÜM. Kime izin verdiğimizle ilgisi yok, "kim
+ *                    geldi" sorusunun cevabı.
+ *
+ * NEDEN GENİŞLETİLDİ (24 Ağu 2026 denetimi): kayıt yalnız AI_BOTS'u tanıdığı
+ * için ölçüm iki en önemli tarayıcıyı YAPISAL OLARAK göremiyordu. Bingbot
+ * hem Bing'i hem Copilot'u hem de ChatGPT aramasının indeksini besliyor;
+ * Googlebot'un taraması AI Overviews'in de taramasıdır (ayrı bot yok); düz
+ * Applebot Siri ve Spotlight yüzeyidir ve Applebot-Extended ile aynı şey
+ * değildir. Üçü de listede olmadığı için panelde hiç görünmüyorlardı.
+ *
+ * `purpose` kasıtlı olarak üç değerle sınırlı kalıyor (afiet-admin
+ * `services/analytics.ts > AiBotData.amac` birebir ayna, dördüncü bir değer
+ * panelde rozetsiz kalır): arama motorları 'arama', link önizleme getirenleri
+ * 'kullanici' (isteği bir insanın paylaşımı tetikler), gerisi 'egitim'.
+ */
+export const IZLENEN_BOTLAR: AiBotInfo[] = [
+  ...AI_BOTS.filter((b) => !SADECE_ROBOTS_ANAHTARI.has(b.agent)),
+
+  // ── Arama motorları: AI yanıt yüzeylerinin gerçek tarayıcıları ──────────
+  { agent: 'Googlebot', owner: 'Google', purpose: 'arama', note: 'Arama + AI Overviews/AI Mode; ayrı bir AI tarayıcısı YOK' },
+  { agent: 'Bingbot', owner: 'Microsoft', purpose: 'arama', note: 'Bing + Copilot + ChatGPT aramasının indeksi' },
+  { agent: 'Applebot', owner: 'Apple', purpose: 'arama', note: 'Siri/Spotlight; Applebot-Extended yalnız eğitim izni anahtarıdır' },
+  { agent: 'DuckDuckBot', owner: 'DuckDuckGo', purpose: 'arama', note: 'DuckDuckGo taraması' },
+  { agent: 'YandexBot', owner: 'Yandex', purpose: 'arama', note: 'Yandex; Türkiye`de küçük ama gerçek bir pay' },
+  { agent: 'Yeti', owner: 'Naver', purpose: 'arama', note: 'Naver taraması' },
+  { agent: 'Seznam', owner: 'Seznam', purpose: 'arama', note: 'IndexNow protokolünü okuyan üçüncü motor' },
+
+  // ── Kullanıcı tetikli AI getirmeleri ────────────────────────────────────
+  { agent: 'Meta-ExternalFetcher', owner: 'Meta', purpose: 'kullanici', note: 'meta-externalagent`ten AYRI: kullanıcı isteğiyle anlık getirme' },
+  { agent: 'Google-CloudVertexBot', owner: 'Google', purpose: 'kullanici', note: 'Vertex AI ajanı, kurumsal müşteri onayıyla getirir' },
+  { agent: 'Google-NotebookLM', owner: 'Google', purpose: 'kullanici', note: 'NotebookLM kaynak getirmesi; robots.txt`e uymaz' },
+  { agent: 'FirecrawlAgent', owner: 'Firecrawl', purpose: 'kullanici', note: 'Çok kiracılı kazıma servisi; arkasında kim var bilinmez' },
+
+  // ── Eğitim ve veri seti tarayıcıları ────────────────────────────────────
+  { agent: 'cohere-ai', owner: 'Cohere', purpose: 'egitim', note: 'Belgelenmemiş eğitim taraması' },
+  { agent: 'AI2Bot', owner: 'Allen Institute', purpose: 'egitim', note: 'Açık araştırma veri seti' },
+  { agent: 'Diffbot', owner: 'Diffbot', purpose: 'egitim', note: 'Bilgi grafiği; birçok modele dolaylı kaynak' },
+  { agent: 'YouBot', owner: 'You.com', purpose: 'arama', note: 'You.com yanıt indeksi' },
+  { agent: 'ImagesiftBot', owner: 'Hive', purpose: 'egitim', note: 'Görsel veri seti' },
+  { agent: 'Timpibot', owner: 'Timpi', purpose: 'egitim', note: 'Dağıtık indeks' },
+  { agent: 'PanguBot', owner: 'Huawei', purpose: 'egitim', note: 'PanGu modeli' },
+  { agent: 'Omgilibot', owner: 'Webz.io', purpose: 'egitim', note: 'Veri satıcısı; webzio-extended ile aynı ev' },
+  { agent: 'SemrushBot-OCOB', owner: 'Semrush', purpose: 'egitim', note: 'Semrush`un AI içerik toplayıcısı (normal SemrushBot`tan ayrı)' },
+
+  // ── Link önizlemesi: AI değil, ama "paylaşınca ne görünüyor" ölçümü ─────
+  { agent: 'facebookexternalhit', owner: 'Meta', purpose: 'kullanici', note: 'Facebook/Instagram/WhatsApp link önizlemesi; meta-externalagent DEĞİL' },
+  { agent: 'Twitterbot', owner: 'X', purpose: 'kullanici', note: 'X kart önizlemesi' },
+  { agent: 'LinkedInBot', owner: 'LinkedIn', purpose: 'kullanici', note: 'LinkedIn paylaşım önizlemesi' },
+  { agent: 'Slackbot-LinkExpanding', owner: 'Slack', purpose: 'kullanici', note: 'Slack link genişletmesi' },
+  { agent: 'TelegramBot', owner: 'Telegram', purpose: 'kullanici', note: 'Telegram önizlemesi' },
+  { agent: 'Discordbot', owner: 'Discord', purpose: 'kullanici', note: 'Discord gömme önizlemesi' },
+]
+
+/**
  * İndekslenen her sayfanın `robots` meta'sı. Üç direktif de bir SINIRI KALDIRIR,
  * yeni bir izin istemez:
  *   - `max-snippet:-1`        → arama sonucundaki metin parçasına uzunluk sınırı yok
@@ -70,6 +143,67 @@ const defaultAiBotPolicy: Record<string, boolean> = Object.fromEntries(
  */
 export const ROBOTS_DIRECTIVES =
   'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
+
+/**
+ * KOD SAYFALARININ İÇERİK TARİHİ. Sitemap `lastmod`u bu tarihle panel
+ * kaydının YENİSİNİ basar (`buildSitemapXml`).
+ *
+ * NEDEN VAR (24 Ağu 2026 denetimi): `lastmod`un tek kaynağı `seo_pages`
+ * satırının `updated_at`i, yani PANELDEN META DÜZENLEME zamanıydı. Bir sayfanın
+ * görünür içeriği deploy'la değiştiğinde (bileşen ya da `content/` dosyası)
+ * sitemap "değişmedim" demeye devam ediyordu. Ölçülen hâli: 160 URL'in 33'ünde
+ * hiç lastmod yok, 82'si aynı gün (1 Ağu, toplu panel kaydı) damgalı, ana sayfa
+ * 14 Tem'de kalmış. Bing ve IndexNow bu alanı gerçekten okuyor.
+ *
+ * NEDEN OTOMATİK DEĞİL: doğru cevap "bu sayfayı besleyen dosyaların en yeni
+ * commit tarihi" ama Vercel build'inde git geçmişi yok ve deploy zamanını
+ * basmak her deploy'da "34 sayfa da değişti" demek olurdu. Yanlış lastmod
+ * Google'ın alanı SİTE GENELİNDE yok saymasına yol açıyor, yani abartmak
+ * susmaktan kötü. Bu yüzden tarih ELLE bakılır, tıpkı destek yazılarının
+ * frontmatter'daki `updated` alanı gibi.
+ *
+ * KURAL: bir satır ancak o sayfanın GÖRÜNÜR İÇERİĞİ değiştiğinde güncellenir.
+ * Meta/başlık düzenlemesi buraya yazılmaz, onu panel kaydı zaten taşıyor.
+ * Listede olmayan sayfa bir hata değildir: gerçek bir tarih yoksa alan hiç
+ * basılmaz ve bu doğru davranıştır.
+ *
+ * Aşağıdaki değerler dosyaların git commit tarihlerinden alındı (24 Ağu 2026).
+ * Yalnız TEK bir kaynak dosyası olan sayfalar listelendi; ana sayfa gibi çok
+ * bileşenli sayfalar bilerek yok, onlar için "hangi dosya" sorusunun tek bir
+ * doğru cevabı yok.
+ */
+export const SAYFA_ICERIK_TARIHI: Record<string, string> = {
+  // content/hesapla/<slug>.md
+  '/hesapla/vucut-kitle-indeksi': '2026-08-01',
+  '/hesapla/gunluk-su': '2026-08-01',
+  '/hesapla/yag-orani': '2026-08-01',
+  '/hesapla/porsiyon-cevirici': '2026-08-01',
+  '/hesapla/sofra-payin': '2026-08-01',
+  // content/hesapla/en/<slug>.md
+  '/en/tools/bmi-calculator': '2026-08-06',
+  '/en/tools/body-fat-calculator': '2026-08-06',
+  '/en/tools/daily-portions-calculator': '2026-08-06',
+  '/en/tools/daily-water-calculator': '2026-08-06',
+  // app/components/BasinKiti.vue
+  '/basin': '2026-08-11',
+  '/en/press': '2026-08-11',
+  // app/components/HakkindaSayfasi.vue
+  '/hakkinda': '2026-08-11',
+  '/en/about': '2026-08-11',
+  // app/components/PrivacyArticle.vue
+  '/gizlilik': '2026-08-05',
+  '/en/privacy': '2026-08-05',
+  // app/components/DeleteAccountArticle.vue
+  '/hesap-sil': '2026-08-05',
+  '/en/delete-account': '2026-08-05',
+  // app/components/KartpostalIletisim.vue
+  '/iletisim': '2026-08-05',
+  '/en/contact': '2026-08-05',
+  // app/pages/indir.vue - iOS lansmanıyla /beta'nın yerine geldi (fd5a73b)
+  '/indir': '2026-08-24',
+  // app/pages/kosullar.vue
+  '/kosullar': '2026-08-12',
+}
 
 export const DEFAULT_SETTINGS: SeoSettings = {
   general: {
@@ -161,12 +295,22 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
        * BİRLİKTE değişir: görünür link kullanıcıya, sameAs arama motoruna aynı
        * kimliği söyler.
        *
-       * ⚠️ PROD'DA OVERRIDE VAR: `seo_settings` tablosunda `schema` satırı
-       * duruyor ve override varsayılanı EZER. Yani buraya adres eklemek prod'u
-       * DEĞİŞTİRMEZ; panelden (admin.afiet.co > Analitik > SEO & GEO) aynı
-       * listeyi girmek gerekir. Burası dev/staging ve boş DB'nin kaynağıdır.
+       * ⚠️ PANEL KAYDI BU LİSTEYİ DONDURUR. `seo_settings.schema` satırı
+       * varsa override varsayılanı EZER (`deepMerge` diziyi birleştirmez,
+       * komple değiştirir) ve buraya adres eklemek prod'u DEĞİŞTİRMEZ.
+       * 11 Ağu 2026'da tam bu yüzden canlıda beş profilin hiçbiri yoktu:
+       * satırda 26 Tem'de kaydedilmiş BOŞ bir dizi duruyordu ve boş dizi
+       * override'ı canlı sayfada "override yok"tan ayırt edilemiyor.
+       *
+       * 25 Ağu 2026'da prod'dan salt okunur teyit: `schema` satırı ARTIK YOK
+       * (panelden varsayılana dönüldü), yani bugün liste buradan geliyor.
+       * Ama bu kalıcı bir güvence değil: panelden yapılacak ilk kayıt satırı
+       * geri yazar ve O ANDAKİ efektif değeri dondurur. Kontrol canlı HTML'den
+       * DEĞİL, `/api/admin/seo`dan ya da DB'den yapılır.
        *
        * Var olmayan profile adres YAZILMAZ; hesap açıldıkça tek satır eklenir.
+       * Uygulamanın Wikidata kimliği buraya GİRMEZ, o SoftwareApplication
+       * düğümündedir (gerekçe: `#shared/utils/marka > WIKIDATA`).
        */
       sameAs: [
         'https://www.instagram.com/afiet.co/',
@@ -352,7 +496,19 @@ export const DEFAULT_PAGES: Record<string, PageSeo> = {
     ogDescription:
       "afiet'in tüm servislerinin anlık durumu, geçmiş olaylar ve 90 günlük çalışma " +
       'oranları tek sayfada.',
-    sitemap: { include: true, changefreq: 'daily', priority: 0.3 },
+    /*
+     * SITEMAP'TEN ÇIKARILDI (24 Ağu 2026 denetimi). Sayfa yayında kalır ve
+     * indekslenmeye açıktır (noindex DEĞİL), yalnız sitemap'te "şunu tara"
+     * diye önerilmez.
+     *
+     * ÖLÇÜLEN SEBEP: `changefreq: daily` ile birlikte bu satır, en değerli
+     * tarayıcının bütçesini sitenin en değersiz sayfasına akıtıyordu.
+     * 11-24 Ağu arası OAI-SearchBot (ChatGPT aramasının indeksi) 35 istek
+     * attı ve içerik olarak YALNIZ /durum'u çekti (8 kez); 160 URL'in
+     * kalanından hiçbirini istemedi. Sunucu durum tablosu bir arama sonucu
+     * ya da alıntı adayı değil.
+     */
+    sitemap: { include: false, changefreq: 'daily', priority: 0.3 },
   }),
   '/destek': makePage({
     title: 'Destek merkezi | afiet',

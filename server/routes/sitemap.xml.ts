@@ -17,6 +17,9 @@ import { blogPath } from '#shared/utils/locales'
  * `/en/blog` listesi DEFAULT_PAGES'ta `sitemap.include:false` ile durur ve
  * buradan yalnız İngilizce yazı VARSA eklenir: içi boş bir liste sayfasını
  * arama motoruna göstermek istemiyoruz (kullanıcı kararı, 6 Ağu 2026).
+ *
+ * Dosya adı `.get.ts` DEĞİL: HEAD isteği 404 dönüyordu, gerekçe
+ * `server/routes/robots.txt.ts` başında.
  */
 export default defineEventHandler(async (event) => {
   const bundle = await getSeoBundle(event)
