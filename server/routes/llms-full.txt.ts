@@ -4,6 +4,9 @@ import { getSeoBundle } from '~~/server/utils/seoStore'
 /**
  * llms-full.txt - destek merkezinin TAM METNİ tek dosyada, düz metin.
  *
+ * Dosya adı `.get.ts` DEĞİL: HEAD isteği 404 dönüyordu, gerekçe
+ * `server/routes/robots.txt.ts` başında.
+ *
  * 2026 pratiği: llms.txt dizin, llms-full.txt gövde. Bir yapay zekâ ajanı
  * afiet'in nasıl kullanıldığını sorulduğunda tek istekle tüm dokümantasyona
  * ulaşsın diye; sayfa sayfa gezinmesi ya da HTML ayrıştırması gerekmesin.
