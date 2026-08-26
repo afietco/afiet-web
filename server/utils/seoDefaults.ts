@@ -318,6 +318,7 @@ afiet bir kalori sayacı değildir. Beş besin grubunu renklerle gösterir; kalo
         'https://afiet.substack.com',
         'https://afiet.hashnode.dev',
         'https://www.linkedin.com/company/afiet-app',
+        'https://www.youtube.com/@afietco',
       ],
       contactEmail: 'destek@afiet.co',
     },
