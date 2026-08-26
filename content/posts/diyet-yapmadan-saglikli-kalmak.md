@@ -119,4 +119,4 @@ Kısıtlamayı kaldırarak. Geri tepen şey yiyeceğin kendisi değil, ona uygul
 Hayır. Bir besini yasaklamak onu zihninde büyütür ve suçluluk döngüsünü besler. Ekmek tahıl grubunun doğal bir parçası; tatlı da sofrada yerini koruyabilir. Denge, çıkarmakla değil, o günün sofrasına eksik kalan grupları eklemekle kurulur.
 
 **Kalori saymadan porsiyonu nasıl ayarlarım?**
-Elin ve mutfağın ölçüleri fazlasıyla yeterli: avuç içi kadar protein, bir avuç dolusu tahıl, başparmak kadar yağ, bir kase çorba, bir tabak salata. Birkaç öğün sonra gözün dengeyi kendiliğinden okumaya başlıyor; porsiyonu kestirmek için hesap yapmana gerek kalmıyor.
+Elin ve mutfağın ölçüleri fazlasıyla yeterli: avuç içi kadar protein, bir kapalı avuç tahıl, başparmak kadar yağ, bir kase çorba, bir tabak salata. Birkaç öğün sonra gözün dengeyi kendiliğinden okumaya başlıyor; porsiyonu kestirmek için hesap yapmana gerek kalmıyor.

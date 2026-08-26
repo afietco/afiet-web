@@ -19,7 +19,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personId, personSchema } from '#shared/utils/author'
-import { MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
+import { AFIET_PLUS, MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -198,19 +198,43 @@ function normalizePath(path: string): string {
 /**
  * SoftwareApplication'ın fiyat düğümü.
  *
- * BUGÜN HİÇ BASILMAZ (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta gerçekten
- * satın alınabiliyor, yani fiyat artık "uydurma" değil; basmama sebebi başka:
- * site hiçbir sayfasında fiyat söylemiyor. Şema, sayfanın söylemediğini iddia
- * etmemelidir. İkinci sebep, lansmanın ilk yıl intro fiyatı sürerken yalnız
- * liste fiyatını bildirmenin eksik anlatması.
+ * 24 Ağu 2026'da bilerek boştu: afiet+ satılıyordu ama site hiçbir sayfasında
+ * fiyat söylemiyordu ve şema, sayfanın söylemediğini iddia etmemeli. 26 Ağu
+ * 2026'da `/destek/baslangic/afiet-plus-nedir` açıldı ve `/indir` SSS'i de
+ * fiyatı yazdı, yani şart karşılandı.
  *
- * AÇILDIĞI GÜN: siteye bir afiet+ bölümü girer, fiyatlar `#shared/utils/marka`
- * içinde tek kaynak olur ve bu fonksiyon onları okur. Fonksiyon bilerek
- * duruyor: kaldırıp yeniden yazmak, şemanın nereye bağlanacağını bir daha
- * keşfetmeyi gerektirirdi.
+ * Uygulamanın KENDİSİ ücretsizdir; `price: 0` onu anlatır. afiet+ ayrı bir
+ * satırdır (`addOn`), çünkü uygulamanın fiyatı değil, içindeki isteğe bağlı
+ * aboneliktir. İkisini tek düğümde birleştirmek "afiet 129,90 TL" demek olurdu.
+ *
+ * Yıllıkta LİSTE fiyatı basılır, ilk yıl teklifi (599,99) basılmaz: `Offer`
+ * süreli bir kampanyayı `priceValidUntil` olmadan anlatamaz ve teklifin bitiş
+ * tarihi yok. Kampanya insana görünür metinde durur, şemada durmaz.
  */
-function mobilAppOffers(_lang: 'tr' | 'en'): Record<string, unknown> | null {
-  return null
+function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> {
+  return {
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: AFIET_PLUS.paraBirimi,
+      availability: 'https://schema.org/InStock',
+    },
+    isAccessibleForFree: true,
+    addOn: [
+      {
+        '@type': 'Offer',
+        name: lang === 'en' ? 'afiet+ monthly' : 'afiet+ aylık',
+        price: AFIET_PLUS.aylik.toFixed(2),
+        priceCurrency: AFIET_PLUS.paraBirimi,
+      },
+      {
+        '@type': 'Offer',
+        name: lang === 'en' ? 'afiet+ yearly' : 'afiet+ yıllık',
+        price: AFIET_PLUS.yillik.toFixed(2),
+        priceCurrency: AFIET_PLUS.paraBirimi,
+      },
+    ],
+  }
 }
 
 /**
@@ -365,7 +389,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
             }
           : {}),
-        ...(mobilAppOffers('tr') ?? {}),
+        ...mobilAppOffers('tr'),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
@@ -810,7 +834,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
-        ...(mobilAppOffers('en') ?? {}),
+        ...mobilAppOffers('en'),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })

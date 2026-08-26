@@ -123,6 +123,13 @@ usePageSeo()
               </span>
             </summary>
             <p class="max-w-2xl pt-4 pr-10 leading-7 font-semibold text-soft">{{ item.a }}</p>
+            <NuxtLink
+              v-if="item.to"
+              :to="item.to"
+              class="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold text-brand-deep underline underline-offset-4 hover:text-brand"
+            >
+              Ayrıntılı anlatım
+            </NuxtLink>
           </details>
         </div>
       </div>

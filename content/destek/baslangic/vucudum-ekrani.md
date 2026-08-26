@@ -3,7 +3,7 @@ slug: vucudum-ekrani
 title: "Vücudum ekranında ne var?"
 description: "Tanışma göstergesi, ölçüm ekleme, Yönüm ve Sayılarla kartları ile kilo ve yağ oranı grafikleri: Vücudum sekmesinin tamamı."
 updated: 2026-08-01
-order: 10
+order: 11
 keywords: [vücudum, ölçüm ekle, kilo takibi, yağ oranı, bmi, mezura, yönüm, sayılarla]
 related: [baslangic/profilimi-doldurmak, baslangic/uygulamanin-haritasi, hesap-gizlilik/verilerim-nerede-saklaniyor]
 ---

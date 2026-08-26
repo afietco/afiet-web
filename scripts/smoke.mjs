@@ -535,7 +535,14 @@ try {
   const llmsFullRes = await fetch(`http://localhost:${PORT}/llms-full.txt`)
   const llmsFull = await llmsFullRes.text()
   ok(llmsFullRes.status === 200, `llms-full.txt yayında (${llmsFullRes.status})`)
-  ok(llmsFull.includes(firstArticle.title), 'llms-full.txt yazı gövdelerini içeriyor')
+  /* llms-full.txt 26 Ağu 2026'da budandı: tam gövde değil, her maddenin
+     başlığı + doğrudan cevabı + kanonik adresi. Üç şey korunur: destek hâlâ
+     içinde, hesaplama araçları da girdi (eskiden hiç yoktu) ve dosya tam
+     gövdeye geri şişmedi. Boyut eşiği 200 KB'a dönüşü yakalar. */
+  ok(llmsFull.includes(firstArticle.title), 'llms-full.txt destek başlıklarını içeriyor')
+  ok(llmsFull.includes('/hesapla/sofra-payin'), 'llms-full.txt hesaplama araçlarını içeriyor')
+  ok(llmsFull.length < 80_000,
+    `llms-full.txt özet kalıyor, tam gövdeye şişmemiş (${Math.round(llmsFull.length / 1024)} KB)`)
 
   const meta = await (
     await fetch(`http://localhost:${PORT}/api/seo/meta?path=/`)
@@ -581,17 +588,39 @@ try {
         indirilemez sanır.
      2. Play adresi şemada YOK. Android bayrağı kapalı ve o adres bugün 404;
         404 bir indirme adresi bildirmek hiç bildirmemekten kötüdür.
-     3. Offer düğümü YOK. afiet+ gerçekten satılıyor ama SİTE hiçbir yerde
-        fiyat söylemiyor (kullanıcı kararı), şema da söylememeli.
+     3. Uygulamanın kendisi ÜCRETSİZ (`price: "0"`), afiet+ ayrı bir `addOn`
+        satırı. 26 Ağu 2026'ya kadar hiç Offer basılmıyordu çünkü site hiçbir
+        yerde fiyat söylemiyordu; artık söylüyor ve şema onu taşıyor. Tersi de
+        korunur: `price: "0"` kayarsa şema ücretsiz bir uygulamayı ücretli
+        ilan eder.
 
-     Üçü de sessizce ters dönebilecek hâller: biri kaydığında sayfa çalışmaya
+     Dördü de sessizce ters dönebilecek hâller: biri kaydığında sayfa çalışmaya
      devam eder, yalnız arama motoruna söylenen şey yanlış olur. */
   ok(html.includes('"installUrl"') && html.includes('apps.apple.com'),
     'şema App Store indirme adresini bildiriyor')
   ok(!html.includes('play.google.com'),
     'şema Play adresini BİLDİRMİYOR (adres henüz 404)')
-  ok(!html.includes('"@type":"Offer"'),
-    'şema fiyat bildirmiyor (sitede fiyat yazmıyor)')
+  ok(html.includes('"price":"0"') && html.includes('"isAccessibleForFree":true'),
+    'şema uygulamanın ücretsiz olduğunu bildiriyor')
+  ok(html.includes('"addOn"') && html.includes('"price":"129.90"'),
+    'şema afiet+ fiyatını addOn olarak bildiriyor')
+
+  /* Fiyat TEK KAYNAKTAN gelir (`marka.ts > AFIET_PLUS`) ve üç sayı BİRLİKTE
+     yazılır: yıllığın liste fiyatını tek başına söylemek eksik anlatır, çünkü
+     bitiş tarihi olmayan bir ilk yıl teklifi yürürlükte. 129,99 basamağı
+     Apple'ın TR merdiveninde YOKTUR; sızarsa yakalanmalı. */
+  const fiyatHtml = await (await fetch(`http://localhost:${PORT}/indir`)).text()
+  ok(fiyatHtml.includes('129,90') && fiyatHtml.includes('799,99')
+    && fiyatHtml.includes('599,99'),
+    '/indir üç fiyatı da yazıyor (aylık, yıllık, ilk yıl)')
+  ok(!fiyatHtml.includes('129,99'), '/indir olmayan 129,99 basamağını yazmıyor')
+
+  const plusRes = await fetch(`http://localhost:${PORT}/destek/baslangic/afiet-plus-nedir`)
+  const plusHtml = await plusRes.text()
+  ok(plusRes.status === 200, `afiet+ destek yazısı yayında (${plusRes.status})`)
+  ok(plusHtml.includes('129,90') && plusHtml.includes('799,99')
+    && plusHtml.includes('599,99'),
+    'afiet+ yazısı üç fiyatı da yazıyor')
 
   // --- Afi'ye sor: SSS sözleşmesini bozmadan eklendi mi ---
   ok(html.includes('id="afiye-sor"'), 'Afi’ye sor bölümü prerender HTML içinde')

@@ -164,11 +164,16 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Android açıldığı gün `MAGAZA.android` + `MARKA_KUNYE.platformlar` +
   şemadaki `operatingSystem` BİRLİKTE değişir; smoke açık mağazanın bağlantı,
   kapalının bağlantı OLMADIĞINI korur.
-- **Fiyat sitede HİÇ basılmaz** (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta
-  gerçekten satılıyor ama site hiçbir sayfasında fiyat söylemiyor; şema
-  sayfanın söylemediğini iddia etmemeli. `seoStore > mobilAppOffers` bu yüzden
-  null döner ve fonksiyon bilerek duruyor: siteye bir afiet+ bölümü girdiği gün
-  fiyatlar `marka.ts`e tek kaynak olarak konur ve o fonksiyon onları okur.
+- **Fiyatın TEK KAYNAĞI `marka.ts > AFIET_PLUS`** (kullanıcı kararı, 26 Ağu
+  2026; 24 Ağustos'taki "site fiyat söylemez" kararının yerine geçer). Değerler
+  App Store Connect'ten okundu: aylık **129,90**, yıllık **799,99**, yıllığın
+  ilk yılı **599,99** (5 Ağu'da başlayan, bitiş tarihi olmayan teklif).
+  **129,99 basamağı Apple'ın TR merdiveninde YOKTUR**, öyle yazan belge
+  yanlıştır. Üç sayı BİRLİKTE yazılır: yıllığın liste fiyatını tek başına
+  söylemek eksik anlatır. Okuyan üç yer: `/destek/baslangic/afiet-plus-nedir`,
+  `/indir` SSS'i (`content.ts`) ve `seoStore > mobilAppOffers`. Şemada
+  uygulamanın kendisi `price: 0`, afiet+ ayrı bir `addOn` satırıdır; ilk yıl
+  teklifi şemaya BASILMAZ (`Offer` süresiz bir kampanyayı anlatamaz).
 - Hesaplayıcı hub'ları (`/hesapla`, `/en/tools`) CollectionPage + ItemList
   basar ve liste `pages`ten türer, kopya dosyasındaki kart listesinden değil:
   şema yalnız gerçekten var olan alt sayfaları vaat etmeli. Sıra iddia
@@ -310,8 +315,14 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   Şema: hub/kategori `CollectionPage`, yazı `TechArticle` + `BreadcrumbList`.
   **HowTo bilinçli olarak kullanılmıyor** (Google zengin sonucu kaldırdı,
   markdown'dan güvenilir adım nesnesi üretmek uydurma yapıya davetiye).
-- `/llms-full.txt` tüm destek gövdesini düz metin verir; `/llms.txt`'nin destek
-  bölümü panelden değil KODDAN üretilir (elle güncellenen liste eskir).
+- `/llms.txt`'nin destek bölümü panelden değil KODDAN üretilir (elle güncellenen
+  liste eskir). `/llms-full.txt` ise 26 Ağu 2026'da BUDANDI: eskiden destek
+  gövdesinin tamamıydı (200 KB, 14 günde sıfır istek, blog ve hesaplama
+  araçlarını hiç taşımıyordu), artık üç yüzeyin de her maddesinden yalnız
+  başlık + doğrudan cevap + kanonik adres taşıyor (~35 KB). Cevap
+  `server/utils/answerDigest.ts > answerOpening` ile gövdenin başından
+  ÇIKARILIR, ayrıca yazılmaz: içerik hattının "cevap önce" kuralı bozulursa bu
+  dosya da bozulur, yani kuralın sessiz denetçisidir.
 - Ölçüm: "Bu yazı yardımcı oldu mu?" oyu ve SONUÇSUZ arama sorgusu birinci
   taraf analitiğe yazılır (`analytics_events.event` = `destek_oy` /
   `destek_arama`, değer `title` kolonunda). Sayfa görüntülemeyle AYNI KVKK
