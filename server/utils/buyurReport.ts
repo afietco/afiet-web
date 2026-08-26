@@ -60,6 +60,7 @@ const SABIT: Record<string, { etiket: string; grup: BuyurGrup }> = {
 }
 const SOSYAL: Record<string, string> = {
   instagram: 'Instagram', medium: 'Medium', substack: 'Substack', hashnode: 'Hashnode', linkedin: 'LinkedIn',
+  youtube: 'YouTube',
 }
 const INCE: Record<string, string> = {
   hesapla: 'Hesaplayıcılar', destek: 'Destek', basin: 'Basın kiti', iletisim: 'İletişim', gizlilik: 'Gizlilik',
