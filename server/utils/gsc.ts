@@ -1,6 +1,15 @@
 import type { H3Event } from 'h3'
 import type { NeonQueryFunction } from '@neondatabase/serverless'
 import { upsertGscDaily, upsertGscRow, type GscDimension } from './gscStore'
+import {
+  DISCOVER_DIMENSIONS,
+  ensureDiscoverTables,
+  markDiscoverSync,
+  upsertDiscoverDailyMany,
+  upsertDiscoverRows,
+  type DiscoverRowInput,
+  type GscDiscoverDimension,
+} from './gscDiscoverStore'
 
 /**
  * Google Search Console Search Analytics istemcisi. Bağımlılık YOK: servis
@@ -179,5 +188,90 @@ export async function syncGsc(
     days,
     queryRows: await syncDim('query'),
     pageRows: await syncDim('page'),
+  }
+}
+
+export type GscDiscoverSyncSummary = {
+  startDate: string
+  endDate: string
+  days: number
+  dailyRows: number
+  pageRows: number
+  countryRows: number
+  /**
+   * Bu turda SIFIRDAN BÜYÜK bir Discover ölçümü geldi mi. Satır sayısı bu
+   * soruyu cevaplamaz: API eşik altındaki mülke sıfır dolu satırlar döndürür
+   * (gscDiscoverStore dosya başındaki nota bak).
+   */
+  measured: boolean
+}
+
+/**
+ * Discover senkronu. Arama senkronuyla AYNI uç ve aynı servis hesabı, tek
+ * farkı gövdedeki `type: 'discover'`.
+ *
+ * Boyutlar bilinçle sınırlı: Discover'da `query` boyutu YOKTUR (akış sorguya
+ * değil ilgiye dayanır) ve istenirse API hata döner; `position` metriği de
+ * dönmez, o yüzden hiçbir yere yazılmaz.
+ *
+ * VERİSİZ YANIT ARIZA DEĞİLDİR ve iki ayrı şekilde gelir (26 Ağu 2026'da
+ * canlı mülke sorularak ölçüldü): günlük boyut sıfır dolu SATIRLAR döndürür,
+ * sayfa/ülke boyutları ise gerçekten BOŞ döner. Her iki durumda da tur
+ * işaretlenir (`markDiscoverSync`), çünkü "cron hiç koşmadı" ile "koştu, veri
+ * yok" panelde ve raporda farklı cümlelerdir.
+ */
+export async function syncGscDiscover(
+  event: H3Event,
+  sql: NeonQueryFunction<false, false>,
+  windowDays: number,
+): Promise<GscDiscoverSyncSummary> {
+  const sa = gscServiceAccount(event)
+  const property = gscProperty(event)
+  if (!sa || !property) throw createError({ statusCode: 503, statusMessage: 'gsc_yapilandirilmadi' })
+
+  await ensureDiscoverTables(sql)
+  const token = await accessToken(sa)
+  const startDate = dayAgo(windowDays)
+  const endDate = dayAgo(1)
+  const base = { startDate, endDate, dataState: 'all', type: 'discover' }
+
+  const daily = await searchAnalytics(token, property, { ...base, dimensions: ['date'], rowLimit: 1000 })
+  const dailyRows = daily
+    .map((row) => ({
+      date: row.keys?.[0] ?? '',
+      clicks: row.clicks ?? 0,
+      impressions: row.impressions ?? 0,
+    }))
+    .filter((r) => r.date)
+  if (dailyRows.length) await upsertDiscoverDailyMany(sql, dailyRows)
+
+  const counts: Record<GscDiscoverDimension, number> = { page: 0, country: 0 }
+  for (const dimension of DISCOVER_DIMENSIONS) {
+    const rows = await searchAnalytics(token, property, {
+      ...base,
+      dimensions: ['date', dimension],
+      rowLimit: 5000,
+    })
+    const input: DiscoverRowInput[] = []
+    for (const row of rows) {
+      const [date, key] = row.keys ?? []
+      if (!date || !key) continue
+      input.push({ date, dimension, key, clicks: row.clicks ?? 0, impressions: row.impressions ?? 0 })
+    }
+    if (input.length) await upsertDiscoverRows(sql, input)
+    counts[dimension] = input.length
+  }
+
+  const total = dailyRows.length + counts.page + counts.country
+  await markDiscoverSync(sql, total)
+
+  return {
+    startDate,
+    endDate,
+    days: dailyRows.length,
+    dailyRows: dailyRows.length,
+    pageRows: counts.page,
+    countryRows: counts.country,
+    measured: dailyRows.some((r) => r.impressions > 0 || r.clicks > 0),
   }
 }

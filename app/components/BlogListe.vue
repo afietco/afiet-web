@@ -144,21 +144,31 @@ const fmtDate = (iso: string | null) =>
 
       <div v-if="paged.length" class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <NuxtLink
-          v-for="p in paged"
+          v-for="(p, i) in paged"
           :key="p.slug"
           :to="blogPath(lang, p.slug)"
           class="group flex flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-lift transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-float"
         >
           <!-- Kapak: kartın üstünde tam genişlik. alt="" bilinçli - başlık ve
                açıklama hemen altında, görsel onları tekrar eder. Kapaksız yazıda
-               kart eskisi gibi yalnız metindir. -->
+               kart eskisi gibi yalnız metindir.
+
+               İLK KART LAZY DEĞİL: mobilde ilk kartın kapağı ekranın üstünde
+               kalıyor ve sayfanın LCP ögesi O oluyor. Lazy bir görsel yerleşim
+               hesaplanana kadar indirilmeye başlanmaz, yani kendi LCP'sini
+               geciktirir. 26 Ağu 2026'da kısıtlanmış mobilde ölçüldü: prod
+               /blog'un LCP'si 5,3 sn ve ölçülen öge tam olarak buydu; aynı
+               sayfada yerel karşılaştırmada hepsi-lazy ortanca 15,2 sn iken
+               ilk kart eager 9,1 sn verdi. Kalan kartlar katlamanın altında,
+               onlar lazy kalır. -->
           <img
             v-if="p.coverUrl"
             :src="p.coverUrl"
             alt=""
             width="1200"
             height="630"
-            loading="lazy"
+            :loading="i === 0 ? 'eager' : 'lazy'"
+            :fetchpriority="i === 0 ? 'high' : undefined"
             class="aspect-[1200/630] w-full border-b border-line object-cover"
           />
           <div class="flex flex-1 flex-col p-5">
