@@ -4,9 +4,9 @@ slug: gunluk-su
 
 ## Bu hesap nasıl çalışır
 
-Su ihtiyacı için en bilinen kural "günde 8 bardak". Akılda kalıyor ama kimseye göre kurulmuş bir sayı değil: 60 kiloluk, masa başında çalışan biriyle 90 kiloluk, gün boyu ayakta duran biri aynı miktarda suya ihtiyaç duymuyor.
+Günlük su ihtiyacın harcadığın enerjiye bağlıdır: yaygın rehber, harcanan her 1 kalori için yaklaşık 1 mililitre su. Bu hesap çoğu yetişkin için günde 6 ila 15 bardak (200 ml) arasında bir aralık verir ve afiet sayıyı kiloya değil bu enerjiye bağlar.
 
-afiet ihtiyacı kiloya değil, harcadığın enerjiye bağlar. Yaygın rehber şu: her 1 kalori harcama için yaklaşık 1 mililitre su.
+"Günde 8 bardak" kuralı akılda kalıyor ama kimseye göre kurulmuş bir sayı değil: 60 kiloluk, masa başında çalışan biriyle 90 kiloluk, gün boyu ayakta duran biri aynı miktarda suya ihtiyaç duymuyor.
 
 Zincir üç adımda kurulur:
 

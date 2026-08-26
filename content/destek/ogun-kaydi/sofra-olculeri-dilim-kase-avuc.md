@@ -8,7 +8,7 @@ keywords: [ölçü, porsiyon, dilim, kase, avuç, fincan, bardak, kaşık, gram,
 related: [ogun-kaydi/ogunu-duzenleme-ve-silme, denge-ritim/dengeli-gun-ne-demek]
 ---
 
-Bir tabağı anlatmanın iki yolu var. Biri tartı ve hesap makinesi ister, diğeri zaten sofrada duran şeye bakar. afiet ikincisini seçer.
+Dilim, kase ve avuç afiet'te miktar ölçüleridir: dilim sayılamayan ama kesilen şeyler (ekmek, peynir, karpuz), kase sıvı ve karışık yemekler (çorba, yoğurt, makarna), avuç ise tek elinin içine sığan miktar. Gram ya da kalori yazman gerekmez, tabağında zaten duran şeye bakarsın.
 
 Bir öğün kaydederken miktarı bu ölçülerden biriyle verirsin:
 

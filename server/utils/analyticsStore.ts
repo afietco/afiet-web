@@ -153,18 +153,101 @@ export function hostFromReferrer(ref: string): string | null {
   }
 }
 
+/**
+ * Yapay zeka yanıt yüzeyleri. Referrer TAŞIYAN AI trafiği bu listeyle yakalanır.
+ *
+ * ⚠️ SIRA ÖNEMLİ: `channelFor` bu kontrolü aramadan ve sosyalden ÖNCE yapar.
+ * `gemini.google.com` arama listesindeki `google.` desenine uyuyor,
+ * `edgeservices.bing.com` de `bing.` desenine; sıra bozulursa Gemini ve
+ * Copilot yönlendirmesi sessizce "arama" diye sayılır ve kör nokta geri gelir.
+ *
+ * Eşleşme tam host ya da alt alan adıdır (`chatgpt.com` ve `x.chatgpt.com`),
+ * `includes` DEĞİL: `openai.com.kotu-site.net` eşleşmemeli.
+ */
+export const AI_HOSTS = [
+  'chatgpt.com',
+  'chat.openai.com',
+  'openai.com',
+  'perplexity.ai',
+  'gemini.google.com',
+  'bard.google.com',
+  'claude.ai',
+  'copilot.microsoft.com',
+  'edgeservices.bing.com',
+  'grok.com',
+  'x.ai',
+  'meta.ai',
+  'you.com',
+  'poe.com',
+  'phind.com',
+  'deepseek.com',
+  'chat.mistral.ai',
+]
+
 const SEARCH_HOSTS = ['google.', 'bing.', 'yahoo.', 'duckduckgo.', 'yandex.', 'baidu.', 'ecosia.', 'startpage.', 'qwant.', 'search.brave.']
 const SOCIAL_HOSTS = ['instagram.com', 't.co', 'twitter.com', 'x.com', 'facebook.com', 'fb.com', 'm.facebook.com', 'lnkd.in', 'linkedin.com', 'youtube.com', 'youtu.be', 'reddit.com', 'pinterest.', 'tiktok.com', 'whatsapp.com', 'wa.me', 't.me', 'telegram.org']
 
 const isSearchHost = (h: string) => SEARCH_HOSTS.some((s) => h.startsWith(s) || h.includes(`.${s}`) || h.includes(s))
 const isSocialHost = (h: string) => SOCIAL_HOSTS.some((s) => h === s || h.endsWith(`.${s}`) || h.startsWith(s))
+export const isAiHost = (h: string) => AI_HOSTS.some((s) => h === s || h.endsWith(`.${s}`))
 
 export function channelFor(opts: { hasUtm: boolean; refHost: string | null; ourHost: string }): string {
+  // UTM kampanyayı YENER, bu davranış bilerek korundu: reklam ölçümü
+  // etiketli bağlantıya dayanıyor ve bir AI yüzeyinden gelen etiketli
+  // bağlantı da bir kampanya tıklamasıdır.
   if (opts.hasUtm) return 'campaign'
   if (!opts.refHost || opts.refHost === opts.ourHost) return 'direct'
+  if (isAiHost(opts.refHost)) return 'ai'
   if (isSearchHost(opts.refHost)) return 'search'
   if (isSocialHost(opts.refHost)) return 'social'
   return 'referral'
+}
+
+/**
+ * "Muhtemel AI" sezgiseli - GENİŞ tanım (kullanıcı kararı, 26 Ağu 2026).
+ *
+ * NEDEN VAR: AI kaynaklı oturumların büyük kısmı referrer TAŞIMADAN geliyor
+ * (yerel uygulamalar, gizlilik ayarları) ve `direct` kovasına düşüyor. Bu
+ * yüzden sadece referrer'a bakan bir ölçüm en iyi kanalı sistematik olarak
+ * eksik sayar.
+ *
+ * NE DEĞİL: bu bir kanal DEĞİLDİR ve `channel` kolonuna YAZILMAZ. Kanal
+ * tablosu ölçülen gerçeği gösterir, bu sayı yanında ayrı bir sinyal olarak
+ * durur. Sezgiselle üretilmiş bir sayıyı kanal tablosuna karıştırmak, sonradan
+ * gerçek AI yönlendirmesi gelmeye başladığında ikisini ayırmayı imkânsız
+ * kılardı.
+ *
+ * KURAL: referrer yok (kanal `direct`) + oturum girişi + YENİ ziyaretçi +
+ * ana sayfa değil + işlemsel yol değil.
+ *
+ * Yanlış pozitifler bilerek kabul edildi: yer imi, elle yazılan adres ve QR
+ * trafiği de bu kovaya düşer. Dar tanım (yalnız derin içerik yolları)
+ * değerlendirildi ve reddedildi; bu sayı mutlak bir ölçüm değil, TREND
+ * göstergesidir ve öyle etiketlenir.
+ *
+ * ⚠️ AYNA: aynı kural `analyticsReport.ts > aggregateAnalytics` içinde SQL
+ * olarak da yazılıdır (okuma tarafı satırları TS'e çekmez). İkisi BİRLİKTE
+ * değişir. Dışlanan yol listesi tek kaynaktır ve SQL'e parametre olarak
+ * geçer, o yüzden orada kopyası yoktur.
+ */
+export const AI_GUESS_EXCLUDED_PREFIXES = [
+  '/e-posta-dogrula',
+  '/sifre-yenile',
+  '/bulten/onay',
+  '/bulten/cik',
+  '/katil',
+]
+
+export function isLikelyAiEntry(o: {
+  channel: string | null
+  isEntry: boolean
+  isNewVisitor: boolean
+  path: string
+}): boolean {
+  if (!o.isEntry || !o.isNewVisitor) return false
+  if (o.channel !== 'direct') return false
+  if (o.path === '/') return false
+  return !AI_GUESS_EXCLUDED_PREFIXES.some((p) => o.path === p || o.path.startsWith(`${p}/`))
 }
 
 /** Basit, bağımsız UA ayrıştırma - cihaz/tarayıcı/OS ailesi. */

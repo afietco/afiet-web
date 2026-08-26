@@ -3,7 +3,7 @@ slug: temayi-degistirmek
 title: "Koyu temaya nasıl geçerim?"
 description: "afiet'in aydınlık mı koyu mu görüneceğini menüdeki Görünüm sayfasından seçersin. Üç seçenek var, tercihin cihazında kalır ve anında uygulanır."
 updated: 2026-08-01
-order: 11
+order: 12
 keywords: [koyu tema, karanlık mod, açık tema, görünüm, tema değiştirme, otomatik]
 related: [baslangic/uygulamanin-haritasi, baslangic/profilimi-doldurmak]
 ---

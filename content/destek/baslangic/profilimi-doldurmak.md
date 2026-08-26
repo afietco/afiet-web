@@ -3,7 +3,7 @@ slug: profilimi-doldurmak
 title: "Profilimi nasıl doldururum?"
 description: "İsmin ve avatarın Profilim'de, boy ve hareket düzeyi gibi bilgiler Vücudum'daki Seni tanıyalım akışında. İkisinin de adımları burada."
 updated: 2026-08-01
-order: 6
+order: 7
 keywords: [profil, isim değiştirme, avatar, boy, doğum tarihi, aktivite düzeyi, seni tanıyalım, yönüm]
 related: [baslangic/vucudum-ekrani, baslangic/uygulamanin-haritasi, denge-ritim/dengeli-gun-ne-demek]
 ---

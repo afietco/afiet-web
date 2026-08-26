@@ -3,7 +3,7 @@ slug: beslenme-ekrani
 title: "Beslenme ekranında ne var?"
 description: "Günün dengesi, dört öğünün, Besin Rehberi ile Menüm kısayolları ve haftalık afiyet ritmin: Beslenme sekmesinde ne var, tek tek anlatıyoruz."
 updated: 2026-08-01
-order: 9
+order: 10
 keywords: [beslenme ekranı, öğünler, denge, makro, besin rehberi, menüm, afiyet ritmi]
 related: [baslangic/ilk-ogunumu-kaydetmek, ogun-kaydi/ogunu-duzenleme-ve-silme, denge-ritim/dengeli-gun-ne-demek]
 ---

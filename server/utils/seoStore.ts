@@ -19,7 +19,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personId, personSchema } from '#shared/utils/author'
-import { MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
+import { AFIET_PLUS, MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -198,19 +198,43 @@ function normalizePath(path: string): string {
 /**
  * SoftwareApplication'ın fiyat düğümü.
  *
- * BUGÜN HİÇ BASILMAZ (kullanıcı kararı, 24 Ağu 2026). afiet+ iOS'ta gerçekten
- * satın alınabiliyor, yani fiyat artık "uydurma" değil; basmama sebebi başka:
- * site hiçbir sayfasında fiyat söylemiyor. Şema, sayfanın söylemediğini iddia
- * etmemelidir. İkinci sebep, lansmanın ilk yıl intro fiyatı sürerken yalnız
- * liste fiyatını bildirmenin eksik anlatması.
+ * 24 Ağu 2026'da bilerek boştu: afiet+ satılıyordu ama site hiçbir sayfasında
+ * fiyat söylemiyordu ve şema, sayfanın söylemediğini iddia etmemeli. 26 Ağu
+ * 2026'da `/destek/baslangic/afiet-plus-nedir` açıldı ve `/indir` SSS'i de
+ * fiyatı yazdı, yani şart karşılandı.
  *
- * AÇILDIĞI GÜN: siteye bir afiet+ bölümü girer, fiyatlar `#shared/utils/marka`
- * içinde tek kaynak olur ve bu fonksiyon onları okur. Fonksiyon bilerek
- * duruyor: kaldırıp yeniden yazmak, şemanın nereye bağlanacağını bir daha
- * keşfetmeyi gerektirirdi.
+ * Uygulamanın KENDİSİ ücretsizdir; `price: 0` onu anlatır. afiet+ ayrı bir
+ * satırdır (`addOn`), çünkü uygulamanın fiyatı değil, içindeki isteğe bağlı
+ * aboneliktir. İkisini tek düğümde birleştirmek "afiet 129,90 TL" demek olurdu.
+ *
+ * Yıllıkta LİSTE fiyatı basılır, ilk yıl teklifi (599,99) basılmaz: `Offer`
+ * süreli bir kampanyayı `priceValidUntil` olmadan anlatamaz ve teklifin bitiş
+ * tarihi yok. Kampanya insana görünür metinde durur, şemada durmaz.
  */
-function mobilAppOffers(_lang: 'tr' | 'en'): Record<string, unknown> | null {
-  return null
+function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> {
+  return {
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: AFIET_PLUS.paraBirimi,
+      availability: 'https://schema.org/InStock',
+    },
+    isAccessibleForFree: true,
+    addOn: [
+      {
+        '@type': 'Offer',
+        name: lang === 'en' ? 'afiet+ monthly' : 'afiet+ aylık',
+        price: AFIET_PLUS.aylik.toFixed(2),
+        priceCurrency: AFIET_PLUS.paraBirimi,
+      },
+      {
+        '@type': 'Offer',
+        name: lang === 'en' ? 'afiet+ yearly' : 'afiet+ yıllık',
+        price: AFIET_PLUS.yillik.toFixed(2),
+        priceCurrency: AFIET_PLUS.paraBirimi,
+      },
+    ],
+  }
 }
 
 /**
@@ -222,6 +246,22 @@ function mobilAppOffers(_lang: 'tr' | 'en'): Record<string, unknown> | null {
  */
 function organizationId(baseUrl: string): string {
   return `${baseUrl.replace(/\/$/, '')}/#organization`
+}
+
+/**
+ * Uygulamanın makine okunur kimliği. `organizationId` ile AYNI gerekçe:
+ * SoftwareApplication düğümü iki sayfada birden basılır (ana sayfa ve `/en`)
+ * ve `@id`siz iki düğüm motorlar için birbirinden habersiz iki adaydır.
+ * Wikidata `sameAs` bağı bu düğümde durduğu için kimliksizlik, kaydı
+ * adreslenemeyen bir düğüme asmak demekti.
+ *
+ * Kimlik DİLDEN BAĞIMSIZ tektir: `/en` kendi `@id`sini üretmez, bu değeri
+ * aynen kullanır (aynı sebeple orada Organization da tekrar edilir).
+ * Yol deseni ailenin geri kalanıyla aynı: kişi `/hakkinda#yazar`,
+ * kurum `/#organization`, uygulama `/#app`.
+ */
+function mobilAppId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}/#app`
 }
 
 /** Organization düğümü - panelin şema ayarından üretilir, üç sayfa da bunu kullanır. */
@@ -333,6 +373,22 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
   const isEn = localeOf(path) === 'en'
   const inLanguage = isEn ? 'en-US' : g.locale.replace('_', '-')
 
+  /* og:image:alt yazının KENDİ kapağını anlatır. Genel ayardaki ogImageAlt
+     jenerik tanıtım görselini (/og.png) tarif ediyor; kapağı olan bir yazıda
+     o metin basıldığında alt, gösterilen görselle uyuşmuyordu (kapakta yazının
+     başlığı yazılı, alt metinde "tanıtım görseli" diyordu). Türetme yalnız
+     yazının cover_url'i EFEKTİF görselken yapılır: panelden bu yola ayrı bir
+     ogImage yazılmışsa ne olduğu bilinmez, genel metne düşülür.
+     Sayfa içindeki görünür kapak <img> bundan ayrıdır ve bilinçli alt=""
+     taşır (başlık hemen yanında, görsel onu tekrar eder). */
+  const postCover = post?.coverUrl ? absolutize(post.coverUrl, g.baseUrl) : ''
+  const ogImageAlt =
+    post && postCover && ogImage === postCover
+      ? isEn
+        ? `${post.title}, afiet blog cover image`
+        : `${post.title}, afiet blog kapak görseli`
+      : g.ogImageAlt
+
   const jsonld: Record<string, unknown>[] = []
   if (path === '/') {
     const graph: Record<string, unknown>[] = []
@@ -351,6 +407,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     if (s.mobileApp.enabled) {
       graph.push({
         '@type': 'SoftwareApplication',
+        '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
@@ -365,7 +422,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
             }
           : {}),
-        ...(mobilAppOffers('tr') ?? {}),
+        ...mobilAppOffers('tr'),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
@@ -532,6 +589,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       dateModified: release.date,
       mainEntityOfPage: canonical,
       articleSection: 'Sürüm notları',
+      /* `about` BİLEREK kimliksiz: buraya `mobilAppId` yazmak, her sürüm
+         sayfasının AYNI `@id`ye farklı bir `softwareVersion` iliştirmesi
+         demek olurdu (otuz sayfa, otuz çelişkili sürüm iddiası). Sürüm
+         notu uygulamadan BAHSEDER, uygulamayı yeniden TANIMLAMAZ. */
       about: { '@type': 'SoftwareApplication', name: g.siteName, softwareVersion: release.version },
       author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
       publisher: {
@@ -796,6 +857,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     if (s.mobileApp.enabled) {
       graph.push({
         '@type': 'SoftwareApplication',
+        '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
@@ -810,7 +872,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
-        ...(mobilAppOffers('en') ?? {}),
+        ...mobilAppOffers('en'),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
@@ -864,7 +926,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     ogTitle: page.ogTitle || title,
     ogDescription: page.ogDescription || description,
     ogImage,
-    ogImageAlt: g.ogImageAlt,
+    ogImageAlt,
     ogUrl: canonical,
     ogSiteName: g.siteName,
     ogLocale: isEn ? 'en_US' : g.locale,

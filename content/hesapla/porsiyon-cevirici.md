@@ -4,15 +4,17 @@ slug: porsiyon-cevirici
 
 ## Bu araç ne yapar
 
-Tariflerde ve paket etiketlerinde "1 porsiyon" yazar, ama bu ifadenin karşılığı yemekten yemeğe değişir. Bir porsiyon mercimek çorbası ile bir porsiyon karpuz aynı şey değildir; ne gramları benzer, ne de sofradaki ölçüleri.
+Porsiyon çevirici, aradığın besinin sofrada hangi ölçüyle anlatıldığını söyler: kase mi, dilim mi, avuç mu, kaç grama denk geldiği ve hangi besin gruplarına sayıldığı. Katalogda iki binden fazla yemek ve besin var, mercimek çorbasından karnıyarığa.
 
-Porsiyon çevirici bu boşluğu doldurur. Bir besin ararsın, üç şeyi birden görürsün:
+Buna ihtiyaç var, çünkü tariflerde ve paket etiketlerinde yazan "1 porsiyon" ifadesinin karşılığı yemekten yemeğe değişir: bir porsiyon mercimek çorbası ile bir porsiyon karpuz aynı şey değildir, ne gramları benzer ne de sofradaki ölçüleri.
+
+Bir besin ararsın, üç şeyi birden görürsün:
 
 1. **Sofradaki ölçüsü.** Dilim mi, kase mi, avuç mu, adet mi?
 2. **Gram karşılığı.** Seçtiğin miktarın yaklaşık ağırlığı.
 3. **Hangi gruplara sayıldığı.** Günün beş temel besin grubundan hangilerine denk geldiği.
 
-Katalogda iki binden fazla yemek ve besin var ve içinde Türk mutfağının kendi yemekleri bulunuyor: mercimek çorbası, karnıyarık, mantı, menemen, künefe. Uluslararası uygulamaların çoğunda bunları ya bulamazsın ya da yanlış bir eşleşmeye razı olursun.
+Kataloğun içinde Türk mutfağının kendi yemekleri var: mercimek çorbası, karnıyarık, mantı, menemen, künefe. Uluslararası uygulamaların çoğunda bunları ya bulamazsın ya da yanlış bir eşleşmeye razı olursun.
 
 Sayılar isteğe bağlı bir bölümde durur. Saklamıyoruz, ama öne de koymuyoruz.
 
