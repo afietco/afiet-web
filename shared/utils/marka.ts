@@ -16,7 +16,7 @@ import type { SiteLocale } from './locales'
  *
  * BİLİNÇLİ İSTİSNALAR (karakter sınırı cümleyi almıyor, kısaltılmış biçim
  * marka rehberinde ayrıca sabittir - afiet-mobile/BRAND.md > Tek cümlelik tanım):
- *   - App Store Subtitle (30):  "Kalori sayma, sofranı dengele"
+ *   - App Store Subtitle (30):  "Kalori sayma, dengeli beslen"
  *   - Play kısa açıklama (80):  "Kalori saymadan, Türk sofrasının diliyle ailece dengeli beslenme ve sağlık."
  *   - Wikidata açıklaması:      nötr ve slogansız olmak zorundadır (topluluk kuralı)
  * Bu üçü dışında bir yerde tanım gerekiyorsa buradan gelir.
