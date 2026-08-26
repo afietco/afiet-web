@@ -3,7 +3,7 @@ slug: bugun-ekrani
 title: "Bugün ekranında ne var?"
 description: "Bugün, günün tek bakışlık özetidir: Beslenme kartı, Afi'nin notu ve su, görevler, vücut, lig satırlarından oluşan pano. Hepsi burada."
 updated: 2026-08-01
-order: 8
+order: 9
 keywords: [bugün ekranı, ana ekran, su takibi, denge pusulan, görevlerim, ligim, pano]
 related: [baslangic/uygulamanin-haritasi, baslangic/beslenme-ekrani, denge-ritim/afiyet-gunu-ve-ritim]
 ---

@@ -8,9 +8,11 @@ cover_url: /covers/besin-gruplari-5-renk.png
 published_at:
 ---
 
-"Sağlıklı beslenmeye başlamak istiyorum ama nereden?" diye soruyorsan, cevap bir kalori tablosunda değil; sofranda zaten duran renklerde. Besin gruplarını bir kez tanıyınca, tabağına şöyle bir bakmak bile sana çok şey söylemeye başlıyor: bugün yeşilim var mı, mavim eksik mi, sarı yine başrolde mi?
+Besin grupları, benzer besleyici özellikler taşıyan yiyeceklerin bir arada düşünülmesidir. Türkiye Beslenme Rehberi (TÜBER 2022) beş grup sayar: süt ve ürünleri; et, tavuk, balık, yumurta ve kurubaklagiller; sebzeler; meyveler; ekmek ve tahıllar.
 
-Bu yazıda besin gruplarının ne olduğunu, Türkiye Beslenme Rehberi'ne (TÜBER 2022) dayanarak ve hiç gram-kalori tablosuna girmeden anlatacağız. Ölçülerimiz hep sofra dilinde: dilim, kase, avuç. Baştan söyleyelim: burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
+"Sağlıklı beslenmeye başlamak istiyorum ama nereden?" diye soruyorsan, başlangıç bir kalori tablosu değil işte bu beş renk. Besin gruplarını bir kez tanıyınca, tabağına şöyle bir bakmak bile sana çok şey söylemeye başlıyor: bugün yeşilim var mı, mavim eksik mi, sarı yine başrolde mi?
+
+Bu yazıda beş grubu, Türkiye Beslenme Rehberi'ne (TÜBER 2022) dayanarak ve hiç gram-kalori tablosuna girmeden anlatacağız. Ölçülerimiz hep sofra dilinde: dilim, kase, avuç. Baştan söyleyelim: burada anlatılanlar genel bir rehberdir; kişiye özel tıbbi ya da diyet tavsiyesi değildir.
 
 ## Besin grubu ne demek, neden kaloriden daha kolay bir başlangıç?
 
@@ -68,7 +70,7 @@ Sofra dilinde: bir adet elma, bir dilim karpuz, bir kase çilek. Rengi kırmız�
 
 Ekmek, bulgur, pirinç, makarna, yulaf... Bu aile günlük enerjinin ana kaynağı ve Türk sofrasının belkemiği. TÜBER, tahıl grubunda tam tahıllı seçeneklere yer açmayı önerir: tam buğday ekmeği, bulgur, yulaf gibi.
 
-Sofra dilinde: bir dilim ekmek, bir avuç dolusu bulgur pilavı, bir kase yulaf. Rengi sarı: buğday başağının, olgun ekmeğin sıcak sarısı.
+Sofra dilinde: bir dilim ekmek, bir kapalı avuç bulgur pilavı, bir kase yulaf. Rengi sarı: buğday başağının, olgun ekmeğin sıcak sarısı.
 
 ## Renkleri tabağa taşı: sağlıklı tabak modeli
 
@@ -83,7 +85,7 @@ Miktar tarafını dert etme: eline ve mutfağındaki doğal ölçülere güveneb
 Teoriyi sofraya koyalım. Bu bir kural değil, sadece renklerin gün içinde nasıl gezindiğine dair bir fikir:
 
 - **Kahvaltı**: birkaç dilim peynir (mavi), haşlanmış yumurta (turuncu), domates-salatalık (yeşil), bir dilim tam tahıllı ekmek (sarı). Dört renk, tek masa.
-- **Öğle**: bir kase mercimek çorbası (turuncu), bir avuç dolusu bulgur pilavı (sarı), bol salata (yeşil), bir bardak ayran (mavi).
+- **Öğle**: bir kase mercimek çorbası (turuncu), bir kapalı avuç bulgur pilavı (sarı), bol salata (yeşil), bir bardak ayran (mavi).
 - **Ara**: bir adet elma ya da bir kase çilek (kırmızı), istersen yanına bir avuç fındık (turuncu).
 - **Akşam**: fırında balık ya da zeytinyağlı nohut (turuncu), sebze yemeği (yeşil), bir dilim ekmek (sarı), bir kase yoğurt (mavi).
 
@@ -92,6 +94,8 @@ Gün bittiğinde beş rengin beşi de sofrandan geçmiş oluyor; üstelik hiçbi
 ## Saymadan dengele: renkler afiet'te seninle
 
 Bu renkler yazıya özel değil; [afiet](/)'in tam kalbinde duruyorlar. Uygulamada yediğini "bir kase mercimek çorbası" diye doğal ölçüyle kaydediyorsun; afiet onu turuncuya işliyor ve günün sonunda tabağındaki renk dengesini sana nazikçe gösteriyor. Sayı yok, yargı yok; sadece renkler ve sen.
+
+Küçük bir not: bu yazıdaki beş grup genel beslenmenin çerçevesi. Uygulamanın içinde afiet on iki grup tutar ve bunların beşini günlük dengede sayar; kalan yedisi kaydedilir, görünür ama halkaları doldurmaz. Hangi yiyeceğin hangi gruba girdiğini [destek merkezindeki tam listeden](/destek/denge-ritim/hangi-yiyecek-hangi-besin-grubunda) görebilirsin.
 
 Renkleri tanıdıysan gerisi kolay: afiet'i dene, tabağını saymadan dengele. Bu arada [blogdaki diğer yazılara](/blog) da göz atabilirsin.
 

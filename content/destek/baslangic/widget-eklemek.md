@@ -3,7 +3,7 @@ slug: widget-eklemek
 title: "afiet widget'ını iPhone ana ekranıma nasıl eklerim?"
 description: "afiyet ritmin widget'ı haftalık ritmini gösterir ve tek dokunuşla öğün eklemeni sağlar. Ana ekran ve kilit ekranı boyutları burada."
 updated: 2026-08-01
-order: 12
+order: 13
 keywords: [widget, ana ekran, kilit ekranı, iphone, ritim, hızlı öğün ekleme]
 related: [denge-ritim/afiyet-gunu-ve-ritim, baslangic/bugun-ekrani, baslangic/ilk-ogunumu-kaydetmek]
 ---

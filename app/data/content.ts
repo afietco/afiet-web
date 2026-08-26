@@ -1,3 +1,7 @@
+// Rakamlar bu dosyada YAZILMAZ: fiyatın tek kaynağı `#shared/utils/marka`
+// (bkz. AFIET_PLUS). Kopya burada yaşar, sayı oradan gelir.
+import { AFIET_PLUS, fiyatYaz } from '#shared/utils/marka'
+
 /**
  * Sayfanın tüm metin içeriği tek yerde - kopya değişikliği bileşenlere dokunmaz.
  * Ses tonu kuralları: afiet-mobile/BRAND.md ("sofrada seni seven biri";
@@ -251,12 +255,17 @@ export const indir = {
 
   faqEyebrow: 'merak ettiklerin',
   faqTitle: 'İndirmeden önce kısa cevaplar',
+  /** Bir maddenin ayrıntısı destek merkezindeyse `to` ile oraya bağlanır. */
   faq: [
     {
       q: 'afiet ücretli mi?',
       a:
         'afiet ücretsizdir ve ücretsiz kalır. Uygulamanın içinde afiet+ adında isteğe ' +
-        'bağlı bir abonelik var; almadan da öğün kaydı, denge, gruplar ve Afi çalışır.',
+        `bağlı bir abonelik var: aylık ${fiyatYaz(AFIET_PLUS.aylik)} TL, yıllık ` +
+        `${fiyatYaz(AFIET_PLUS.yillik)} TL, ilk yıl ${fiyatYaz(AFIET_PLUS.yillikIlkYil)} TL. ` +
+        'Açtığı şey Sini ve Demi sohbetleri; almadan da öğün kaydı, denge, gruplar ve ' +
+        'Afi çalışır.',
+      to: '/destek/baslangic/afiet-plus-nedir',
     },
     {
       q: 'Android ne zaman gelecek?',
@@ -283,7 +292,7 @@ export const indir = {
         'İstediğin zaman. Uygulamada menü, Hesap ayarlarım, Hesabı ve tüm verileri sil ' +
         'yolunu izlemen yeterli; işlem geri alınamaz.',
     },
-  ],
+  ] as { q: string; a: string; to?: string }[],
 }
 
 
@@ -672,7 +681,10 @@ export type BasinCopy = typeof basin
 export const support = {
   eyebrow: 'destek merkezi',
   title: 'Nasıl yardımcı olabiliriz?',
-  sub: 'Aradığın cevabı ara kutusuna yaz ya da aşağıdaki başlıklardan ilerle.',
+  sub:
+    'Destek merkezinde afiet’in kullanımına dair yazılar var: öğün kaydı ve ' +
+    'besin grupları, Soframız, denge ve ritim, hesap ve gizlilik. Aradığın ' +
+    'cevabı ara kutusuna yaz ya da aşağıdaki başlıklardan ilerle.',
   searchLabel: 'Destek merkezinde ara',
   searchPlaceholder: 'Bir şey ara: kayıt, grup, bildirim…',
   searchHint: 'Aramak için / tuşuna basabilirsin',
@@ -747,8 +759,10 @@ export const hesapla = {
   eyebrow: 'hesaplama',
   title: 'Sayıyı biz de biliyoruz. Sana tabağını veriyoruz.',
   sub:
-    'Çoğu hesaplayıcı bir kalori ve bir "ideal kilo" verip susar. afiet ' +
-    'aynı hesabı yapar, sonra onu sofranın diline çevirir: kaç avuç, kaç yumruk.',
+    'Beş ücretsiz hesaplayıcı: sofra payın, günlük su, porsiyon çevirici, vücut ' +
+    'kitle indeksi ve yağ oranı. Çoğu hesaplayıcı bir kalori ve bir "ideal kilo" ' +
+    'verip susar; afiet aynı hesabı yapar, sonra onu sofranın diline çevirir: ' +
+    'kaç avuç, kaç yumruk.',
   toolsTitle: 'Araçlar',
   soonLabel: 'Yakında',
   soonBody:
