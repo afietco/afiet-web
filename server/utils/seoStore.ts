@@ -248,6 +248,22 @@ function organizationId(baseUrl: string): string {
   return `${baseUrl.replace(/\/$/, '')}/#organization`
 }
 
+/**
+ * Uygulamanın makine okunur kimliği. `organizationId` ile AYNI gerekçe:
+ * SoftwareApplication düğümü iki sayfada birden basılır (ana sayfa ve `/en`)
+ * ve `@id`siz iki düğüm motorlar için birbirinden habersiz iki adaydır.
+ * Wikidata `sameAs` bağı bu düğümde durduğu için kimliksizlik, kaydı
+ * adreslenemeyen bir düğüme asmak demekti.
+ *
+ * Kimlik DİLDEN BAĞIMSIZ tektir: `/en` kendi `@id`sini üretmez, bu değeri
+ * aynen kullanır (aynı sebeple orada Organization da tekrar edilir).
+ * Yol deseni ailenin geri kalanıyla aynı: kişi `/hakkinda#yazar`,
+ * kurum `/#organization`, uygulama `/#app`.
+ */
+function mobilAppId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}/#app`
+}
+
 /** Organization düğümü - panelin şema ayarından üretilir, üç sayfa da bunu kullanır. */
 function organizationNode(
   org: SeoSettings['schema']['organization'],
@@ -391,6 +407,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     if (s.mobileApp.enabled) {
       graph.push({
         '@type': 'SoftwareApplication',
+        '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
@@ -572,6 +589,10 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
       dateModified: release.date,
       mainEntityOfPage: canonical,
       articleSection: 'Sürüm notları',
+      /* `about` BİLEREK kimliksiz: buraya `mobilAppId` yazmak, her sürüm
+         sayfasının AYNI `@id`ye farklı bir `softwareVersion` iliştirmesi
+         demek olurdu (otuz sayfa, otuz çelişkili sürüm iddiası). Sürüm
+         notu uygulamadan BAHSEDER, uygulamayı yeniden TANIMLAMAZ. */
       about: { '@type': 'SoftwareApplication', name: g.siteName, softwareVersion: release.version },
       author: { '@type': 'Organization', name: g.siteName, url: g.baseUrl },
       publisher: {
@@ -836,6 +857,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     if (s.mobileApp.enabled) {
       graph.push({
         '@type': 'SoftwareApplication',
+        '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
