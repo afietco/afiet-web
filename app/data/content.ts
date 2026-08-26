@@ -326,6 +326,12 @@ export const footer = {
    * ÇIKARILDI (kullanıcı kararları). Var olmayan profile link VERİLMEZ.
    * `icon` anahtarı SocialIcons.vue'daki çizimi seçer. Hashnode adresi
    * blog alan adıdır (afiet.hashnode.dev), profil sayfası değil.
+   *
+   * YouTube kanalı 26 Ağu 2026'da açıldı. Adres kanalın KENDİ ilan ettiği
+   * kanonik biçimdir (`canonicalBaseUrl` = `/@afietco`), `/channel/<id>`
+   * değil. ⚠️ `@afiet` BAŞKASININ kanalıdır ve 200 döner; kısaltmaya
+   * çekme. Kanal kimliği `UCAA9ZbSZxaE88XAp7nZATmA`, Wikidata'da P2397
+   * olarak da kayıtlı (Q141169446) ve iki kayıt aynı varlığı gösterir.
    */
   social: [
     { label: 'Instagram', href: 'https://www.instagram.com/afiet.co/', icon: 'instagram' },
@@ -333,10 +339,11 @@ export const footer = {
     { label: 'Substack', href: 'https://afiet.substack.com', icon: 'substack' },
     { label: 'Hashnode', href: 'https://afiet.hashnode.dev', icon: 'hashnode' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/afiet-app', icon: 'linkedin' },
+    { label: 'YouTube', href: 'https://www.youtube.com/@afietco', icon: 'youtube' },
   ] as { label: string; href: string; icon: SocialIcon }[],
 }
 
-export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'linkedin'
+export type SocialIcon = 'instagram' | 'medium' | 'substack' | 'hashnode' | 'linkedin' | 'youtube'
 
 /**
  * Bülten (kendi altyapımız: aboneler Neon'da, gönderim Resend API ile, dış
