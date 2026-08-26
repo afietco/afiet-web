@@ -86,6 +86,23 @@ try {
 
   const llms = await (await fetch(`http://localhost:${PORT}/llms.txt`)).text()
   ok(llms.startsWith('# afiet'), 'llms.txt yayında')
+
+  // Android App Links: Play yayına girdiğinde afiet.co bağlantılarının
+  // uygulamayı açması buna bağlı. Dosyanın SERVİSİ burada korunur; parmak
+  // izinin DOĞRULUĞU burada kanıtlanamaz (sabitle karşılaştırmak totoloji
+  // olurdu), o Play Console'daki uygulama imzalama sertifikasından gelir.
+  const assetLinksYanit = await fetch(`http://localhost:${PORT}/.well-known/assetlinks.json`)
+  const assetLinksTip = assetLinksYanit.headers.get('content-type') || ''
+  ok(assetLinksYanit.status === 200 && assetLinksTip.includes('application/json'), 'assetlinks.json JSON olarak yayında')
+  const assetLinks = await assetLinksYanit.json().catch(() => null)
+  const android = Array.isArray(assetLinks)
+    ? assetLinks.find((s) => s?.target?.package_name === 'co.afiet.app')
+    : null
+  ok(
+    android?.relation?.includes('delegate_permission/common.handle_all_urls') &&
+      /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(android?.target?.sha256_cert_fingerprints?.[0] ?? ''),
+    'assetlinks.json co.afiet.app için geçerli biçimde parmak izi taşıyor',
+  )
   /* llms.txt'in `>` özeti = tek cümlelik marka tanımının kendisi. Bu dosya
      üretken motorların okuduğu asıl yüzey; buraya cümlenin elle yazılmış bir
      kopyası konursa tanım değiştiğinde sessizce eskir (11 Ağu 2026'ya kadar
