@@ -3,11 +3,10 @@ slug: gunluk-su-ihtiyaci-hesaplama
 title: "Günlük su ihtiyacı nasıl hesaplanır?"
 description: "Günlük su ihtiyacı hesaplama için pratik formül: kilo x 30-35 ml. Sıcak hava, egzersiz ve günlük rutine göre miktarı nasıl ayarlayacağını açıklar."
 tags: [günlük su ihtiyacı, su tüketimi, hidrasyon]
-cover_url: /kapak/gunluk-su-ihtiyaci-hesaplama.png?poz=su
 item_id: 27
-published_at: 2026-08-06T07:56:02.175Z
+cover_url: /kapak/gunluk-su-ihtiyaci-hesaplama.png?poz=su
+published_at:
 ---
-
 Günlük su ihtiyacı hesaplama için en pratik başlangıç, vücut ağırlığını kilogram başına **30 ila 35 ml** ile çarpmaktır. Yani 70 kilo bir yetişkin için yaklaşık **2,1 ila 2,5 litre** su iyi bir referans olabilir. Ama bu sayı herkeste aynı işlemez. Havanın sıcaklığı, ne kadar terlediğin, egzersiz yapıp yapmadığın, gebelik, emzirme ve bazı sağlık durumları ihtiyacı değiştirebilir. En doğrusu, bu hesabı bir başlangıç noktası gibi görmek, sonra da gün içindeki susama hissin, idrar rengin ve rutininle birlikte ayarlamaktır.
 
 ## En basit hesap: kilo x 30-35 ml
@@ -26,6 +25,8 @@ Bunu birkaç örnekle görelim:
 
 Buradaki amaç litreye takılmak değil, sana uygun bir aralık bulmak. Çünkü su ihtiyacı tek bir sayıyla değil, yaşamın temposuyla şekillenir.
 
+Bu yüzden hareket düzeyini de hesaba katan bir sayı istersen, [günlük su hesaplayıcısına](/hesapla/gunluk-su) yaş, boy, kilo ve hareketini girip bardak karşılığını görebilirsin.
+
 ## Bu miktara sadece saf su mu dahil?
 
 Öncelik elbette sudur. Ama günlük sıvı alımına sadece bardaktaki su değil, bazı içecekler ve su içeriği yüksek yiyecekler de katkı sağlar.
@@ -40,7 +41,7 @@ Katkı sayılabilecekler:
 - Süt
 - Salatalık, domates, karpuz, portakal gibi su oranı yüksek besinler
 
-Yine de işin omurgasını suya dayamak daha rahattır. Çünkü tatlı içecekler, fazla kafeinli seçenekler ya da çok şekerli hazır içecekler susuzluğu yönetmek için en dengeli yol olmayabilir.
+Yine de işin omurgasını suya dayamak daha rahattır. Çünkü tatlı içecekler, fazla kafeinli seçenekler ya da çok şekerli hazır içecekler susuzluğu yönetmek için en dengeli yol olmayabilir. Hangi içeceğin pratikte kalorisiz sayıldığını, sade maden suyuyla aromalı olanın farkını [1 bardak su kaç kalori?](/blog/1-bardak-su-kac-kalori) yazısında ayrıntılandırdık.
 
 Eğer beslenme düzenini genel olarak da sadeleştirmek istiyorsan, [dengeli beslenme nedir?](/blog/dengeli-beslenme-nedir) yazısı da işine yarayabilir.
 
@@ -138,7 +139,7 @@ Susama iyi bir sinyal ama gün çok yoğunsa bu sinyali geç fark edebilirsin.
 Bu, gece sık uyanmaya ya da rahatsız hissetmeye yol açabilir.
 
 ### 3. Çay ve kahveyi su yerine koymak
-Tamamen sayılmaz demek doğru değil, ama günün temel sıvısı su olduğunda dengeyi kurmak daha kolay olur.
+Tamamen sayılmaz demek doğru değil, ama günün temel sıvısı su olduğunda dengeyi kurmak daha kolay olur. Bu ayrımı gün akışıyla birlikte [çay ve kahve su yerine geçer mi?](/blog/cay-ve-kahve-su-yerine-gecer-mi) yazısında anlattık.
 
 ### 4. Masada su bulundurmamak
 Göz önünde olmayan şeyi unutmak çok insani. Şişe ya da bardak görünür olunca içmek de kolaylaşır.

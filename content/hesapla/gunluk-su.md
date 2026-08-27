@@ -16,6 +16,8 @@ Zincir üç adımda kurulur:
 
 Sonuç 6 ile 15 bardak arasına yumuşatılır. Alt sınır var, çünkü çok düşük bir sayı kimse için doğru bir tavsiye değil. Üst sınır var, çünkü formülün ürettiği uç değerler pratikte anlamını yitiriyor.
 
+Aklında kalacak kaba bir ölçü arıyorsan, kilo başına 30-35 ml'lik klasik hesabı ve örneklerini [günlük su ihtiyacı nasıl hesaplanır?](/blog/gunluk-su-ihtiyaci-hesaplama) yazısında bulursun. İki yol da aynı yere çıkar; buradaki hesap hareket düzeyini de sayıya katar.
+
 ## Sonucunu nasıl okumalı
 
 Çıkan sayı bir hedef değil, bir başlangıç noktasıdır. Şu durumlarda ihtiyacın artar:
@@ -28,7 +30,7 @@ Sonuç 6 ile 15 bardak arasına yumuşatılır. Alt sınır var, çünkü çok d
 
 Bazı durumlarda ise miktar hekim tarafından sınırlanır: kalp yetmezliği, böbrek hastalıkları ve bazı ilaç tedavileri. Böyle bir durumun varsa buradaki sayıyı değil, hekiminin verdiği sınırı esas al.
 
-**Çay ve kahve sayılır mı?** Sayılır. Kafeinin hafif idrar söktürücü etkisi, içtiğin sıvının kendisini götürecek kadar güçlü değildir. Yine de suyun yerini tam tutmaz: şekerli içecekler yanlarında enerji getirir, çay ve kahve fazlası uykuyu böler.
+**Çay ve kahve sayılır mı?** Sayılır. Kafeinin hafif idrar söktürücü etkisi, içtiğin sıvının kendisini götürecek kadar güçlü değildir. Yine de suyun yerini tam tutmaz: şekerli içecekler yanlarında enerji getirir, çay ve kahve fazlası uykuyu böler. Günün hangi bardağının temel, hangisinin eşlikçi olduğunu [çay ve kahve su yerine geçer mi?](/blog/cay-ve-kahve-su-yerine-gecer-mi) yazısında ayırdık; sade su, maden suyu ve aromalı içecek arasındaki fark ise [1 bardak su kaç kalori?](/blog/1-bardak-su-kac-kalori) yazısında.
 
 **En pratik gösterge idrarının rengidir.** Açık saman sarısı genellikle iyi bir işaret. Koyu sarı, su içmek için bir hatırlatma. Tamamen renksiz ise gereğinden fazla içiyor olabilirsin.
 
@@ -43,7 +45,7 @@ Günlük ihtiyacını güne yaymak için işe yarayan bağlama noktaları:
 - Çay ya da kahve içtiğinde yanına bir bardak su.
 - Masana ya da çantana görünür bir şişe koy. Görünmeyen su içilmiyor.
 
-afiet uygulamasında su tek dokunuşla eklenir ve gün sonunda kaç bardak içtiğini gösterir. Kaçırdığın gün için seni azarlamaz; ertesi güne temiz başlarsın.
+afiet uygulamasında su tek dokunuşla eklenir ve gün sonunda kaç bardak içtiğini gösterir. Kaçırdığın gün için seni azarlamaz; ertesi güne temiz başlarsın. Kaydın uygulamada nasıl tutulduğunu [su kaydı tutmak](/destek/ogun-kaydi/su-kaydi-tutmak) sayfasında adım adım anlattık.
 
 ## Sık sorulanlar
 

@@ -7,7 +7,6 @@ item_id: 6
 cover_url: /covers/besin-gruplari-5-renk.png
 published_at:
 ---
-
 Besin grupları, benzer besleyici özellikler taşıyan yiyeceklerin bir arada düşünülmesidir. Türkiye Beslenme Rehberi (TÜBER 2022) beş grup sayar: süt ve ürünleri; et, tavuk, balık, yumurta ve kurubaklagiller; sebzeler; meyveler; ekmek ve tahıllar.
 
 "Sağlıklı beslenmeye başlamak istiyorum ama nereden?" diye soruyorsan, başlangıç bir kalori tablosu değil işte bu beş renk. Besin gruplarını bir kez tanıyınca, tabağına şöyle bir bakmak bile sana çok şey söylemeye başlıyor: bugün yeşilim var mı, mavim eksik mi, sarı yine başrolde mi?
@@ -54,6 +53,8 @@ Bu ailenin ortak noktası protein: vücudun tamirat ve yapı ekibi. Ve iyi haber
 
 Sofra dilinde: avuç içi kadar et, tavuk ya da balık; bir kase mercimek çorbası; haşlanmış bir yumurta; bir avuç fındık. Rengi turuncu: yumurta sarısına, mercimeğe göz kırpan sıcak bir ton.
 
+Izgara but ile panelenmiş tavuğun aynı yere düşüp düşmediğini merak ediyorsan, [tavuk hangi besin grubuna girer?](/blog/tavuk-hangi-besin-grubuna-girer) yazısında tek tek ayırdık.
+
 ### Yeşil: sebzeler
 
 Sebzeler tabağın en cömert ailesi. Domates, salatalık, ıspanak, kabak, biber, patlıcan... TÜBER sebzeleri lif, vitamin ve mineral katkıları için her gün önerir; [Dünya Sağlık Örgütü de](https://www.who.int/news-room/fact-sheets/detail/healthy-diet) sağlıklı bir beslenmede sebze ve meyvenin bolca yer almasını öneriyor.
@@ -71,6 +72,8 @@ Sofra dilinde: bir adet elma, bir dilim karpuz, bir kase çilek. Rengi kırmız�
 Ekmek, bulgur, pirinç, makarna, yulaf... Bu aile günlük enerjinin ana kaynağı ve Türk sofrasının belkemiği. TÜBER, tahıl grubunda tam tahıllı seçeneklere yer açmayı önerir: tam buğday ekmeği, bulgur, yulaf gibi.
 
 Sofra dilinde: bir dilim ekmek, bir kapalı avuç bulgur pilavı, bir kase yulaf. Rengi sarı: buğday başağının, olgun ekmeğin sıcak sarısı.
+
+Bu grubun sofradaki payını ve tam tahılın yerini [tahıllar grubu nedir?](/blog/tahillar-grubu) yazısında açtık; pilavdan kısıra kadar bulgurun nereye oturduğu ise [bulgur hangi besin grubuna girer?](/blog/bulgur-hangi-besin-grubuna-girer) yazısında.
 
 ## Renkleri tabağa taşı: sağlıklı tabak modeli
 
@@ -90,6 +93,8 @@ Teoriyi sofraya koyalım. Bu bir kural değil, sadece renklerin gün içinde nas
 - **Akşam**: fırında balık ya da zeytinyağlı nohut (turuncu), sebze yemeği (yeşil), bir dilim ekmek (sarı), bir kase yoğurt (mavi).
 
 Gün bittiğinde beş rengin beşi de sofrandan geçmiş oluyor; üstelik hiçbir yerde terazi, tablo ya da hesap yok.
+
+Beş grubu güne yaymanın pratik yollarını [günlük besin ihtiyacı nedir?](/blog/gunluk-besin-ihtiyaci) yazısında topladık.
 
 ## Saymadan dengele: renkler afiet'te seninle
 
