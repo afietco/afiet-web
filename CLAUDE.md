@@ -424,6 +424,47 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
 - Token/sır loglanmaz: Graph hataları URL'siz, yalnız type+code+message olarak
   yazılır (URL'de access_token olabilir).
 
+### YouTube yolu (29 Ağu 2026)
+
+- **Hesap ve gönderi tabloları AYNI** (`social_accounts`, `social_posts`,
+  platform `youtube`); ölçüm tabloları AYRI: `youtube_daily` (gün başına kanal
+  toplamı), `youtube_rows` (gün başına trafik/ülke/cihaz), `youtube_videos` ve
+  `youtube_demographics` (pencere anlık görüntüsü). Model
+  `server/utils/youtubeStore.ts`, istemci ve senkron `server/utils/youtube.ts`.
+- **SERVİS HESABI ÇALIŞMAZ.** YouTube API'leri servis hesabını kabul etmiyor,
+  yani `gsc.ts` deseni kopyalanamaz. Kanal sahibi bir kez OAuth'la izin verir,
+  REFRESH TOKEN şifreli saklanır (aynı `socialCrypto` anahtarı) ve her turda
+  ondan kısa ömürlü access token üretilir. Hesabın `expires_at`i bu yüzden
+  NULL'dur, "token yenileme" adımı YOKTUR.
+- **TUZAK: OAuth onay ekranı "Testing" modundaysa refresh token 7 GÜNDE ölür**
+  ve senkron sessizce durur (`invalid_grant`). Uygulama **In production**
+  olmalı; `yt-analytics.readonly` hassas kapsam olduğu için doğrulanmamış
+  uygulama uyarısı çıkar, kendi kanalımız için sorun değil. Kod bu hatayı
+  "yetki düşmüş: kanalı panelden yeniden bağla" diye çevirir.
+- Bağlama akışı Instagram'ın kardeşi: `GET /api/admin/social/youtube-start`
+  (imzalı `state`) → Google izin ekranı → `GET /api/social/youtube/callback`
+  (PUBLIC olmak zorunda). `access_type=offline` + `prompt=consent` ŞART:
+  Google refresh token'ı yalnız o zaman tekrar gönderir, yoksa yeniden bağlama
+  token'sız kalır ve kod bunu hata sayar.
+- Senkron aynı cron'da (`POST /api/cron/social-metrics`): kayan 7 günlük
+  pencere her turda yeniden çekilir, `{"days": 90}` gövdesiyle geriye dönük
+  doldurulur (gsc-sync'teki desenin aynısı, YALNIZ YouTube'u etkiler).
+- **İKİ API KISITI TASARIMI BELİRLEDİ:** `video` boyutu `day` ile
+  BİRLEŞMİYOR, demografi de yalnız `viewerPercentage` döndürüyor (yüzde günler
+  arası toplanamaz). Bu yüzden video listesi ve demografi 7/30/90 günlük
+  pencereler hâlinde ayrı ayrı sorulup `range_key` altında saklanır; trafik,
+  ülke ve cihaz ise `day` ile birlikte sorulabildiği için tarih başına yazılır.
+  `omur` penceresi videonun ömür toplamıdır ve `content_metrics`e (source
+  `youtube`) yazılan sayı odur.
+- **GÖSTERİM (impressions) ve CTR HİÇBİR YERDE YOK.** YouTube ikisini Analytics
+  API'sine de Reporting API'sine de açmıyor, yalnız Studio'da var. Kolon açma,
+  panelde vaat etme (`YouTubeTab.vue` bunu okuyucuya da söylüyor).
+- Shorts ayrımı SÜREDEN yapılır (≤180 sn), çünkü Data API'de bayrağı yok.
+  Yanlış sınıflarsa biçim etiketi yanlış olur, sayılar doğru kalır.
+- Ülke adları ICU'dan gelir (`Intl.DisplayNames`, tr); cihaz ve trafik kaynağı
+  sözlükleri KODDA durur ve eşleşmeyen değer HAM geçer (Apple mağaza
+  kaynaklarındaki kuralın aynısı).
+
 ## Basın kiti (/basin + /en/press)
 
 - **Tek cümlelik marka tanımı** `shared/utils/marka.ts > MARKA_TANIM`tadır ve
