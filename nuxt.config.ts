@@ -71,10 +71,16 @@ export default defineNuxtConfig({
     // Hesaplama araçları: form SSR'da basılır, hesap TAMAMEN tarayıcıda koşar.
     '/hesapla': { isr: 60 },
     '/hesapla/**': { isr: 60 },
-    // Universal link doğrulama dosyası (public/.well-known/…): uzantısı
-    // olmadığından statik sunum content-type belirleyemez; Apple bunu
-    // application/json ile bekler (iOS eşleştirmeyi buradan yapar).
+    // Uygulama eşleştirme dosyaları (public/.well-known/…) JSON olarak
+    // servis edilmek zorunda. Apple'ınkinin uzantısı yok, o yüzden statik
+    // sunum content-type'ı dosya adından çıkaramıyor; iOS eşleştirmeyi
+    // buradan yapar. Android'inki `.json` uzantılı ama başlığı burada
+    // sabitlemek ikisini aynı yerde tutuyor ve sunum katmanı değişirse
+    // sessizce bozulmuyor.
     '/.well-known/apple-app-site-association': {
+      headers: { 'content-type': 'application/json' },
+    },
+    '/.well-known/assetlinks.json': {
       headers: { 'content-type': 'application/json' },
     },
   },
