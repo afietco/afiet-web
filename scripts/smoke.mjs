@@ -648,6 +648,37 @@ try {
   ok(html.includes('"addOn"') && html.includes('"price":"129.90"'),
     'şema afiet+ fiyatını addOn olarak bildiriyor')
 
+  /* Aboneliğin SÜRESİ (seoStore > mobilAppOffers). Düz `price` "129,90 TL"
+     der ama "ayda" demez; aylık ile yıllığı ayıran tek şey `name` alanındaki
+     Türkçe kelime olursa fiyatı doğru okumak makinenin o kelimeyi çevirmesine
+     kalır. `unitCode` UN/CEFACT kodudur: MON ay, ANN yıl. İkisi karışırsa
+     şema "yılda 129,90" ya da "ayda 799,99" der ve sayfa yine çalışır. */
+  const abonelikler = uygulama?.addOn ?? []
+  const aylik = abonelikler.find((o) => o.priceSpecification?.unitCode === 'MON')
+  const yillik = abonelikler.find((o) => o.priceSpecification?.unitCode === 'ANN')
+  ok(aylik?.price === '129.90', `aylık teklif ay birimiyle bildiriliyor (${aylik?.price ?? 'YOK'})`)
+  ok(yillik?.price === '799.99', `yıllık teklif yıl birimiyle bildiriliyor (${yillik?.price ?? 'YOK'})`)
+
+  /* İLK YIL TEKLİFİ ŞEMADA YOKTUR (kullanıcı kararı, 26 Ağu 2026'da konuldu,
+     29 Ağu 2026'da yeniden soruldu ve korundu). Gerekçe `mobilAppOffers`
+     yorumunda: `Offer` bitiş tarihi olmayan bir kampanyayı anlatamaz, o yüzden
+     599,99 insana görünür metinde durur, şemada durmaz. Bu satır kararın
+     kendisini korur: kampanya fiyatı bir gün şemaya sızarsa burada düşer. */
+  ok(!JSON.stringify(uygulama ?? {}).includes('599.99'),
+    'şema ilk yıl kampanyasını teklif olarak bildirmiyor')
+
+  /* Teklifi kim veriyor. `seller` kurumun `@id`sine bağlanır ve düğüm tekrar
+     EDİLMEZ; bağ koparsa fiyatlar sahipsiz kalır. */
+  ok(abonelikler.every((o) => o.seller?.['@id'] === kurum?.['@id']),
+    'afiet+ teklifleri kurum kimliğine bağlı')
+
+  /* Fiyatın insan tarafından okunabilir kaynağı. Türkçede `/indir` üç sayıyı
+     da yazıyor; İngilizcede fiyat yazan sayfa YOK, o yüzden orada `url`
+     basılmaz (uydurulmuş kaynak, kaynaksızlıktan kötüdür). */
+  ok(aylik?.url?.endsWith('/indir'), 'afiet+ teklifi fiyatı yazan sayfaya bağlı')
+  ok((enUygulama?.addOn ?? []).every((o) => !o.url),
+    '/en teklifleri olmayan bir İngilizce fiyat sayfasına bağlanmıyor')
+
   /* Fiyat TEK KAYNAKTAN gelir (`marka.ts > AFIET_PLUS`) ve üç sayı BİRLİKTE
      yazılır: yıllığın liste fiyatını tek başına söylemek eksik anlatır, çünkü
      bitiş tarihi olmayan bir ilk yıl teklifi yürürlükte. 129,99 basamağı
