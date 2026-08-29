@@ -210,29 +210,63 @@ function normalizePath(path: string): string {
  * Yıllıkta LİSTE fiyatı basılır, ilk yıl teklifi (599,99) basılmaz: `Offer`
  * süreli bir kampanyayı `priceValidUntil` olmadan anlatamaz ve teklifin bitiş
  * tarihi yok. Kampanya insana görünür metinde durur, şemada durmaz.
+ * **29 Ağu 2026'da yeniden soruldu ve karar KORUNDU** (kullanıcı); mağaza
+ * açıklaması ve `/indir` üç sayıyı da yazdığı hâlde şema iki sayı basar.
+ * Aşağıdaki smoke bu kararı kilitliyor, yani 599,99'un şemaya sızması testte
+ * düşer.
+ *
+ * ABONELİĞİN SÜRESİ YAPIDAN OKUNMALI (29 Ağu 2026). Düz `price` bir SAYIDIR:
+ * "129,90 TL" der, "ayda" demez. O ana kadar aylık ile yıllığı ayıran tek şey
+ * `name` alanındaki Türkçe kelimeydi, yani makinenin fiyatı doğru okuması
+ * kelimeyi çevirmesine bağlıydı. `UnitPriceSpecification` bunu yapıdan söyler:
+ * `unitCode` UN/CEFACT kodudur (`MON` ay, `ANN` yıl) ve `billingDuration` ile
+ * birlikte "bir ay için 129,90" cümlesini kurar. Fiyat iki yerde tekrar eder
+ * (`price` ve spec içinde); bu kopya değil sözleşmedir, `Offer.price` alanını
+ * okuyup spec'e bakmayan tüketiciler için orada durur.
+ *
+ * `url` YALNIZ TÜRKÇEDE var: fiyatı yazan tek sayfa `/indir` ve İngilizce
+ * karşılığı henüz yok (`app/pages/en/` altında `download` yok). Teklife
+ * kaynak gösterilemeyen dilde adres uydurmak yerine alan hiç basılmıyor.
+ * `/en/download` açıldığı gün bu koşul kalkar.
  */
-function mobilAppOffers(lang: 'tr' | 'en'): Record<string, unknown> {
+function mobilAppOffers(lang: 'tr' | 'en', baseUrl: string): Record<string, unknown> {
+  /* Teklifi kuruma bağlar. `@id` ile bağlanır, düğüm burada TEKRAR EDİLMEZ:
+     kurum aynı grafikte zaten tam hâliyle basılı ve aynı varlığı iki kez
+     tarif etmek motorlara iki aday gösterir (aynı gerekçe `organizationNode`
+     yorumunda). */
+  const satici = { '@id': organizationId(baseUrl) }
+
+  const abonelik = (ad: string, tutar: number, birim: 'MON' | 'ANN') => ({
+    '@type': 'Offer',
+    name: ad,
+    price: tutar.toFixed(2),
+    priceCurrency: AFIET_PLUS.paraBirimi,
+    availability: 'https://schema.org/InStock',
+    category: 'subscription',
+    seller: satici,
+    priceSpecification: {
+      '@type': 'UnitPriceSpecification',
+      price: tutar.toFixed(2),
+      priceCurrency: AFIET_PLUS.paraBirimi,
+      billingDuration: 1,
+      billingIncrement: 1,
+      unitCode: birim,
+    },
+    ...(lang === 'tr' ? { url: `${baseUrl.replace(/\/$/, '')}/indir` } : {}),
+  })
+
   return {
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: AFIET_PLUS.paraBirimi,
       availability: 'https://schema.org/InStock',
+      seller: satici,
     },
     isAccessibleForFree: true,
     addOn: [
-      {
-        '@type': 'Offer',
-        name: lang === 'en' ? 'afiet+ monthly' : 'afiet+ aylık',
-        price: AFIET_PLUS.aylik.toFixed(2),
-        priceCurrency: AFIET_PLUS.paraBirimi,
-      },
-      {
-        '@type': 'Offer',
-        name: lang === 'en' ? 'afiet+ yearly' : 'afiet+ yıllık',
-        price: AFIET_PLUS.yillik.toFixed(2),
-        priceCurrency: AFIET_PLUS.paraBirimi,
-      },
+      abonelik(lang === 'en' ? 'afiet+ monthly' : 'afiet+ aylık', AFIET_PLUS.aylik, 'MON'),
+      abonelik(lang === 'en' ? 'afiet+ yearly' : 'afiet+ yıllık', AFIET_PLUS.yillik, 'ANN'),
     ],
   }
 }
@@ -422,7 +456,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
               installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean),
             }
           : {}),
-        ...mobilAppOffers('tr'),
+        ...mobilAppOffers('tr', g.baseUrl),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
@@ -872,7 +906,7 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         ...(s.mobileApp.appStoreUrl || s.mobileApp.playStoreUrl
           ? { installUrl: [s.mobileApp.appStoreUrl, s.mobileApp.playStoreUrl].filter(Boolean) }
           : {}),
-        ...mobilAppOffers('en'),
+        ...mobilAppOffers('en', g.baseUrl),
       })
     }
     if (graph.length) jsonld.push({ '@context': 'https://schema.org', '@graph': graph })
