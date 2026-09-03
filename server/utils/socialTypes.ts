@@ -5,8 +5,10 @@
  * aynasıdır. contentTypes.ts ile aynı kural: alan eklerken iki ucu birlikte
  * güncelle.
  *
- * Faz 2 kapsamı Instagram'dır (tek gerçek hesabımız). TikTok/YouTube/X aynı
- * tablolara oturacak şekilde `platform` alanı baştan geniş tutuldu.
+ * Faz 2 Instagram'la açıldı, YouTube 29 Ağu 2026'da aynı tablolara oturdu
+ * (`social_accounts` + `social_posts`); ölçüm tabloları platform başına ayrı
+ * (`content_metrics` vs `youtube_daily`), çünkü iki platform aynı şeyi
+ * ölçmüyor. TikTok/X için `platform` alanı yine hazır.
  */
 
 import type { Channel } from './contentTypes'
@@ -55,6 +57,10 @@ export type AdminSocialPayload = {
   instagramReady: boolean
   /** Bağlama akışı yalnız bu adreste çalışır (Meta'ya kayıtlı redirect_uri). */
   connectHost: string
+  /** Google OAuth istemcisi tanımlı mı (yoksa YouTube bağlama akışı kapalı). */
+  youtubeReady: boolean
+  /** Google'a KAYITLI redirect_uri; YouTube bağlaması yalnız o adreste çalışır. */
+  youtubeConnectHost: string
   accounts: SocialAccount[]
   /** Yalnız eşleşmemiş gönderiler; eşleşenler etkinliğin üstünde görünür. */
   unmatched: SocialPost[]
@@ -65,6 +71,8 @@ export const emptySocialPayload = (): AdminSocialPayload => ({
   live: false,
   instagramReady: false,
   connectHost: '',
+  youtubeReady: false,
+  youtubeConnectHost: '',
   accounts: [],
   unmatched: [],
 })

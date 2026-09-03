@@ -236,21 +236,27 @@ export async function buildSocialAdminPayload(event: H3Event): Promise<AdminSoci
     String(config.igAppId ?? '').trim() && String(config.igAppSecret ?? '').trim() && tokenKeyConfigured(event),
   )
   const connectHost = String(config.igRedirectUri ?? '').trim()
+  // YouTube'da token şifreleme aynı anahtarı kullanıyor; o yoksa bağlama
+  // akışı Instagram'daki gibi kapalı sayılır (yarım şifreleme yapılmaz).
+  const youtubeReady = Boolean(
+    String(config.ytClientId ?? '').trim() && String(config.ytClientSecret ?? '').trim() && tokenKeyConfigured(event),
+  )
+  const youtubeConnectHost = String(config.ytRedirectUri ?? '').trim()
+  const base = { instagramReady, connectHost, youtubeReady, youtubeConnectHost }
   const sql = sqlClient(event)
-  if (!sql) return { dbConnected: false, live: true, instagramReady, connectHost, accounts: [], unmatched: [] }
+  if (!sql) return { dbConnected: false, live: true, ...base, accounts: [], unmatched: [] }
   try {
     await ensureSocialTables(sql)
     const [accounts, posts] = await Promise.all([listAccounts(sql), listPosts(sql)])
     return {
       dbConnected: true,
       live: true,
-      instagramReady,
-      connectHost,
+      ...base,
       accounts,
       unmatched: posts.filter((p) => p.itemId === null),
     }
   } catch (err) {
     console.error('[sosyal] payload okunamadı:', err)
-    return { dbConnected: false, live: true, instagramReady, connectHost, accounts: [], unmatched: [] }
+    return { dbConnected: false, live: true, ...base, accounts: [], unmatched: [] }
   }
 }

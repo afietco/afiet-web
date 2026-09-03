@@ -133,6 +133,21 @@ export default defineNuxtConfig({
     // bağlama akışı yalnız production'da çalışır:
     // https://afiet.co/api/social/instagram/callback
     igRedirectUri: '',
+    // YouTube (Google Cloud > OAuth 2.0 istemcisi, "Web application").
+    // Kapsamlar: yt-analytics.readonly + youtube.readonly. BOŞ = YouTube
+    // bağlama akışı kapalı, panel bunu rozetle söyler ve analitiğin geri
+    // kalanı çalışmaya devam eder. Env: NUXT_YT_CLIENT_ID / NUXT_YT_CLIENT_SECRET.
+    //
+    // TUZAK: OAuth onay ekranı "Testing" modunda kalırsa Google refresh
+    // token'ı 7 GÜNDE geçersiz kılar ve senkron sessizce durur; uygulama
+    // "In production" olmalı (hassas kapsam uyarısı çıkar, kendi hesabımız
+    // için sorun değil).
+    ytClientId: '',
+    ytClientSecret: '',
+    // Google'a KAYITLI redirect_uri; tek adres olduğu için YouTube bağlaması
+    // da yalnız production'da çalışır:
+    // https://afiet.co/api/social/youtube/callback
+    ytRedirectUri: '',
     // Erişim token'larını DB'de şifrelemek için 32 baytlık base64 anahtar
     // (Secret Manager: app-social-token-key). BOŞ = hesap bağlama 503 döner;
     // yarım şifreleme yapılmaz. Env: NUXT_SOCIAL_TOKEN_KEY.
