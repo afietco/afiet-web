@@ -33,6 +33,38 @@ export const MARKA_TANIM: Record<SiteLocale, string> = {
 }
 
 /**
+ * Markanın İKİNCİ ADI - TEK KAYNAK (kullanıcı kararı, 5 Eyl 2026).
+ *
+ * NEDEN VAR: "afiet" tek başına "afiyet"ten ayrışmıyor. 5 Eyl 2026'da marka
+ * sorgusu "afiet" GSC'de 6.9. sıradaydı (50 gösterim, 3 tık) - kendi adında
+ * ilk sırada olmamak, Google'ın afiet'i henüz ayrı bir varlık olarak
+ * tanımadığı anlamına gelir. Betimleyici bir ikinci ad bu ayrımı besler.
+ *
+ * NEDEN `name` DEĞİL `alternateName`: Google'da isim bir ANAHTAR KELİME değil
+ * VARLIK KİMLİĞİdir; Knowledge Graph aynı ismin aynı URL'le tekrar tekrar
+ * geçmesinden varlık kurar. `name` bir yerde "afiet", başka yerde "afiet:
+ * Öğün ve Beslenme Takibi" olursa eşleştirme kolaylaşmaz, ZORLAŞIR. Bu yüzden
+ * `name` her yerde çıplak "afiet" kalır (Wikidata etiketi de öyle) ve
+ * betimleyici `alternateName`e gider - schema.org'da "bu varlık şu adla da
+ * bilinir" demenin yolu budur.
+ *
+ * MAĞAZA BAŞLIĞINDAN AYRI DÜŞÜNÜLMEZ: Apple BAŞLIKTAKİ kelimeleri doğrudan
+ * arama indeksine aldığı için mağazada başlık bir anahtar kelime alanıdır -
+ * Google'daki işlevinin tersi. 5 Eyl 2026'da vitrinler ÜÇ FARKLI ad
+ * taşıyordu (TR/GB "afiet: Menü ve Kilo Sayacı", US "afiet: Turkish Food
+ * Diary", DE "afiet: Öğün ve Beslenme Takibi") ve üç ad bir varlığı
+ * birleştirmez, böler. Bu satır kararlaştırılan tek addır; TR ve US
+ * vitrinleri App Store Connect'ten buna çekilecek (o iş repoda DEĞİL).
+ *
+ * TR'deki eski ad ayrıca konumlandırmayla çelişiyordu: "Kilo Sayacı",
+ * `MARKA_KUNYE.tagline` "Sayma, dengele."nin tam tersini söylüyor.
+ *
+ * DEĞİŞİRSE: App Store Connect'teki adla BİRLİKTE değişir; ayrışırlarsa
+ * ikinci ad varlığı birleştirmek yerine yeniden bölerdi.
+ */
+export const MARKA_IKINCI_AD = 'afiet: Öğün ve Beslenme Takibi'
+
+/**
  * Wikidata kaydı: afiet'in üretken motorlara verdiği MAKİNE OKUNUR kimliği.
  * 25 Ağustos 2026'da açıldı; ifadeler, referanslar ve kayıt sırasında verilen
  * kararlar `research/2026-08-11-wikidata-kayit-hazirligi.md` dosyasında.
