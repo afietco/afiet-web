@@ -21,7 +21,7 @@ import type { CheckResult, ProbeEvidence } from '~~/server/utils/statusStore'
  * olduğundan canlı prob yapılmaz).
  */
 
-const API_BASE = 'https://app-api-prod-f7cnieuuza-ew.a.run.app'
+const API_BASE = 'https://api.afiet.co'
 const TIMEOUT_MS = 8000
 /** Bu eşiğin üstü 'yavaşlama' sayılır (kesinti değil). */
 const SLOW_MS = 4000
