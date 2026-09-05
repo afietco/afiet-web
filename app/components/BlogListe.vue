@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BlogCopy } from '~/data/content'
 import { blogPath } from '#shared/utils/locales'
-import { sayfaNumarasi, sayfaSorgusu } from '#shared/utils/sayfalama'
+import { sayfaNumarasi, sayfaYolu } from '#shared/utils/sayfalama'
 import type { SiteLocale } from '#shared/utils/locales'
 
 /**
@@ -12,7 +12,12 @@ import type { SiteLocale } from '#shared/utils/locales'
  * öteki dilin yazısı görünmez. Arama ve sıralama tamamen istemcidedir, filtre
  * bilinçli olarak yoktur.
  */
-const props = defineProps<{ copy: BlogCopy; lang: SiteLocale }>()
+const props = defineProps<{
+  copy: BlogCopy
+  lang: SiteLocale
+  /** İstenen sayfa; adresten gelir (`/blog/sayfa/2`). Taban listede 1. */
+  istenenSayfa?: number
+}>()
 
 const { data } = await useFetch('/api/blog/posts', {
   key: `blog-posts:${props.lang}`,
@@ -37,11 +42,11 @@ const sort = ref<'yeni' | 'eski'>('yeni')
  * ve yalnız sitemap'te duruyordu. 5 Eylül'de 17 Türkçe yazının 8'i tam olarak
  * bu durumdaydı; taranmamış olmalarının mekanik sebebi buydu.
  *
- * Numara route'tan okununca üç şey birden düzeliyor: sunucu doğru dilimi
- * render ediyor, sayfalama gerçek <a href> oluyor ve adres paylaşılabilir
- * hale geliyor.
+ * Numara ÖNCE `?sayfa=2` ile taşındı ve Vercel'de ÇALIŞMADI; gerekçe ve
+ * Nitro'daki tam satır `#shared/utils/sayfalama > sayfaYolu` başındadır.
+ * Bugün adres `/blog/sayfa/2` biçimindedir, numara route parametresinden
+ * gelir ve buraya prop olarak iner.
  */
-const route = useRoute()
 const router = useRouter()
 
 /* Devre dışı uçlar <span>, çalışanlar NuxtLink olacak (aşağıda `<component
@@ -50,9 +55,10 @@ const router = useRouter()
    kaçındığımız şey, tıklanamayan bir "sonraki sayfa". */
 const NuxtLinkBileseni = resolveComponent('NuxtLink')
 
-/* Parametre adı dile uyar; İngilizce sayfada `?sayfa=` yazmak adresi
-   yarım çevrilmiş gösterirdi. */
-const sayfaParam = computed(() => (props.lang === 'en' ? 'page' : 'sayfa'))
+/* Yol segmenti ve taban adres dile uyar; İngilizce adreste `sayfa` yazmak
+   adresi yarım çevrilmiş gösterirdi. */
+const sayfaSegmenti = computed(() => (props.lang === 'en' ? 'page' : 'sayfa'))
+const listeTabani = computed(() => (props.lang === 'en' ? '/en/blog' : '/blog'))
 
 /* Küçük harfe çevirme dile bağlıdır: Türkçede "I" → "ı" olmalı. */
 const locale = computed(() => (props.lang === 'en' ? 'en-US' : 'tr-TR'))
@@ -73,19 +79,19 @@ const filtered = computed(() => {
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filtered.value.length / PAGE_SIZE)))
 
-const page = computed(() => sayfaNumarasi(route.query[sayfaParam.value], pageCount.value))
+const page = computed(() => sayfaNumarasi(props.istenenSayfa, pageCount.value))
 
 const paged = computed(() => filtered.value.slice((page.value - 1) * PAGE_SIZE, page.value * PAGE_SIZE))
 
-/* Kural ve gerekçesi `#shared/utils/sayfalama > sayfaSorgusu`ta. */
-function sayfaYolu(n: number) {
-  return { path: route.path, query: sayfaSorgusu(route.query, sayfaParam.value, n) }
+/* Kural ve gerekçesi `#shared/utils/sayfalama > sayfaYolu`ta. */
+function sayfaAdresi(n: number) {
+  return sayfaYolu(listeTabani.value, n, sayfaSegmenti.value)
 }
 
 /* Arama ya da sıralama değişince numara başa döner. `replace` bilinçli:
    süzgeç denemeleri tarayıcı geçmişini doldurmamalı. */
 watch([query, sort], () => {
-  if (route.query[sayfaParam.value] !== undefined) router.replace(sayfaYolu(1))
+  if (page.value > 1) router.replace(sayfaAdresi(1))
 })
 
 const listTop = ref<HTMLElement | null>(null)
@@ -251,7 +257,7 @@ const fmtDate = (iso: string | null) =>
       >
         <component
           :is="page === 1 ? 'span' : NuxtLinkBileseni"
-          :to="page === 1 ? undefined : sayfaYolu(page - 1)"
+          :to="page === 1 ? undefined : sayfaAdresi(page - 1)"
           :aria-label="copy.pagePrev"
           :aria-disabled="page === 1 ? 'true' : undefined"
           class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition"
@@ -277,7 +283,7 @@ const fmtDate = (iso: string | null) =>
         <NuxtLink
           v-for="n in pageCount"
           :key="n"
-          :to="sayfaYolu(n)"
+          :to="sayfaAdresi(n)"
           :aria-current="n === page ? 'page' : undefined"
           class="grid h-10 w-10 place-items-center rounded-full border text-sm font-bold transition"
           :class="
@@ -290,7 +296,7 @@ const fmtDate = (iso: string | null) =>
         </NuxtLink>
         <component
           :is="page === pageCount ? 'span' : NuxtLinkBileseni"
-          :to="page === pageCount ? undefined : sayfaYolu(page + 1)"
+          :to="page === pageCount ? undefined : sayfaAdresi(page + 1)"
           :aria-label="copy.pageNext"
           :aria-disabled="page === pageCount ? 'true' : undefined"
           class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition"
