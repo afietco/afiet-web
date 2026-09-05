@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 import {
   emptyAppFlags,
@@ -26,14 +26,13 @@ import {
  * DDL burada TEK kaynaktır.
  */
 
-type Sql = NeonQueryFunction<false, false>
 
 /** Panelin bir alanı boş bırakmasıyla "hiç ayarlanmamış" aynı şeydir. */
 const MAX_MESSAGE_LENGTH = 200
 
 function sqlClient(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 let ensured = false

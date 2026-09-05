@@ -23,7 +23,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
-import { neon } from '@neondatabase/serverless'
+import postgres from 'postgres'
 import MarkdownIt from 'markdown-it'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -165,7 +165,7 @@ if (testTo) {
 const dbUrl = envValue('NUXT_DATABASE_URL')
 if (!dbUrl) die('NUXT_DATABASE_URL yok.')
 const host = new URL(dbUrl).hostname
-const sql = neon(dbUrl)
+const sql = postgres(dbUrl, { prepare: false, onnotice: () => {} })
 
 /* lang kolonu abone.post.ts'in ALTER'ıyla gelir; hiç EN abone yazılmamış eski
    DB'de kolon olmayabilir - COALESCE yerine kolonun varlığını yoklamak yerine
@@ -179,7 +179,7 @@ const subs = await sql`
 if (subs.length === 0) die(`Onaylı ${lang} abonesi yok; gönderilecek kimse bulunamadı.`)
 
 console.log(`Konu   : ${subject}`)
-console.log(`Neon   : ${host}`)
+console.log(`Sunucu : ${host}`)
 console.log(`Dil    : ${lang}`)
 console.log(`Alıcı  : ${subs.length} onaylı abone`)
 if (!(await confirm('Gönderilsin mi?'))) die('Vazgeçildi.')
@@ -190,3 +190,8 @@ for (let i = 0; i < subs.length; i += BATCH) {
   console.log(`  → ${Math.min(i + BATCH, subs.length)}/${subs.length}`)
 }
 console.log('✓ Bülten yolda. Sofranıza afiyet.')
+
+// postgres.js bir bağlantı HAVUZU tutar ve havuz açıkken olay döngüsü boşalmaz:
+// `neon()` durumsuz HTTP olduğu için betik kendiliğinden biterdi, bu sürücüde
+// bitmez. Kapatmadan çıkma - script sonsuza kadar asılı kalır.
+await sql.end()

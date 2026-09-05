@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 import {
   AI_BOTS,
@@ -49,11 +49,10 @@ type CacheEntry = { at: number; overrides: SeoOverrides }
 let cache: CacheEntry | null = null
 let ensured = false
 
-type Sql = NeonQueryFunction<false, false>
 
 function sqlClient(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 export function hasDb(event: H3Event): boolean {

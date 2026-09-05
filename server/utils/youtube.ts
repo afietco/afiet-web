@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import type { H3Event } from 'h3'
 import { CONTENT_TZ } from './contentTypes'
 import { upsertMetric } from './contentStore'
@@ -46,7 +46,6 @@ import {
  * eşleştirme ve yazma yolunu sürebiliyor.
  */
 
-type Sql = NeonQueryFunction<false, false>
 
 const ANALYTICS = 'https://youtubeanalytics.googleapis.com/v2/reports'
 const DATA = 'https://www.googleapis.com/youtube/v3'

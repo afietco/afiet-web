@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 
 /**
@@ -20,7 +20,6 @@ import type { H3Event } from 'h3'
  * üzerine yazar.
  */
 
-type Sql = NeonQueryFunction<false, false>
 let ensured = false
 
 export type StorePlatform = 'ios' | 'android'
@@ -74,7 +73,10 @@ export type StoreData = {
 export async function requireStoreDb(event: H3Event): Promise<Sql> {
   const url = useRuntimeConfig(event).databaseUrl
   if (!url) throw createError({ statusCode: 503, statusMessage: 'db_bagli_degil' })
-  const sql = neon(url)
+  const sql = dbSql(url)
+  // dbSql boş URL'de null döner; url yukarıda zaten doğrulandı ama tip
+  // bunu bilemez ve sessiz bir non-null iddiası yerine açık kapı yeğdir.
+  if (!sql) throw createError({ statusCode: 503, statusMessage: 'db_bagli_degil' })
   await ensureStoreTables(sql)
   return sql
 }

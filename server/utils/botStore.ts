@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 import { IZLENEN_BOTLAR } from '~~/server/utils/seoDefaults'
 
@@ -38,12 +38,11 @@ import { IZLENEN_BOTLAR } from '~~/server/utils/seoDefaults'
  * aralığı ister). Sayılar bu yüzden "iddia edilen bot" sayısıdır.
  */
 
-type Sql = NeonQueryFunction<false, false>
 let ensured = false
 
 export function botSql(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 export async function ensureBotTables(sql: Sql) {

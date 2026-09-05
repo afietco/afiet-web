@@ -22,7 +22,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
-import { neon } from '@neondatabase/serverless'
+import postgres from 'postgres'
 import { gonder } from './indexnow.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -208,7 +208,7 @@ const readingMinutes = (src) =>
 // ── Ana akış ─────────────────────────────────────────────────────────────────
 const url = databaseUrl()
 const host = new URL(url).hostname
-const sql = neon(url)
+const sql = postgres(url, { prepare: false, onnotice: () => {} })
 const [{ db }] = await sql`SELECT current_database() AS db`
 console.log(`Hedef Neon: ${host} · veritabanı: ${db}`)
 
@@ -321,3 +321,8 @@ console.log('  görünürlük: sayfa ≤ ~2 dk (bellek cache 60 sn + ISR 60 sn) 
 console.log('  hatırlatma: md dosyasını commit\'le - yedek dosyada, runtime kaynağı DB\'de.')
 
 await indexNowBildir(`${SITE}${postPath(post.slug, post.lang)}`, url)
+
+// postgres.js bir bağlantı HAVUZU tutar ve havuz açıkken olay döngüsü boşalmaz:
+// `neon()` durumsuz HTTP olduğu için betik kendiliğinden biterdi, bu sürücüde
+// bitmez. Kapatmadan çıkma - script sonsuza kadar asılı kalır.
+await sql.end()

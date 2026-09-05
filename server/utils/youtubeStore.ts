@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 
 /**
@@ -28,7 +28,6 @@ import type { H3Event } from 'h3'
  * Kolonu "ileride doldururuz" diye açma, boş kolon vaat eder.
  */
 
-type Sql = NeonQueryFunction<false, false>
 type Row = Record<string, unknown>
 
 let ensured = false
@@ -65,7 +64,7 @@ export type YtVideoInput = {
 
 function sqlClient(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 export async function requireYouTubeDb(event: H3Event): Promise<Sql> {

@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import type { H3Event } from 'h3'
 import { CONTENT_TZ } from './contentTypes'
 import { upsertMetric } from './contentStore'
@@ -27,7 +27,6 @@ import { decryptToken, encryptToken } from './socialCrypto'
  * Graph yanıtlarıyla eşleştirme + DB yazma yolunu gerçek DB'ye karşı sürebilir.
  */
 
-type Sql = NeonQueryFunction<false, false>
 
 const API = 'https://graph.instagram.com'
 const VERSION = 'v23.0'
