@@ -263,6 +263,24 @@ try {
     (rssRes.headers.get('content-type') || '').includes('xml') && rss.includes('<rss'),
     'blog RSS yayında ve XML',
   )
+  /* Sayfalanmış liste yolu. Smoke veritabanısız koştuğu için yazı YOK ve
+     sayfalama navigasyonu render EDİLMEZ; buradaki iddia navigasyon değil
+     ROUTE'un ve meta'sının varlığıdır - ikisi de yazılardan bağımsızdır.
+     Başlıktaki numara `seoStore > sayfaliListe`ten gelir; o eşleşme
+     bozulursa sayfa site varsayılan başlığına düşer ve indekslenen bir
+     sayfa ana sayfanın başlığını taşır. */
+  const sayfa2 = await fetch(`http://localhost:${PORT}/blog/sayfa/2`)
+  const sayfa2Html = await sayfa2.text()
+  ok(sayfa2.status === 200, `/blog/sayfa/2 açılıyor (${sayfa2.status})`)
+  ok(/<title>[^<]*sayfa 2/i.test(sayfa2Html), '/blog/sayfa/2 başlığında sayfa numarası var')
+  ok(
+    sayfa2Html.includes('<link rel="canonical" href="https://afiet.co/blog/sayfa/2"'),
+    '/blog/sayfa/2 KENDİNE canonical veriyor (birinci sayfanın kopyası değil)',
+  )
+  // Numarasız `/blog/sayfa` bir sayfa değildir; `[slug]`a düşüp 404 olmalı.
+  const sayfaCiplak = await fetch(`http://localhost:${PORT}/blog/sayfa`)
+  ok(sayfaCiplak.status === 404, `/blog/sayfa numarasız 404 (${sayfaCiplak.status})`)
+
   ok(sitemap.includes('/blog'), 'sitemap /blog sayfasını içeriyor')
   ok(sitemap.includes('/indir'), 'sitemap /indir sayfasını içeriyor')
   ok(!sitemap.includes('/beta'), 'sitemap artık /beta içermiyor')

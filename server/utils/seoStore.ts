@@ -323,12 +323,42 @@ function organizationNode(
   }
 }
 
+/**
+ * Sayfalanmış liste yolunu tanır: `/blog/sayfa/2` → taban `/blog`.
+ *
+ * Yollar `shared/utils/sayfalama.ts > sayfaYolu` ile ÜRETİLİR, burada
+ * ÇÖZÜLÜR; ikisi aynı biçimi tarif ettiği için birlikte değişirler.
+ * Birinci sayfanın ayrı bir yolu yoktur (`/blog/sayfa/1` diye bir adres
+ * üretilmez), o yüzden desen 2'den başlar diye ayrıca kısıtlanmaz - `sayfa`
+ * değeri 1 gelse bile taban meta'sı doğrudur.
+ */
+function sayfaliListe(path: string): { taban: string; sayfa: number; etiket: string } | null {
+  const tr = /^(\/blog)\/sayfa\/(\d+)$/.exec(path)
+  if (tr) return { taban: tr[1]!, sayfa: Number(tr[2]), etiket: 'sayfa' }
+  const en = /^(\/en\/blog)\/page\/(\d+)$/.exec(path)
+  if (en) return { taban: en[1]!, sayfa: Number(en[2]), etiket: 'page' }
+  return null
+}
+
 /** Bir sayfanın render edilecek nihai meta seti. Bilinmeyen path'ler de tutarlı üretir (404 sayfası dahil). */
 export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<ResolvedPageMeta> {
   const path = normalizePath(rawPath)
   const [{ settings, pages }, overrides] = await Promise.all([getSeoBundle(event), loadOverrides(event)])
   const g = settings.general
-  let page = pages[path] ?? makePage({})
+
+  /* Sayfalanmış liste (`/blog/sayfa/2`, `/en/blog/page/2`): meta TABAN
+     listeden gelir, numara başlığa eklenir. Aksi hâlde bu yollar
+     `DEFAULT_PAGES`ta olmadığı için site varsayılanına düşer ve indekslenen
+     bir sayfa ana sayfanın başlığını taşırdı. Canonical KENDİNE kalır
+     (aşağıda `path`ten türer): sayfa 2 birincinin kopyası değildir. */
+  const sayfali = sayfaliListe(path)
+  let page = pages[sayfali?.taban ?? path] ?? makePage({})
+  if (sayfali) {
+    page = makePage({
+      ...page,
+      title: `${page.title} - ${sayfali.etiket} ${sayfali.sayfa}`,
+    })
+  }
 
   // Blog yazısı: meta tabanı DB'deki yazıdan gelir, panelin sayfa override'ı
   // (seo_pages['/blog/<slug>']) ham haliyle üstüne biner. Yayında olmayan/

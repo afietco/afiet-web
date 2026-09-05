@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { sayfaNumarasi, sayfaSorgusu } from './sayfalama'
+import { sayfaNumarasi, sayfaYolu } from './sayfalama'
 
 describe('sayfaNumarasi', () => {
   it('geçerli numarayı olduğu gibi verir', () => {
@@ -28,27 +28,24 @@ describe('sayfaNumarasi', () => {
   })
 })
 
-describe('sayfaSorgusu', () => {
-  it('birinci sayfa parametre TAŞIMAZ', () => {
-    expect(sayfaSorgusu({ sayfa: '3' }, 'sayfa', 1)).toEqual({})
+describe('sayfaYolu', () => {
+  it('birinci sayfa taban adrestir, /sayfa/1 DEĞİL', () => {
+    expect(sayfaYolu('/blog', 1, 'sayfa')).toBe('/blog')
   })
 
-  it('sonraki sayfalar parametre taşır', () => {
-    expect(sayfaSorgusu({}, 'sayfa', 2)).toEqual({ sayfa: '2' })
+  it('sonraki sayfalar yol segmenti alır', () => {
+    expect(sayfaYolu('/blog', 2, 'sayfa')).toBe('/blog/sayfa/2')
+    expect(sayfaYolu('/blog', 10, 'sayfa')).toBe('/blog/sayfa/10')
   })
 
-  it('diğer parametreleri korur', () => {
-    expect(sayfaSorgusu({ q: 'porsiyon', sayfa: '2' }, 'sayfa', 1)).toEqual({ q: 'porsiyon' })
-    expect(sayfaSorgusu({ q: 'porsiyon' }, 'sayfa', 3)).toEqual({ q: 'porsiyon', sayfa: '3' })
+  it('dile göre farklı taban ve segmentle çalışır', () => {
+    expect(sayfaYolu('/en/blog', 2, 'page')).toBe('/en/blog/page/2')
+    expect(sayfaYolu('/en/blog', 1, 'page')).toBe('/en/blog')
   })
 
-  it('girdiyi değiştirmez', () => {
-    const girdi = { sayfa: '2' }
-    sayfaSorgusu(girdi, 'sayfa', 1)
-    expect(girdi).toEqual({ sayfa: '2' })
-  })
-
-  it('dile göre farklı parametre adıyla çalışır', () => {
-    expect(sayfaSorgusu({}, 'page', 2)).toEqual({ page: '2' })
+  it('sorgu dizesi ÜRETMEZ', () => {
+    // Gerekçe: Nitro'nun Vercel ISR handler'ı sorguyu atıyor
+    // (bkz. sayfaYolu doc yorumu). Adreste ? görünürse regresyondur.
+    expect(sayfaYolu('/blog', 3, 'sayfa')).not.toContain('?')
   })
 })

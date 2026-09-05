@@ -47,22 +47,16 @@ export default defineNuxtConfig({
     // shared/utils/locales.ts > EN_BY_TR'de durur.
     '/en': { isr: 60 },
     '/en/**': { isr: 60 },
-    // Türkçe listeyle aynı gerekçe; İngilizce parametre adı `page`.
-    '/en/blog': { isr: { expiration: 60, allowQuery: ['page'] } },
     '/indir': { isr: 60 },
-    /* Blog LİSTESİ: sayfa numarası sorgu dizesinde (`?sayfa=2`) ve Vercel'in
-       ISR önbellek anahtarı sorguyu VARSAYILAN OLARAK YOK SAYAR - yani
-       `allowQuery` olmadan `?sayfa=2` isteği `/blog`un önbelleğinden
-       servis edilir ve ikinci sayfa birinciyi gösterir. 5 Eyl 2026'da tam
-       bunu yaşadık: sayfalama düzeltmesi yerel Nitro sunucusunda çalışıp
-       prod'da çalışmadı, çünkü yerelde CDN yok. Doğrulama CANLIDA yapılmalı.
-
-       `allowQuery` bir izin listesidir: yalnız buradakiler önbellek anahtarına
-       girer, `?utm_source=` gibi geri kalan her şey hâlâ aynı girdiye düşer -
-       istediğimiz de bu, yoksa her kampanya parametresi ayrı bir render
-       yaratırdı. Parametre adı dile uyar (`shared/utils/sayfalama.ts`
-       kullanan `BlogListe.vue`), o yüzden /en/blog kendi kuralını taşır. */
-    '/blog': { isr: { expiration: 60, allowQuery: ['sayfa'] } },
+    /* Blog listesi ve sayfalama. Sayfa numarası YOLDA taşınır
+       (`/blog/sayfa/2`), sorgu dizesinde DEĞİL: Vercel ISR fonksiyonu
+       çağrıldığında Nitro `req.url`i yalnız `__isr_route`tan yeniden kuruyor
+       ve sorguyu atıyor, yani `?sayfa=2` sunucuya hiç ulaşmıyordu.
+       `allowQuery` bunu çözmedi çünkü sorun önbellek anahtarı değil,
+       parametrenin fonksiyona ulaşmamasıydı. Tam gerekçe:
+       `shared/utils/sayfalama.ts > sayfaYolu`. Alt sayfalar `/blog/**`
+       kuralına düşer. */
+    '/blog': { isr: 60 },
     '/blog/**': { isr: 60 },
     '/gizlilik': { isr: 60 },
     '/hesap-sil': { isr: 60 },

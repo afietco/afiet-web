@@ -508,15 +508,19 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   (nuxt → cssnano zinciri) opsiyonel peer'ı; npm bunu lock'a yazmayı atlıyor
   ve CI'da `npm ci` senkron hatası veriyor. Kaldırmadan önce `npm ci --dry-run`
   ile doğrula.
-- **Vercel ISR önbellek anahtarı SORGU DİZESİNİ yok sayar.** `?sayfa=2`
-  isteği `/blog`un önbelleğinden servis edilir ve ikinci sayfa birinciyi
-  gösterir. Çözüm `routeRules`ta `isr: { expiration, allowQuery: [...] }`;
-  bugün `/blog` (`sayfa`) ve `/en/blog` (`page`) bunu taşıyor. TUZAĞIN ASIL
-  KISMI: bu sınıf hata YERELDE HİÇ GÖRÜNMEZ, çünkü `nuxt dev` ve
-  `.output/server` önünde CDN yoktur - smoke da yakalayamaz. 5 Eyl 2026'da
-  sayfalama düzeltmesi tam bu yüzden yeşil testlerle prod'a çıkıp orada
-  çalışmadı. Sorgu parametresine bağlı bir davranış eklerken doğrulama
-  CANLIDA yapılır (`curl -D- https://afiet.co/... | grep x-vercel-cache`).
+- **ISR SAYFASI SORGU DİZESİ ALAMAZ.** Nitro'nun Vercel preset'i ISR
+  fonksiyonunu `x-now-route-matches` başlığıyla çağırıyor ve handler
+  (`presets/vercel/runtime/vercel.mjs`) `req.url`i YALNIZ `__isr_route`tan
+  yeniden kuruyor: `if (routeRules.isr) { req.url = url }`. Sorgu dizesinin
+  tamamı orada düşer - aynı dosyadaki başlıksız dal `withQuery(url, params)`
+  ile korur ama ISR yolunda o dal koşmaz. `routeRules`ta `allowQuery` vermek
+  YETMEZ: o yalnız önbellek anahtarını ayırır, parametre fonksiyona yine
+  ulaşmaz (5 Eyl 2026'da denendi, çalışmadı). ISR'lı bir sayfada duruma bağlı
+  davranış gerekiyorsa YOLA taşı - blog sayfalaması bu yüzden `/blog/sayfa/2`.
+  TUZAĞIN İKİNCİ KISMI: bu sınıf hata YERELDE HİÇ GÖRÜNMEZ, çünkü `nuxt dev`
+  ve `.output/server` önünde CDN yoktur ve ISR handler'ı devrede değildir -
+  smoke da yakalayamaz. Doğrulama CANLIDA yapılır
+  (`curl -D- https://afiet.co/... | grep x-vercel-cache`).
 - CI bilinçli olarak `npm ci` DEĞİL `npm install` kullanır: npm, platforma göre
   atlanan opsiyonelleri (tailwind oxide wasm zinciri, @emnapi/*) lock'a eksik
   yazabiliyor (npm/cli#4828) ve `npm ci` linux'ta düşüyor. `npm ci`ya geri

@@ -23,27 +23,28 @@ export function sayfaNumarasi(ham: unknown, sayfaSayisi: number): number {
 }
 
 /**
- * Bir sayfanın sorgu dizesi.
+ * Bir sayfanın ADRESİ.
  *
- * BİRİNCİ SAYFA PARAMETRE TAŞIMAZ: `?sayfa=1` ile çıplak `/blog` aynı
- * içeriğin iki adresi olurdu ve ikisi de kendine canonical verdiği için
- * arama motoruna gereksiz bir kopya çifti gösterirdi.
+ * NEDEN YOL, SORGU DEĞİL (5 Eyl 2026): sayfalama önce `?sayfa=2` ile yazıldı
+ * ve Vercel'de ÇALIŞMADI. Sebep Nitro'nun Vercel preset'inin ISR handler'ında
+ * (`presets/vercel/runtime/vercel.mjs`): fonksiyon `x-now-route-matches`
+ * başlığıyla çağrıldığında `req.url` YALNIZ `__isr_route`tan yeniden kurulur
+ * ve sorgu dizesinin tamamı atılır -
  *
- * Diğer parametreler KORUNUR: arama ve sıralama istemcide kalsa da adres
- * ileride onları taşırsa sayfalama onları düşürmemeli.
+ *     if (routeRules.isr) { req.url = url }   // parametreler yok
+ *
+ * Aynı dosyadaki başlıksız dal `withQuery(url, params)` ile parametreleri
+ * korur ama ISR yolunda o dal koşmaz. Yani `routeRules`ta `allowQuery`
+ * vermek yetmiyordu: önbellek anahtarı ayrışıyor, fonksiyona parametre yine
+ * ulaşmıyordu. Yol tabanlı adres bu katmanı tamamen atlar.
+ *
+ * YAN FAYDA: canonical `path`ten türetildiği için her sayfa artık kendine
+ * canonical veriyor. Sorgulu sürümde ikinci sayfa kendini birincinin kopyası
+ * ilan ediyordu, ki Google sayfalama serisinde bunu istemez.
+ *
+ * BİRİNCİ SAYFA `/blog`TUR, `/blog/sayfa/1` DEĞİL: aynı içeriğin iki adresi
+ * olurdu ve ikisi de kendine canonical verirdi.
  */
-/* Değer tipi GENERIC: `unknown` dönmek çağıran tarafta işe yaramaz, çünkü
-   vue-router `to.query`den `LocationQueryRaw` bekler ve `unknown` ona
-   atanamaz. Girdinin değer tipini taşıyıp yalnız `string` ekleyerek hem
-   burayı router'dan bağımsız tutuyoruz (bu dosya vitest'te düz node'da
-   koşuyor) hem de çağıranda tip bilgisini koruyoruz. */
-export function sayfaSorgusu<V>(
-  mevcut: Record<string, V>,
-  param: string,
-  n: number,
-): Record<string, V | string> {
-  const q: Record<string, V | string> = { ...mevcut }
-  if (n > 1) q[param] = String(n)
-  else delete q[param]
-  return q
+export function sayfaYolu(taban: string, n: number, segment: string): string {
+  return n > 1 ? `${taban}/${segment}/${n}` : taban
 }
