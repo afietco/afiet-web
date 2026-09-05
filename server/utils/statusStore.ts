@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 
 /**
@@ -14,7 +14,6 @@ import type { H3Event } from 'h3'
  * Yazan uç `POST /api/cron/status-check`, okuyan uç `GET /api/status`.
  * DDL burada TEK kaynaktır.
  */
-type Sql = NeonQueryFunction<false, false>
 
 export type ServiceState = 'up' | 'degraded' | 'down' | 'none'
 
@@ -69,7 +68,7 @@ export const PROVIDERS = [
 
 export function statusSql(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 let ensured = false

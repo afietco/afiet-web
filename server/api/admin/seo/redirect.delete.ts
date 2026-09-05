@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { dbSqlOrFail } from '~~/server/utils/db'
 import { requireAdmin } from '~~/server/utils/adminAuth'
 import { buildAdminPayload } from '~~/server/utils/adminPayload'
 import { invalidateSeoCache, normalizePath } from '~~/server/utils/seoStore'
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   if (typeof raw !== 'string' || !raw.startsWith('/')) {
     throw createError({ statusCode: 422, statusMessage: 'gecersiz_alan:from' })
   }
-  const sql = neon(url)
+  const sql = dbSqlOrFail(url)
   await sql`DELETE FROM seo_redirects WHERE from_path = ${normalizePath(raw)}`
   await invalidateSeoCache()
   return buildAdminPayload(event)

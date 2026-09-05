@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 
 /**
  * buyur.afiet.co funnel sayfasının okuma tarafı.
@@ -15,7 +15,6 @@ import type { NeonQueryFunction } from '@neondatabase/serverless'
  * içindeki `BuyurData` tipiyle BİREBİR aynıdır.
  */
 
-type Sql = NeonQueryFunction<false, false>
 export type BuyurRange = '7d' | '30d' | '90d'
 const GUN: Record<BuyurRange, number> = { '7d': 7, '30d': 30, '90d': 90 }
 export const parseBuyurRange = (v: unknown): BuyurRange => (v === '7d' || v === '90d' ? v : '30d')
@@ -182,12 +181,12 @@ export async function toplaBuyur(sql: Sql, range: BuyurRange): Promise<BuyurData
     `,
   ])
 
-  const sayimlar = sayimRows as { event: string; n: number }[]
-  const oncekiSayimlar = oncekiRows as { event: string; n: number }[]
-  const gunluk = gunlukRows as { gun: string; event: string; n: number }[]
-  const hedefler = hedefRows as { hedef: string; n: number }[]
-  const kirilimlar = kirilimRows as { tur: string; anahtar: string; n: number }[]
-  const kaynaklar = kaynakRows as { host: string; n: number }[]
+  const sayimlar = sayimRows as unknown as { event: string; n: number }[]
+  const oncekiSayimlar = oncekiRows as unknown as { event: string; n: number }[]
+  const gunluk = gunlukRows as unknown as { gun: string; event: string; n: number }[]
+  const hedefler = hedefRows as unknown as { hedef: string; n: number }[]
+  const kirilimlar = kirilimRows as unknown as { tur: string; anahtar: string; n: number }[]
+  const kaynaklar = kaynakRows as unknown as { host: string; n: number }[]
 
   const say = (satirlar: { event: string; n: number }[], e: string) => satirlar.find((r) => r.event === e)?.n ?? 0
   const goruntuleme = say(sayimlar, 'goruntuleme')

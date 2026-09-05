@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 
 /**
@@ -15,11 +15,10 @@ import type { H3Event } from 'h3'
  * tablodan okur, Resend API ile yollar (Audience/Broadcast paneli KULLANILMAZ,
  * kullanıcı kararı 5 Ağu 2026).
  */
-type Sql = NeonQueryFunction<false, false>
 
 export function bultenSql(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 let ensured = false

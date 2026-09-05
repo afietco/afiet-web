@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import { AI_GUESS_EXCLUDED_PREFIXES } from './analyticsStore'
 
 /**
@@ -8,7 +8,6 @@ import { AI_GUESS_EXCLUDED_PREFIXES } from './analyticsStore'
  * Kişi-bazlı satır dönmez.
  */
 
-type Sql = NeonQueryFunction<false, false>
 export type Range = '7d' | '30d' | '90d'
 const DAYS: Record<Range, number> = { '7d': 7, '30d': 30, '90d': 90 }
 export const parseRange = (v: unknown): Range => (v === '7d' || v === '90d' ? v : '30d')
@@ -283,10 +282,10 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
   const oran = (n: number) => (visitors > 0 ? Math.round((n / visitors) * 1000) / 10 : 0)
 
   const durByPath = new Map<string, number>()
-  for (const r of durRows as { path: string; ms: number }[]) durByPath.set(r.path, r.ms)
+  for (const r of durRows as unknown as { path: string; ms: number }[]) durByPath.set(r.path, r.ms)
 
   const blogTitle = new Map<string, { title: string; publishedAt: string | null }>()
-  for (const r of blogTitleRows as { slug: string; title: string; published_at: string | null }[]) {
+  for (const r of blogTitleRows as unknown as { slug: string; title: string; published_at: string | null }[]) {
     blogTitle.set(r.slug, { title: r.title, publishedAt: r.published_at })
   }
   const titleFor = (path: string): string => {
@@ -297,14 +296,14 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
 
   // Seri: eksik günleri 0'la
   const seriesMap = new Map<string, { views: number; visitors: number }>()
-  for (const r of seriesRows as { d: string; views: number; visitors: number }[]) seriesMap.set(r.d, { views: r.views, visitors: r.visitors })
+  for (const r of seriesRows as unknown as { d: string; views: number; visitors: number }[]) seriesMap.set(r.d, { views: r.views, visitors: r.visitors })
   const series: SeriesPoint[] = dayKeys(days).map((date) => ({ date, views: seriesMap.get(date)?.views ?? 0, visitors: seriesMap.get(date)?.visitors ?? 0 }))
 
-  const topPages: PageRow[] = (pagesRows as { path: string; views: number; visitors: number }[]).map((r) => ({
+  const topPages: PageRow[] = (pagesRows as unknown as { path: string; views: number; visitors: number }[]).map((r) => ({
     path: r.path, title: titleFor(r.path), views: r.views, visitors: r.visitors, avgSeconds: Math.round((durByPath.get(r.path) ?? 0) / 1000),
   }))
 
-  const blog: BlogRow[] = (pagesRows as { path: string; views: number; visitors: number }[])
+  const blog: BlogRow[] = (pagesRows as unknown as { path: string; views: number; visitors: number }[])
     .filter((r) => r.path.startsWith('/blog/'))
     .map((r) => {
       const slug = r.path.slice('/blog/'.length)
@@ -325,16 +324,16 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
   // kör noktayı geri getirir. Diğer kanallar bu muameleyi görmez: onların
   // sıfırı bir haber değil.
   const channelVisits = new Map<string, number>()
-  for (const r of channelRows as { channel: string; visits: number }[]) channelVisits.set(r.channel, r.visits)
+  for (const r of channelRows as unknown as { channel: string; visits: number }[]) channelVisits.set(r.channel, r.visits)
   if (!channelVisits.has('ai')) channelVisits.set('ai', 0)
   const channels: ChannelRow[] = [...channelVisits.entries()]
     .map(([key, visits]) => ({ key, label: CHANNEL_LABEL[key] ?? key, visits }))
     .sort((a, b) => CHANNEL_ORDER.indexOf(a.key) - CHANNEL_ORDER.indexOf(b.key))
 
-  const referrers: SourceRow[] = (referrerRows as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits }))
+  const referrers: SourceRow[] = (referrerRows as unknown as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits }))
 
-  const utmMap = (rows: unknown[]): UtmRow[] => (rows as { value: string; visits: number }[]).map((r) => ({ value: r.value, visits: r.visits }))
-  const contentRows: ContentRow[] = (utmContentRows as { value: string; visits: number; magaza: number; bulten: number }[])
+  const utmMap = (rows: unknown[]): UtmRow[] => (rows as unknown as { value: string; visits: number }[]).map((r) => ({ value: r.value, visits: r.visits }))
+  const contentRows: ContentRow[] = (utmContentRows as unknown as { value: string; visits: number; magaza: number; bulten: number }[])
     .map((r) => ({ value: r.value, visits: r.visits, magaza: r.magaza, bulten: r.bulten }))
   const wc = (webConvRows[0] ?? {}) as { magaza_play?: number; magaza_appstore?: number; bulten?: number; with_click_id?: number }
   const webConversions: WebConversions = {
@@ -349,15 +348,15 @@ export async function aggregateAnalytics(sql: Sql, domains: string[], range: Ran
   const aiLikely = ai.likely ?? 0
   const aiTraffic: AiTraffic = {
     referred: ai.referred ?? 0,
-    sources: (aiSourceRows as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits })),
+    sources: (aiSourceRows as unknown as { source: string; visits: number }[]).map((r) => ({ source: r.source, visits: r.visits })),
     likely: aiLikely,
     directEntries: aiDirectEntries,
     likelyOfDirect: pct(aiLikely, aiDirectEntries),
   }
 
-  const devices: BreakdownRow[] = (deviceRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: DEVICE_LABEL[r.key] ?? r.key, visits: r.visits }))
-  const browsers: BreakdownRow[] = (browserRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: r.key, visits: r.visits }))
-  const countries: BreakdownRow[] = (countryRows as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: COUNTRY_LABEL[r.key] ?? r.key, visits: r.visits }))
+  const devices: BreakdownRow[] = (deviceRows as unknown as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: DEVICE_LABEL[r.key] ?? r.key, visits: r.visits }))
+  const browsers: BreakdownRow[] = (browserRows as unknown as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: r.key, visits: r.visits }))
+  const countries: BreakdownRow[] = (countryRows as unknown as { key: string; visits: number }[]).map((r) => ({ key: r.key, label: COUNTRY_LABEL[r.key] ?? r.key, visits: r.visits }))
 
   return {
     generatedAt: new Date().toISOString(),

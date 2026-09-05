@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { dbSqlOrFail } from '~~/server/utils/db'
 import { requireAdmin } from '~~/server/utils/adminAuth'
 import { buildAdminPayload } from '~~/server/utils/adminPayload'
 import { invalidateSeoCache, normalizePath } from '~~/server/utils/seoStore'
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const path = normalizePath(body.path)
   const value = sanitizePageValue(body.value)
 
-  const sql = neon(url)
+  const sql = dbSqlOrFail(url)
   await sql`
     INSERT INTO seo_pages (path, value, updated_at)
     VALUES (${path}, ${JSON.stringify(value)}::jsonb, now())

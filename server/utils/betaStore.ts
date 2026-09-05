@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 
 /**
@@ -16,11 +16,10 @@ import type { H3Event } from 'h3'
  * Okuma ucu `GET /api/admin/beta` (yalnız admin). DDL burada TEK kaynaktır ve
  * yeni satır beklenmediği için büyümez.
  */
-type Sql = NeonQueryFunction<false, false>
 
 export function betaSql(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 let ensured = false

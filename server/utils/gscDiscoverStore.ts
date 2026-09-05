@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 
 /**
  * Google Discover verisinin yerel kopyası. Arama verisinden AYRI tablolarda
@@ -31,7 +31,6 @@ import type { NeonQueryFunction } from '@neondatabase/serverless'
  * ama aslında ölçümsüz bir sıfır çizgisi çizerdi.
  */
 
-type Sql = NeonQueryFunction<false, false>
 let ensured = false
 
 /**
@@ -188,13 +187,13 @@ export async function upsertDiscoverRows(sql: Sql, rows: DiscoverRowInput[], chu
   const unique = [...seen.values()]
   for (let i = 0; i < unique.length; i += chunkSize) {
     const chunk = unique.slice(i, i + chunkSize)
-    const params: unknown[] = []
+    const params: (string | number)[] = []
     const tuples = chunk.map((r) => {
       const base = params.length
       params.push(r.date, r.dimension, r.key, r.clicks, r.impressions)
       return `($${base + 1}::date, $${base + 2}, $${base + 3}, $${base + 4}::int, $${base + 5}::int)`
     })
-    await sql.query(
+    await sql.unsafe(
       `INSERT INTO gsc_discover_rows (metric_date, dimension, key, clicks, impressions)
        VALUES ${tuples.join(',')}
        ON CONFLICT (metric_date, dimension, key) DO UPDATE SET
@@ -212,13 +211,13 @@ export async function upsertDiscoverDailyMany(
 ) {
   for (let i = 0; i < rows.length; i += chunkSize) {
     const chunk = rows.slice(i, i + chunkSize)
-    const params: unknown[] = []
+    const params: (string | number)[] = []
     const tuples = chunk.map((r) => {
       const base = params.length
       params.push(r.date, r.clicks, r.impressions)
       return `($${base + 1}::date, $${base + 2}::int, $${base + 3}::int)`
     })
-    await sql.query(
+    await sql.unsafe(
       `INSERT INTO gsc_discover_daily (metric_date, clicks, impressions)
        VALUES ${tuples.join(',')}
        ON CONFLICT (metric_date) DO UPDATE SET

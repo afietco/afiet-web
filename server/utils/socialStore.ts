@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import type { H3Event } from 'h3'
 import type { Channel } from './contentTypes'
 import type { AccountStatus, AdminSocialPayload, SocialAccount, SocialPost } from './socialTypes'
@@ -13,14 +13,13 @@ import { tokenKeyConfigured } from './socialCrypto'
  * çözme işini çağıran yapar - böylece token yanlışlıkla payload'a sızmaz.
  */
 
-type Sql = NeonQueryFunction<false, false>
 type Row = Record<string, unknown>
 
 let ensured = false
 
 function sqlClient(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 export async function requireSocialDb(event: H3Event): Promise<Sql> {

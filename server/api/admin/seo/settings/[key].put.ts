@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { dbSqlOrFail } from '~~/server/utils/db'
 import { requireAdmin } from '~~/server/utils/adminAuth'
 import { buildAdminPayload } from '~~/server/utils/adminPayload'
 import { SETTINGS_KEYS, invalidateSeoCache } from '~~/server/utils/seoStore'
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event).catch(() => null)
   const value = sanitizeSettingsValue(key, body?.value)
 
-  const sql = neon(url)
+  const sql = dbSqlOrFail(url)
   await sql`
     INSERT INTO seo_settings (key, value, updated_at)
     VALUES (${key}, ${JSON.stringify(value)}::jsonb, now())

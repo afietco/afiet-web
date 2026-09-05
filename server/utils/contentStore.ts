@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { dbSql, type Sql } from './db'
 import { parseStoryPayload } from './storyPayload'
 import type { H3Event } from 'h3'
 import type {
@@ -34,7 +34,6 @@ import { storageReady } from './gcsSign'
  * 60 sn bellek cache'i yalnız yayındaki blog yazılarına uygulanır.
  */
 
-type Sql = NeonQueryFunction<false, false>
 
 const POSTS_CACHE_TTL_MS = 60_000
 let postsCache: { at: number; posts: BlogPost[] } | null = null
@@ -42,7 +41,7 @@ let ensured = false
 
 function sqlClient(event: H3Event): Sql | null {
   const url = useRuntimeConfig(event).databaseUrl
-  return url ? neon(url) : null
+  return dbSql(url)
 }
 
 /** Yazma uçları için: DB yoksa 503, varsa tabloları garanti edip istemci döner. */

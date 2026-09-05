@@ -7,9 +7,13 @@ import {
 } from './gscDiscoverStore'
 
 /**
- * Sahte `sql`: neon'un etiketli şablonunu, `.query()`sini ve `.unsafe()`ini
- * taklit eder. Sorguları kaydeder ve metne göre canned satır döndürür, böylece
- * mantık gerçek bir veritabanı olmadan sınanır.
+ * Sahte `sql`: postgres.js'in etiketli şablonunu ve `.unsafe()`ini taklit eder.
+ * Sorguları kaydeder ve metne göre canned satır döndürür, böylece mantık gerçek
+ * bir veritabanı olmadan sınanır.
+ *
+ * `.unsafe()` postgres.js'te İKİ İŞ yapar ve taklidin ikisini de tanıması gerekir:
+ * tek argümanla şablon içine gömülen ham PARÇA, iki argümanla `$1,$2` parametreli
+ * TAM SORGU. (neon'da bunlar ayrı ayrı `.unsafe()` ve `.query()` idi.)
  */
 type Sql = Parameters<typeof upsertDiscoverRows>[0]
 
@@ -21,8 +25,8 @@ function fakeSql(answer: (text: string) => unknown[] = () => []) {
   }
   const tag = (strings: TemplateStringsArray, ...params: unknown[]) => run(strings.join(' ? '), params)
   const fake = Object.assign(tag, {
-    query: (text: string, params: unknown[] = []) => run(text, params),
-    unsafe: (raw: string) => raw,
+    unsafe: (text: string, params?: unknown[]) =>
+      params === undefined ? text : run(text, params),
   })
   return { sql: fake as unknown as Sql, calls }
 }

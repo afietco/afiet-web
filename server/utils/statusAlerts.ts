@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import { COMPONENTS, PROVIDERS, type CheckResult, type ServiceState } from '~~/server/utils/statusStore'
 import { diagnose, type Diagnosis } from '~~/server/utils/statusDiagnose'
 import { recentErrorLogs } from '~~/server/utils/statusLogs'
@@ -24,7 +24,6 @@ import { buildAlertMail, type AlertContext, type AlertItem } from '~~/server/uti
  * `status_incidents`in işidir; bu tablo silinse sayfa hiç etkilenmez, yalnız
  * bir sonraki turda uyarılar bir kez daha çıkar.
  */
-type Sql = NeonQueryFunction<false, false>
 
 /** Aynı sorun için iki hatırlatma arası. */
 const HATIRLATMA_DK = 30

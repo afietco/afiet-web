@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { dbSqlOrFail } from '~~/server/utils/db'
 import { requireAdmin } from '~~/server/utils/adminAuth'
 import { buildAdminPayload } from '~~/server/utils/adminPayload'
 import { SETTINGS_KEYS, invalidateSeoCache } from '~~/server/utils/seoStore'
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const url = useRuntimeConfig(event).databaseUrl
   if (!url) throw createError({ statusCode: 503, statusMessage: 'db_bagli_degil' })
 
-  const sql = neon(url)
+  const sql = dbSqlOrFail(url)
   await sql`DELETE FROM seo_settings WHERE key = ${key}`
   await invalidateSeoCache()
   return buildAdminPayload(event)

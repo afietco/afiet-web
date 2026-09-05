@@ -1,4 +1,4 @@
-import { neon } from '@neondatabase/serverless'
+import { dbSqlOrFail } from '~~/server/utils/db'
 import { requireAdmin } from '~~/server/utils/adminAuth'
 import { buildAdminPayload } from '~~/server/utils/adminPayload'
 import { invalidateSeoCache } from '~~/server/utils/seoStore'
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event).catch(() => null)
   const r = sanitizeRedirect(body)
 
-  const sql = neon(url)
+  const sql = dbSqlOrFail(url)
   // Zincir oluşmasın: hedefi bu kaynağa işaret eden kayıt varsa reddet.
   const loop = await sql`
     SELECT 1 FROM seo_redirects WHERE from_path = ${r.to.startsWith('/') ? r.to : ''} AND to_path = ${r.from} LIMIT 1

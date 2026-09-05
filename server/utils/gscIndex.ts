@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import { accessToken, gscProperty, gscServiceAccount } from './gsc'
 import {
   classify,
@@ -102,7 +102,7 @@ const CONCURRENCY = 4
 
 export async function sweepIndexStatus(
   event: H3Event,
-  sql: NeonQueryFunction<false, false>,
+  sql: Sql,
   opts: { batch?: number; staleHours?: number } = {},
 ): Promise<IndexSweepSummary> {
   const sa = gscServiceAccount(event)

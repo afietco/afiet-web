@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 import { upsertGscDaily, upsertGscRow, type GscDimension } from './gscStore'
 import {
   DISCOVER_DIMENSIONS,
@@ -149,7 +149,7 @@ function dayAgo(offset: number): string {
  */
 export async function syncGsc(
   event: H3Event,
-  sql: NeonQueryFunction<false, false>,
+  sql: Sql,
   windowDays: number,
 ): Promise<GscSyncSummary> {
   const sa = gscServiceAccount(event)
@@ -222,7 +222,7 @@ export type GscDiscoverSyncSummary = {
  */
 export async function syncGscDiscover(
   event: H3Event,
-  sql: NeonQueryFunction<false, false>,
+  sql: Sql,
   windowDays: number,
 ): Promise<GscDiscoverSyncSummary> {
   const sa = gscServiceAccount(event)

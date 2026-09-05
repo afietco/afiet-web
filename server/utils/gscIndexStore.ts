@@ -1,4 +1,4 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless'
+import type { Sql } from './db'
 
 /**
  * Sitemap'teki her URL'in Google indeks durumunun yerel kopyası.
@@ -15,7 +15,6 @@ import type { NeonQueryFunction } from '@neondatabase/serverless'
  *                     büyüyüp küçüldüğü için toplam da saklanır.
  */
 
-type Sql = NeonQueryFunction<false, false>
 let ensured = false
 
 /**
