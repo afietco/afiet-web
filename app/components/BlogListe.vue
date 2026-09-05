@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BlogCopy } from '~/data/content'
 import { blogPath } from '#shared/utils/locales'
+import { sayfaNumarasi, sayfaSorgusu } from '#shared/utils/sayfalama'
 import type { SiteLocale } from '#shared/utils/locales'
 
 /**
@@ -25,7 +26,33 @@ const PAGE_SIZE = 9
 
 const query = ref('')
 const sort = ref<'yeni' | 'eski'>('yeni')
-const page = ref(1)
+
+/**
+ * Sayfa numarası URL'de yaşar, bileşende DEĞİL.
+ *
+ * NEDEN (kullanıcı kararı, 5 Eyl 2026): eskiden `page` bir ref'ti ve
+ * sayfalama <button>'lardı. Googlebot butona tıklamaz ve sunucu `?sayfa=`
+ * parametresini hiç okumadığı için ikinci sayfa HER İSTEKTE birinci sayfayı
+ * basıyordu. Sonuç: ilk 9 yazının dışındaki her yazı iç linkten ERİŞİLEMEZdi
+ * ve yalnız sitemap'te duruyordu. 5 Eylül'de 17 Türkçe yazının 8'i tam olarak
+ * bu durumdaydı; taranmamış olmalarının mekanik sebebi buydu.
+ *
+ * Numara route'tan okununca üç şey birden düzeliyor: sunucu doğru dilimi
+ * render ediyor, sayfalama gerçek <a href> oluyor ve adres paylaşılabilir
+ * hale geliyor.
+ */
+const route = useRoute()
+const router = useRouter()
+
+/* Devre dışı uçlar <span>, çalışanlar NuxtLink olacak (aşağıda `<component
+   :is>`). Bileşen ADIYLA değil KENDİSİYLE veriliyor: dize olarak verilen ad
+   çözülmüyor ve şablona ham bir <NuxtLink> etiketi basıyor - yani tam da
+   kaçındığımız şey, tıklanamayan bir "sonraki sayfa". */
+const NuxtLinkBileseni = resolveComponent('NuxtLink')
+
+/* Parametre adı dile uyar; İngilizce sayfada `?sayfa=` yazmak adresi
+   yarım çevrilmiş gösterirdi. */
+const sayfaParam = computed(() => (props.lang === 'en' ? 'page' : 'sayfa'))
 
 /* Küçük harfe çevirme dile bağlıdır: Türkçede "I" → "ı" olmalı. */
 const locale = computed(() => (props.lang === 'en' ? 'en-US' : 'tr-TR'))
@@ -45,21 +72,29 @@ const filtered = computed(() => {
 })
 
 const pageCount = computed(() => Math.max(1, Math.ceil(filtered.value.length / PAGE_SIZE)))
+
+const page = computed(() => sayfaNumarasi(route.query[sayfaParam.value], pageCount.value))
+
 const paged = computed(() => filtered.value.slice((page.value - 1) * PAGE_SIZE, page.value * PAGE_SIZE))
 
+/* Kural ve gerekçesi `#shared/utils/sayfalama > sayfaSorgusu`ta. */
+function sayfaYolu(n: number) {
+  return { path: route.path, query: sayfaSorgusu(route.query, sayfaParam.value, n) }
+}
+
+/* Arama ya da sıralama değişince numara başa döner. `replace` bilinçli:
+   süzgeç denemeleri tarayıcı geçmişini doldurmamalı. */
 watch([query, sort], () => {
-  page.value = 1
-})
-watch(pageCount, (n) => {
-  if (page.value > n) page.value = n
+  if (route.query[sayfaParam.value] !== undefined) router.replace(sayfaYolu(1))
 })
 
 const listTop = ref<HTMLElement | null>(null)
-function goPage(n: number) {
-  if (n < 1 || n > pageCount.value || n === page.value) return
-  page.value = n
-  nextTick(() => listTop.value?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
-}
+/* Sayfa değişince listenin başına dön - eskiden goPage'in işiydi, artık
+   gezinme router'da olduğu için numaranın kendisi izleniyor. Yalnız
+   tarayıcıda: SSR'da kaydırılacak bir görüntü yok. */
+watch(page, () => {
+  if (import.meta.client) nextTick(() => listTop.value?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+})
 
 const rssHref = computed(() => (props.lang === 'en' ? '/en/blog/rss.xml' : '/blog/rss.xml'))
 const idPrefix = computed(() => (props.lang === 'en' ? 'blog-en' : 'blog'))
@@ -205,17 +240,26 @@ const fmtDate = (iso: string | null) =>
         {{ copy.noResults }}
       </p>
 
+      <!-- Sayfalama GERÇEK <a href>'lerdir, <button> değil: tarayıcı olmayan
+           bir istemci (Googlebot) butona tıklamaz, bağlantıyı izler. Gerekçe
+           script bloğundaki `page` tanımının başında. Devre dışı uçlar link
+           DEĞİL <span> olur; kapalı bir bağlantı diye bir şey yok. -->
       <nav
         v-if="pageCount > 1"
         :aria-label="copy.pagesLabel"
         class="mt-10 flex items-center justify-center gap-2"
       >
-        <button
-          type="button"
+        <component
+          :is="page === 1 ? 'span' : NuxtLinkBileseni"
+          :to="page === 1 ? undefined : sayfaYolu(page - 1)"
           :aria-label="copy.pagePrev"
-          :disabled="page === 1"
-          class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition hover:border-brand/40 hover:text-brand-deep disabled:pointer-events-none disabled:opacity-40"
-          @click="goPage(page - 1)"
+          :aria-disabled="page === 1 ? 'true' : undefined"
+          class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition"
+          :class="
+            page === 1
+              ? 'pointer-events-none opacity-40'
+              : 'hover:border-brand/40 hover:text-brand-deep'
+          "
         >
           <svg
             class="h-4 w-4"
@@ -229,28 +273,32 @@ const fmtDate = (iso: string | null) =>
           >
             <path d="m15 6-6 6 6 6" />
           </svg>
-        </button>
-        <button
+        </component>
+        <NuxtLink
           v-for="n in pageCount"
           :key="n"
-          type="button"
+          :to="sayfaYolu(n)"
           :aria-current="n === page ? 'page' : undefined"
-          class="h-10 w-10 rounded-full border text-sm font-bold transition"
+          class="grid h-10 w-10 place-items-center rounded-full border text-sm font-bold transition"
           :class="
             n === page
               ? 'border-brand bg-brand text-white shadow-lift'
               : 'border-line bg-surface text-soft hover:border-brand/40 hover:text-brand-deep'
           "
-          @click="goPage(n)"
         >
           {{ n }}
-        </button>
-        <button
-          type="button"
+        </NuxtLink>
+        <component
+          :is="page === pageCount ? 'span' : NuxtLinkBileseni"
+          :to="page === pageCount ? undefined : sayfaYolu(page + 1)"
           :aria-label="copy.pageNext"
-          :disabled="page === pageCount"
-          class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition hover:border-brand/40 hover:text-brand-deep disabled:pointer-events-none disabled:opacity-40"
-          @click="goPage(page + 1)"
+          :aria-disabled="page === pageCount ? 'true' : undefined"
+          class="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface text-soft transition"
+          :class="
+            page === pageCount
+              ? 'pointer-events-none opacity-40'
+              : 'hover:border-brand/40 hover:text-brand-deep'
+          "
         >
           <svg
             class="h-4 w-4"
@@ -264,7 +312,7 @@ const fmtDate = (iso: string | null) =>
           >
             <path d="m9 6 6 6-6 6" />
           </svg>
-        </button>
+        </component>
       </nav>
     </div>
 
