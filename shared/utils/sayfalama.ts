@@ -32,12 +32,17 @@ export function sayfaNumarasi(ham: unknown, sayfaSayisi: number): number {
  * Diğer parametreler KORUNUR: arama ve sıralama istemcide kalsa da adres
  * ileride onları taşırsa sayfalama onları düşürmemeli.
  */
-export function sayfaSorgusu<T extends Record<string, unknown>>(
-  mevcut: T,
+/* Değer tipi GENERIC: `unknown` dönmek çağıran tarafta işe yaramaz, çünkü
+   vue-router `to.query`den `LocationQueryRaw` bekler ve `unknown` ona
+   atanamaz. Girdinin değer tipini taşıyıp yalnız `string` ekleyerek hem
+   burayı router'dan bağımsız tutuyoruz (bu dosya vitest'te düz node'da
+   koşuyor) hem de çağıranda tip bilgisini koruyoruz. */
+export function sayfaSorgusu<V>(
+  mevcut: Record<string, V>,
   param: string,
   n: number,
-): Record<string, unknown> {
-  const q: Record<string, unknown> = { ...mevcut }
+): Record<string, V | string> {
+  const q: Record<string, V | string> = { ...mevcut }
   if (n > 1) q[param] = String(n)
   else delete q[param]
   return q
