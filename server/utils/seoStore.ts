@@ -19,7 +19,7 @@ import type { SupportArticle, SupportCategory } from '#shared/types/support'
 import type { ReleaseNote } from '#shared/types/release'
 import { blogPath, counterpartOf, localeOf } from '#shared/utils/locales'
 import { AUTHOR, personId, personSchema } from '#shared/utils/author'
-import { AFIET_PLUS, MAGAZA, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
+import { AFIET_PLUS, MAGAZA, MARKA_IKINCI_AD, MARKA_TANIM, WIKIDATA } from '#shared/utils/marka'
 import type {
   DeepPartial,
   PageSeo,
@@ -298,6 +298,15 @@ function mobilAppId(baseUrl: string): string {
   return `${baseUrl.replace(/\/$/, '')}/#app`
 }
 
+/**
+ * Sitenin makine okunur kimliği. Ailenin geri kalanıyla aynı desen: kişi
+ * `/hakkinda#yazar`, kurum `/#organization`, uygulama `/#app`, site
+ * `/#website`. Gerekçe `organizationId` başında.
+ */
+function webSiteId(baseUrl: string): string {
+  return `${baseUrl.replace(/\/$/, '')}/#website`
+}
+
 /** Organization düğümü - panelin şema ayarından üretilir, üç sayfa da bunu kullanır. */
 function organizationNode(
   org: SeoSettings['schema']['organization'],
@@ -433,8 +442,24 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
     if (s.website.enabled) {
       graph.push({
         '@type': 'WebSite',
+        /* `@id` ve `publisher`, Organization düğümüyle AYNI gerekçeyle var
+           (bkz. organizationId): kimliksiz düğüm adreslenemez, adreslenemeyen
+           düğüme de bağ atılamaz. Bu ikisi olmadan grafikte üç TEPE düğüm
+           yan yana duruyordu (Organization, WebSite, SoftwareApplication) ve
+           hiçbiri diğerine bağlı değildi - motor için bu, tek varlığın üç
+           tarifi değil, birbirinden habersiz üç aday demek. `publisher` siteyi
+           kuruma bağlayınca üçü tek kimlik altında toplanıyor.
+
+           5 Eyl 2026'da eklendi: marka sorgusu "afiet" o gün GSC'de 6.9.
+           sıradaydı, yani Google afiet'i henüz ayrı bir varlık olarak
+           tanımıyordu ("afiyet" ile ayrışmıyor). */
+        '@id': webSiteId(g.baseUrl),
         name: g.siteName,
+        /* Betimleyici ikinci ad; `name` çıplak "afiet" KALIR. Gerekçe ve
+           mağaza başlığıyla ilişkisi: `#shared/utils/marka > MARKA_IKINCI_AD`. */
+        alternateName: MARKA_IKINCI_AD,
         url: g.baseUrl,
+        publisher: { '@id': organizationId(g.baseUrl) },
         inLanguage,
       })
     }
@@ -443,6 +468,11 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         '@type': 'SoftwareApplication',
         '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
+        /* Uygulamanın mağazada listelendiği ad. WebSite düğümündeki ve
+           İngilizce sayfadaki ikizi ile AYNI dize olmak zorunda: aynı `@id`yi
+           paylaşan düğümler farklı ikinci adlar taşırsa varlığı birleştirmek
+           yerine bölerler. */
+        alternateName: MARKA_IKINCI_AD,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
         description: s.mobileApp.description,
@@ -893,6 +923,11 @@ export async function resolvePageMeta(event: H3Event, rawPath: string): Promise<
         '@type': 'SoftwareApplication',
         '@id': mobilAppId(g.baseUrl),
         name: s.mobileApp.name,
+        /* Uygulamanın mağazada listelendiği ad. WebSite düğümündeki ve
+           İngilizce sayfadaki ikizi ile AYNI dize olmak zorunda: aynı `@id`yi
+           paylaşan düğümler farklı ikinci adlar taşırsa varlığı birleştirmek
+           yerine bölerler. */
+        alternateName: MARKA_IKINCI_AD,
         applicationCategory: s.mobileApp.category,
         operatingSystem: s.mobileApp.operatingSystem,
         // Panelin açıklaması Türkçedir; İngilizce sayfada sayfanın kendi
@@ -1030,6 +1065,38 @@ function enYeniTarih(...adaylar: (string | undefined)[]): string | undefined {
 }
 
 /** sitemap.xml içeriği - kodda var olan sayfalar + dinamik ekler (blog yazıları). */
+/**
+ * Sitemap'ten BİLİNÇLİ olarak dışlanan yollar (kullanıcı kararı, 5 Eyl 2026).
+ *
+ * NEDEN: 5 Eylül'de prod GSC verisi şunu gösterdi - sitemap'teki 163 URL'in
+ * 77'sini Googlebot BİR KEZ BİLE indirmemişti (`gsc_index_status.last_crawl_at
+ * IS NULL`) ve tarama hızı 2 Ağustos'ta 34 sayfa/günken 1 sayfa/güne düşmüştü.
+ * Yeni bir alan adının tarama talebi sınırlıdır; o sınırlı talebi karşılığı
+ * olmayan adreslere harcamamak için yüzey daraltıldı.
+ *
+ *   /en/**         17 URL, yalnız 3'ü indekste, 13'ü hiç taranmamış.
+ *                  İngilizce kapsam bugün öncelik DEĞİL (kullanıcı kararı,
+ *                  5 Eyl 2026).
+ *   /yenilikler/*  Sürüm notu sayfaları; arama talebi sıfır - kimse "afiet
+ *                  0.8.1" aramıyor. Hub (`/yenilikler`) LİSTEDE KALIR: gerçek
+ *                  bir sayfa ve sürümlere link verdiği için tarayıcı oradan
+ *                  ulaşmaya devam eder.
+ *
+ * SAYFALAR YAYINDA KALIR VE `noindex` ALMAZ. Bu bir dizinden çıkarma değil,
+ * tarama önceliği kararıdır: sitemap'ten çıkmak Google'a "bunu benim için
+ * öncelikli sayma" der, "bunu unut" demez. Zaten indekste olanlar indekste
+ * kalır.
+ *
+ * GERİ ALMAK: bu diziyi boşaltmak yeter, başka hiçbir yere dokunulmaz.
+ * İngilizce yeniden öncelik olduğunda ilk desen silinir.
+ */
+const SITEMAP_DISI: RegExp[] = [/^\/en(?:\/|$)/, /^\/yenilikler\//]
+
+/** Yol sitemap'e girmeli mi (bkz. SITEMAP_DISI). */
+function sitemapDisinda(path: string): boolean {
+  return SITEMAP_DISI.some((desen) => desen.test(path))
+}
+
 export function buildSitemapXml(
   bundle: SeoBundle,
   updatedAt: Record<string, string> = {},
@@ -1048,6 +1115,13 @@ export function buildSitemapXml(
   const alternateLines = (p: string): string[] => {
     const counterpart = counterpartOf(p)
     if (!counterpart) return []
+    /* Sitemap'te OLMAYAN bir adrese alternate basılmaz: xhtml:link, "bu dilin
+       sürümü şurada listeleniyor" iddiasıdır ve karşılık listede yokken iddia
+       tek yönlü kalır - Google tek yönlü hreflang'i zaten yok sayar. Sayfanın
+       KENDİ <link rel="alternate"> etiketleri bundan etkilenmez (ayrı yol,
+       resolvePageMeta); dil sürümleri birbirinin kopyası sanılmasın diye
+       HTML'de durmaya devam ederler. */
+    if (sitemapDisinda(counterpart)) return []
     const [trPath, enPath] = localeOf(p) === 'en' ? [counterpart, p] : [p, counterpart]
     return [
       `    <xhtml:link rel="alternate" hreflang="tr" href="${xmlEscape(href(trPath))}" />`,
@@ -1055,7 +1129,9 @@ export function buildSitemapXml(
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${xmlEscape(href(trPath))}" />`,
     ]
   }
-  const entries = KNOWN_PATHS.filter((p) => bundle.pages[p]?.sitemap.include !== false)
+  const entries = KNOWN_PATHS.filter(
+    (p) => bundle.pages[p]?.sitemap.include !== false && !sitemapDisinda(p),
+  )
     .map((p) => {
       const page = bundle.pages[p]!
       const loc = xmlEscape(href(p))
@@ -1073,14 +1149,30 @@ export function buildSitemapXml(
       parts.push('  </url>')
       return parts.join('\n')
     })
+  /* Alternate seti HEP YA DA HİÇ basılır. Bir hreflang grubu, o grubun
+     TAMAMININ birbirine işaret ettiği iddiasıdır; bir dili düşürüp geri
+     kalanı basmak Google'a eksik ve kendini doğrulamayan bir grup verir.
+     Dışlanan tek bir adres varsa grubun tamamı düşer. */
+  const alternateSatirlari = (
+    alternates?: { hreflang: string; href: string }[],
+  ): string[] => {
+    if (!alternates?.length) return []
+    const yol = (h: string) => (h.startsWith(base) ? h.slice(base.length) : h)
+    if (alternates.some((a) => sitemapDisinda(yol(a.href)))) return []
+    return alternates.map(
+      (a) => `    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${xmlEscape(a.href)}" />`,
+    )
+  }
+
   for (const e of extra) {
+    /* Route'un verdiği girdiler de aynı politikadan geçer; tek kapı olsun diye
+       filtre burada, çağıran tarafta değil (İngilizce blog yazıları ve sürüm
+       notu sayfaları buradan eleniyor). */
+    if (sitemapDisinda(e.loc.startsWith(base) ? e.loc.slice(base.length) : e.loc)) continue
     const parts = [
       `  <url>`,
       `    <loc>${xmlEscape(e.loc)}</loc>`,
-      ...(e.alternates ?? []).map(
-        (a) =>
-          `    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${xmlEscape(a.href)}" />`,
-      ),
+      ...alternateSatirlari(e.alternates),
     ]
     if (e.lastmod) parts.push(`    <lastmod>${new Date(e.lastmod).toISOString()}</lastmod>`)
     parts.push('  </url>')
