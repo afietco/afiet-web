@@ -508,6 +508,15 @@ NUXT_DATABASE_URL="$(cat .env.prod-url)" node scripts/publish-post.mjs content/p
   (nuxt → cssnano zinciri) opsiyonel peer'ı; npm bunu lock'a yazmayı atlıyor
   ve CI'da `npm ci` senkron hatası veriyor. Kaldırmadan önce `npm ci --dry-run`
   ile doğrula.
+- **Vercel ISR önbellek anahtarı SORGU DİZESİNİ yok sayar.** `?sayfa=2`
+  isteği `/blog`un önbelleğinden servis edilir ve ikinci sayfa birinciyi
+  gösterir. Çözüm `routeRules`ta `isr: { expiration, allowQuery: [...] }`;
+  bugün `/blog` (`sayfa`) ve `/en/blog` (`page`) bunu taşıyor. TUZAĞIN ASIL
+  KISMI: bu sınıf hata YERELDE HİÇ GÖRÜNMEZ, çünkü `nuxt dev` ve
+  `.output/server` önünde CDN yoktur - smoke da yakalayamaz. 5 Eyl 2026'da
+  sayfalama düzeltmesi tam bu yüzden yeşil testlerle prod'a çıkıp orada
+  çalışmadı. Sorgu parametresine bağlı bir davranış eklerken doğrulama
+  CANLIDA yapılır (`curl -D- https://afiet.co/... | grep x-vercel-cache`).
 - CI bilinçli olarak `npm ci` DEĞİL `npm install` kullanır: npm, platforma göre
   atlanan opsiyonelleri (tailwind oxide wasm zinciri, @emnapi/*) lock'a eksik
   yazabiliyor (npm/cli#4828) ve `npm ci` linux'ta düşüyor. `npm ci`ya geri
