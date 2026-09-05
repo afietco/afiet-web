@@ -380,7 +380,16 @@ try {
     'bilinmeyen sürüm markalı hata yerine kendi cümlesini kuruyor',
   )
 
-  ok(sitemap.includes(releasePath), 'sitemap sürüm notunu içeriyor')
+  /* Sürüm notu sayfaları sitemap'e GİRMEZ (kullanıcı kararı, 5 Eyl 2026;
+     gerekçe: `server/utils/seoStore > SITEMAP_DISI`). Arama talebi sıfır olan
+     9 adres, tarama talebi zaten günde ~1 sayfaya düşmüş bir sitede yer
+     kaplıyordu. Sayfalar YAYINDA ve hub onlara link vermeye devam ediyor -
+     iddia "listelenmiyor", "erişilemiyor" değil. */
+  ok(!sitemap.includes(releasePath), 'sürüm notu sitemap’e GİRMİYOR')
+  ok(
+    sitemap.includes('<loc>https://afiet.co/yenilikler</loc>'),
+    'sürüm notu HUB’ı sitemap’te duruyor',
+  )
   ok(llms.includes('## Sürüm notları'), 'llms.txt sürüm bölümü içeriyor')
 
   // --- Hesaplama araçları ---
@@ -495,7 +504,15 @@ try {
       trHtml.includes(`hreflang="en" href="https://afiet.co${enPath}"`),
       `${trPath} İngilizce karşılığına hreflang veriyor (çift yönlü)`,
     )
-    ok(sitemap.includes(`<loc>https://afiet.co${enPath}</loc>`), `sitemap ${enSlug} içeriyor`)
+    /* İngilizce sayfalar sitemap'e GİRMEZ (aynı karar ve aynı gerekçe).
+       Yukarıdaki çift yönlü hreflang iddiaları BOZULMADAN duruyor ve bu
+       bilinçli: sayfanın kendi <link rel="alternate"> etiketleri ayrı yoldan
+       (resolvePageMeta) basılıyor, çünkü dil sürümlerinin birbirinin kopyası
+       sanılmaması listelenmekten bağımsız bir ihtiyaç. */
+    ok(
+      !sitemap.includes(`<loc>https://afiet.co${enPath}</loc>`),
+      `sitemap ${enSlug} içermiyor`,
+    )
   }
   // İngilizce hub aynı şemayı üretir ama listesi DÖRT araçtır: porsiyon
   // çevirici İngilizce'de yok, liste onu uydurmamalı.
